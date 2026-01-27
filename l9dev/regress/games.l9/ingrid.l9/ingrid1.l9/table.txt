@@ -1,0 +1,1315 @@
+; Ingrid's Back part 1 source, copyright (C) 1987 Level 9 Computing.
+;
+; TABLE.TXT, assembler format data for tables, a.k.a lists/arrays. 
+; (Save the assembled data as TABLE.DAT). 
+;
+; You must start all DEFWs on EVEN boundaries, else subsequent code 
+; seems to be padded to make it even (according to the GENST listing, 
+; anyway). The EVEN directive inserts a padding byte if appropriate.
+;
+ ORG 0
+starttables
+ dc.l LIST1-starttables ; MOVEABLE OBJECT START
+ dc.l $8000 ; OBJECT CURRENT
+ dc.l $8000+MaxObject ; HI OBJECT CURRENT
+ dc.l LIST4-starttables ; scenery table
+ dc.l NPCINITIAL-starttables ; npc initial and 'floor pointers'
+ dc.l $8000+LIST23SIZE ; 6 - NPC current attributes, stack
+ dc.l $8000+LIST236SIZE ; 7 - output buffer,scoretable
+ dc.l list8-starttables ; 8 - assorted fixed system tables
+ dc.l $8000+LIST2367SIZE ; 9 - input table,object table
+ dc.l ENDTABLE-starttables
+;---
+; CONTAINER POSITONS
+ON EQU 1
+UNDER EQU 2
+BEHIND EQU 3
+CARRIED EQU 4
+WORN EQU 5
+PREPIN EQU 7
+HANGINGFROM EQU 8 ; E.G. TREE
+pushedby equ 11
+LIEON EQU 12
+SITON EQU 13
+fastenedto equ 14
+lyingon equ 15
+;
+; additions to high initial position
+OBV EQU $80
+ita equ 0
+itan equ $10 ; starts with a vowel
+singularsome equ $20 ; "some cheese is tasy"
+he equ $30
+she equ $40
+pluralsome equ $50 ; "some ropes are strong"
+you equ $60
+properMale equ $70
+ProperFemale equ $70
+; ProperFemale is handled by SpecialConjugate
+;
+MaxObject EQU 189 ; should be two bigger than it really needs to be
+NUMHIOBJ EQU MaxObject ; NO. OF OBJECTS WITH A HIGH POSITION
+minnpc equ 1
+maxnpc equ 64
+npctablesize EQU (MaxNpc+1)*8
+npcstacksize equ 260 ; 300
+
+OUTPUTBUFFER EQU 32
+SCORETABLE EQU 40 ;length of score table
+OBJTABLE EQU 16 ; number of objects which can be specified on one line
+petitiontable equ 35 ;*graham*
+;
+;
+LIST23SIZE EQU MaxObject+NUMHIOBJ
+LIST236SIZE EQU LIST23SIZE+npctablesize+npcstacksize
+LIST2367SIZE EQU LIST236SIZE+OUTPUTBUFFER+SCORETABLE+170+maxnpc+petitiontable
+; 170 is num rooms
+;;LIST23678SIZE equ LIST2367SIZE ; >>Mike 8/8/87 - reduced from ST version
+;>>mike 8/8/87 LIST23678SIZE EQU LIST2367SIZE+OBJTABLE
+;
+;---
+LIST1
+ dc.b 0,0               ; OBJECT 0
+;
+; people
+USER EQU 1
+ dc.b 0+you,9 ; 1 USER (ingrid)
+ dc.b properfemale,3	; 2 gnora
+ dc.b propermale,3	; 3 gnoah
+bumpy equ 4
+ dc.b propermale,26	; 4 bumpy
+ dc.b propermale,25	; 5 dimple
+ dc.b propermale,16	; 6 gnoggin
+ dc.b propermale,26	; 7 arback
+ dc.b propermale,132	; 8 isfrunt
+jumbo equ 9
+ dc.b propermale,6	; 9 jumbo
+flora equ 10
+ dc.b properfemale,7	; 10 flora
+farthing equ 11
+ dc.b properfemale,10	; 11 miss farthing
+ dc.b properfemale,5	; 12 grandma
+ dc.b propermale,128	; 13 dusty
+ dc.b properfemale,17	; 14 gt. aunt
+boney equ 15
+ dc.b propermale,34	; 15 boney
+ dc.b propermale,11	; 16 gnat
+mrstack equ 14
+ dc.b properfemale+on,bed ; 17 mrs tack
+ dc.b properfemale,15	; 18 millie
+ dc.b propermale+prepin,oward ; 19 seamus
+;
+; people 20-24 never appear, but are included 
+; for parsing, "go object" etc.
+ dc.b propermale,0	; 20 hermit
+ dc.b properfemale,0	; 21 mistress spratt
+ dc.b propermale,0	; 22 jasper
+ dc.b 0,0		; 23
+ dc.b 0,0		; 24
+;
+; employees of jasper:
+silas equ 25
+ dc.b propermale,6	; 25 silas
+surveyer equ 26
+ dc.b he,33		; 26 surveyer
+ dc.b properfemale,6	; 27 underlay
+salesgnome equ 28
+ dc.b he,6		; 28 salesgnome
+amillaria equ 29
+ dc.b properfemale,25	; 29 amillaria
+ dc.b 0,0		; 30
+ dc.b 0,0		; 31
+ dc.b 0,0		; 32
+ dc.b 0,0		; 33
+ dc.b 0,0		; 34
+;
+; animals
+flopsy equ 35
+ dc.b properfemale,9	; 35 flopsy
+ dc.b 0,24		; 36 rook
+ dc.b pluralsome,29	; 37 chickens
+ dc.b 0,21		; 38 gorilla
+ dc.b 0,0		; 39
+ dc.b 0,0		; 40
+ dc.b 0,0		; 41
+ dc.b 0,0		; 42
+ dc.b 0,0		; 43
+ dc.b 0,0		; 44
+ dc.b 0,0		; 45
+ dc.b 0,0		; 46
+ dc.b 0,0		; 47
+ dc.b 0,0		; 48
+ dc.b 0,0		; 49
+ dc.b 0,0		; 50
+ dc.b 0,0		; 51
+ dc.b 0,0		; 52
+ dc.b 0,0		; 53
+ dc.b 0,0		; 54
+ dc.b 0,0		; 55
+ dc.b 0,0		; 56
+ dc.b 0,0		; 57
+ dc.b 0,0		; 58
+ dc.b 0,0		; 59
+ dc.b 0,0		; 60
+ dc.b 0,0		; 61
+ dc.b 0,0		; 62
+ dc.b 0,0		; 63
+ dc.b 0,0		; 64
+ dc.b 0,0		; 65
+ dc.b 0,0		; 66
+ dc.b 0,0		; 67
+ dc.b 0,0		; 68 
+ dc.b 0,0		; 69 
+ dc.b 0,0		; 70
+ dc.b 0,0		; 71
+ dc.b 0,0		; 72
+ dc.b 0,0               ; 73
+ dc.b 0,0               ; 74
+ dc.b 0,0               ; 75
+ dc.b 0,0               ; 76
+ dc.b 0,0               ; 77
+ dc.b 0,0               ; 78
+ dc.b 0,0               ; 79
+;
+; now some ordinary objects (80 onwards)..
+ dc.b pluralsome,10	; 80 groceries
+ dc.b itan+carried,user	; 81 invitation
+ dc.b carried,user	; 82 petition
+ dc.b 0,12		; 83 short ladder
+ dc.b 0,0		; 84 scrumpy
+ dc.b 0,0		; 85
+ dc.b 0,0		; 86
+ dc.b 0,0		; 87
+ dc.b 0,0		; 88
+ dc.b 0,0		; 89
+ dc.b 0,0		; 90
+ dc.b 0,0		; 91
+ dc.b 0,0		; 92
+ dc.b 0,0		; 93
+ dc.b 0,0		; 94
+ dc.b 0,0		; 95
+ dc.b 0,0		; 96
+ dc.b 0,0		; 97
+ dc.b 0,0		; 98
+ dc.b 0,0		; 99
+ dc.b 0,0               ;100 
+ dc.b 0,0               ;101 
+ dc.b 0,0               ;102 
+ dc.b 0,0		;103 
+ dc.b 0,0               ;104
+ dc.b 0,0               ;105
+ dc.b 0,0               ;106
+ dc.b 0,0               ;107
+ dc.b 0,0               ;108
+ dc.b 0,0               ;109
+;
+; static objects... (110+)
+bed equ 110
+ dc.b obv,14		;110 bed
+brambles equ 111
+ dc.b obv,23		;111 briar patch
+ dc.b obv,29		;112 bushes
+longladder equ 113
+ dc.b 0,15		;113 long ladder
+ dc.b 0,22		;114 notice
+ dc.b 0,37		;115 notice
+ dc.b obv,128		;116 pile of sacks
+noingrids equ 117
+ dc.b 0,28		;117 notice
+ dc.b 0,14		;118 closed wardrobe
+oward equ 119
+ dc.b obv,0		;119 open wardrobe
+ dc.b 0,41		;120 window (outside)
+ dc.b 0,14		;121 window (inside)
+ dc.b 0,29		;122 bell rope
+ dc.b pluralsome,43	;123 garden
+ dc.b 0,0		;124
+ dc.b 0,0		;125
+ dc.b 0,0		;126
+ dc.b 0,0		;127
+ dc.b 0,0		;128
+ dc.b 0,0		;129
+ dc.b 0,0		;130
+ dc.b 0,0		;131
+ dc.b 0,0		;132
+ dc.b 0,0		;133
+ dc.b 0,0		;134
+ dc.b 0,0		;135
+ dc.b 0,0		;136
+ dc.b 0,0		;137
+ dc.b 0,0		;138
+ dc.b 0,0		; 139
+;
+; vehicles 
+boat equ 140
+ dc.b obv,36		; 140 boat
+ dc.b 0,0		; 141 broken carriage
+ dc.b obv,11		; 142 carriage
+ dc.b 0,0		; 143
+ dc.b 0,0		; 144
+ dc.b 0,0		; 145
+ dc.b 0,0		; 146 
+ dc.b 0,0		; 147 
+ dc.b 0,0		; 148 
+ dc.b 0,0		; 149
+;
+; invisible objects
+ dc.b 0,20		; 150 cottage
+ dc.b itan,33		; 151 inn
+ dc.b 0,39		; 152 cave
+ dc.b 0,33		; 153 village hall
+ dc.b 0,0		; 154
+ dc.b 0,0		; 155
+ dc.b 0,41		; 156 barn
+ dc.b 0,45		; 157 lighthouse
+ dc.b 0,16		; 158 warren
+ dc.b 0,25		; 159 gnet. farmhouse
+ dc.b 0,29		; 160 mill
+ dc.b 0,34		; 161 w.bridge
+ dc.b 0,36		; 162 e.bridge
+ dc.b 0,34		; 163 w.river
+ dc.b 0,36		; 164 e.river
+ dc.b 0,35		; 165 mid-river
+ dc.b 0,41		; 166 tack farmhouse
+ dc.b 0,42              ; 167 back dunrollin
+ dc.b 0,43              ; 168 front dunrollin
+ dc.b 0,34              ; 169 ferry cottage
+ dc.b 0,37              ; 170 manor
+ dc.b 0,6               ; 171 bar
+ dc.b 0,6               ; 172 booze
+ dc.b pluralsome,6      ; 173 glasses
+ dc.b 0,0               ;174
+ dc.b 0,0               ;175
+ dc.b 0,0               ;176
+ dc.b 0,0               ;177
+ dc.b 0,0               ;178
+ dc.b 0,0               ;179
+;-------------------------
+;
+; Brief location objects (479+N). See 779+ for examine messages and 
+; 1199+ for their verbose equivalents..
+ dc.b 0,221		; 180 grocers
+ dc.b 0,220		; 181 smithy
+ dc.b 0,0		; 182
+ dc.b 0,0		; 183
+ dc.b 0,0		; 184
+ dc.b 0,0		; 185
+ dc.b 0,0		; 186
+ dc.b 0,0		; 187
+;---
+ even
+ENDOBJECTS
+terraintable
+LIST4
+; table giving scenery types on grassy plain grid
+;m equ 220 ; minsynthroom
+; dc.b m,m
+ even
+;---------
+list8
+; table for remarks made by 'PET' - Damosel Maledisant (Galahad in L3)...
+ dc.b 7,0 ; fly rook
+ dc.b 22,1 ; in carriage
+ dc.b 23,2 ; in fast carriage
+ dc.b 30,3 ; slide across cart
+ dc.b 31,4 ; uphill
+ dc.b 32,5 ; splash!
+ dc.b 33,6 ; halts
+ dc.b 34,16 ; jump!
+ dc.b 45,7 ; knock
+ dc.b 62,8 ; hint - get dusty
+ dc.b 63,9 ; missed him!
+ dc.b 64,10 ; wet dusty?
+ dc.b 87,11 ; don't believe seamus
+ dc.b 92,12 ; meet gorilla
+ dc.b 95,13 ; growl...
+ dc.b 240,14 ; wot no signatures
+ dc.b 243,15 ; complete!
+ dc.b 0,0
+
+
+;
+;
+;---------
+ even
+NPCINITIAL
+list5
+; first we have a dummy entry for npc 0
+; this is used as some pointers to the *other*
+; things which are used in this list
+; (the equivalent of this area in list6 is used for temp workspace)
+;
+ dc.w floorpointers-npcinitial
+ dc.w racetracks-npcinitial
+ dc.w reversaltable-npcinitial
+ dc.w roompictures-npcinitial ;*****
+;
+; For greed agression, timidity, obediance, there
+; is a special case - if one of the values is 255, then
+; the npc will always choose that one, if it is possible
+; This is particularly useful for slaves etc.
+; Note that npcs will still respond to attacks etc. - 
+; anything which sets the 'attention flag'
+
+FRIENDLY EQU 0
+dodge equ 0
+damage equ 0
+; now the npc tables themselves...
+; npc 0 has dummy entry used as pointers above
+;
+; dc.b enemy, dodge, attack, hit points, obedience, patience, gold-sing
+; if bit 7 of the "enemy" byte is set, the npc will be inactive
+; until it meets Lancelot
+;inactive equ $80
+;disabled equ $40 ; set for npc's in part 2
+
+ dc.b friendly,dodge,35,100,3,0   ; 1 USER
+ dc.w 3400 ; standard singing
+ dc.b friendly,dodge,10,100,255,1 ; 2 gnora
+ dc.w 3410
+ dc.b friendly,dodge,10,100,255,1 ; 3 gnoah
+ dc.w 3400
+ dc.b friendly,dodge,10,100,255,1 ; 4 bumpy
+ dc.w 3480
+ dc.b friendly,dodge,10,100,255,1 ; 5 dimple
+ dc.w 3400
+ dc.b friendly,dodge,10,100,255,1 ; 6 gnoggin
+ dc.w 3400
+ dc.b friendly,dodge,10,100,255,1 ; 7 arback
+ dc.w 3440
+ dc.b friendly,dodge,10,100,255,1 ; 8 isfrunt
+ dc.w 3440
+ dc.b friendly,dodge,10,100,255,1 ; 9 jumbo
+ dc.w 3500
+ dc.b friendly,dodge,10,100,255,1 ; 10 flora
+ dc.w 3510
+ dc.b friendly,dodge,10,100,255,1 ; 11 miss farthing
+ dc.w 3480
+ dc.b friendly,dodge,10,100,255,1 ; 12 grandma
+ dc.w 3410
+ dc.b friendly,dodge,10,100,255,1 ; 13 dusty
+ dc.w 3440
+ dc.b friendly,dodge,10,100,255,1 ; 14 great aunt
+ dc.w 3480
+ dc.b friendly,dodge,10,100,255,1 ; 15 boney
+ dc.w 3440
+ dc.b friendly,dodge,10,100,255,1 ; 16 gnat
+ dc.w 3390
+ dc.b friendly,dodge,10,100,255,1 ; 17 mrs tack
+ dc.w 3480
+ dc.b friendly,dodge,10,100,255,1 ; 18 millie
+ dc.w 3410 ;was 3480, but she turns sour!
+ dc.b friendly,dodge,10,100,255,1 ; 19 seamus
+ dc.w 3520
+ dc.b friendly,dodge,10,100,255,1 ; 20 (hermit)
+ dc.w 0
+ dc.b friendly,dodge,10,100,255,1 ; 21 (mistress spratt)
+ dc.w 0
+ dc.b friendly,dodge,10,100,255,1 ; 22 (jasper)
+ dc.w 0
+ dc.b friendly,dodge,10,100,255,1 ; 23
+ dc.w 0
+ dc.b friendly,dodge,10,100,100,1 ; 24
+ dc.w 0
+ dc.b friendly,dodge,10,100,255,1 ; 25 silas
+ dc.w 3430
+ dc.b friendly,dodge,10,100,255,1 ; 26 surveyer
+ dc.w 3430
+ dc.b friendly,dodge,10,100,255,1 ; 27 mrs underlay
+ dc.w 3460
+ dc.b friendly,dodge,10,100,255,1 ; 28 salesgnome
+ dc.w 3470
+ dc.b friendly,dodge,10,100,255,1 ; 29 amillaria
+ dc.w 3460
+ dc.b friendly,dodge,10,100,100,4 ; 30
+ dc.w 0
+ dc.b friendly,dodge,10,100,100,2 ; 31
+ dc.w 0
+ dc.b friendly,dodge,10,100,100,3 ; 32
+ dc.w 0
+ dc.b friendly,dodge,10,100,100,4 ; 33
+ dc.w 0
+ dc.b friendly,dodge,10,100,100,2 ; 34
+ dc.w 0
+ dc.b friendly,dodge,10,100,255,1 ; 35 flopsy
+ dc.w 3450
+ dc.b friendly,dodge,10,100,255,1 ; 36 rook
+ dc.w 3420
+ dc.b friendly,dodge,10,100,255,1 ; 37 chickens
+ dc.w 3420
+ dc.b friendly,dodge,10,100,255,1 ; 38 gorilla
+ dc.w 3380
+;---
+
+floorpointers
+; part of list5
+; now 'floor pointers'
+; there is one bye pair for each static room - the
+; first byte gives the direction to go inwards
+; and the second byte gives direction for going outwards
+; (i.e. towards the synthesised grid)
+;
+; ** BIG WARNING **
+; all shapes must be simply connected. i.e. given a pair of rooms,
+; you must be able to trace a path between them using only the
+; OUT paths of one OR the other.
+; This is because of the way the follow and GO code works.
+north equ 1
+ne equ 2
+east equ 3
+se equ 5
+south equ 4
+sw equ 6
+west equ 7
+nw equ 8
+up equ 9
+down equ 10
+verbin equ 11
+out equ 12
+cross equ 13
+climb equ 14
+jump equ 15
+
+ dc.b 0 ; room 0 (not used)
+ dc.b 0 ; room 1 (not used)
+ dc.b 0 ; room 2 (not used)
+ dc.b out ; 3
+ dc.b down ; 4
+ dc.b east ; 5
+ dc.b out ; 6
+ dc.b south ; 7
+ dc.b out ; 8
+ dc.b north ; 9
+ dc.b north ; 10
+ dc.b north ; 11
+ dc.b west ; 12
+ dc.b out ; 13
+ dc.b down ; 14
+ dc.b out ; 15
+ dc.b south ; 16 
+ dc.b out ; 17
+ dc.b 0 ; 18
+ dc.b 0 ; 19
+ dc.b east ; 20
+ dc.b east ; 21 
+ dc.b east ; 22
+ dc.b east ; 23 
+ dc.b south ; 24
+ dc.b west ; 25 
+ dc.b nw ; 26
+ dc.b down ; 27
+ dc.b west ; 28
+ dc.b west ; 29
+ dc.b se ; 30
+ dc.b se ; 31
+ dc.b se ; 32
+ dc.b west ; 33
+ dc.b west ; 34
+ dc.b west ; 35
+ dc.b west ; 36
+ dc.b west ; 37
+ dc.b south ; 38
+ dc.b south ; 39
+ dc.b east ; 40
+ dc.b south ; 41
+ dc.b north ; 42
+ dc.b sw ; 43
+ dc.b nw ; 44
+ dc.b north ; 45
+ dc.b 0 ; 46
+ dc.b 0 ; 47
+ dc.b 0 ; 48
+ dc.b 0 ; 49
+ dc.b 0 ; 50
+ dc.b 0 ; 51
+ dc.b 0 ; 51
+ dc.b 0 ; 52
+ dc.b 0 ; 54
+ dc.b 0 ; 55
+ dc.b 0 ; 56
+ dc.b 0 ; 57
+ dc.b 0 ; 58
+ dc.b 0 ; 59
+ dc.b 0 ; 60
+ dc.b 0 ; 61
+ dc.b 0 ; 62
+ dc.b 0 ; 63
+ dc.b 0 ; 64
+ dc.b 0 ; 65
+ dc.b 0 ; 66
+ dc.b 0 ; 67
+ dc.b 0 ; 68
+ dc.b 0 ; 69
+ dc.b 0 ; 70
+ dc.b 0 ; 71
+ dc.b 0 ; 72
+ dc.b 0 ; 73
+ dc.b 0 ; 74
+ dc.b 0 ; 75
+ dc.b 0 ; 76
+ dc.b 0 ; 77
+ dc.b 0 ; 78
+ dc.b 0 ; 79
+ dc.b 0 ; 80
+ dc.b 0 ; 81
+ dc.b 0 ; 82
+ dc.b 0 ; 83
+ dc.b 0 ; 84
+ dc.b 0 ; 85
+ dc.b 0 ; 86
+ dc.b 0 ; 87
+ dc.b 0 ; 88
+ dc.b 0 ; 89
+ dc.b 0 ; 90
+ dc.b 0 ; 91
+ dc.b 0 ; 92
+ dc.b 0 ; 93
+ dc.b 0 ; 94
+ dc.b 0 ; 95
+ dc.b 0 ; 96
+ dc.b 0 ; 97
+ dc.b 0 ; 98
+ dc.b 0 ; 99
+ dc.b 0 ; 100
+ dc.b 0 ; 101
+ dc.b 0 ; 102
+ dc.b 0 ; 103
+ dc.b 0 ; 104
+ dc.b 0 ; 105
+ dc.b 0 ; 106
+ dc.b 0 ; 107
+ dc.b 0 ; 108
+ dc.b 0 ; 109
+ dc.b 0 ; 110
+ dc.b 0 ; 111
+ dc.b 0 ; 112
+ dc.b 0 ; 113
+ dc.b 0 ; 114
+ dc.b 0 ; 115
+ dc.b 0 ; 116
+ dc.b 0 ; 117
+ dc.b 0 ; 118
+ dc.b 0 ; 119
+ dc.b 0 ; 120
+ dc.b 0 ; 121
+ dc.b 0 ; 122
+ dc.b 0 ; 123
+ dc.b 0 ; 124
+ dc.b west ; 125
+ dc.b nw ; 126
+ dc.b west ; 127
+ dc.b out ; 128
+ dc.b west ; 129
+ dc.b out ; 130
+ dc.b out ; 131
+ dc.b out ; 132
+ dc.b 0 ; 133
+ dc.b 0 ; 134
+ dc.b down ; 135
+ dc.b 0 ; 136
+ dc.b 0 ; 137
+ dc.b 0 ; 138
+ dc.b 0 ; 139
+ dc.b south ; 140
+ dc.b north ; 141
+ dc.b west ; 142
+ dc.b west ; 143
+ dc.b east ; 144
+;---
+ even
+racetracks
+; sequences of commands which actors obey
+; each is referred to by a 16-bit offset from the start of list5
+; the initial sequences are contained in this table at the start..
+ dc.w 0 ; 0
+ dc.w 0 ; 1
+ dc.w gnorart-list5 ; 2
+ dc.w gnoahrt-list5 ; 3
+ dc.w bumpyrt-list5 ; 4
+ dc.w dimplert-list5 ; 5
+ dc.w gnogginrt-list5 ; 6
+ dc.w arbackrt-list5 ; 7
+ dc.w 0 ; 8 isfrunt
+ dc.w jumbort-list5 ; 9 jumbo
+ dc.w florart-list5 ; 10 flora
+ dc.w farthingrt-list5 ; 11 farthing
+ dc.w grandmart-list5 ; 12 grandma
+ dc.w 0 ; 13 dusty
+ dc.w gtauntrt-list5 ; 14 gt. aunt
+ dc.w boneyrt-list5 ; 15 boney
+ dc.w gnatrt-list5 ; 16 gnat
+ dc.w 0 ; 17 mrs tack
+ dc.w milliert-list5 ; 18 millie
+ dc.w 0 ; 19 seamus
+ dc.w 0 ; 20
+ dc.w 0 ; 21
+ dc.w 0 ; 22
+ dc.w 0 ; 23
+ dc.w 0 ; 24
+ dc.w silasrt-list5 ; 25
+ dc.w surveyerrt-list5 ; 26
+ dc.w underlayrt-list5 ; 27 underlay
+ dc.w salesgnomert-list5 ; 28 salesgnome
+ dc.w amillariart-list5 ; 29
+ dc.w 0 ; 30
+ dc.w 0 ; 31
+ dc.w 0 ; 32
+ dc.w 0 ; 33
+ dc.w 0 ; 34
+ dc.w 0 ; 35 flopsy (follows)
+ dc.w rookrt-list5 ; 36
+ dc.w 0 ; 37 chickens
+ dc.w 0 ; 38
+ dc.w 0 ; 39
+;
+ dc.w seamusrt-list5 ; 40
+ dc.w gorillacaughtrt-list5 ; 41
+ dc.w 0 ; 42
+ dc.w 0 ; 43
+ dc.w 0 ; 44
+ dc.w 0 ; 45
+
+StartRt
+; each of the race track entries has a 4-byte entry:
+; VERB PREP NOUN1 NOUN2
+ipin equ 7
+ipon equ 1
+
+drop equ 107
+attack equ 40
+ifollow equ 113
+open equ 114 ;64
+go equ 96 ; go to room noun1 (=setupgo)
+close equ 140 ; 90
+wait equ 92
+examine equ 100
+take equ 105
+give equ 111
+eat equ 123
+find equ 139
+kill equ 93
+waitforperson equ 89
+waituntiltime equ 90
+waitforperiod equ 91
+put equ 108
+returnobject equ 136
+gdfind equ 139
+
+Conditional equ 247
+
+ActorVaryMessage equ 248 ; goes straight on in same turn to next step in rt
+WRtActorVaryMessage equ ActorVaryMessage*256
+
+ActorSingleMessage equ 249 ; this completes actor's turn. Like ActorM1Dot
+WRtActorSingleMessage equ ActorSingleMessage*256
+
+RtVaryMessage equ 250
+WRtVaryMessage equ RtVarymessage*256
+
+racetrackmessage equ 251
+WRtMessage equ racetrackMessage*256
+
+racetrackgosub equ 253
+WRtGosub equ racetrackGosub*256
+
+racetrackgoto equ 254
+WRtGoto equ racetrackGoto*256
+
+racetrackreturn equ 255
+light equ 165 ; 115
+ride equ  185 ; 135
+
+stand equ 46
+lie equ 47
+drink equ 60
+wear equ 106
+remove equ 109
+
+; nouns...
+people equ 237
+everything equ 234
+nullobject equ 255
+
+water equ 241 ; noun
+
+; prepositions...
+to equ 202
+; note that:
+;
+; NOUN1 will always be searched for if not accessible
+; to the verb (using the usual accessability rules)
+;
+; NOUN2 will normally be searched for using the same rules.
+; There are situations where this is awkward - so if the
+; preposition is WITH, then NOUN2 must be carried (or it will
+; be searched for by the npc).
+;
+rtmess equ 5000 ; start of racetrack messages
+;---
+; gorilla struggles & breaks free from brambles
+gorillacaughtrt
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtMessage,3310
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtMessage,3311
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+gnorart
+ dc.b go,0,3,nullobject ; go kitchen
+ dc.w WRtActorSingleMessage,rtmess+0 ; fill sink & squirt in liquid.
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+1 ; do some washing up, dry & put away.
+ dc.b go,0,4,nullobject ; go stairs
+ dc.w WRtActorSingleMessage,rtmess+2 ; pop in bedrooms & tidy them, then 
+;; dc.b waitforperiod,0,1,nullobject ; vacuum carpet on landing.
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+3 ; flopsy treads mud into carpet.
+gnoahrt
+ dc.b go,0,3,nullobject ; go kitchen
+ dc.w WRtActorSingleMessage,rtmess+5 ; get frying pan & put on stove
+ dc.b waitforperiod,0,1,nullobject ; then crack egg & fry it.
+ dc.w WRtActorSingleMessage,rtmess+6 ; put egg on plate, sit & eat it,
+;; dc.b waitforperiod,0,1,nullobject ; and then mop up yolk with ma's bread.
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+7 ; flopsy eats crumbs & bits of spilled egg.
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+8 ; throw plate in sink.
+dimplert
+ dc.b go,0,25,nullobject ; outside farm
+ dc.w WRtActorSingleMessage,rtmess+10 ; go pigsty & shovel shit
+;; dc.b waitforperiod,0,1,nullobject
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+11 ; flopsy rolls in pig muck. ingrid holds nose
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+12 ; feed chickens with grain
+;; dc.b waitforperiod,0,1,nullobject
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+13 ; flopsy chases chickens
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+14 ; look for needle in haystack
+arbackrt
+ dc.b go,0,26,nullobject ; go field
+ dc.w WRtActorSingleMessage,rtmess+15 ; sow seeds & stomp earth over them
+;; dc.b waitforperiod,0,1,nullobject
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+16 ; flopsy digs up seeds again
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+17 ; dig turnip. sit & eat in long grass
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+18 ; stomp around flattening grass & gaze
+gnogginrt
+ dc.b go,0,16,nullobject ; go warren
+ dc.w WRtActorSingleMessage,rtmess+20 ; look through holes. sniff droppings
+;; dc.b waitforperiod,0,1,nullobject
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+21 ; flopsy sniffs droppings. eats a bit
+ dc.b waitforperiod,0,1,nullobject
+ dc.b conditional,0,bumpy,nullobject
+ dc.w WRtActorSingleMessage,rtmess+22 ; chat to bumpy & share a carrot.
+ dc.b waitforperiod,0,1,nullobject
+ dc.b conditional,0,bumpy,nullobject
+ dc.w WRtActorSingleMessage,rtmess+23 ; help dig up carrots for bumpy & talk
+;; dc.b waitforperiod,0,1,nullobject
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+24 ; flopsy digs up huge carrot & eats it
+ dc.w WRtGoto,gnorart-list5
+;---
+bumpyrt
+ dc.b waitforperson,0,1,nullobject ; wait for ingrid in field
+ dc.w WRtActorSingleMessage,rtmess+25 ; hi ingrid. look at my warren.
+ dc.b go,0,16,nullobject ; lead way to warren.
+ dc.b waitforperson,0,1,nullobject ; wait for ingrid to arrive
+ dc.w WRtActorSingleMessage,rtmess+26 ; show new warren extensions
+ dc.b waitforperiod,0,1,nullobject
+ dc.b waitforperson,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+27 ; tease ingrid by running around
+ dc.b waitforperiod,0,1,nullobject
+ dc.b waitforperson,0,1,nullobject
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+28 ; flopsy plays with bumpy
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+jumbort
+ dc.b waitforperson,0,1,nullobject ; wait for ingrid
+ dc.w WRtActorSingleMessage,rtmess+30 ; offer scrumpy. y/n in specialrtmess
+; y - ingrid collapses
+; n - drinks it himself
+; (scrap first time text for inn)
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+31 ; flopsy licks up spilled scrumpy & runs into 
+; a table leg.
+jumbolooprt
+ dc.b waitforperiod,0,6,nullobject ; allow guests to buy pints
+ dc.w WRtActorSingleMessage,rtmess+32 ; sweating. pour himself a cool pint.
+ dc.b go,0,7,nullobject ; go kitchen
+ dc.b waitforperiod,0,2,nullobject
+ dc.b conditional,0,flora,nullobject
+ dc.w WRtActorSingleMessage,rtmess+33 ; ask flora if pies are ready. yes!
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+34 ; ooh, goody. take plate of pies
+ dc.b waitforperiod,0,2,nullobject
+ dc.b go,0,6,nullobject ; go back to bar
+ dc.w WRtActorSingleMessage,rtmess+35 ; go back behind bar, and eat pies
+ dc.b waitforperiod,0,2,nullobject ; do nothing but serve for a while.
+ dc.b conditional,0,amillaria,nullobject
+ dc.w WRtActorSingleMessage,rtmess+163 ;  what a funny smell of manure,
+; have you stood in something, amillaria?
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtMessage,rtmess+165 ; guests hold noses & move from amillaria.
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtGoto,jumbolooprt-list5
+;---
+florart
+ dc.b go,0,7,nullobject ; go kitchen
+ dc.w WRtActorSingleMessage,rtmess+40 ; few eggs etc. into bowl & stir mix
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+41 ; pour mix in oven-tray & put in oven
+ dc.b waitforperiod,0,1,nullobject
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+42 ; flopsy licks out bowl. Shoo!!
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+45 ; chop groceries & make sandwiches
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+46 ; take buns out of oven
+ dc.b go,0,6,nullobject ; go to bar area
+ dc.w WRtActorSingleMessage,rtmess+47 ; waves tray. anyone for buns?
+ dc.b waitforperiod,0,1,nullobject ; allow people to take buns
+ dc.b conditional,0,jumbo,nullobject
+ dc.w WRtActorSingleMessage,rtmess+48 ; drinks & chats to dumbo
+ dc.b waitforperiod,0,1,nullobject ; serve more cakes
+ dc.w WRtGoto,florart-list5 ; make some more cakes
+;---
+farthingrt
+ dc.b waitforperson,0,1,nullobject ; wait for ingrid
+ dc.b waitforperiod,0,1,nullobject ; allow first time text
+ dc.b waitforperson,0,1,nullobject ; wait for ingrid before each message
+ dc.w WRtActorSingleMessage,rtmess+50 ; unpack turnips & put on shelf, while
+;; dc.b waitforperiod,0,1,nullobject ; gossiping to ingrid.
+ dc.b waitforperson,0,1,nullobject
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+51 ; flopsy eats mushrooms. Shoo!!
+ dc.b waitforperiod,0,1,nullobject ; gossiping to ingrid.
+ dc.b waitforperson,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+52 ; arrange cucumbers & tomatoes in
+ dc.b waitforperiod,0,1,nullobject ; rude shapes & then smile.
+ dc.b waitforperson,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+53 ; chomp at apple & talk to ingrid, 
+ dc.b waitforperiod,0,1,nullobject ; spluttering pips.
+ dc.b waitforperson,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+54 ; count change in till.
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+grandmart
+; look for gnorsegnomes
+ dc.b go,0,5,nullobject ; bedroom
+ dc.w WRtActorSingleMessage,rtmess+60 ; under bed
+ dc.b go,0,4,nullobject ; stairs
+ dc.w WRtActorSingleMessage,rtmess+61 ; under boards
+ dc.b go,0,3,nullobject ; kitchen
+ dc.w WRtActorSingleMessage,rtmess+62 ; blender
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+63 ; open corned beef tin
+;; dc.b waitforperiod,0,1,nullobject
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+64 ; flopsy eats corned beef
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+65 ; crack egg
+;; dc.b waitforperiod,0,1,nullobject
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+66 ; flopsy licks up egg
+ dc.b go,0,25,nullobject ; outside farm
+ dc.w WRtActorSingleMessage,rtmess+67 ; hands & knees in pig sty
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+68 ; heap of horse manure
+;; dc.b waitforperiod,0,1,nullobject
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+69 ; sniff & roll in it. grandma comments on smell
+ dc.b go,0,26,nullobject ; field
+ dc.w WRtActorSingleMessage,rtmess+70 ; dig up spuds
+ dc.b go,0,16,nullobject ; warren
+ dc.w WRtActorSingleMessage,rtmess+71 ; examine holes & droppings
+ dc.b waitforperiod,0,1,nullobject
+ dc.b conditional,0,bumpy,nullobject
+ dc.w WRtActorSingleMessage,rtmess+72 ; ask bumpy. look in his ears
+ dc.w WRtGoto,grandmart-list5
+;---
+gtauntrt
+ dc.b go,0,17,nullobject ; go cottage
+ dc.w WRtActorSingleMessage,rtmess+80 ; boil kettle & make 2 cups of tea.
+ dc.b conditional,0,flopsy,nullobject ; ingrid thirstily gulps hers down.
+ dc.w WRtMessage,rtmess+81 ; gives flopsy bone. she chomps it quickly.
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+82 ; sit down, drink tea. read council
+ dc.b waitforperiod,0,1,nullobject ; news. chat to ingrid about it.
+ dc.w WRtActorSingleMessage,rtmess+83 ; tidy up. use duster etc.
+; chat about new manor residents.
+ dc.b conditional,0,flopsy,nullobject ; ingrid thirstily gulps hers down.
+ dc.w WRtMessage,rtmess+84 ; flopsy shakes & spreads dust everywhere.
+ dc.b go,0,20,nullobject ; go outside cottage
+ dc.w WRtActorSingleMessage,rtmess+85 ; what a nice day!
+ dc.b conditional,0,flopsy,nullobject ; prune ivy. trim hedge
+ dc.w WRtMessage,rtmess+86 ; flopsy "waters" flowers ivy
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+87 ; mow lawn. spray weed killer.
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+88 ; sit down on lawn, daydreaming.
+ dc.b waitforperiod,0,1,nullobject ; hope little moaning stays the same
+ dc.w WRtGoto,gtauntrt-list5
+;---
+boneyrt
+ dc.b waitforperson,0,1,nullobject ; don't get inn too crowded yet
+boneyloop
+ dc.b go,0,34,nullobject ; go west bank
+ dc.b conditional,0,boat,nullobject
+ dc.b go,0,36,nullobject ; if boat, sail to east bank
+ dc.w WRtActorSingleMessage,rtmess+90 ; take worm from tin. put on hook
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+91 ; flopsy sniffs worms in tin
+ dc.b waitforperiod,0,1,nullobject ; & cast. put rod on bank.
+ dc.w WRtActorSingleMessage,rtmess+92 ; eat butties, keeping eye on
+ dc.b conditional,0,flopsy,nullobject ; float.
+ dc.w WRtMessage,rtmess+93 ; snatch butty & run around. boney angry.
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+94 ; float bobs. splutter butties.
+ dc.b waitforperiod,0,1,nullobject ; gerkin falls in tin. reel in & 
+; find a boot.
+ dc.w WRtActorSingleMessage,rtmess+95 ; put gherkin from butty on hook
+ dc.b waitforperiod,0,1,nullobject ; by mistake. cast out again.
+ dc.w WRtActorSingleMessage,rtmess+96 ; open flask & drink coffee.
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+97 ; hook catches on barge. line 
+ dc.b waitforperiod,0,1,nullobject ; tangles around foot & drags him.
+; eventually, he swims back.
+ dc.w WRtActorSingleMessage,rtmess+98 ; soddit! I'm going for a pint.
+ dc.w WRtGosub,innrt-list5
+ dc.w WRtGoto,boneyloop-list5
+;---
+gnatrt
+ dc.b waitforperson,0,1,nullobject ; wait for ingrid
+ dc.b waitforperiod,0,1,nullobject ; allow first time message
+ dc.b waitforperson,0,1,nullobject ; wait for ingrid before each mess
+ dc.w WRtActorSingleMessage,rtmess+100 ; clung onto carriage. I'm not
+ dc.b waitforperiod,0,1,nullobject ; getting out - you'd smash this up on
+; your own. ingrid gives reassurance.
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtActorSingleMessage,rtmess+101 ; stop gnawing my carriage, flopsy!
+ dc.b waitforperiod,0,1,nullobject
+ dc.b waitforperson,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+102 ; be careful with my pride & joy!
+ dc.b waitforperiod,0,1,nullobject
+ dc.b waitforperson,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+103 ; I wish I'd never shown you this 
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+milliert
+ dc.b waitforperson,0,1,nullobject ; wait for ingrid
+ dc.w WRtActorSingleMessage,rtmess+110 ; glad to see you. I get bored here
+ dc.b waitforperiod,0,1,nullobject ; on my own.
+ dc.w WRtActorSingleMessage,rtmess+111 ; complain to ingrid about power 
+ dc.b waitforperiod,0,1,nullobject ; lines broken. blast, it's blown out
+; again, as ingrid noticed smoking 
+; wick of a candle in a tin-foil dish.
+ dc.b conditional,0,flopsy,nullobject ; millie relights candle & 
+ dc.w WRtActorSingleMessage,rtmess+112 ; flopsy blows it out again. millie swings
+ dc.b waitforperiod,0,1,nullobject ; her by ears & makes her dizzy.
+ dc.w WRtActorSingleMessage,rtmess+113 ; hear crash. see ship crash into 
+ dc.b waitforperiod,0,1,nullobject ; rocks. millie blames ingrid & flopsy.
+; why can't you leave me alone.
+ dc.b examine,0,longladder,nullobject
+ dc.w WRtActorSingleMessage,rtmess+114 ; guess where I'll shove this ladder 
+ dc.w WRtGoto,Getlost-list5
+;; dc.b racetrackreturn,0,nullobject,nullobject ; if you don't clear off!
+;---
+seamusrt
+; triggered after introduction when ingrid opens wardrobe
+ dc.b stand,0,nullobject,nullobject ; get out of wardrobe
+ dc.w WRtActorSingleMessage,rtmess+120 ; curse that faulty teleport spell...
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+121 ; flopsy nodded in disbelief.
+ dc.b go,0,13,nullobject ; anyway, must dash!
+ dc.b waitforperson,0,1,nullobject ; wait for ingrid
+ dc.w WRtActorSingleMessage,rtmess+122 ; err, goodbye now ingrid, I'm going
+ dc.b go,0,14,nullobject ; back upstairs. I forgot my err, magic wand.
+ dc.b stand,ipon,nullobject,bed ; get on bed with mrs tack!
+ dc.b waitforperson,0,1,nullobject ; visited again, he's bouncing in bed.
+ dc.w WRtActorSingleMessage,rtmess+123 ; err, I'm looking under the covers
+ dc.w WRtGoto,Getlost-list5
+;; dc.b racetrackreturn,0,nullobject,nullobject ; for my magic wand!
+;---
+rookrt
+ dc.b waitforperson,0,1,nullobject ; wait for ingrid
+ dc.b waitforperiod,0,1,nullobject ; allow for first time message
+ dc.w WRtActorSingleMessage,rtmess+130 ; peck at ground around ingrid.
+ dc.b waitforperiod,0,1,nullobject ; if you want any help, just ask.
+ dc.b conditional,0,flopsy,nullobject ; flopsy sniffs rook. rook playfully
+ dc.w WRtMessage,rtmess+131 ; pecks her nose & flopsy yelps.
+ dc.w WRtActorSingleMessage,rtmess+132 ; ruffle feathers. wings settle 
+rooklooprt
+ dc.b waitforperiod,0,6,nullobject ; on back like a saddle.
+; after waiting for a command, fly around for a while, but don't use 
+; any racetrack messages, since the chances of meeting him landing or 
+; taking off are pretty slim.
+ dc.b go,0,41,nullobject ; tack farm
+ dc.b waitforperiod,0,10,nullobject
+ dc.b go,0,44,nullobject ; dunes
+ dc.b waitforperiod,0,10,nullobject
+ dc.b go,0,28,nullobject ; mill track
+ dc.b waitforperiod,0,10,nullobject
+ dc.b go,0,26,nullobject ; field at farm
+ dc.b waitforperiod,0,10,nullobject
+ dc.b go,0,24,nullobject ; cawing road
+ dc.b waitforperson,0,1,nullobject ; wait for user again.
+ dc.w WRtGoto,rooklooprt-list5
+;---
+; surveyer intro
+surveyerrt
+ dc.b waitforperson,0,1,nullobject ; wait for user
+ dc.w WRtActorSingleMessage,rtmess+200 ; measure inn with tape-measure
+;; dc.b waitforperiod,0,1,nullobject
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtActorSingleMessage,rtmess+201 ; yells. mad dog. flopsy growls.
+ dc.w WRtGoto,midsurvey-list5
+;
+; silas intro
+silasrt
+ dc.b waitforperson,0,1,nullobject ; wait for user
+ dc.b waitforperiod,0,1,nullobject ; wait till after jumbo's intro
+;
+; main loop for silas & surveyer
+surveyloop
+; play darts & drink in green gnome
+ dc.b go,0,6,nullobject ; go to bar area if not already there
+ dc.b conditional,0,salesgnome,nullobject
+ dc.w WRtGosub,playdarts-list5 ; play darts with salesgnome
+ dc.w WRtGosub,innrt-list5
+midsurvey
+; wander around, surveying
+ dc.b go,0,34,nullobject ; by river
+ dc.w WRtActorSingleMessage,rtmess+202 ; inspect bridge
+ dc.b conditional,0,boney,nullobject
+ dc.w WRtActorSingleMessage,rtmess+203 ; complain to boney about bridge
+ dc.b go,0,221,nullobject ; high street
+ dc.w WRtActorSingleMessage,rtmess+204 ; sketch shops. have to come down!
+ dc.b go,0,32,nullobject ; bottom lane
+ dc.w WRtActorSingleMessage,rtmess+205 ; lane too steep. flatten/use tunnel
+ dc.b go,0,31,nullobject ; middle lane
+ dc.w WRtActorSingleMessage,rtmess+206 ; look around. plenty building land
+ dc.b go,0,33,nullobject ; top lane
+ dc.w WRtActorSingleMessage,rtmess+207 ; look at view of town & compare
+; with plans.
+ dc.b go,0,25,nullobject ; outside farm
+ dc.w WRtActorSingleMessage,rtmess+208 ; what a dump! I'll save this last
+ dc.b go,0,28,nullobject ; mill track
+ dc.w examine,0,noingrids,nullobject ; read notice
+ dc.w WRtActorSingleMessage,rtmess+209 ; he can't spell!
+ dc.w WRtGoto,surveyloop-list5
+;
+playdarts
+ dc.w WRtActorSingleMessage,rtmess+180 ; wipe board clean & chalk score
+ dc.b waitforperiod,0,1,nullobject ; salesgnome throws first and gets 41
+ dc.w WRtActorSingleMessage,rtmess+181 ; actor throws and gets 180. gnome
+ dc.b waitforperiod,0,1,nullobject ; gets two 20s & a poster of local mp.
+ dc.w WRtActorSingleMessage,rtmess+182 ; actor gets 180 again. chuffed.
+ dc.b waitforperiod,0,1,nullobject ; gnome throws darts on floor & stomps.
+ dc.w WRtActorSingleMessage,rtmess+183 ; actor throws two treble 20s & a 20.
+ dc.b conditional,0,flopsy,nullobject ; gnome throws darts at guests.
+ dc.w WRtMessage,rtmess+184 ; flopsy attacks him.
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+185 ; actor wins & begins brawl with 
+; gnome. chairs broken etc. jumbo arrives & breaks it up.
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+underlayrt
+ dc.b waitforperson,0,1,nullobject ; wait for user
+ dc.b waitforperiod,0,1,nullobject ; wait till after jumbo & silas intro
+underlayloop
+; first, do a bit of lounging around
+ dc.b conditional,0,jumbo,nullobject
+ dc.w WRtActorSingleMessage,rtmess+210 ; Oi! Get me a tomato juice, fatso!
+ dc.b waitforperiod,0,1,nullobject
+ dc.b conditional,0,jumbo,nullobject
+ dc.w WRtActorSingleMessage,rtmess+211 ; slobber down chin & on floor. Oi, 
+ dc.b waitforperiod,0,1,nullobject ; fatso, wipe this mess up!
+ dc.w WRtActorSingleMessage,rtmess+212 ; open newspaper & light up
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+213 ; read aloud. little moaning to be
+ dc.b waitforperiod,0,1,nullobject ; demolished. drag cigarette
+ dc.w WRtActorSingleMessage,rtmess+214 ; put cigarette out on floor &
+ dc.b waitforperiod,0,1,nullobject ; fold up paper.
+ dc.w WRtActorSingleMessage,rtmess+215 ; snooze for moment, mutter in sleep
+ dc.b waitforperiod,0,1,nullobject ; about price of tunrnips & wake up.
+ dc.w WRtActorSingleMessage,rtmess+216 ; take tobacco out of pouch and chew
+ dc.b waitforperiod,0,1,nullobject ; it.
+ dc.w WRtActorSingleMessage,rtmess+217 ; spit ball of tobacco into ashtray.
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+218 ; mutter to herself about the weather
+; now get drink & bun
+ dc.w WRtGosub,innrt-list5
+ dc.w WRtGoto,underlayloop-list5
+;---
+; salesgnome is static, and remains in the inn.
+; if silas or surveyer are here, he plays darts with them.
+salesgnomert
+ dc.b waitforperiod,0,1,nullobject
+ dc.b conditional,0,silas,nullobject
+ dc.w WRtGoto,salesgnomert-list5 ; busy playing darts
+ dc.b conditional,0,surveyer,nullobject
+ dc.w WRtGoto,salesgnomert-list5 ; busy playing darts
+; pity, can't use true sequence in case silas or surveyer turn up and 
+; start to play darts.
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorVaryMessage,rtmess+190 ; play darts alone. (short VARY)
+ dc.w WRtGoto,salesgnomert-list5 ; loop in case silas or surveyer turns up
+;---
+; amilaria wanders around, looking at plants.
+; since her racetrack is non-important, she waits for ingrid at each 
+; location and gives a detailed series of messages. this helps set 
+; atmosphere, since she does a lot of wandering and the player would 
+; normally miss the messages.
+amillariart
+ dc.b waitforperson,0,1,nullobject ; wait for ingrid in farmyard
+ dc.w WRtActorSingleMessage,rtmess+220 ; suspiciously fill coat pockets with 
+; horse manure. I'll plant my daffodils in this.
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+221 ; fill overall pockets with pig muck
+; "for my petulias".
+ dc.w WRtGosub,innrt-list5 ; now go to the inn
+; (note that jumbo & guests will comment on her unusual smell.)
+ dc.b go,0,28,nullobject ; mill track
+ dc.b waitforperson,0,1,nullobject ; wait for ingrid
+ dc.b examine,0,noingrids,nullobject ; examine notice
+ dc.w WRtActorSingleMessage,rtmess+222 ; ignore notice & examine plants
+ dc.b conditional,0,flopsy,nullobject ; around its post.
+ dc.w WRtMessage,rtmess+223 ; flopsy pees on post & hits amillaria.
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+224 ; pull up weeds by track & tut.
+; can't have weeds growing in the 
+; new foundations!
+ dc.b go,0,34,nullobject ; river
+ dc.b waitforperson,0,1,nullobject ; wait for ingrid
+ dc.b conditional,0,boney,nullobject
+ dc.w WRtActorSingleMessage,rtmess+225 ; talk to b. about riverbank plants,
+ dc.b waitforperiod,0,1,nullobject ; boney tells her to clear off.
+ dc.w WRtActorSingleMessage,rtmess+226 ; pick flowers around riverbank.
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+227 ; flopsy pinches flowers & eats them
+ dc.b go,0,23,nullobject ; brambles
+ dc.b waitforperson,0,1,nullobject ; wait for ingrid
+ dc.b examine,0,brambles,nullobject
+ dc.w WRtActorSingleMessage,rtmess+228 ; somebody could get caught in there!
+; tut, tut, tut!
+ dc.w WRtGoto,amillariart-list5
+;---
+; general inn racetrack used for VISITORS at the green gnome.
+; residents have more detailed racetracks, but may use this one 
+; just to buy drinks & eat buns etc.
+; guests react to amillaria, since ingrid has just seen her handling
+; horse manure.
+innrt
+ dc.b go,0,6,nullobject ; go bar area
+ dc.w WRtGosub,waitforjumbo-list5 ; wait to get served
+ dc.w WRtActorSingleMessage,rtmess+160 ; go bar. ask for drink. chat to 
+ dc.b conditional,0,flopsy,nullobject ; jumbo while he's pulling pint.
+ dc.w WRtMessage,rtmess+161 ; flopsy licks up spilled ale from under 
+ dc.b waitforperiod,0,1,nullobject ; barrel & sways about unsteadily.
+ dc.w WRtActorSingleMessage,rtmess+162 ; pay for drink & then sit down
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+164 ; sip drink & chat to guests
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+166 ; get up & go to toilet. come back
+ dc.b waitforperiod,0,1,nullobject ; relieved. chewing gum is rubbery!
+ dc.b conditional,0,jumbo,nullobject
+ dc.w WRtActorSingleMessage,rtmess+167 ; buy peanuts. eat them. still hungry
+ dc.b waitforperiod,0,1,nullobject
+;
+ dc.w WRtGosub,waitforflora-list5 ; wait for buns to arrive
+ dc.w WRtActorSingleMessage,rtmess+170 ; chat to flora. offers bun, take it
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtActorSingleMessage,rtmess+171 ; dip bun in drink & eat it. Mmmm!
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+172 ; flopsy eats crumbs off floor
+ dc.b racetrackreturn,0,nullobject,nullobject ; end of inn rt
+;
+; subroutine to wait for Jumbo
+waitforjumbo
+ dc.b waitforperiod,0,1,nullobject
+ dc.b conditional,0,jumbo,nullobject
+ dc.b racetrackreturn,0,nullobject,nullobject ; jumbo is here
+ dc.w WRtActorVaryMessage,rtmess+140 ; what do I have to do to get served?
+ dc.w WRtGoto,waitforjumbo-list5 ; (short VARIED MESSAGE)
+;
+; subroutine to wait for Flora
+waitforflora
+ dc.b waitforperiod,0,1,nullobject
+ dc.b conditional,0,flora,nullobject
+ dc.b racetrackreturn,0,nullobject,nullobject ; flora is here
+ dc.w WRtActorVaryMessage,rtmess+150 ; where's the grub?
+ dc.w WRtGoto,waitforflora-list5 ; (short VARIED MESSAGE)
+;---
+; series of hints when ingrid is not welcome
+getlost
+ dc.w WRtVaryMessage,rtmess+230
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtGoto,getlost-list5
+;---
+ even
+reversaltable
+; part of list5
+; gives reverse directions for directions
+ dc.b 0,4,6,7,1,8,2,3,5 ; compass directions
+ dc.b 10,9,12,11,13,14,15
+;*****
+ even
+roompictures
+; part of list 5
+; gives pictures associated with various rooms.
+; the bytes are arranged in ROOM,PIC pairs rather than a table of 
+; pictures for each room. this is because some rooms begin from 
+; number 220, hence the table would be rather big.
+ dc.b 3,2	; 3 farm kitchen
+ dc.b 4,2	; 4 farm stairs
+ dc.b 5,2	; 5 grandma's bedroom
+ dc.b 6,26	; 6 green gnome bar
+ dc.b 7,19	; 7 green gnome kitchen
+;; dc.b 9,24	; 9 village hall
+ dc.b 10,1	; 10 groceries shop
+ dc.b 11,1	; 11 smithy
+ dc.b 12,4	; 12 barn
+ dc.b 13,2	; 13 tack's hall
+ dc.b 14,2	; 14 tack's bedroom
+ dc.b 15,8	; 15 inside lighthouse
+ dc.b 20,10	; 20 doomladen cottage
+ dc.b 21,14	; 21 darkwood
+ dc.b 22,14	; 22 darkwood
+ dc.b 23,16	; 23 brambles field
+ dc.b 24,15	; 24 cawing road
+ dc.b 25,2	; 25 outside farm
+ dc.b 26,16	; 26 sandy field
+ dc.b 27,8	; 27 landing pad
+ dc.b 28,6	; 28 mill track
+ dc.b 29,6	; 29 mill yard
+ dc.b 30,15	; 30 ploughgnome lane
+ dc.b 31,15	; 31 ploughgnome lane
+ dc.b 32,15	; 32 ploughgnome lane
+ dc.b 33,1	; 33 outside green gnome
+ dc.b 34,9	; 34 west broken bridge
+ dc.b 35,9	; 35 river
+ dc.b 36,9	; 36 east broken bridge
+ dc.b 37,11	; 37 front of manor
+ dc.b 38,16	; 38 parkland
+ dc.b 39,16	; 39 outside cave
+ dc.b 41,2	; 40 outside tacks farm
+ dc.b 42,7	; 42 dunrollin in dunes
+ dc.b 43,7	; 43 dunrollin in dunes
+ dc.b 44,7	; 44 dunrollin in dunes
+ dc.b 45,8	; 45 lighthouse on spit
+ dc.b 220,1	; 220 west high street
+ dc.b 221,1	; 221 east high street
+ dc.b 0,0
+;*****
+even
+
+ENDTABLE
+;---
+ END
+

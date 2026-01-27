@@ -1,0 +1,340 @@
+; Chain code for Lancelot
+;
+; Taken from Time+Magik (ne GR) Chain code
+;
+; M.J.Austin 21:52 9/9/87
+;
+; Copyright (c) 1987 Level 9 Computing.
+;---
+begin
+;
+; game starts here when first run.
+
+.StartGame
+ message space
+ message cr
+
+; prs " thisgame="
+; print thisgame
+; prs " thispart="
+; print thispart
+; prs " PartToChain="
+; print PartToChain
+; message dotcr
+
+ if thisgame<>Lancelot then InitAll
+
+cif NotDiskVersion
+ if thispart=0 then InitAll ;>>mike 11/9/88
+; drop through to ChainIn
+cend
+
+cif L3
+ if ThisPart<>3 then InitAll1 ; for P3, chain without score.
+; p3 restart catered for by setting thisPart=0 - handled above
+cend
+
+cif DiskVersion
+ if thispart=0 then InitAll ; failed restore/restart
+cend
+
+.ChainIn
+; restore from another part or chained?
+;>>mike 7/9/88 - duplicate: if thispart=0 then InitAll
+ thispart=ConstantPartNum ; don't chain back the part we just came from!
+ gosub @SpecialEssentialInit
+ NoMoreInput=true
+ goto @AfterRestore
+
+.INITALL
+; clear and initialise
+ clear ;>>mike 10/9/88 - for Cassette versions, can
+.InitAll1
+; start P3 directly with garbage in memory on some systems. Most
+; clear the variables, but some (e.g. Spectrum 128) don't, so
+; the score goes wrong without the clear.
+
+ gosub essentialinit ;>>mike 20/7/87
+ screen g c0
+ goto @normalStartGame
+;-----------------
+.EssentialInit
+ cif L3
+  x1=ValueSave ; P1 Score
+  x2=256
+  gosub @x1divx2
+  list9(1)=valueSave ; P1 Score
+  list9(2)=x1
+ cend
+; cif part3
+;  x1=part12score
+;  x2=256
+;  gosub @x1divx2
+;  list9(3)=part12score
+;  list9(4)=x1
+; cend
+; CLEAR ; clears all variables
+; thispart=list9(0)
+; cif part2
+;  P1Score=list9(1)
+;  value=list9(2)
+;  gosub @valuetimes256
+;  add P1Score,value
+; cend
+; cif part3
+;  part12score=list9(3)
+;  value=list9(4)
+;  gosub @valuetimes256
+;  add part12score,value
+; cend
+
+ CLEAR
+
+ cif L3
+  P1Score=list9(1)
+  value=list9(2)
+  gosub @valuetimes256
+  add P1Score,value
+ cend
+
+
+ thispart=ConstantPartNum
+ thisgame=Lancelot
+; initialise some variables which retain their values throughout
+; the game
+ C1=1
+ C2=2
+ C3=3
+; C4=4
+;; c6=6
+;; c8=8
+ NOMOREINPUT=TRUE ; have come to end of input line
+ goto @SpecialEssentialInit ;  return
+;---
+;.showpicture
+; displaypicture for room PICTURETODRAW
+; this is either a static room number 2..25
+; or a scenery object number 180..200
+; or 255=forest
+; x1=1 ; joust
+; if picturetodraw=joustpicture then drawpicturex1
+; x1=2 ; deserted jousting field
+; if picturetodraw=14 then drawpicturex1
+;.dpret
+; return
+
+.drawpicturex1
+.dp3
+ if x1=lastpicture then @dpret
+ lastpicture=x1
+
+.waitpic
+ gosub @savelist9
+
+
+ cif IncludePictures
+ x3=0
+.waitpic1
+; make sure picture 1 has finished loading before doing any other pics
+ x2=34 ; is picture still being drawn?
+ list9(0)=x2
+ list9(2)=c0 ; fix latent bug
+ driver
+ add x3,c1
+ if x3=20000 then waitpic2 ; ensure infinite loop is impossible (15 sec)
+ x2=list9(2)
+ if x2=1 then waitpic1
+; if x1=1 then drawing1
+.waitpic2
+; picture1displayed=true ; picture 1 is ALWAYS the first pic to be shown.
+; BUT we can only be certain it is finished when we draw the next one.
+
+.drawing1
+ xcoord=0
+ ycoord=0
+ if x1=1 then dp4
+ xcoord=49
+
+ cend ; pics
+
+cif L1
+; do pictures which overlay the border...
+ if x1=5 then dp4
+ if x1=13 then dp4
+cend
+
+
+ ycoord=10 ;>>was 8 for T+M ; >> was 10 for knight orc
+
+.dp4
+ cif IncludePictures ;>>mike 6-9-88
+ x2=32
+
+ list9(0)=x2
+
+ list9(1)=c0
+ list9(2)=x1 ; picture number to draw
+
+.picturenotcheat
+ list9(3)=c0
+ list9(4)=xcoord
+
+ list9(5)=c0
+ list9(6)=ycoord
+ driver
+
+ cend ; pictures
+
+ goto @restorelist9
+
+;---
+.diskinterlock
+
+ cif IncludePictures
+
+  x1=200 ; stop all picture drawing
+  gosub @waitpic ; (will finish picture 1 first, if not yet displayed)
+
+ cend
+
+;
+; this message printing/osrdch should take long enough
+; for there to have been a task swap since the above "kill picture"
+; command.
+ cif NotMac
+  message 2301 ; please insert save disk and strike a key
+;>>mike 24/8/88  x2=25000 ; good long time to wait
+;>>mike 24/8/88  gosub @timeoutosrdch
+.diLoop
+  gosub @osrdch ;>>mike 24/8/88
+  if x1=0 then diLoop ;>>mike 29/8/88
+  message cr ; to signal to user that we have acknowledged.
+ cend
+
+ cif IncludePictures
+
+  x3=0
+.restoredelay
+  x2=34 ; is picture still being drawn?
+  list9(0)=x2
+  list9(2)=c0 ; fix latent bug
+  driver
+  add x3,c1
+  if x3=20000 then dpret ; ensure infinite loop is impossible (15 sec)
+  x2=list9(2)
+  if x2<>0 then restoredelay ; loop if ANY picture displayed.
+
+ cend
+
+.dpret
+ return
+;---
+.RESTORE
+ Message 2202 ; really restore ?
+ GOSUB @YESORNO
+ if result=false then restoreend 
+; if y1=0 then restoreend ;>>Mike 15/7/87 IF RESULT=FALSE THEN RESTOREEND
+
+.DORESTORE
+ GOSUB @BOOKPROTECT
+ IF RESULT=FALSE THEN AFTERDORESTORE
+ gosub diskinterlock ; finish all picture activity first.
+
+ thisPart=0 ; prevent failed restore/auto restart going wrong
+ RESTORE
+
+ cif NotMac
+  message 2302 ; please reinsert game disk
+ cend
+
+.afterdorestore
+ if gameover=true then @restartorrestore ; restore failed.
+;>>mike 19/7/87 NOMOREINPUT=FALSE
+;>>mike 19/7/87 EOL=FALSE
+;>>mike 19/7/87 GOSUB @GETNEXTWORD
+
+.AFTERRESTORE
+ OOPSPOS=1 ; musn't do an oops now - to prevent corruption if
+ OOPSPOSEND=0 ; type OOPS immediately after a restore
+.OopsAfterRestore
+.afteroops ;>>mike 19/7/87
+ LASTPICTURE=0 ; allow picture to be drawn
+.RESTOREEND
+ if thisgame=Lancelot then restore1
+.wronggame
+ message 2312 ; wrong game
+ goto @restartorrestore
+
+.restore1
+ if thispart=constantpartnum then restore2
+ parttochain=thispart
+
+
+.chainparttochain
+
+cif NotDiskVersion
+;;>>mike 7/9/88 if c1=diskversion then diskchain
+; gosub OfferSave ;>>mike 7/9/88
+; thispart=PartToChain ;>>mike 7/9/88
+ message 2314 ; do you want to load the other part
+ gosub @YesOrNo
+ if result=false then @RestartOrRestore
+
+.cassettechain
+  message 2313 ; put in cassette containing part number
+  print parttochain
+  message dot
+  message cr
+cend
+
+
+.diskchain
+; chain in "PARTTOCHAIN"
+ x1=200
+ gosub @waitpic ; kill any picture which is currently loading
+ x1=11
+ list9(0)=x1
+ list9(1)=parttochain
+
+; pass data to part 2 in first byte of currentpos/hicurrentpos lists...
+; currentpos(0)=ropelength ; score
+; hicurrentpos(0)=c0 ; no cloak unless changed....
+
+ driver
+ goto @restartorrestore
+
+.restore2
+ GOTO @gameafterrestore
+;---
+cif NotDiskVersion
+.OfferSave
+;>>mike 7/9/88 - moved from within chain code.
+ message 2311 ; you are about to chain - do you want to save first?
+ actor=user
+ gosub @yesorno
+ if result=false then NoMoreSaves
+ thispart=ConstantPartNum ;>> mike 7/9/88
+ save
+ goto OfferSave ; allow multiple copies
+.NoMoreSaves
+ return
+cend
+;---
+.osrdch
+ gosub @savelist9
+ x1=3 ; osrdch
+ list9(0)=x1
+ driver
+ x1=list9(1)
+ goto @restorelist9
+;---
+.SAVE
+ gosub @diskinterlock
+ thispart=ConstantPartNum ;>>mike 30/8/88
+ SAVE
+ cif NotMac
+  message 2302 ; please insert game disk
+ cend
+.SAVERET
+ RETURN
+;---

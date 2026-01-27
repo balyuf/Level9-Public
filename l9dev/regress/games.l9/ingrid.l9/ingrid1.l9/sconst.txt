@@ -1,0 +1,255 @@
+; Standard adventure source, copyright (C) 1988 Level 9 Computing.
+;
+; SCONST, game-specific constants. You will probably need to change 
+; most of the values of these. 
+;
+; A standard labelling convention for constants is that constants 
+; preceded by I (e.g ILOOK) are relative to their appropriate offset 
+; (e.g verboffset).
+;
+CONST
+;; StandardAdventure=1405 ; unique game identifier value
+ IngridsBack=1910
+;
+ AllowBoat=1 ; set to 1 if you want boat/vehicle code
+;
+; STARTsynthSHORTdescs=1199 ; shortroomdescs+minsynthroom
+ SHORTroomDESCS=800
+ LONGroomDESCS=1100
+;
+ MAXMOVEABLE=109 ; MAX OBJECT WHICH MAY BE TAKEN, THROWN ETC.
+ MAXMOVEAPLUS1=110
+;
+ xmax=1 ; co-ords go 0..xmax - remember to change room 1 exits.
+ xmaxplus1=2
+ ymax=0
+; 
+ minsynthroomminus2=218
+ minsynthroomminus1=219
+ minsynthroom=220 ; the first room on the grid (bottom left hand corner)
+ maxsynthroom=221
+;
+ minsceneryobj=180
+ minsceneryobjminus1=179
+ maxsceneryobj=190
+ maxsceneryobjplus1=191
+ minsceneryobjt2m1=359
+ maxsceneryobjtimes2plus2=382
+ numsceneryobjplus1=11
+;
+ minweaponminus1=39
+ minweapon=40
+ maxweapon=43
+ maxweaponplus1=44
+;
+ minclothes=99 ; 60
+ maxclothes=99 ; 61
+;
+ minfood=80
+ maxfood=81
+ maxfoodplus1=82
+;
+ mintreasure=84 ; used for ingredients range in gnome2
+ maxtreasure=91 ; used for ingredients range in gnome2
+;
+ minallobject=40
+ maxallobject=129
+;
+ MAXOBJECTVISIBLE=149
+ MAXOBJECT=189 ; includes scenery objects.
+; goes wrong for maxobject>190 (dunno why!)
+; - inventory gets a funny value for hisearchpos (24)
+ MAXOBJECTPLUS1=190
+; 
+ MINOMNI=190 ; 158 ; all real objects above this are omni-present
+ MINOMNIMINUS1=189 ; 159
+ MAXOMNI=260 ; must include ieverything, except, it
+;
+; Preposition values (all relative to prepoffset)
+;
+ FASTENEDTO=14
+ through=209
+;
+; VERBS...
+ iburn=115
+ ikiss=129
+ ipast=162
+ iwalk=164
+ icatch=165
+;
+; Offsets into SCORETABLE.. ( table 7 ) (starts at 32...)
+ scBase=32
+ scmax=75
+ scmaxplus1=76
+;
+ VisitTableStart=76 ; 34
+ VisitTableEnd=246 ; 255 ; 213 ; VisitTableStart + (170=num of "Real" rooms)
+;
+ MeetingTable=246 ; 255 ; 213
+ MeetingTableEnd=310 ; 319 ; 277 ; meetingTable+MaxNpc
+;
+ StartPetitionTable=310 ; 319 ;*graham*
+ PetitionTableEnd=345 ; 354
+;
+ minpeople=1 ; = creaturebase
+ maxpeople=38
+ maxpeopleplus1=39
+;
+ creaturebase=1 ; including people, user etc.
+ creaturebaseminus1=0 ; including people, user etc.
+ MINNPC=2 ; all except user
+ MINNPCMINUS1=1 ; all except user
+ MAXNPC=38
+ MAXNPCPLUS1=39
+ maxtalkingnpc=34
+ MAXTALKINGNPCPLUS1=35
+;
+; npc status in list 6..
+ NPCTABLESIZE=312 ; MAXNPCPLUS1*NpcEntrySize
+ NPCTABLESIZEPLUS8=320
+ NPCCURRENTOFFSET=0
+;
+ NPCENTRYSIZE=8
+; npc command queues follow the above in list 6..
+ npcstackbase=312 ; immediately after npc table
+ npcstackbaseplus5=317
+ maxnpcentries=52 ; 5 bytes per queued-command entry on stack
+;
+ npcstackentrysize=5; each entry is 5 bytes (hence the 5's above)
+;
+ npctablesizetozero=1535 ; now fixed. was 785
+;
+; offsets within each npc table entry in list 6..
+ enemyoffset=0
+ followoffset=1 ; person to follow normally
+ masteroffset=2 ; the person or creature who subdued this npc
+ hitpointoffset=3
+ hatredoffset=4 ; the amount which this npc hates its enemy
+ npcptroffset=5
+ boredomoffset=6
+; attentionoffset=7
+; and offsets within each corresponding entry in npcinitial, list 5..
+ attackoffset=2
+; hitpoint offset=3
+ obedienceoffset=4
+ patienceoffset=5
+ goldsingingoffset=6 ; in static data - word (hi byte first)
+;
+TABLE
+ list6=6
+;
+CONST
+;
+;objects
+;
+ user=1
+ gnora=2
+ gnoah=3
+ bumpy=4
+ dimple=5
+ gnoggin=6
+ arback=7
+ isfrunt=8
+ jumbo=9
+ flora=10
+ missfarthing=11
+ grandma=12
+ dusty=13
+ greataunt=14
+ boney=15
+ gnat=16
+ mrstack=17
+ millie=18
+ seamus=19
+;
+ hermit=20
+ mistressspratt=21
+ jasper=22
+;
+ Silas=25
+ surveyer=26
+ Underlay=27
+ salesgnome=28
+ Amillaria=29
+;
+ flopsy=35
+ rook=36
+ chickens=37
+ gorilla=38
+;
+ groceries=80
+ invitation=81
+ petition=82
+ shortladder=83
+ scrumpy=84
+;
+ bed=110
+ briarpatch=111
+ bushes=112
+ longladder=113
+ notice1=114
+ notice2=115
+ sacks=116
+ notice3=117
+ cward=118
+ oward=119
+ outwindow=120
+ inwindow=121
+ bellrope=122
+ garden=123
+;
+ boat=140
+ brokencarriage=141
+ p1cart=142 ; vehicle code uses this var. (was used in lancelot)
+ carriage=142
+;
+ cottage=150
+ inn=151
+ cave=152
+ villagehall=153
+ barn=156
+ lighthouse=157
+ warren=158
+ gnetfarmhouse=159
+ mill=160
+ wbridge=161
+ ebridge=162
+ wriver=163
+ eriver=164
+ midriver=165
+ tackfarmhouse=166
+ backdunrollin=167
+ frontdunrollin=168
+ ferrycottage=169
+ manor=170
+ bar=171
+ booze=172
+ glasses=173
+;
+ ithing=246
+ iroom=243
+;
+; game-specific variables...
+;
+VAR
+ TotalMoves
+ ProblemObject ProblemVerb
+ gdCurrentSave gdHiSave
+ GalahadComment
+ ALREADYDONEPROTECT
+ StartPictureTable ;*****
+ examinemarked ;*****
+;
+ GeneralScoreAddition
+ t1 t2 t3 ; temps for preserving x1,x2,x3 in printm1
+ cvgetprep ; see convert verb (get) & stand in/out
+ roomsave1
+ destsave1 ; see flydest (npc.txt)
+ carriagespeed
+ lastcarriageroom
+ dustyflag
+ vegetable ; number of vegetable in Ingrid's room
+ foundseamus ; flags message once when find seamus in wardrobe
+ boattakentoboney
+ gorillacaught
+ gorillachasing

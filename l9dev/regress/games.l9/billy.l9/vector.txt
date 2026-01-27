@@ -1,0 +1,86 @@
+;.MCInitGraphics                  data @Dummy,@Dummy,@Dummy ;45
+;.MCCalcMatrix                  data @Dummy,@Dummy,@Dummy ;46
+;.MCDrawVector                  data @Dummy,@Dummy,@Dummy ;47
+
+const
+ WordVectorX=62
+ WordVectorY=64
+ WordVectorZ=60
+
+var
+ VectorZSpeed VectorYSpeed VectorXSpeed
+
+begin
+
+
+cif ST ;*****
+
+;---
+.VectorDemo
+ gosub  @MCInitGraphics
+ VectorZSpeed=8  ;* 1 ; speed
+ VectorYSpeed=32 ;* 1 ; speed
+ VectorXSpeed=64 ;* 1 ; speed
+.MikeLoop
+ gosub @DisplayEverything ;***** @BuildAndDisplayFrame ;*****
+
+ &dx1=WordWS(WordVectorX)
+ add dx1,VectorXSpeed
+ &WordWS(WordVectorX)=dx1
+ &dx1=WordWS(WordVectorZ)
+ add dx1,VectorZSpeed
+ &WordWS(WordVectorZ)=dx1
+ &dx1=WordWS(WordVectorY)
+ add dx1,VectorYSpeed
+ &WordWS(WordVectorY)=dx1
+
+ gosub @MCOsrdch
+ if v2<>2 then NotIncreaseX
+ add VectorXSpeed,VectorXSpeed
+.NotIncreaseX
+ if v2<>3 then NotIncreaseZ
+ add VectorZSpeed,VectorZSpeed
+.NotIncreaseZ
+ if v2<>4 then NotIncreaseY
+ add VectorYSpeed,VectorYSpeed
+.NotIncreaseY
+ if v2<>5 then NotResetSpeed
+ VectorXSpeed=1
+ VectorZSpeed=1
+ VectorYSpeed=1
+
+.NotResetSpeed
+
+;*Joystick...
+ c8=8
+ v1=ByteWS(BytejoystickStatus)
+ if v1<>4 then NotJLeft
+; if VectorXspeed=c0 then NotJLeft
+ VectorXspeed=0 ; sub VectorXSpeed,c8
+.NotJLeft
+ if v1<>8 then NotJRight
+ VectorXSpeed=500 ; add VectorXSpeed,c8
+.NotJRight
+
+ if v1<>2 then NotDown
+; if VectorYspeed=c0 then NotDown
+ VectorYSpeed=0 ; sub VectorYSpeed,c8
+.NotDown
+ if v1<>1 then NotJUp
+ VectorYspeed=500 ; add VectorYSpeed,c8
+.NotJUp
+
+ if v1<>130 then NotFireDown
+; if VectorZspeed=c0 then NotFireDown
+ VectorZspeed=0 ; sub VectorZSpeed,c8
+.NotFireDown
+ if v1<>129 then NotFireUp
+ VectorZspeed=500 ; add VectorZSpeed,c8
+.NotFireUp
+
+; v2=hikey
+ if v2=1 then @Menu ;*** @MCCloseDown
+ if v2=0 then @MikeLoop
+ goto @MikeLoop
+
+cend ;*****

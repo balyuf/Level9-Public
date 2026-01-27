@@ -1,0 +1,1295 @@
+; MENU.TXT for Billy The Kid
+;
+; Mike Austin July 1990
+;
+; Copyright (C) 1990 Level 9 Computing Ltd.
+;
+;
+;********** Debug code in WaitFire.
+;
+;
+
+
+var
+ PrettyMenuDisplayed ; false/true
+ HighlightY
+ HighlightEntry ; offset of highlight, i.e. number of entry 0..
+ MaxHighlightEntry
+
+const
+ MM=600 ; message base for menu messages
+MDoIt=0 ; equ $0000
+MPrintM1=4096 ; equ $1000
+MActorM1=8192 ; equ $2000
+MMenu=12288 ;  equ $3000
+MPrintDOM1=16384 ; equ $4000
+MActorDOM1=20480 ; equ $5000
+
+ begin
+
+ code +
+;.Menu
+; m1=10
+; gosub @DoTextWindow
+; gosub @DisplayEverything
+; TextBoxDisplayed=0
+;
+; gosub @MenuWait
+;
+;.MenuLoop
+; gosub @WaitFire
+; push v1
+;  x1=48
+;  x2=v1
+;  sub x2,x1
+;  m1=20
+;  add m1,x2
+;  gosub @DoTextWindow
+;  gosub @DisplayEverything
+; pop v1
+; gosub @GotoGameV1
+; goto @MenuLoop
+;
+;-----------------------
+
+
+
+
+ cif TownOverlay
+.MenuGotScreen
+; want to change to screen number x1 within this overlay
+ NewScreen=x1
+ goto @OverlayRestart ;  return
+ cend
+
+;------
+.OpenArcadeStructures
+; e.g. for visiting ranches etc.
+ push v4
+  TextBoxDisplayed=0
+  PlayerACB=0
+  gosub @MCPurgeAllCells
+  v1=IntroTablesList
+  &v2=IntroTables(38) ; arcade sprites filename
+  v3=1 ; 0=purge, 1=don't purge
+  gosub @OpenSpriteFile
+  &v1=IntroTables(44) ; arcade structures filename
+  if StructureFile=LinkingStructures then OAS1
+  gosub @LoadStructuresV1
+  StructureFile=ArcadeStructures
+.OAS1
+  gosub @InitACBs
+ pop v4
+ return
+;----------
+.WaitFireRelease
+.MenuWait
+; menu has been displayed - handle selections
+ push x1
+  gosub @sgetControls
+ pop x1
+ if FireKey<>0 then MenuWait ; wait for fire to be released
+.MenuClearKbd
+ goto @ClearKBD
+;---------
+.WaitFire
+ cif ST
+  gosub @MCDisplayRoom ; ******************** re-hook kbd vector ******************
+;**************DEBUG VERSION ONLY *******************
+ cend
+ gosub @ClearKBD
+ gosub @WaitFireRelease
+
+.WaitFireLoop
+ gosub @sGetControls ; also does keyscan
+ if FireKey=0 then WaitFireLoop
+ if FireKeyChange=0 then WaitFireLoop
+ gosub @WaitFireRelease
+.WFRet
+ return
+;------------
+.WaitFireAndDisplay
+ gosub @DisplayEverything
+ gosub @sGetControls ; also does keyscan
+ if FireKey=0 then WaitFireAndDisplay
+ if FireKeyChange=0 then WaitFireAndDisplay
+ gosub @WaitFireRelease
+ return
+
+;--------
+.RealMenu
+ code -
+ gosub @iStartPrinting
+ message 200
+ gosub @iEndPrinting
+ code +
+ gosub @DisplayEveryThing
+ gosub @MenuWait
+.RM1
+ gosub @MCOsrdch
+ if v1<48 then RM1
+ if v1>58 then RM1
+ TextBoxDisplayed=0
+ return
+;----------------------------------
+.PutUpMenu
+
+ gosub @SetPrintMenu
+ gosub @MenuWait ; wait for fire to be released, etc.
+
+
+; park the black box which goes behind the menu to
+; make it run good and fast...
+ gosub @MCDisplayRoom
+;; dv1=206 ; black box behind menu
+;; if StructureFile=TownStructures then MS1
+; dv1=97 ; black box behind structures
+;.MS1
+; dv2=screenx
+; dv3=screeny ; z
+; dv4=0
+; dv5=dPlot
+; dv6=0 ; non-reflected
+; gosub @MCDrawObjectDv1
+; gosub @MCCopyScreenToBuffer
+
+
+.PutUpMenuAgain
+; push CurrentPrintRaster
+; push CurrentDO
+ if MenuNumber<>100 then PMNotWidowWoman
+; can only get widow woman message when have enough money
+ if PlayerGold>999 then PMNotWidowWoman
+ MenuNumber=16 ; Standard menu
+
+.PMNotWidowWoman
+ push ForegroundColour
+ push BackgroundColour
+ push TextBoxWidth
+  ForegroundColour=16 ; foreground color (7). 16=Print transparent.
+  BackGroundColour=1 ; background color (1). 0=Don't change current.
+; 1=white. The background is also cleared to this colour
+; IntroTables(MenuOffset) is start of menus
+  x4=MenuOffset
+  add x4,MenuNumber ; add on offset of menu we want
+  &x4=IntroTables(x4)
+; now IntroTables(x4) is the menu requested
+  push x4
+   gosub @PrintMenu
+  pop x4
+  HighlightY=TopMargin ; start with top entry highlit.
+  HighlightEntry=0 ; likewise entry number
+ pop TextBoxWidth
+ pop BackgroundColour
+ pop ForegroundColour
+; pop CurrentDO
+; pop CurrentPrintRaster
+
+ return
+;-------------------
+code -
+.iPrettyMenu
+ code +
+ gosub @PrettyMenu
+ code -
+ return
+code +
+.PrettyMenu
+; menu offset MenuNumber has been requested
+; code to handle MenuStructures().
+; Returns result=0 or result=message number offset from MM
+; (See Menudata.txt)
+ &MenuOffset=IntroTables(32) ; offset of menu data.
+ gosub @PutUpMenu
+
+.SelectPrettyMenu
+; select from menu already displayed: x4
+; push CurrentPrintRaster
+; push CurrentDO
+ push ForegroundColour
+ push BackgroundColour
+ push TextBoxWidth
+
+.PrettyMenuLoop
+.PMDisplayLoop
+.PMInputLoop
+  gosub @DisplayNewMenu
+
+  push x4
+   gosub @sGetControls
+  pop x4
+  if FireKeyChange=0 then @PMNoFire
+  if FireKey=0 then @PMNoFire
+; fire pressed.
+  push x4
+   gosub @WaitFireRelease
+  pop x4
+  goto @PMEnd
+
+.PMNoFire
+; up/down on highlight bar?
+  if UpKey=false then PMNoUp
+  sub HighlightEntry,c1 ; entry number 0..
+  sub HighlightY,c8
+  if HighlightEntry<200 then @PMDisplayLoop ; redisplay in new position
+  HighlightY=TopMargin ; limit to top of menu
+  HighlightEntry=0
+ 
+.PMNoUp
+  if DownKey=false then PMNoDown
+  add HighlightEntry,c1
+  if HighlightEntry<MaxHighlightEntry then PMDown
+  sub HighlightEntry,c1
+  goto PMNoDown
+
+.PMDown
+  add HighlightY,c8
+  goto @PMDisplayLoop ; redisplay highlight in new position.
+
+.PMNoDown
+  goto @PMInputLoop
+
+.PMEnd
+; return result=operation requested
+;MDoIt equ $0000
+;MPrintM1 equ $1000
+;MActorM1 equ $2000
+;MMenu equ $3000
+ x1=HighlightEntry
+ add x1,x1 ; 4 bytes per menu entry in IntroTables()
+ add x1,x1
+; IntroTables(x4) is start of current menu data.
+ add x4,x1 ; get data for this selection
+ add x4,c2 ; skip over message number, get to word saying
+; what to do. Top 4 bits are set as follows, with bottom 12 bits as
+; a parameter:
+;MDoIt equ $0000. Return this operation code.
+;MPrintM1 equ $1000
+;MActorM1 equ $2000
+;MMenu equ $3000
+ &x1=IntroTables(x4)
+ result=x1 ; parameter
+ x3=4095 ; $0fff
+ and result,x3
+ x3=61440 ;$f000
+ and x1,x3
+; now x1=operation code, in top 4 bits.
+; result=paramter (e.g. message number, operation code, etc. )
+; if result<3000 then MenuNoSignExtend
+;; negative message numbers - e.g. 300-MM(600) go to a
+;; three digit hex number. Here, make them into a four
+;; digit hex number by adding $f000.
+; m1=61440
+; add result,m1
+;
+;.MenuNoSignExtend
+ m1=MM ; base for all menu messages
+ add m1,result ; work out response message in case it's needed.
+ if x1=MDoIt then @PMReturnCode
+ if x1=MPrintDOM1 then PMPrintM1
+ if x1<>MPrintM1 then PMNotPrintM1
+.PMPrintM1
+ MaxHighlightEntry=1 ;  HighLightY=65535 ; remove hightlight bar.
+ push x1 ; operation code.
+ push m1
+ code -
+  gosub @iStartPrinting
+; messages to go to text box go here...
+  if m1<3000 then PMP2
+  x1=61440 ; $f000 ;negative numbers -> 3 hex digits.
+  add m1,x1
+.PMP2
+  message m1
+  gosub @iEndPrinting
+ code +
+ pop m1
+ gosub @DisplayNewMenu
+ gosub @WaitFire ; wait for user to press fire button
+ pop x1 ; operation code
+ if x1=MPrintDOM1 then @PMReturnCode ; return message offset as operation code
+ result=0 ; do nothing code
+ goto PMReturnCode
+
+.PMNotPrintM1
+ if x1=MActorDOM1 then PMActorM1
+ if x1<>MActorM1 then PMNotActorM1
+.PMActorM1
+ MaxHighlightEntry=1 ; HighLightY=65535 ; remove hightlight bar.
+ push x1 ; operation code
+ code -
+  gosub @iStartPrinting
+; messages to go to text box go here...
+  message PlayersName
+  message m1
+  gosub @iEndPrinting
+ code +
+  gosub @DisplayNewMenu
+  gosub @WaitFire ; wait for user to press fire button
+ pop x1 ; operation code
+; result=m1
+ if x1=MActorDOM1 then @PMReturnCode ; return offset as operation code
+ result=0 ; do nothing code
+ goto PMReturnCode
+
+.PMNotActorM1
+ if x1<>MMenu then PMNotMMenu
+ MenuNumber=result
+
+; make menus 0..8 latch when we switch to them. This allows
+; for the equivalent of "first meeting" messages
+ cif TownOverlay
+  if MenuNumber>8 then PMNotLatch
+  x1=PersonNumber
+  gosub @NewMenuForPerson ; person x1
+ 
+.PMNotLatch
+ cend
+ gosub @PutUpMenuAgain ; get new menu, print it to raster...
+ goto @PrettyMenuLoop
+
+.PMNotMMenu
+
+
+
+.PMReturnCode
+; result is operation code to return to caller.
+; 0=by default do nothing.
+  TextBoxDisplayed=false ; kill any other text box that
+; may have been displayed before
+ pop TextBoxWidth
+ pop BackgroundColour
+ pop ForegroundColour
+; pop CurrentDO
+; pop CurrentPrintRaster
+ return
+;-------------
+.SetPrintMenu
+ LeftMargin=10 ; allow for area hidden by border
+ TopMargin=9
+ TextBoxWidth=144 ; 160 - 16 to allow for area hidden by border
+
+ CurrentDO=95 ; 207 ; display object for menu box (white bit which
+; gets printed onto)
+ CurrentPrintRaster=2743 ; menu print raster
+ if StructureFile=TownStructures then SPMRet
+ if StructureFile=BrawlStructures then SPMRet
+ if StructureFile=ArcadeStructures then SPMRet
+ CurrentPrintRaster=2311
+ if StructureFile=IntroStructures then SPMRet
+
+ CurrentPrintRaster=599 ; was 196 ; menu box
+ if StructureFile<>ScrollingStructures then SPMRet
+ CurrentPrintRaster=1000 ; menu print raster
+
+.SPMRet
+ return
+
+;-------------
+; EXAMPLE OF MENU STRUCTURES...
+; menu data for game. Each entry contains two words:
+;   .w Message number of appear on menu, relative to MM (0 if 
+;       end of this menu)
+;   .w (1) MDoIt + Operation code.
+;      (2) MPrintM1 + Message number to print in response, relative to MM
+;                  A further click returns to the previous menu
+;      (3) MActorM1 + Message number. As MResp, but puts
+;                  (Billy/Pat) at start of message.
+;      (4) MMenu + Offset of menu to go to if item selected. 0 to
+;                  quit menus
+;      (5) MPrintDOM1 + Message number to print in response, relative to MM
+;                  the offset from MM is then return as a return code.
+;      (6) MActorDOM1 + Message number. As MResp, but puts
+;                   (Billy/Pat) at start of message.
+;                  the offset from MM is then return as a return code.
+
+;MDoIt equ $0000
+;MPrintM1 equ $1000
+;MActorM1 equ $2000
+;MMenu equ $3000
+;MPrintDOM1 equ $4000
+;MActorDOM1 equ $5000
+
+
+; dc.w Menu0-IntroTables
+;
+;Menu0
+; dc.w 1,MDoIt+0 * do nothing
+; dc.w 2,MActorM1+3 ; visit town/ride into town
+; dc.w 0,0 * end of table
+
+
+;-------------
+.PrintMenu
+; print menu with data starting at IntroTables(x4)
+ MaxHighlightEntry=0
+ code -
+
+  gosub @iStartPrinting
+  x6=0 ; set if any of messages printed involve spending money
+ code +
+; messages to go to text box go here...
+.PrintMenuLoop
+ &m1=IntroTables(x4)
+ if m1=0 then PrintMenuDone
+ if m1>49 then PML2
+ x6=1 ; a message involves spending money
+.PML2
+ x1=MM
+ add m1,x1
+ push x4
+  gosub @SpecialPrintMenu
+ pop x4
+ if m1=0 then PML3
+ code -
+  message m1
+ code +
+ add MaxHighlightEntry,c1
+.PML3
+ add x4,c4
+ goto PrintMenuLoop
+
+.PrintMenuDone
+ code -
+  if x6=0 then PMD2 ; no menu options involved spending money
+  message PlayersName
+  message 872 ; Billy had $
+  print PlayerGold
+  message 873 ;.
+.PMD2
+
+ cif TownOverlay
+  if MenuNumber<>174 then pmdNotBudget2
+  message 464 ; [464:funds remaining: $]
+; and Income in x5
+  print PlayerGold ; gold remaining out of budget
+;[465:income: $]
+;[466:costs: $]
+ message 465 ; income
+ x1=200
+ print x1 ; 200$/month at present
+ message 466 ; costs...
+ gosub @iCalcCostOfDeputies ; gets running cost in x3
+ print x3 ; cost
+
+ x1=SPFTexanPosseeAvailable ; number of members (byte)
+ x2=SubPlotFlags
+ add x1,x2
+ x2=TownVarData(x1) ; number of deputies working for nothing
+ if x2=0 then pmdNotBudget2
+ message 467 ; (including 
+ print x2
+ message 468 ; texan deputies)
+
+.pmdNotBudget2
+ cend
+ HighlightY=0 ; so that EndPrinting will print transparent
+ if MaxHighlightEntry>1 then pmdEnd2
+ HighlightY=65535 ; no highlight
+
+.pmdEnd2
+  gosub @iEndPrinting
+ code +
+ return
+;--------------
+
+
+;------------
+.MenuSprites
+; called from display everything before the text box
+; is displayed.
+; Is a pretty menu displayed?
+ if PrettyMenuDisplayed<>true then @MSRet
+
+ &WordWS(WordRasterOffset)=c0
+; if HighlightY>32000 then MSRet ; bar removed - e.g. for result message
+ if MaxHighlightEntry<2 then @MSRet ; bar removed - e.g. for result message
+; if MaxHighlightEntry<2 then MSRet ; only one option - don't bother
+;; with highlight.
+
+ dv1=206 ; black box behind menu
+ if StructureFile=TownStructures then MS1
+ dv1=97 ; black box behind structures
+.MS1
+ dv2=screenx
+ dv3=screeny ; z
+ dv4=0
+ dv5=dPlot
+ dv6=0 ; non-reflected
+
+ cif TownOverlay
+  if TextBoxDisplayed=99 then MSBigBox
+  if CurrentDO=99 then MSBigBox
+  if CurrentPrintRaster=2744 then MSBigBox ; for deputy's challenge
+  if CurrentPrintRaster<>594 then HighlightNotBigBox ; 12x7
+.MSBigBox
+; unusual case - we need the hightlight/black box
+; behind the big text box. It needs to be positioned slightly
+; differently...
+  add dv2,c16
+  if StructureFile=ArcadeStructures then MSBigBox2
+  if StructureFile=IdentikitStructures then MSBigBox2
+  if StructureFile=LinkingStructures then MSBigBox2
+  add dv2,c16 ; intro, town structures need a greater move of highlight.
+.MSBigBox2
+  add dv4,c32
+  if StructureFile=TownStructures then hBB2
+  if StructureFile<>IdentikitStructures then HighlightNotBigBox
+.hbb2
+  sub dv2,c32
+  sub dv2,c16
+  add dv4,c16
+
+.highlightNotBigBox
+ cend
+
+ gosub @MCDrawObjectDv1
+
+ dv5=dPlot
+ dv6=0 ; non-reflected
+ sub dv4,HighlightY ; h=0-y in this unusual case.
+; dv1=205 ; highlight bar.
+; if StructureFile=TownStructures then MS2
+ dv1=96 ; was98. ; highlight bar in Identikit structure file.
+
+.MS2
+ gosub @MCDrawObjectDv1
+
+.MSRet
+ return
+;-------------
+.DisplayNewMenu
+; refresh screen to show the changes to the menu
+ PrettyMenuDisplayed=true
+.DisplayNewTextBox
+ if PersonDisplayed=true then DNTB2
+ UpdateACBs=false ; when on map etc. don't change acbs
+.DNTB2
+ push x4
+  gosub @DisplayEverything ; make it visible
+ pop x4
+ UpdateACBs=true ; back to normal mode again
+ PrettyMenuDisplayed=false
+ return
+;-------------
+.DisplayInstructions
+ m2=0
+.DisplayInstructionsM1M2
+ gosub DisplayTextNoWait
+ gosub @WaitFireRelease ; wait for fire to be released, etc.
+ gosub @WaitFire
+; fire pressed.
+ TextBoxDisplayed=0
+ return
+;---------------
+.DisplayTextNoWait
+ gosub @SetPrintMenu
+.DisplayTextFunnyBox
+ MaxHighlightEntry=1 ;  HighlightY=65535 ; remove highlight
+ code -
+  gosub @iStartPrinting
+.DTFB2
+  message m1
+  message m2
+.DTFB3
+  gosub @iEndPrinting
+ code +
+.DisplayInstructions2
+ gosub @DisplayNewTextBox
+ return
+;------------
+.ActorM1NoWait
+ gosub @SetPrintMenu
+ code -
+  gosub @iStartPrinting
+  message PlayersName
+  goto DTFB2 ; display M1, finish up.
+ code +
+;------------
+.DisplayTextBigBox
+ gosub SetBigBox
+ goto @DisplayTextFunnyBox ; display M1 in CurrentPrintRaster/CurrentDO
+;---------------
+.SetBigBox
+ cif TownOverlay
+  if Newspaper=true then DTB2
+  if StructureFile=IntroStructures then DTB2 ; don't change in intro!
+ cend
+ TextBoxWidth=170
+ CurrentPrintRaster=2744 ; 12x7
+ CurrentDO=99 ; was208
+ if StructureFile=TownStructures then DTB2
+ if StructureFile=BrawlStructures then DTB2
+ if StructureFile=ArcadeStructures then DTB2
+ CurrentPrintRaster=594 ; 12x7
+ if StructureFile<>ScrollingStructures then DTB2
+ CurrentPrintRaster=1001 ; big print raster
+
+.DTB2
+ return
+;---------------
+.ToFinalDuel
+ BillyLives=0 ; signal it's the final conflict
+ EnemyName=Pat
+ if PlayersName=Billy then ToDuel
+ EnemyName=Billy
+
+.ToDuel
+ v4=DuelBack
+ cif TownOverlay
+  PlayingDuel=true
+  goto @OverlayEntryPoint
+ cend
+ goto ToTownOverlayV4
+;--------------
+.GotoGameV1
+; v1=49 = '1' - map
+;    50 = '2' - scrolling game
+;    51 = '3' - bank robbery escape
+;    52 = '4' - arcade game
+;    53 = '5' - train game
+
+ if v1<>49 then @MenuNotTown
+.ReturnToMap
+ v4=GameMap ; parameter
+
+.ToTownOverlayV4
+; call town overlay with parameter v4
+ push v4
+  gosub @PutUpHourglass
+  cif TownOverlay
+   PlayingDuel=false
+   gosub @OpenTownStructures
+   x1=GameMap
+   v4=GameMap
+   goto @MenuGotScreen ; '1' - map
+  cend
+   break ;*******
+  v1=69 ; 'E' as in acodE.acd
+ pop v4 ; parameter to town overlay
+
+.CallOverlayV1
+ push v4 ; corrupted on pC?
+  push v1
+   gosub ClearKBD
+  pop v1
+  gosub @MCPurgeAllCells
+  &WordWS(WordVBLDisabled)=c1 ; disable vbls during chain
+  push v1
+   gosub @ClearKBD
+  pop v1
+ pop v4
+ v2=OverlayEntryOffset
+ gosub @MCCallOverlay
+ return
+;------------------
+.ClearKBD
+ x1=100 ; countdown timer
+.ClearKBD1
+ sub x1,c1
+ if x1=0 then ClearKBD2
+ gosub @MCOsrdch
+ if v1<>0 then ClearKBD1
+.ClearKBD2
+ FireKey=0
+ return
+;------------------
+.MenuNotTown 
+ if v1=51 then MenuScrolling ; '3' - bank robbery escape
+ if v1<>50 then MenuNotScrolling ; '2' - scrolling game
+.MenuScrolling
+ cif ScrollingOverlay
+  goto @OverlayRestart
+ cend
+ gosub @MCPurgeAllCells
+.CallScrollingOverlay
+ v1=50 ; '2'
+ v2=OverlayEntryOffset
+; v4 is parameter to overlay being called
+ gosub @MCCallOverlay
+.MenuRet
+ return
+;-
+.MenuNotScrolling
+ if v1=53 then MenuArcades ; '5' - train game
+ if v1<>52 then MenuNotArcades ; '4' - arcade game
+.MenuArcades
+ v4=v1
+ cif ArcadesOverlay
+  goto @OverlayRestart
+ cend
+ gosub @MCPurgeAllCells
+ v1=51 ; '3'
+ v2=OverlayEntryOffset
+; v4 is parameter to overlay being called
+ gosub @MCCallOverlay
+ return
+;-
+.MenuNotArcades
+ return
+;-------------
+.BuildPicture
+; build picture dv1 in non-scrolling mode.
+ push dv1
+  if CurrentScreen=BankGame then BP2
+  if CurrentScreen<400 then BP1 ; not in town
+  if CurrentScreen<599 then BP2 ; in town - don't change currentScreen
+.BP1
+  prettyMenuDisplayed=false ; disable all MenuSprites
+ cif ArcadesOverlay
+  if CurrentScreen<620 then BPnotShootout
+  if CurrentScreen<628 then BP3 ; a shootout scene - try to
+; get rid of this goddam stray text box.
+
+.BPNotShootout
+ cend ; ArcadesOverlay
+
+  CurrentScreen=dv1
+
+.BP2
+;  TextBoxDisplayed=0
+  gosub @PutUpHourglass
+.BP3
+  v1 = 640 ; 640
+  v2 = 1240 ; 384
+  v3=0 ; game mode: 0=non-scrolling, 1=scrolling, 2=jumps
+  gosub @InitScrolling
+  ScreenX=0
+  ScreenY=0
+  gosub @MCEmptyRoom
+  gosub @MCBuildRoom
+  gosub @MCEmptyRoom
+  gosub @InitACBs
+  ScrollXDir=0
+  ScrollYDir=0
+ pop dv1
+  gosub @PreloadAndInsertDV1
+  v1=0
+  v2=0
+  goto @MCBuildRoom ; gosub, return.
+;---------
+.OpenLinkingStructures
+ push v4
+  if StructureFile=LinkingStructures then OLO1
+  TextBoxDisplayed=0
+  PlayerACB=0
+  v1=IntroTablesList
+  &v2=IntroTables(70) ; linking sprites filename
+  v3=1 ; 0=purge, 1=don't purge
+  gosub @OpenSpriteFile
+  &v1=IntroTables(72) ; linking structures filename
+  gosub @LoadStructuresV1
+  StructureFile=LinkingStructures
+.OLO1
+  gosub @InitACBs
+ pop v4
+ return
+;----------
+.OpenIdentikitStructures
+ push v4
+  if StructureFile=IdentikitStructures then OIO2
+  if StructureFile=TownStructures then OIO1 ; same sprites file
+  PlayerACB=0
+  gosub @MCPurgeAllCells
+  v1=IntroTablesList
+  &v2=IntroTables(34) ; map/town sprites filename
+  v3=1 ; 0=purge, 1=don't purge
+  gosub @OpenSpriteFile
+.OIO1
+  &v1=IntroTables(80) ; identikit structures filename
+  gosub @LoadStructuresV1
+  StructureFile=IdentikitStructures
+
+.OIO2
+  gosub @InitACBs
+ pop v4
+ return
+;-------------------
+.DLPNoHourglass
+ push v4
+ goto DLP2
+;-------
+.DisplayLinkingPicture
+; number v4, without menu
+; This is unfortunate for pictures such as the nursing pic
+; which has a bed in the foreground!
+ push v4
+  gosub @PutUpHourglass
+
+.DLP2
+   cif TownOverlay
+    PlayingDuel=false ; in duel, foreground graphics are disabled.
+   cend
+  TextBoxDisplayed=0
+  PrettyMenuDisplayed=0
+  gosub @MCPurgeAllCells
+  gosub @OpenLinkingStructures
+ pop v4
+ dv1=v4 ; 1=bank, 2=grave, 3=prospector, 6=fort.
+ gosub @BuildPicture
+ gosub @DisplayEverything
+ gosub @PutUpHourglass
+ return
+;----------
+.LinkingPictureWait
+ gosub @DisplayLinkingPicture
+ goto @WaitFireAndDisplay ; gosub, return
+;-------------
+.SpecialInitACBs
+; select between normal acb area and
+; the high area used for talking to people (e.g. whilst
+; walking around)
+ UpdateACBs=true
+ ACBStart=0 ; ConstACBSearchStart
+ ACBSearchStart=ConstACBSearchStart
+ ACBEnd=ConstACBEnd ; end within ACBList
+ cif TownOverlay 
+  if StructureFile<>IdentikitStructures then SIA2
+  ACBSearchStart=ConstTTPACBStart
+  ACBStart=ConstTTPACBStart
+  ACBEnd=ConstTTPACBEnd
+
+.SIA2
+ cend
+ return
+;-------------
+.NewMenuForPerson
+; next time Player talks to person x1, use menu MenuNumber
+ add x1,x1
+ add x1,x1
+ add x1,x1
+ add x1,x1
+ add x1,PeopleVarData ; get offset in TVD
+.NewMenuForPersonTVDx1
+ v1=x1
+ x1=PeoplePatMenuOffset
+; if PlayersName=Pat then NMFP2
+; x1=PeopleBillyMenuOffset
+.NMFP2
+ add v1,x1
+ v2=MenuNumber
+ goto @UpdateVarDataWord ; gosub, return
+;----------
+.KillGangAtTownX4
+.bringLawToTown
+; town x4 has become lawful - so remove it from the map etc.
+
+; was Billy's gang there?
+ if x4<>playerGang then BLTT2
+ PlayerGang=0
+
+.BLTT2
+ gosub @IsTownLawful
+ v2=c1 ; lawful
+ v1=x1
+ gosub @UpdateVarDataByte ;  TownVarData(x1)=c1 ; lawful
+ ExtraNewsStory=400
+ add ExtraNewsStory,x4 ; story about town becoming lawful
+ cif TownOverlay
+  if x4<16 then PI2
+  if PlayersName=Billy then @LoseGame
+  if PlayersName=Pat then @ToFinalDuel ; WinGame
+ cend
+
+.PI2
+ x1=SPGangsOffset
+ add x1,SubPlotsOffset
+ &x1=TownVarData(x1) ; x4 is now start of subplot data word pairs
+ x2=x4
+ x3=SantaFe
+ sub x2,x3 ; take off first town to get gang (0..5)
+
+ NextMeetingMenu=260 ; menu for first gang
+ x3=x2
+ add x3,x3 ; twice gang number (0..5) to get offset into menus
+ add nextMeetingMenu,x3
+
+; 8 words per enty in subplot data, so times 16
+ add x2,x2
+ add x2,x2
+ add x2,x2
+ add x2,x2
+ add x1,x2
+; &TVD(x1) is now visible/invisible flag for this town
+ v2=254 ; invisible/unobtainable
+ v1=x1
+ gosub @UpdateVarDataWord ; &TownVarData(x1)=v2
+ v1=CommsRedisplayMap
+ goto @WriteSerial ; request other machine to redisplay
+; the map if it's currently displayed
+;-----------
+.IsTownLawful
+.GetLocationData
+; is town object x4 (10..15) lawful?
+; Return x2=TVD(x1) as flag: 0 if lawless, 1 if lawful
+; (This routine also used to find objectsInformation offset:x1
+;  for other objects: e.g. ranches)
+; Each town has the following variable table
+; which is part of ObjectsInformation: 8 bytes each
+; (i.e. 8 bytes per object, including e.g. cows, gangs)
+;LawfulOffset equ 0
+;    .b 0 if lawless, 1 if lawful
+; Happiness offset equ 1
+;    .b How happy the town is: starts at 128 (moderately happy)
+; to 0 (completely unhappy) and up to 255 (ecstatic)
+ x1=x4
+ add x1,x1
+ add x1,x1
+ add x1,x1 ; times 8
+ add x1,ObjectsInformation
+; +(LawfulOffset=0)
+ x2=TownVarData(x1)
+ return
+;---------------
+.DisplayNursingPicture
+; (Called from all parts)
+; take away part of the player's reputation
+ sub PlayerReputation,c16
+
+ HourglassState=0
+ PrettyMenuDisplayed=0
+ TextBoxDisplayed=0
+ v4=17 ; nursing picture
+ gosub @DLPNoHourglass
+ m1=PlayersName
+ m2=1864 ; nursing message
+ gosub @DisplayInstructionsM1M2
+
+ if PlayersName<>Billy then NotBillyLoseLife
+ sub BillyLives,c1
+ if BillyLives>0 then NotBillyLoseLife
+ m1=1865 ; Pat burst in
+ m2=1866 ; Billy, we gotta finish it right now...
+ gosub @DisplayInstructionsM1M2
+ CurrentScreen=430 ; force it to Santa Fe, regardless of where we were
+ EnemyName=Pat ; make it the final duel
+ goto @ToDuel
+
+.NotBillyLoseLife
+ HourglassState=0 ; ensure hourglass is redisplayed
+ gosub @PutUpHourglass
+ return
+;----------
+.FreezeAndPutUpHourglass
+ WantCSTB=true
+ HourglassState=0
+ UpdateACBs=false ;18 Jan 1991
+ gosub @DisplayEverything ; freeze people in saloon
+ gosub @InitACBs
+ TextBoxDisplayed=0
+
+.PutUpHourglass
+ if HourglassState=2 then PUHRet ; already displayed?
+;;  if CurrentScreen=SelectPlayerScreen then PUHRet
+ if CurrentScreen=0 then PUHRet
+ HourglassState=1 ; we want to display it
+ push UpdateACBs
+ push dv1
+  UpdateACBs=false ; don't change any sprites
+  gosub @DisplayEverything
+ pop dv1
+ pop UpdateACBs
+
+.PUHRet
+ return
+;------------------
+.DisplayHourglass
+ if StructureFile=BrawlStructures then DHRet ; no hourglass in
+; brawl structure file.
+ if WantCSTB=true then DHRet ; don't freeze hourglass
+ if HourglassState=false then BANoHourglass
+ if TextBoxDisplayed<>0 then BANoHourglass ; don't do hourglass when
+; text box is going to be displayed
+;;; if CurrentScreen=SelectPlayerScreen then BANoHourglass
+ if CurrentScreen=0 then BANoHourglass
+ dv1=HourglassObject
+ dv2=ScreenX ; x
+ dv3=ScreenY ; z 
+ dx1=120 ; move hourglass up to top left.
+ sub dv2,dx1
+ dx1=80 ; increase z coord
+ add dv3,dx1
+ dv4=160 ; h =z+80m to move hourglass to top left.
+
+ &WordWS(WordRasterOffset)=c0
+ dv5=dPlot
+ dv6=0 ; reflect
+ gosub @MCDrawObjectDV1
+ HourglassState=2 ; now displayed
+.BANoHourglass
+.DHRet
+ return
+;-----------------
+.AdjustDifficulty
+; return x1 and x2 such that IF X1>X2 then PlayerInTrouble
+code-
+ random x1
+code+
+ x3=Difficulty ; standard is 256
+ asr x3
+ asr x3
+ asr x3 ; x3 is related to dificulty, standard difficulty gives 32.
+ x2=190
+ sub x2,x3 ; -> x2=150 at standard difficulty, decreases progressively
+ if x2>40 then mef2
+ x2=40 ; limit difficulty
+.mef2
+ return
+;----------
+.WinGame
+ x1=100 ; bonus for winning final duel
+ add PlayerReputation,x1
+ if PlayerReputation<600 then LoseGame
+ if TwoPlayerMode=false then WinGame1
+  gosub @AnnounceWin
+.WinGame1
+ v4=19 ; Pat/girl
+ if PlayersName=Pat then WinGame2
+ v4=18 ; Billy/Girl
+.WinGame2
+ HourglassState=0
+ gosub @DisplayLinkingPicture ; load linking structure file,
+; open sprites file, and build the picture we've asked for(v4).
+ m1=1811 ; Pat win
+ if PlayersName=Pat then LoseGame2
+ m1=1850 ; Billy win
+ goto LoseGame2
+;----------
+.LoseGame
+ if TwoPlayerMode=false then LoseGame1
+ gosub @AnnounceLoss
+.LoseGame1
+ v4=2 ; grave piccy
+ HourglassState=0
+ gosub @DisplayLinkingPicture ; load linking structure file,
+; open sprites file, and build the picture we've asked for(v4).
+ m1=1812 ; Pat lose
+ if PlayersName=Pat then LoseGame2
+ m1=1851 ; Billy lose
+.LoseGame2
+; gosub @WaitFireRelease
+; gosub @WaitFire
+; gosub @WaitFireRelease
+ gosub @WaitTimeOrFire
+
+ ScreenX=16 ; move text box right a bit, to avoid hiding the lovers/grave
+ gosub @DisplayInstructions
+
+
+; display rating
+;[1920:Billy's final reward was $]
+;[1921:out of a maximum of about $5000, and he will ] ;^^^^
+;
+;[1922:not be remembered. ]
+;[1923:be a dim memory. ]
+;[1924:be a figure of fun. ]
+;[1925:be remembered by many. ]
+;[1926:be remembered by most. ]
+;[1927:be a minor hero. ]
+;[1928:be a popular hero. ]
+;[1929:be a household name till the end of time. ]
+;
+;[1930:Pat's final popularity was ]
+;[1931:out of a maximum of about 5000, and he will ] ;^^^^
+ code -
+  gosub @iStartPrinting
+  m1=1920 ; final reward
+  if PlayersName=Billy then DisRat2
+  m1=1930 ; final popularity
+.DisRat2
+  message m1
+  gosub @iValidateReputation ; check it's in range
+  print PlayerReputation
+  add m1,c1
+  message m1
+  m1=1922
+  if PlayerReputation<200 then DisRat3
+  m1=1923
+  if PlayerReputation<250 then DisRat3
+  m1=1924
+  if PlayerReputation<400 then DisRat3
+  m1=1925 ; first reasonable-sounding rating.
+  if PlayerReputation<600 then DisRat3
+  m1=1926
+  if PlayerReputation<900 then DisRat3
+  m1=1927
+  if PlayerReputation<1400 then DisRat3
+  m1=1928
+  if PlayerReputation<2500 then DisRat3
+  m1=1929
+.DisRat3
+  message m1
+  gosub @iEndPrinting
+ code +
+ gosub @DisplayNewTextBox
+ gosub @WaitFire
+
+ cif TownOverlay
+  goto @PlayAgain
+ cend
+ v4=CodeRestartGame
+ goto @ToTownOverlayV4
+;------------
+;----------
+.WaitTimeOrFire
+ gosub @WaitFireRelease
+ FrameCount=0
+.WTOF1
+ gosub @sGetControls
+ if FireKey<>0 then WTOF2
+ if FrameCount<100 then WTOF1
+.WTOF2
+ gosub @WaitFireRelease
+ return
+;------------
+.ConvertScrollToJump
+; Convert ScrollXDir, ScrollYDir to suitable jump sizes
+; if this is a jump-scrolling driver (PC only)
+ if SmoothScroller<>0 then CSTJRet
+ push v1
+ push v2
+ push v3
+ push v4
+ if ScrollXDir=0 then CSTJ2
+ v3=64 ; positive step size
+ v4=65472 ; negative step size
+ cif ScrollingOverlay
+; tracking game etc. uses smaller jump size, to avoid
+; oscillation.
+  v3=40
+  v4=65496 ; negative step size
+ cend
+ cif ArcadesOverlay
+; train game etc. uses smaller jump size, to avoid
+; oscillation.
+  v3=40
+  v4=65496 ; negative step size
+ cend
+
+ v1=v3
+ if ScrollXDir<32000 then CSTJ1
+ v1=v4
+
+.CSTJ1
+ ScrollXDir=v1
+
+.CSTJ2
+ if ScrollYDir=0 then CSTJ4
+ v2=v3
+ if ScrollYDir<32000 then CSTJ3
+ v2=v4
+
+.CSTJ3
+ ScrollYDir=v2
+.CSTJ4
+ pop v4
+ pop v3
+ pop v2
+ pop v1
+
+.CSTJRet
+ return
+;---------
+.MaybeJump
+; we've done COnvertScrollToJump, come here
+; with v1,v2=direction of scroll asked for. Do a suitable rebuild.
+; old v1,v2 are on stack.
+ ScrollDirectionDone=0
+ PlotLogicalDone=0
+
+ IF V1<>0 then MJ2
+ if v2=0 then MJEnd
+.MJ2
+ add ScreenX,v1
+ add ScreenY,v2
+ v1=ScreenX
+ v2=ScreenY
+ gosub @MCBuildRoom
+.MJEnd
+ cif pc
+  v1=0
+  v2=0
+  gosub @MCScrollDirection ; to keep the flow checker happy
+ cend
+ pop v2 ; ;remove values pushed in DisplayEverythin
+ pop v1
+ return
+;-------
+.InitScrolling
+ gosub @MCInitScrolling
+ cif pc
+; need to do SetGraphicsWindow for PC, even though game is scrolling
+  v1=0    ; X1
+  v2=319  ; X2
+  v3=0    ; Y1
+  v4=191  ; Y2
+  gosub @MCSetGraphicsWindow
+ cend
+ ScrollXDir=0
+ ScrollYDir=0
+ return
+;----------
+.EmptyRoomEtc
+ cif TownOverlay
+  if CurrentScreen=SelectPlayerScreen then @NoClearScreen ; display selection
+; window on top of the relevant bit of the intro
+ cend
+  v1 = 800 ; 640
+  v2 = 1240 ; 384
+  v3=1 ; game mode: 0=non-scrolling, 1=scrolling, 2=jumps
+ cif TownOverlay
+  if CurrentScreen=GameMap then IS1
+  if CurrentScreen=IntroScreen then IS1
+  v3=0 ; non-scrolling for all others
+ cend
+.IS1
+ gosub @InitScrolling
+ gosub @MCEmptyRoom
+
+.NoClearScreen
+ return
+;------------------
+.LoadGameData
+; v1=65 (town), 50('2'=scrolling) or 51('3'=arcades)
+; Convert to correct number for language.
+ x1=v1
+ if Language=German then LGDGerman
+ if Language=French then LGDFrench
+
+.LGDMC
+ goto @MCLoadGameData
+
+
+.LGDGerman
+; Convert to...
+; v1=52 ('4'town), 53('5'=scrolling) or 54('6'=arcades)
+ v1=53
+ if x1=50 then LGDMC
+ v1=54
+ if x1=51 then LGDMC
+ v1=52 ; default to town
+ goto LGDMC
+
+.LGDFrench
+; Convert to...
+; v1=55 ('7'town), 56('8'=scrolling) or 57('9'=arcades)
+ v1=56
+ if x1=50 then LGDMC
+ v1=57
+ if x1=51 then LGDMC
+ v1=55 ; default to town
+ goto LGDMC
+
+;-----------
+ code -
+.iValidateReputation ; check it's in range
+ if PlayerReputation<32000 then iVRRet
+ PlayerReputation=2
+
+.iVRRet
+ return
+ code +
+;-------
+.OpenSpriteFile
+ gosub @MCOpenSpriteFile
+ goto @SetCGAPalettes ; cleared by MCOpenSpritesFile
+;------------

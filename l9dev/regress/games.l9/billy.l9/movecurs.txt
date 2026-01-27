@@ -1,0 +1,291 @@
+ begin
+
+;;---------------------------------------------------
+; check cursor checks for keypresses associated with
+; crosshair movement in the shootup scenes.
+
+.CheckCursor
+  gosub @CheckKeys
+
+.ccNext2
+; check position of cursor on screen
+.cursormove
+  if cursory > 10000 then toohigh
+  if cursorY > 200 then toolow
+  if cursorx > 10000 then tooleft
+  if cursorx > 316 then tooright
+  goto movethecursor
+.toohigh 
+  cursory = 8
+  goto movethecursor
+.toolow 
+  cursory = 192
+  goto movethecursor
+.tooleft 
+  cursorx = 8
+  goto movethecursor
+.tooright 
+  cursorx = 316
+  
+.movethecursor
+  dx4 = crosshairacb
+  gosub @readacbdx4
+  dv2 = cursorx
+  dv3 = cursorz
+  dv4 = cursorz
+  sub dv4,cursory
+  gosub @moveacbdx4 
+  gosub @CheckCursorSpeed 
+ return
+
+;------------------------- end of cursor movement checks----------;
+
+;------------------------- cursor speed routines ----------------
+.CheckCursorSpeed
+  add TimeHeld,KeyHeld  ; count for key kept pressed
+  if KeyHeld<>0 then sNotDecrease
+    goto sNotIncrease
+
+.sNotDecrease
+  if TimeHeld<2 then sNotIncrease     ; key not held long, do  
+                                      ; not increase cursor speed
+   add CursorSpeed,c2                 ; increase cursor speed                  
+   TimeHeld = 0                       ; reset check for key hold
+
+; then check to see if cursor speed exceeds its maximum
+  if CursorSpeed>MaxCursorSpeed then sLimit  
+  if CursorSpeed=MaxCursorSpeed then sNotIncrease
+  if CursorSpeed<MaxCursorSpeed then sNotIncrease
+
+; reset cursor speed to maximum
+.sLimit
+  CursorSpeed=MaxCursorSpeed
+
+; reset cursor speed to minimum
+.sNotIncrease
+  if keyheld <>0 then scursorend
+  TimeHeld = 0
+  CursorSpeed = 4
+
+.scursorend
+  keyheld = 0
+  return
+;---------------------------------------------------------------;
+
+;------------------------- key check routines---------------------;
+.CheckKeys
+ gosub @sGetControls
+; look at kbd/joystick/mouse and return
+; dir as new movement direction in standard adventure format
+; and FireKey=0 if not pressed, 1 if pressed.
+; and FireKeyChange=1 if pressed/released this turn
+
+; and for directions, returns:
+;	x1
+;   x4       x2
+;       x3
+; Non-zero means trying to move in that direction
+; and x5=x offset (single pixel movement), signed
+;     x6=y offset (single pixel movement), signed
+;     x7=direction number in standard adventure format
+;          i.e.          1
+;                     8     2
+;                    7       3
+;                     6     4
+;                        5
+ XSpeed=x5
+ YSpeed=x6
+
+ if FireKey=0 then ccNext1 ;  if v2 <> 107 then ccNext1
+  gosub @fire
+
+.ccNext1
+
+
+
+;cif pc
+; v1=104 ; keypad 8
+; gosub @MCkeyDown
+; if v1<>0 then smoveup
+; v1=71;103; keypad 7
+; gosub @MCkeyDown
+; if v1<>0 then smoveup
+; v1=72 ; cursor up
+; gosub @MCkeyDown
+; if v1<>0 then smoveup
+; v1=73;105 ; keypad 9
+; gosub @MCkeyDown
+; if v1=0 then sCursorNotUp
+;.smoveup
+
+
+ &X1=WordWS(WordMouseXDistance) ; signed distance mouse has moved l/r 
+ &X2=WordWS(WordMouseYDistance) ; signed distance mouse has moved u/d 
+ &WordWS(WordMouseXDistance)=c0 
+ &WordWS(WordMouseYDistance)=c0 
+ add CursorX,X1 
+ add CursorY,X2 
+;; or x1,x2 ; did mouse move in either direction?
+;; if x1>0 then @mgcRepositionCursor
+
+
+
+ if UpKey=0 then sCursorNotUp
+ keyheld = 1
+ sub cursory,cursorspeed
+
+.sCursorNotUp
+; v1=73;105 ;keypad 9
+; gosub @MCkeyDown
+; if v1<>0 then smoveright
+; v1=108 ; keypad 6
+; gosub @MCkeyDown
+; if v1<>0 then smoveright
+; v1=81;111 ; keypad 3
+; gosub @MCkeyDown
+; if v1<>0 then smoveright
+; v1=77 ; cursor right
+; gosub @MCkeyDown
+; if v1=0 then scursornotright
+;.smoveright
+ if RightKey=0 then sCursorNotRight
+ keyheld = 1
+ add cursorx,cursorspeed
+
+.sCursorNotRight
+; v1=110 ; keypad 2
+; gosub @MCkeyDown
+; if v1 <> 0 then smovedown
+; v1=79;109 ; keypad 1
+; gosub @MCkeyDown
+; if v1 <> 0 then smovedown
+; v1=81;111 ; keypad 3
+; gosub @MCkeyDown
+; if v1 <> 0 then smovedown
+; v1=80 ; cursor down
+; gosub @MCkeyDown
+; if v1 = 0 then sCursorNotDown
+;.smovedown
+ if DownKey=0 then sCursorNotDown
+ keyheld = 1
+ add cursory,CursorSpeed
+ 
+.sCursorNotDown
+; v1=71;103 ; keypad 7
+; gosub @MCkeyDown
+; if v1 <> 0 then @smoveleft
+; v1=106 ; keypad 4
+; gosub @MCkeyDown
+; if v1 <> 0 then @smoveleft
+; v1=79;109 ; keypad 1
+; gosub @MCkeyDown
+; if v1 <> 0 then @smoveleft
+; v1=75 ; cursor left
+; gosub @MCkeyDown
+; if v1 = 0 then @sCursormove
+;.smoveleft
+; if v1=0 then @sCursormove
+ if LeftKey=0 then sCursorNotLeft
+ keyheld = 1
+ sub cursorx,CursorSpeed
+.sCursorNotLeft
+;cend
+
+
+;cif st
+; v1=104 ; keypad 8
+; gosub @MCkeyDown
+; if v1<>0 then smoveup
+; v1=103; keypad 7
+; gosub @MCkeyDown
+; if v1<>0 then smoveup
+; v1=72 ; cursor up
+; gosub @MCkeyDown
+; if v1<>0 then smoveup
+; v1=105 ; keypad 9
+; gosub @MCkeyDown
+; if v1=0 then sCursorNotUp
+;.smoveup
+; keyheld = 1
+; sub cursory,cursorspeed
+;
+;.sCursorNotUp
+; v1=105 ;keypad 9
+; gosub @MCkeyDown
+; if v1<>0 then smoveright
+; v1=108 ; keypad 6
+; gosub @MCkeyDown
+; if v1<>0 then smoveright
+; v1=111 ; keypad 3
+; gosub @MCkeyDown
+; if v1<>0 then smoveright
+; v1=77 ; cursor right
+; gosub @MCkeyDown
+; if v1=0 then scursornotright
+;.smoveright
+; keyheld = 1
+; add cursorx,cursorspeed
+;
+;.sCursorNotRight
+; v1=110 ; keypad 2
+; gosub @MCkeyDown
+; if v1 <> 0 then smovedown
+; v1=109 ; keypad 1
+; gosub @MCkeyDown
+; if v1 <> 0 then smovedown
+; v1=111 ; keypad 3
+; gosub @MCkeyDown
+; if v1 <> 0 then smovedown
+; v1=80 ; cursor down
+; gosub @MCkeyDown
+; if v1 = 0 then sCursorNotDown
+;.smovedown
+; keyheld = 1
+; add cursory,CursorSpeed
+; 
+;.sCursorNotDown
+; v1=103 ; keypad 7
+; gosub @MCkeyDown
+; if v1 <> 0 then @smoveleft
+; v1=106 ; keypad 4
+; gosub @MCkeyDown
+; if v1 <> 0 then @smoveleft
+; v1=109 ; keypad 1
+; gosub @MCkeyDown
+; if v1 <> 0 then @smoveleft
+; v1=75 ; cursor left
+; gosub @MCkeyDown
+; if v1 = 0 then @sCursormove
+;.smoveleft
+; if v1=0 then @sCursormove
+; keyheld = 1
+; sub cursorx,CursorSpeed
+;cend
+.scursormove
+ return
+;-------------------------------------------------------------- 
+
+;------------------------
+; set up cursors and man in gunfight
+;------------------------------------
+.ccDoCross
+ if currentscreen <> GameMap then @ccendcross
+ Objectnumber=MapCursor
+ dv3 = 384 ; z
+ dv4 = 300 ; h
+; fall through to insertcursor
+
+.insertcursor
+ dv2 = 150  
+ dv5 = 0
+ dv6 = 0 
+ cursorx = dv2
+ cursorz = dv3
+ cursorh = dv4
+ gosub @StartFreeACB ; Starts ACB with ObjectNumber.  SetupACB
+ CrossHairACB = dx4 
+.ccendCross
+ return
+;-------------------------------------------
+
+

@@ -1,0 +1,225 @@
+begin 
+
+;-----------------------------------------------------------
+.SpecialAniObject
+; this is a standard routine, myaniobject is the specific bit
+; parameters: num object number, dv2,dv3,dv4, xzh coords
+; ACBHeader
+; useful variables:
+  if dv5<>dPlot then SAORet
+  push dv1
+  push dv2
+  push dv3
+  push dv4
+  push num
+  push objectnumber
+    gosub myaniobject
+  pop objectnumber
+  pop num
+  pop dv4
+  pop dv3
+  pop dv2
+  pop dv1
+
+ if Num<>2069 then SAORet
+; 2069 is an invisible frame at end of dismount - used
+; to trigger some code in the main SAO routine. Replace
+; it with the last visible frame...
+ num=101 ; display Billy standing. Raster offset is set up.
+
+.SAORet
+ if num<2530 then MAONotSmallBilly
+ if num>2554 then MAONotSmallBilly
+ x1=2530
+ goto MAOToGeneric
+
+.MAONotSmallBilly
+ if num<2420 then MAONotSmallPat
+ if num>2447 then MAONotSmallPat
+ x1=2420
+.MAOToGeneric
+; turn small draw figure into generic outlaw - unless we're
+; involved in the final duel
+ if EnemyName<>255 then MAONotSmallPat ; =Pat, Billy or $ff for other
+
+ sub num,x1 ; get offset of small draw figure from base,
+ x1=20 ; base of generic gunfighter
+ add num,x1
+
+.MAONotSmallPat
+ return
+;-------------------------------------------------------------
+
+;-------------------------------------------------------------
+.myaniobject
+; x2,x3,x4 can be used as workspace...
+
+
+ if StructureFile<>IntroStructures then maoNotIntro
+ if num=1144 then introShot ; being pursued out of town
+ if num=798 then IntroShot ; guy shooting from window (In town)
+ if num=800 then IntroShot ; guy shooting beside window (In town)
+;; if num=921 then IntroShot ; lightning in Canyon - gives intermittent gun shot
+ if num=1244 then IntroShot ; pigeon-shooting scene
+ if num=952 then IntroShot ; shoot blacksmith, and assinate Tunstall
+ if num<>922 then maoNotGunFlash ; frame of horseman in canyon
+ code -
+  random x1
+ code +
+ if x1>30 then maoNotGunFlash ; only occasionally in canyon
+
+.IntroShot
+ v1=0 ; colt45 sample
+ gosub @HiPriPlaySample
+
+.maoNotGunFlash
+.maoNotIntro
+ if num<1 then MAONotWalkabout
+ if num>199 then MAONotWalkabout
+; reset playerAcb record, cause sometimes it
+; gets lost when playing as Pat.
+ PlayerACB=ACBHeader
+
+.MAONotWalkabout
+ if num<>2069 then @MAONotDismount ; last frame of dismount
+ PlayerACB=ACBHeader
+ PlayerDirection=1
+ PlayerWalking=false
+ ObjectNumber=3410 ; stand in direction
+ add ObjectNumber,PlayerDirection
+ dx4=PlayerACB
+ gosub @ChangeACBDx4
+
+ Rasteroffset=100 ; Billy
+ if PlayersName=Billy then MAODismount2
+ RasterOffset=200 ; Pat
+.MAODismount2
+ x2=ACBRasterOffset
+ add x2,PlayerACB
+ if x2>ACBListSize then @MAOBug ;******
+ &ACBList(x2)=RasterOffset ; ACBList(ACBRasterOffset)
+ x2=ACBLastHeightAdjust
+ add x2,PlayerACB
+ if x2>ACBListSize then @MAOBug ;******
+ ACBList(x2)=c0 ; reset last adjustment
+ x1=ACBCumulativeShift ; word - for Walkabout: keeps track
+; of how far we've shifted vertically - to allow the up/down
+; movement as we walk to be cancelled when change animation.
+ add x1,PlayerACB
+ &ACBList(x1)=c0 ; reset continuous height shift
+
+
+ return
+
+.MAOBug ;******
+ break ;*******
+ return ;*******
+
+.MAONotDismount
+ if num<>2511 then MAONotHorse
+; a frame of standing horse
+ HorseX=dv2
+ HorseZ=dv3
+ HorseH=dv4
+
+.MAONotHorse
+ if CurrentScreen<>BankGame then SAONotBank
+ if num<>329 then SAOBankNotPlayerLeft ; arm at left - initial condition.
+ PlayerACB=ACBHeader
+ x2=840 ; ani sequence for arm at left - for ARCADE.TXT checking
+ if ACBHeader>ACBListSize then @MAOBug ;******
+ &ACBList(ACBHeader)=x2
+
+.SAOBankNotPlayerLeft
+ if num<>332 then SAOBankNotPlayerRight ; arm at right
+ x2=841 ; ani sequence for arm at right - for ARCADE.TXT checking
+ if ACBHeader>ACBListSize then @MAOBug ;******
+ &ACBList(ACBHeader)=x2
+
+.SAOBankNotPlayerRight
+.SAONotBank
+
+ if CurrentScreen<>GameMap then MAONotGameMap
+ if num<340 then MAONotCows
+ if num<350 then MAOCows
+ if num<>3304 then MAOMapNotTrain ; one frame of the train
+.MAOCows
+; record the current coords for firing at.
+ push dv1
+  dv1=num
+  gosub @ScanObjectTables
+ pop dv1
+
+.MAOMapNotTrain
+.maoNotCows
+ if num<2730 then MAOMapNotWagon
+ if num>2736 then MAOMapNotWagon
+; record the current coords for firing at.
+ dv1=2730 ; first wagon
+ gosub @ScanObjectTables
+
+.MAOMapNotWagon
+ return
+;--------------------------
+.MAONotGameMap
+ if PlayingDuel=0 then @MAONotDuel
+ if DuelStatus=0 then @MAONotDuel
+
+if duelstatus <> 2 then maonextstatus
+ if num <> bellraster then @maoDuel2
+  duelstatus = 3 ; allow player to draw.
+  if TwoPlayerMode=true then maoDuel2 ; in two player mode, 
+; the opponent draws when we receive the message from the other
+; computer
+  dx4 = enemyacb
+  ObjectNumber=11
+  add ObjectNumber,DuelOpponentBase
+
+.maoDraw1
+  gosub @changeacbdx4
+  goto maoDuel2 ; theend
+.maonextstatus
+  if num=2539 then ShootPlayer ;15Jan1991
+  if num=28 then ShootPlayer ;15Jan1991
+  if num=29 then ShootPlayer ;15Jan1991
+  if num=32 then ShootPlayer ;15Jan1991
+  if num <> 2429 then notenemyfire
+.ShootPlayer
+;code-
+;  random x1
+;code+
+;  if x1 >50 then notenemyfire
+ v1=0 ; colt45 sample
+ gosub @PlaySample
+  duelstatus = 7 ; player is dying
+.NotEnemyfire
+  if EnemyStatus<>0 then NotEnemyDraw ; to fix two player mode
+  if num <> 2426 then notenemydraw
+  enemystatus = 1
+.NotEnemyDraw
+if duelstatus <> 4 then maoDuel2
+  if num <> BillDrawn then maoDuel2
+  duelstatus = 5
+
+.maoDuel2
+
+
+
+;--------------
+.maoTheEnd
+ return
+;---------------------
+.MAONotDuel
+ if PersonDisplayed=false then maoNotPerson
+ return ; no sao stuff is relevant
+
+
+.maoNotPerson
+ if num<1300 then MAONotMovingPerson
+ if num>1349 then MAONotMovingPerson
+ x1=MovingPersonHires 
+ gosub @RecordCoordinates ; at Hires(x1)
+
+.MAONotMovingPerson
+ return
+;---------------

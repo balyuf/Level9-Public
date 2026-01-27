@@ -1,0 +1,1968 @@
+Compiling Knight Orc part 1
+Level 9 table.dat generation done.
+
+
+COMPACT 2.3
+7th September 1987
+Available memory = 1048576 bytes
+
+Options: N N 128
+
+
+
+
+                             Level 9 Adventures
+
+                  Copyright (C) 1986-1988 Level 9 Computing
+
+
+
+
+                               A .. spec48.l9
+Only one sub-directory - proceeding with squash
+
+Phase 1 - Clear memory
+Phase 2 - Sort into message number order
+
+Squashing. Please wait.
+
+Length of SMT = 34264 bytes.
+Number of modifications = 95.
+Number of text characters = 26519.
+
+Phase 3 - Construct 'Frequency Table'
+
+Line number = 55. Line number = 95. Line number = 135. Line number = 184. Line number = 237. Line number = 276. Line number = 314. Line number = 357. Line number = 408. Line number = 451. Line number = 487. Line number = 524. Line number = 570. Line number = 615. Line number = 678. Line number = 744. Line number = 863. Line number = 928. Line number = 969. Line number = 1044. Line number = 1101. Line number = 1151. Line number = 1200. Line number = 1252. Line number = 1336. Line number = 1423. Line number = 1495. Line number = 1605. Line number = 1661. Line number = 1749. Line number = 1801. Line number = 1848. 
+
+Number of 'words' = 1791.
+Length of 'Frequency Table' = 15713 bytes.
+
+Phase 4 - (Optional) Display 'Frequency Table'
+Phase 5 - Construct 'Common Word Dictionary'
+Phase 6 - Construct 'Message Descriptors'
+
+Line number = 55. Line number = 95. Line number = 135. Line number = 184. Line number = 237. Line number = 276. Line number = 314. Line number = 357. Line number = 408. Line number = 451. Line number = 487. Line number = 524. Line number = 570. Line number = 615. Line number = 678. Line number = 744. Line number = 863. Line number = 928. Line number = 969. Line number = 1044. Line number = 1101. Line number = 1151. Line number = 1200. Line number = 1252. Line number = 1336. Line number = 1423. Line number = 1495. Line number = 1605. Line number = 1661. Line number = 1749. Line number = 1801. Line number = 1848. 
+
+Longest compressed message = 224 bytes.
+Length compressed Message Desriptors = 9859 bytes.
+
+Phase 7 - Construct 'Word Dictionary'
+Phase 8 - Construct 'Word Dictionary Index'
+Phase 9 - Build Squash File
+
+Writing squash.dat ...
+
+File 'message.txt' length = 56410 bytes.
+Number of characters = 26519. Number of words = 1791.
+
+File 'squash.dat' length = 16423 bytes.
+Compressed size of message descriptors = 9859 bytes.
+Compressed size of word dictionary     = 5875 bytes.
+Compression = 61% of filesize = 39% saved space.
+
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file 'aconst.txt'. End of source file.
+Compiling file 'mconst.txt'. End of source file.
+Compiling file 'sconst.txt'. End of source file.
+Compiling file 'c1.txt'. End of source file.
+Compiling file 'aparse.txt'. End of source file.
+Compiling file 'averb.txt'. End of source file.
+Compiling file 'acore.txt'. End of source file.
+Compiling file 'aspecial.txt'. End of source file.
+Compiling file 'converse.txt'. End of source file.
+Compiling file 'npc.txt'. End of source file.
+Compiling file 'oops.txt'. End of source file.
+Compiling file 'book.txt'. End of source file.
+
+Number of vars=230
+Number of source lines=11709
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+                               A .. spec48.l9
+Only one sub-directory - proceeding with finish
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling Knight Orc part 2
+Level 9 table.dat generation done.
+
+
+COMPACT 2.3
+7th September 1987
+Available memory = 1048576 bytes
+
+Options: N N 128
+
+
+
+
+                             Level 9 Adventures
+
+                  Copyright (C) 1986-1988 Level 9 Computing
+
+
+
+
+                               A .. msx.l9
+Only one sub-directory - proceeding with squash
+
+Phase 1 - Clear memory
+Phase 2 - Sort into message number order
+
+Squashing. Please wait.
+
+Length of SMT = 51022 bytes.
+Number of modifications = 138.
+Number of text characters = 40739.
+
+Phase 3 - Construct 'Frequency Table'
+
+Line number = 65. Line number = 102. Line number = 135. Line number = 181. Line number = 228. Line number = 265. Line number = 304. Line number = 341. Line number = 375. Line number = 422. Line number = 466. Line number = 514. Line number = 564. Line number = 605. Line number = 657. Line number = 700. Line number = 752. Line number = 792. Line number = 886. Line number = 942. Line number = 982. Line number = 1031. Line number = 1083. Line number = 1131. Line number = 1191. Line number = 1238. Line number = 1299. Line number = 1361. Line number = 1412. Line number = 1456. Line number = 1511. Line number = 1567. Line number = 1617. Line number = 1667. Line number = 1715. Line number = 1777. Line number = 1831. Line number = 1874. Line number = 1927. Line number = 1976. Line number = 2018. Line number = 2073. Line number = 2124. Line number = 2177. 
+
+Number of 'words' = 2246.
+Length of 'Frequency Table' = 20134 bytes.
+
+Phase 4 - (Optional) Display 'Frequency Table'
+Phase 5 - Construct 'Common Word Dictionary'
+Phase 6 - Construct 'Message Descriptors'
+
+Line number = 65. Line number = 102. Line number = 135. Line number = 181. Line number = 228. Line number = 265. Line number = 304. Line number = 341. Line number = 375. Line number = 422. Line number = 466. Line number = 514. Line number = 564. Line number = 605. Line number = 657. Line number = 700. Line number = 752. Line number = 792. Line number = 886. Line number = 942. Line number = 982. Line number = 1031. Line number = 1083. Line number = 1131. Line number = 1191. Line number = 1238. Line number = 1299. Line number = 1361. Line number = 1412. Line number = 1456. Line number = 1511. Line number = 1567. Line number = 1617. Line number = 1667. Line number = 1715. Line number = 1777. Line number = 1831. Line number = 1874. Line number = 1927. Line number = 1976. Line number = 2018. Line number = 2073. Line number = 2124. Line number = 2177. 
+
+Longest compressed message = 146 bytes.
+Length compressed Message Desriptors = 14638 bytes.
+
+Phase 7 - Construct 'Word Dictionary'
+Phase 8 - Construct 'Word Dictionary Index'
+Phase 9 - Build Squash File
+
+Writing squash.dat ...
+
+File 'message.txt' length = 76456 bytes.
+Number of characters = 40739. Number of words = 2246.
+
+File 'squash.dat' length = 22661 bytes.
+Compressed size of message descriptors = 14638 bytes.
+Compressed size of word dictionary     = 7334 bytes.
+Compression = 55% of filesize = 45% saved space.
+
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file '../knight1.l9/aconst.txt'. End of source file.
+Compiling file '../knight1.l9/mconst.txt'. End of source file.
+Compiling file 'sconst.txt'. End of source file.
+Compiling file 'pconst.txt'. End of source file.
+Compiling file 'c2.txt'. End of source file.
+Compiling file '../knight1.l9/aparse.txt'. End of source file.
+Compiling file '../knight1.l9/acore.txt'. End of source file.
+Compiling file '../knight1.l9/converse.txt'. End of source file.
+Compiling file '../knight1.l9/npc.txt'. End of source file.
+Compiling file '../knight1.l9/oops.txt'. End of source file.
+Compiling file '../knight1.l9/book.txt'. End of source file.
+Compiling file 'averb.txt'. End of source file.
+Compiling file 'aspecial.txt'. End of source file.
+
+Number of vars=254
+Number of source lines=13744
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+                               A .. msx.l9
+Only one sub-directory - proceeding with finish
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling Knight Orc part 3
+Level 9 table.dat generation done.
+
+
+COMPACT 2.3
+7th September 1987
+Available memory = 1048576 bytes
+
+Options: N N 128
+
+
+
+
+                             Level 9 Adventures
+
+                  Copyright (C) 1986-1988 Level 9 Computing
+
+
+
+
+                               A .. msx.l9
+Only one sub-directory - proceeding with squash
+
+Phase 1 - Clear memory
+Phase 2 - Sort into message number order
+
+Squashing. Please wait.
+
+Length of SMT = 52658 bytes.
+Number of modifications = 159.
+Number of text characters = 42521.
+
+Phase 3 - Construct 'Frequency Table'
+
+Line number = 64. Line number = 101. Line number = 133. Line number = 178. Line number = 223. Line number = 260. Line number = 299. Line number = 337. Line number = 371. Line number = 416. Line number = 459. Line number = 505. Line number = 555. Line number = 602. Line number = 662. Line number = 711. Line number = 762. Line number = 797. Line number = 888. Line number = 948. Line number = 988. Line number = 1036. Line number = 1086. Line number = 1130. Line number = 1185. Line number = 1237. Line number = 1302. Line number = 1369. Line number = 1427. Line number = 1470. Line number = 1515. Line number = 1563. Line number = 1611. Line number = 1665. Line number = 1706. Line number = 1767. Line number = 1822. Line number = 1867. Line number = 1916. Line number = 1967. Line number = 2008. Line number = 2063. Line number = 2119. Line number = 2171. 
+
+Number of 'words' = 2270.
+Length of 'Frequency Table' = 20268 bytes.
+
+Phase 4 - (Optional) Display 'Frequency Table'
+Phase 5 - Construct 'Common Word Dictionary'
+Phase 6 - Construct 'Message Descriptors'
+
+Line number = 64. Line number = 101. Line number = 133. Line number = 178. Line number = 223. Line number = 260. Line number = 299. Line number = 337. Line number = 371. Line number = 416. Line number = 459. Line number = 505. Line number = 555. Line number = 602. Line number = 662. Line number = 711. Line number = 762. Line number = 797. Line number = 888. Line number = 948. Line number = 988. Line number = 1036. Line number = 1086. Line number = 1130. Line number = 1185. Line number = 1237. Line number = 1302. Line number = 1369. Line number = 1427. Line number = 1470. Line number = 1515. Line number = 1563. Line number = 1611. Line number = 1665. Line number = 1706. Line number = 1767. Line number = 1822. Line number = 1867. Line number = 1916. Line number = 1967. Line number = 2008. Line number = 2063. Line number = 2119. Line number = 2171. 
+
+Longest compressed message = 257 bytes.
+Length compressed Message Desriptors = 15207 bytes.
+
+Phase 7 - Construct 'Word Dictionary'
+Phase 8 - Construct 'Word Dictionary Index'
+Phase 9 - Build Squash File
+
+Writing squash.dat ...
+
+File 'message.txt' length = 73445 bytes.
+Number of characters = 42521. Number of words = 2270.
+
+File 'squash.dat' length = 23379 bytes.
+Compressed size of message descriptors = 15207 bytes.
+Compressed size of word dictionary     = 7483 bytes.
+Compression = 54% of filesize = 46% saved space.
+
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file '../knight1.l9/aconst.txt'. End of source file.
+Compiling file '../knight1.l9/mconst.txt'. End of source file.
+Compiling file 'sconst.txt'. End of source file.
+Compiling file 'pconst.txt'. End of source file.
+Compiling file 'c2.txt'. End of source file.
+Compiling file '../knight1.l9/aparse.txt'. End of source file.
+Compiling file '../knight1.l9/acore.txt'. End of source file.
+Compiling file '../knight1.l9/converse.txt'. End of source file.
+Compiling file '../knight1.l9/npc.txt'. End of source file.
+Compiling file '../knight1.l9/oops.txt'. End of source file.
+Compiling file '../knight1.l9/book.txt'. End of source file.
+Compiling file 'averb.txt'. End of source file.
+Compiling file 'aspecial.txt'. End of source file.
+
+Number of vars=254
+Number of source lines=13744
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+                               A .. msx.l9
+Only one sub-directory - proceeding with finish
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling Lancelot part 1
+Level 9 table.dat generation done.
+
+
+COMPACT 2.3
+7th September 1987
+Available memory = 1048576 bytes
+
+Options: N N 128
+
+
+
+
+                             Level 9 Adventures
+
+                  Copyright (C) 1986-1988 Level 9 Computing
+
+
+
+
+                               A .. main.l9
+Only one sub-directory - proceeding with squash
+
+Phase 1 - Clear memory
+Phase 2 - Sort into message number order
+
+Squashing. Please wait.
+
+Length of SMT = 75714 bytes.
+Number of modifications = 307.
+Number of text characters = 65784.
+
+Phase 3 - Construct 'Frequency Table'
+
+Line number = 67. Line number = 108. Line number = 163. Line number = 225. Line number = 284. Line number = 327. Line number = 380. Line number = 429. Line number = 498. Line number = 633. Line number = 771. Line number = 824. Line number = 964. Line number = 1110. Line number = 1252. Line number = 1296. Line number = 1344. Line number = 1386. Line number = 1468. Line number = 1580. Line number = 1669. Line number = 1718. Line number = 1793. Line number = 1847. Line number = 1961. Line number = 2060. Line number = 2136. Line number = 2174. Line number = 2215. Line number = 2253. Line number = 2304. Line number = 2366. Line number = 2418. Line number = 2458. Line number = 2497. Line number = 2566. Line number = 2626. Line number = 2686. Line number = 2724. Line number = 2762. 
+
+Number of 'words' = 3022.
+Length of 'Frequency Table' = 27601 bytes.
+
+Phase 4 - (Optional) Display 'Frequency Table'
+Phase 5 - Construct 'Common Word Dictionary'
+Phase 6 - Construct 'Message Descriptors'
+
+Line number = 67. Line number = 108. Line number = 163. Line number = 225. Line number = 284. Line number = 327. Line number = 380. Line number = 429. Line number = 498. Line number = 633. Line number = 771. Line number = 824. Line number = 964. Line number = 1110. Line number = 1252. Line number = 1296. Line number = 1344. Line number = 1386. Line number = 1468. Line number = 1580. Line number = 1669. Line number = 1718. Line number = 1793. Line number = 1847. Line number = 1961. Line number = 2060. Line number = 2136. Line number = 2174. Line number = 2215. Line number = 2253. Line number = 2304. Line number = 2366. Line number = 2418. Line number = 2458. Line number = 2497. Line number = 2566. Line number = 2626. Line number = 2686. Line number = 2724. Line number = 2762. 
+
+Longest compressed message = 376 bytes.
+Length compressed Message Desriptors = 21102 bytes.
+
+Phase 7 - Construct 'Word Dictionary'
+Phase 8 - Construct 'Word Dictionary Index'
+Phase 9 - Build Squash File
+
+Writing squash.dat ...
+
+File 'message.txt' length = 107885 bytes.
+Number of characters = 65784. Number of words = 3022.
+
+File 'squash.dat' length = 31924 bytes.
+Compressed size of message descriptors = 21102 bytes.
+Compressed size of word dictionary     = 10141 bytes.
+Compression = 48% of filesize = 52% saved space.
+
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file '../lancelt2.l9/aconst.txt'. End of source file.
+Compiling file 'mconst.txt'. End of source file.
+Compiling file 'sconst.txt'. End of source file.
+Compiling file 'pconst.txt'. End of source file.
+Compiling file '../lancelt2.l9/chain.txt'. End of source file.
+Compiling file '../lancelt2.l9/aparse.txt'. End of source file.
+Compiling file '../lancelt2.l9/acore.txt'. End of source file.
+Compiling file '../lancelt2.l9/converse.txt'. End of source file.
+Compiling file '../lancelt2.l9/npc.txt'. End of source file.
+Compiling file '../lancelt2.l9/oops.txt'. End of source file.
+Compiling file 'averb.txt'. End of source file.
+Compiling file 'aspecial.txt'. End of source file.
+Compiling file '../lancelt2.l9/score.txt'. End of source file.
+Compiling file '../lancelt2.l9/book.txt'. End of source file.
+
+Number of vars=255
+Number of source lines=11270
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+                               A .. main.l9
+Only one sub-directory - proceeding with finish
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling Lancelot part 2
+
+COMPACT 2.3
+7th September 1987
+Available memory = 1048576 bytes
+
+Options: N N 128
+
+
+
+
+                             Level 9 Adventures
+
+                  Copyright (C) 1986-1988 Level 9 Computing
+
+
+
+
+                               A .. main.l9
+Only one sub-directory - proceeding with squash
+
+Phase 1 - Clear memory
+Phase 2 - Sort into message number order
+
+Squashing. Please wait.
+
+Length of SMT = 85598 bytes.
+Number of modifications = 336.
+Number of text characters = 73950.
+
+Phase 3 - Construct 'Frequency Table'
+
+Line number = 45. Line number = 86. Line number = 140. Line number = 201. Line number = 261. Line number = 302. Line number = 339. Line number = 390. Line number = 437. Line number = 504. Line number = 626. Line number = 730. Line number = 834. Line number = 904. Line number = 968. Line number = 1036. Line number = 1161. Line number = 1313. Line number = 1488. Line number = 1657. Line number = 1813. Line number = 1964. Line number = 2018. Line number = 2062. Line number = 2141. Line number = 2213. Line number = 2286. Line number = 2342. Line number = 2424. Line number = 2487. Line number = 2553. Line number = 2601. Line number = 2687. Line number = 2753. Line number = 2791. Line number = 2873. Line number = 2970. Line number = 3016. Line number = 3089. Line number = 3168. Line number = 3234. Line number = 3271. Line number = 3307. 
+
+Number of 'words' = 3207.
+Length of 'Frequency Table' = 29134 bytes.
+
+Phase 4 - (Optional) Display 'Frequency Table'
+Phase 5 - Construct 'Common Word Dictionary'
+Phase 6 - Construct 'Message Descriptors'
+
+Line number = 45. Line number = 86. Line number = 140. Line number = 201. Line number = 261. Line number = 302. Line number = 339. Line number = 390. Line number = 437. Line number = 504. Line number = 626. Line number = 730. Line number = 834. Line number = 904. Line number = 968. Line number = 1036. Line number = 1161. Line number = 1313. Line number = 1488. Line number = 1657. Line number = 1813. Line number = 1964. Line number = 2018. Line number = 2062. Line number = 2141. Line number = 2213. Line number = 2286. Line number = 2342. Line number = 2424. Line number = 2487. Line number = 2553. Line number = 2601. Line number = 2687. Line number = 2753. Line number = 2791. Line number = 2873. Line number = 2970. Line number = 3016. Line number = 3089. Line number = 3168. Line number = 3234. Line number = 3271. Line number = 3307. 
+
+Longest compressed message = 227 bytes.
+Length compressed Message Desriptors = 23823 bytes.
+
+Phase 7 - Construct 'Word Dictionary'
+Phase 8 - Construct 'Word Dictionary Index'
+Phase 9 - Build Squash File
+
+Writing squash.dat ...
+
+File 'message.txt' length = 122326 bytes.
+Number of characters = 73950. Number of words = 3207.
+
+File 'squash.dat' length = 35117 bytes.
+Compressed size of message descriptors = 23823 bytes.
+Compressed size of word dictionary     = 10613 bytes.
+Compression = 47% of filesize = 53% saved space.
+
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file 'aconst.txt'. End of source file.
+Compiling file '../lancelt1.l9/mconst.txt'. End of source file.
+Compiling file '../lancelt1.l9/sconst.txt'. End of source file.
+Compiling file 'pconst.txt'. End of source file.
+Compiling file 'chain.txt'. End of source file.
+Compiling file 'aparse.txt'. End of source file.
+Compiling file 'acore.txt'. End of source file.
+Compiling file 'converse.txt'. End of source file.
+Compiling file 'npc.txt'. End of source file.
+Compiling file 'oops.txt'. End of source file.
+Compiling file 'averb.txt'. End of source file.
+Compiling file 'aspecial.txt'. End of source file.
+Compiling file 'book.txt'. End of source file.
+Compiling file 'score.txt'. End of source file.
+
+Number of vars=255
+Number of source lines=12430
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Can't find file on disk.
+Loading table.dat
+Can't find file on disk.
+                               A .. main.l9
+Only one sub-directory - proceeding with finish
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling Lancelot part 3
+Level 9 table.dat generation done.
+
+
+COMPACT 2.3
+7th September 1987
+Available memory = 1048576 bytes
+
+Options: N N 128
+
+
+
+
+                             Level 9 Adventures
+
+                  Copyright (C) 1986-1988 Level 9 Computing
+
+
+
+
+                               A .. main.l9
+Only one sub-directory - proceeding with squash
+
+Phase 1 - Clear memory
+Phase 2 - Sort into message number order
+
+Squashing. Please wait.
+
+Length of SMT = 75634 bytes.
+Number of modifications = 251.
+Number of text characters = 64964.
+
+Phase 3 - Construct 'Frequency Table'
+
+Line number = 64. Line number = 103. Line number = 155. Line number = 213. Line number = 272. Line number = 335. Line number = 396. Line number = 442. Line number = 526. Line number = 681. Line number = 792. Line number = 831. Line number = 972. Line number = 1113. Line number = 1301. Line number = 1447. Line number = 1495. Line number = 1546. Line number = 1596. Line number = 1683. Line number = 1792. Line number = 1878. Line number = 1949. Line number = 2035. Line number = 2100. Line number = 2154. Line number = 2210. Line number = 2253. Line number = 2317. Line number = 2384. Line number = 2443. Line number = 2484. Line number = 2523. Line number = 2573. Line number = 2656. Line number = 2699. Line number = 2737. Line number = 2775. Line number = 2825. Line number = 2869. Line number = 2910. Line number = 2947. 
+
+Number of 'words' = 2905.
+Length of 'Frequency Table' = 26421 bytes.
+
+Phase 4 - (Optional) Display 'Frequency Table'
+Phase 5 - Construct 'Common Word Dictionary'
+Phase 6 - Construct 'Message Descriptors'
+
+Line number = 64. Line number = 103. Line number = 155. Line number = 213. Line number = 272. Line number = 335. Line number = 396. Line number = 442. Line number = 526. Line number = 681. Line number = 792. Line number = 831. Line number = 972. Line number = 1113. Line number = 1301. Line number = 1447. Line number = 1495. Line number = 1546. Line number = 1596. Line number = 1683. Line number = 1792. Line number = 1878. Line number = 1949. Line number = 2035. Line number = 2100. Line number = 2154. Line number = 2210. Line number = 2253. Line number = 2317. Line number = 2384. Line number = 2443. Line number = 2484. Line number = 2523. Line number = 2573. Line number = 2656. Line number = 2699. Line number = 2737. Line number = 2775. Line number = 2825. Line number = 2869. Line number = 2910. Line number = 2947. 
+
+Longest compressed message = 193 bytes.
+Length compressed Message Desriptors = 21243 bytes.
+
+Phase 7 - Construct 'Word Dictionary'
+Phase 8 - Construct 'Word Dictionary Index'
+Phase 9 - Build Squash File
+
+Writing squash.dat ...
+
+File 'message.txt' length = 108702 bytes.
+Number of characters = 64964. Number of words = 2905.
+
+File 'squash.dat' length = 31513 bytes.
+Compressed size of message descriptors = 21243 bytes.
+Compressed size of word dictionary     = 9585 bytes.
+Compression = 48% of filesize = 52% saved space.
+
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file '../lancelt2.l9/aconst.txt'. End of source file.
+Compiling file '../lancelt1.l9/mconst.txt'. End of source file.
+Compiling file 'sconst.txt'. End of source file.
+Compiling file 'pconst.txt'. End of source file.
+Compiling file '../lancelt2.l9/chain.txt'. End of source file.
+Compiling file '../lancelt2.l9/aparse.txt'. End of source file.
+Compiling file 'acore.txt'. End of source file.
+Compiling file '../lancelt2.l9/converse.txt'. End of source file.
+Compiling file '../lancelt2.l9/npc.txt'. End of source file.
+Compiling file '../lancelt2.l9/oops.txt'. End of source file.
+Compiling file 'averb.txt'. End of source file.
+Compiling file 'aspecial.txt'. End of source file.
+Compiling file '../lancelt2.l9/score.txt'. End of source file.
+Compiling file '../lancelt2.l9/book.txt'. End of source file.
+
+Number of vars=226
+Number of source lines=11528
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+                               A .. main.l9
+Only one sub-directory - proceeding with finish
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling Ingrid's Back part 1
+Level 9 table.dat generation done.
+
+
+COMPACT 2.3
+7th September 1987
+Available memory = 1048576 bytes
+
+Options: N N 128
+
+
+
+
+                             Level 9 Adventures
+
+                  Copyright (C) 1986-1988 Level 9 Computing
+
+
+
+
+                               A .. main.l9
+Only one sub-directory - proceeding with squash
+
+Phase 1 - Clear memory
+Phase 2 - Sort into message number order
+
+Squashing. Please wait.
+
+Length of SMT = 86946 bytes.
+Number of modifications = 440.
+Number of text characters = 77370.
+
+Phase 3 - Construct 'Frequency Table'
+
+Line number = 70. Line number = 107. Line number = 159. Line number = 216. Line number = 284. Line number = 335. Line number = 378. Line number = 421. Line number = 469. Line number = 558. Line number = 723. Line number = 891. Line number = 927. Line number = 1057. Line number = 1204. Line number = 1352. Line number = 1399. Line number = 1443. Line number = 1512. Line number = 1579. Line number = 1633. Line number = 1705. Line number = 1811. Line number = 1856. Line number = 1909. Line number = 1954. Line number = 2005. Line number = 2072. Line number = 2142. Line number = 2189. Line number = 2243. Line number = 2310. Line number = 2355. Line number = 2404. Line number = 2501. Line number = 2603. Line number = 2736. Line number = 2819. Line number = 2901. 
+
+Number of 'words' = 3022.
+Length of 'Frequency Table' = 27642 bytes.
+
+Phase 4 - (Optional) Display 'Frequency Table'
+Phase 5 - Construct 'Common Word Dictionary'
+Phase 6 - Construct 'Message Descriptors'
+
+Line number = 70. Line number = 107. Line number = 159. Line number = 216. Line number = 284. Line number = 335. Line number = 378. Line number = 421. Line number = 469. Line number = 558. Line number = 723. Line number = 891. Line number = 927. Line number = 1057. Line number = 1204. Line number = 1352. Line number = 1399. Line number = 1443. Line number = 1512. Line number = 1579. Line number = 1633. Line number = 1705. Line number = 1811. Line number = 1856. Line number = 1909. Line number = 1954. Line number = 2005. Line number = 2072. Line number = 2142. Line number = 2189. Line number = 2243. Line number = 2310. Line number = 2355. Line number = 2404. Line number = 2501. Line number = 2603. Line number = 2736. Line number = 2819. Line number = 2901. 
+
+Longest compressed message = 323 bytes.
+Length compressed Message Desriptors = 24832 bytes.
+
+Phase 7 - Construct 'Word Dictionary'
+Phase 8 - Construct 'Word Dictionary Index'
+Phase 9 - Build Squash File
+
+Writing squash.dat ...
+
+File 'message.txt' length = 116718 bytes.
+Number of characters = 77370. Number of words = 3022.
+
+File 'squash.dat' length = 35595 bytes.
+Compressed size of message descriptors = 24832 bytes.
+Compressed size of word dictionary     = 10082 bytes.
+Compression = 46% of filesize = 54% saved space.
+
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file 'aconst.txt'. End of source file.
+Compiling file '../ingrid1.l9/mconst.txt'. End of source file.
+Compiling file 'sconst.txt'. End of source file.
+Compiling file 'pconst.txt'. End of source file.
+Compiling file '../ingrid1.l9/chain.txt'. End of source file.
+Compiling file 'aparse.txt'. End of source file.
+Compiling file 'acore.txt'. End of source file.
+Compiling file 'converse.txt'. End of source file.
+Compiling file 'npc.txt'. End of source file.
+Compiling file '../ingrid1.l9/oops.txt'. End of source file.
+Compiling file 'averb.txt'. End of source file.
+Compiling file 'aspecial.txt'. End of source file.
+Compiling file 'score.txt'. End of source file.
+Compiling file '../ingrid1.l9/book.txt'. End of source file.
+
+Number of vars=219
+Number of source lines=10936
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+                               A .. main.l9
+Only one sub-directory - proceeding with finish
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling Ingrid's Back part 2
+Level 9 table.dat generation done.
+
+
+COMPACT 2.3
+7th September 1987
+Available memory = 1048576 bytes
+
+Options: N N 128
+
+
+
+
+                             Level 9 Adventures
+
+                  Copyright (C) 1986-1988 Level 9 Computing
+
+
+
+
+                               A .. main.l9
+Only one sub-directory - proceeding with squash
+
+Phase 1 - Clear memory
+Phase 2 - Sort into message number order
+
+Squashing. Please wait.
+
+Length of SMT = 75319 bytes.
+Number of modifications = 317.
+Number of text characters = 66491.
+
+Phase 3 - Construct 'Frequency Table'
+
+Line number = 70. Line number = 108. Line number = 159. Line number = 212. Line number = 277. Line number = 334. Line number = 378. Line number = 439. Line number = 483. Line number = 627. Line number = 763. Line number = 849. Line number = 927. Line number = 1057. Line number = 1187. Line number = 1228. Line number = 1274. Line number = 1317. Line number = 1410. Line number = 1476. Line number = 1539. Line number = 1639. Line number = 1721. Line number = 1786. Line number = 1868. Line number = 1985. Line number = 2034. Line number = 2086. Line number = 2130. Line number = 2195. Line number = 2258. Line number = 2311. Line number = 2393. Line number = 2438. Line number = 2492. Line number = 2607. Line number = 2710. 
+
+Number of 'words' = 2688.
+Length of 'Frequency Table' = 24387 bytes.
+
+Phase 4 - (Optional) Display 'Frequency Table'
+Phase 5 - Construct 'Common Word Dictionary'
+Phase 6 - Construct 'Message Descriptors'
+
+Line number = 70. Line number = 108. Line number = 159. Line number = 212. Line number = 277. Line number = 334. Line number = 378. Line number = 439. Line number = 483. Line number = 627. Line number = 763. Line number = 849. Line number = 927. Line number = 1057. Line number = 1187. Line number = 1228. Line number = 1274. Line number = 1317. Line number = 1410. Line number = 1476. Line number = 1539. Line number = 1639. Line number = 1721. Line number = 1786. Line number = 1868. Line number = 1985. Line number = 2034. Line number = 2086. Line number = 2130. Line number = 2195. Line number = 2258. Line number = 2311. Line number = 2393. Line number = 2438. Line number = 2492. Line number = 2607. Line number = 2710. 
+
+Longest compressed message = 389 bytes.
+Length compressed Message Desriptors = 21691 bytes.
+
+Phase 7 - Construct 'Word Dictionary'
+Phase 8 - Construct 'Word Dictionary Index'
+Phase 9 - Build Squash File
+
+Writing squash.dat ...
+
+File 'message.txt' length = 104712 bytes.
+Number of characters = 66491. Number of words = 2688.
+
+File 'squash.dat' length = 31371 bytes.
+Compressed size of message descriptors = 21691 bytes.
+Compressed size of word dictionary     = 8999 bytes.
+Compression = 47% of filesize = 53% saved space.
+
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file 'aconst.txt'. End of source file.
+Compiling file '../ingrid1.l9/mconst.txt'. End of source file.
+Compiling file 'sconst.txt'. End of source file.
+Compiling file 'pconst.txt'. End of source file.
+Compiling file '../ingrid1.l9/chain.txt'. End of source file.
+Compiling file 'aparse.txt'. End of source file.
+Compiling file 'acore.txt'. End of source file.
+Compiling file 'converse.txt'. End of source file.
+Compiling file 'npc.txt'. End of source file.
+Compiling file '../ingrid1.l9/oops.txt'. End of source file.
+Compiling file 'averb.txt'. End of source file.
+Compiling file 'aspecial.txt'. End of source file.
+Compiling file 'score.txt'. End of source file.
+Compiling file '../ingrid1.l9/book.txt'. End of source file.
+
+Number of vars=229
+Number of source lines=11913
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+                               A .. main.l9
+Only one sub-directory - proceeding with finish
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling Ingrid's Back part 3
+Level 9 table.dat generation done.
+
+
+COMPACT 2.3
+7th September 1987
+Available memory = 1048576 bytes
+
+Options: N N 128
+
+
+
+
+                             Level 9 Adventures
+
+                  Copyright (C) 1986-1988 Level 9 Computing
+
+
+
+
+                               A .. main.l9
+Only one sub-directory - proceeding with squash
+
+Phase 1 - Clear memory
+Phase 2 - Sort into message number order
+
+Squashing. Please wait.
+
+Length of SMT = 88079 bytes.
+Number of modifications = 548.
+Number of text characters = 78959.
+
+Phase 3 - Construct 'Frequency Table'
+
+Line number = 71. Line number = 108. Line number = 161. Line number = 202. Line number = 276. Line number = 320. Line number = 355. Line number = 406. Line number = 451. Line number = 562. Line number = 691. Line number = 796. Line number = 857. Line number = 900. Line number = 1031. Line number = 1160. Line number = 1292. Line number = 1370. Line number = 1411. Line number = 1453. Line number = 1515. Line number = 1563. Line number = 1613. Line number = 1714. Line number = 1842. Line number = 1968. Line number = 2170. Line number = 2222. Line number = 2270. Line number = 2329. Line number = 2387. Line number = 2444. Line number = 2495. Line number = 2540. Line number = 2601. Line number = 2697. Line number = 2793. 
+
+Number of 'words' = 3103.
+Length of 'Frequency Table' = 28379 bytes.
+
+Phase 4 - (Optional) Display 'Frequency Table'
+Phase 5 - Construct 'Common Word Dictionary'
+Phase 6 - Construct 'Message Descriptors'
+
+Line number = 71. Line number = 108. Line number = 161. Line number = 202. Line number = 276. Line number = 320. Line number = 355. Line number = 406. Line number = 451. Line number = 562. Line number = 691. Line number = 796. Line number = 857. Line number = 900. Line number = 1031. Line number = 1160. Line number = 1292. Line number = 1370. Line number = 1411. Line number = 1453. Line number = 1515. Line number = 1563. Line number = 1613. Line number = 1714. Line number = 1842. Line number = 1968. Line number = 2170. Line number = 2222. Line number = 2270. Line number = 2329. Line number = 2387. Line number = 2444. Line number = 2495. Line number = 2540. Line number = 2601. Line number = 2697. Line number = 2793. 
+
+Longest compressed message = 373 bytes.
+Length compressed Message Desriptors = 25848 bytes.
+
+Phase 7 - Construct 'Word Dictionary'
+Phase 8 - Construct 'Word Dictionary Index'
+Phase 9 - Build Squash File
+
+Writing squash.dat ...
+
+File 'message.txt' length = 111962 bytes.
+Number of characters = 78959. Number of words = 3103.
+
+File 'squash.dat' length = 37233 bytes.
+Compressed size of message descriptors = 25848 bytes.
+Compressed size of word dictionary     = 10704 bytes.
+Compression = 47% of filesize = 53% saved space.
+
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file 'aconst.txt'. End of source file.
+Compiling file '../ingrid1.l9/mconst.txt'. End of source file.
+Compiling file 'sconst.txt'. End of source file.
+Compiling file 'pconst.txt'. End of source file.
+Compiling file '../ingrid1.l9/chain.txt'. End of source file.
+Compiling file 'aparse.txt'. End of source file.
+Compiling file 'acore.txt'. End of source file.
+Compiling file 'converse.txt'. End of source file.
+Compiling file 'npc.txt'. End of source file.
+Compiling file '../ingrid1.l9/oops.txt'. End of source file.
+Compiling file 'averb.txt'. End of source file.
+Compiling file 'aspecial.txt'. End of source file.
+Compiling file 'score.txt'. End of source file.
+Compiling file '../ingrid1.l9/book.txt'. End of source file.
+
+Number of vars=230
+Number of source lines=11413
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+                               A .. main.l9
+Only one sub-directory - proceeding with finish
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling Scapeghost part 1
+Level 9 table.dat generation done.
+
+
+COMPACT 2.3
+7th September 1987
+Available memory = 1048576 bytes
+
+Options: N N 128
+
+
+
+
+                             Level 9 Adventures
+
+                  Copyright (C) 1986-1988 Level 9 Computing
+
+
+
+
+                               A .. main.l9
+Only one sub-directory - proceeding with squash
+
+Phase 1 - Clear memory
+Phase 2 - Sort into message number order
+
+Squashing. Please wait.
+
+Length of SMT = 72878 bytes.
+Number of modifications = 376.
+Number of text characters = 64026.
+
+Phase 3 - Construct 'Frequency Table'
+
+Line number = 77. Line number = 113. Line number = 170. Line number = 238. Line number = 310. Line number = 353. Line number = 397. Line number = 463. Line number = 509. Line number = 615. Line number = 721. Line number = 814. Line number = 904. Line number = 995. Line number = 1106. Line number = 1228. Line number = 1310. Line number = 1352. Line number = 1423. Line number = 1473. Line number = 1528. Line number = 1572. Line number = 1646. Line number = 1733. Line number = 1841. Line number = 1940. Line number = 1992. Line number = 2036. Line number = 2087. Line number = 2131. Line number = 2247. Line number = 2396. Line number = 2521. Line number = 2630. Line number = 2739. 
+
+Number of 'words' = 2685.
+Length of 'Frequency Table' = 24170 bytes.
+
+Phase 4 - (Optional) Display 'Frequency Table'
+Phase 5 - Construct 'Common Word Dictionary'
+Phase 6 - Construct 'Message Descriptors'
+
+Line number = 77. Line number = 113. Line number = 170. Line number = 238. Line number = 310. Line number = 353. Line number = 397. Line number = 463. Line number = 509. Line number = 615. Line number = 721. Line number = 814. Line number = 904. Line number = 995. Line number = 1106. Line number = 1228. Line number = 1310. Line number = 1352. Line number = 1423. Line number = 1473. Line number = 1528. Line number = 1572. Line number = 1646. Line number = 1733. Line number = 1841. Line number = 1940. Line number = 1992. Line number = 2036. Line number = 2087. Line number = 2131. Line number = 2247. Line number = 2396. Line number = 2521. Line number = 2630. Line number = 2739. 
+
+Longest compressed message = 333 bytes.
+Length compressed Message Desriptors = 21695 bytes.
+
+Phase 7 - Construct 'Word Dictionary'
+Phase 8 - Construct 'Word Dictionary Index'
+Phase 9 - Build Squash File
+
+Writing squash.dat ...
+
+File 'message.txt' length = 103065 bytes.
+Number of characters = 64026. Number of words = 2685.
+
+File 'squash.dat' length = 30984 bytes.
+Compressed size of message descriptors = 21695 bytes.
+Compressed size of word dictionary     = 8608 bytes.
+Compression = 48% of filesize = 52% saved space.
+
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file 'aconst.txt'. End of source file.
+Compiling file 'mconst.txt'. End of source file.
+Compiling file 'sconst.txt'. End of source file.
+Compiling file 'pconst.txt'. End of source file.
+Compiling file 'chain.txt'. End of source file.
+Compiling file 'aparse.txt'. End of source file.
+Compiling file 'acore.txt'. End of source file.
+Compiling file 'converse.txt'. End of source file.
+Compiling file 'npc.txt'. End of source file.
+Compiling file 'oops.txt'. End of source file.
+Compiling file 'averb.txt'. End of source file.
+Compiling file 'aspecial.txt'. End of source file.
+Compiling file 'score.txt'. End of source file.
+Compiling file 'book.txt'. End of source file.
+
+Number of vars=217
+Number of source lines=11505
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+                               A .. main.l9
+Only one sub-directory - proceeding with finish
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling Scapeghost part 2
+Level 9 table.dat generation done.
+
+
+COMPACT 2.3
+7th September 1987
+Available memory = 1048576 bytes
+
+Options: N N 128
+
+
+
+
+                             Level 9 Adventures
+
+                  Copyright (C) 1986-1988 Level 9 Computing
+
+
+
+
+                               A .. main.l9
+Only one sub-directory - proceeding with squash
+
+Phase 1 - Clear memory
+Phase 2 - Sort into message number order
+
+Squashing. Please wait.
+
+Length of SMT = 54176 bytes.
+Number of modifications = 231.
+Number of text characters = 47076.
+
+Phase 3 - Construct 'Frequency Table'
+
+Line number = 78. Line number = 116. Line number = 174. Line number = 228. Line number = 298. Line number = 344. Line number = 416. Line number = 460. Line number = 621. Line number = 754. Line number = 877. Line number = 1030. Line number = 1110. Line number = 1156. Line number = 1219. Line number = 1266. Line number = 1327. Line number = 1441. Line number = 1517. Line number = 1623. Line number = 1718. Line number = 1805. Line number = 1849. Line number = 1901. Line number = 1989. Line number = 2155. 
+
+Number of 'words' = 2121.
+Length of 'Frequency Table' = 19177 bytes.
+
+Phase 4 - (Optional) Display 'Frequency Table'
+Phase 5 - Construct 'Common Word Dictionary'
+Phase 6 - Construct 'Message Descriptors'
+
+Line number = 78. Line number = 116. Line number = 174. Line number = 228. Line number = 298. Line number = 344. Line number = 416. Line number = 460. Line number = 621. Line number = 754. Line number = 877. Line number = 1030. Line number = 1110. Line number = 1156. Line number = 1219. Line number = 1266. Line number = 1327. Line number = 1441. Line number = 1517. Line number = 1623. Line number = 1718. Line number = 1805. Line number = 1849. Line number = 1901. Line number = 1989. Line number = 2155. 
+
+Longest compressed message = 177 bytes.
+Length compressed Message Desriptors = 15288 bytes.
+
+Phase 7 - Construct 'Word Dictionary'
+Phase 8 - Construct 'Word Dictionary Index'
+Phase 9 - Build Squash File
+
+Writing squash.dat ...
+
+File 'message.txt' length = 82287 bytes.
+Number of characters = 47076. Number of words = 2121.
+
+File 'squash.dat' length = 22815 bytes.
+Compressed size of message descriptors = 15288 bytes.
+Compressed size of word dictionary     = 6846 bytes.
+Compression = 48% of filesize = 52% saved space.
+
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file 'aconst.txt'. End of source file.
+Compiling file '../part1.l9/mconst.txt'. End of source file.
+Compiling file 'sconst.txt'. End of source file.
+Compiling file 'pconst.txt'. End of source file.
+Compiling file '../part1.l9/chain.txt'. End of source file.
+Compiling file 'aparse.txt'. End of source file.
+Compiling file 'acore.txt'. End of source file.
+Compiling file 'converse.txt'. End of source file.
+Compiling file 'npc.txt'. End of source file.
+Compiling file '../part1.l9/oops.txt'. End of source file.
+Compiling file 'averb.txt'. End of source file.
+Compiling file 'aspecial.txt'. End of source file.
+Compiling file 'score.txt'. End of source file.
+Compiling file '../part1.l9/book.txt'. End of source file.
+
+Number of vars=204
+Number of source lines=11332
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+                               A .. main.l9
+Only one sub-directory - proceeding with finish
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling Scapeghost part 3
+Level 9 table.dat generation done.
+
+
+COMPACT 2.3
+7th September 1987
+Available memory = 1048576 bytes
+
+Options: N N 128
+
+
+
+
+                             Level 9 Adventures
+
+                  Copyright (C) 1986-1988 Level 9 Computing
+
+
+
+
+                               A .. main.l9
+Only one sub-directory - proceeding with squash
+
+Phase 1 - Clear memory
+Phase 2 - Sort into message number order
+
+Squashing. Please wait.
+
+Length of SMT = 71930 bytes.
+Number of modifications = 352.
+Number of text characters = 64242.
+
+Phase 3 - Construct 'Frequency Table'
+
+Line number = 78. Line number = 115. Line number = 170. Line number = 217. Line number = 300. Line number = 342. Line number = 412. Line number = 456. Line number = 606. Line number = 752. Line number = 861. Line number = 1056. Line number = 1166. Line number = 1224. Line number = 1287. Line number = 1337. Line number = 1386. Line number = 1468. Line number = 1549. Line number = 1658. Line number = 1747. Line number = 1866. Line number = 1939. Line number = 1983. Line number = 2036. Line number = 2080. Line number = 2194. Line number = 2328. Line number = 2480. Line number = 2639. Line number = 2754. 
+
+Number of 'words' = 2547.
+Length of 'Frequency Table' = 23115 bytes.
+
+Phase 4 - (Optional) Display 'Frequency Table'
+Phase 5 - Construct 'Common Word Dictionary'
+Phase 6 - Construct 'Message Descriptors'
+
+Line number = 78. Line number = 115. Line number = 170. Line number = 217. Line number = 300. Line number = 342. Line number = 412. Line number = 456. Line number = 606. Line number = 752. Line number = 861. Line number = 1056. Line number = 1166. Line number = 1224. Line number = 1287. Line number = 1337. Line number = 1386. Line number = 1468. Line number = 1549. Line number = 1658. Line number = 1747. Line number = 1866. Line number = 1939. Line number = 1983. Line number = 2036. Line number = 2080. Line number = 2194. Line number = 2328. Line number = 2480. Line number = 2639. Line number = 2754. 
+
+Longest compressed message = 190 bytes.
+Length compressed Message Desriptors = 20866 bytes.
+
+Phase 7 - Construct 'Word Dictionary'
+Phase 8 - Construct 'Word Dictionary Index'
+Phase 9 - Build Squash File
+
+Writing squash.dat ...
+
+File 'message.txt' length = 105496 bytes.
+Number of characters = 64242. Number of words = 2547.
+
+File 'squash.dat' length = 29798 bytes.
+Compressed size of message descriptors = 20866 bytes.
+Compressed size of word dictionary     = 8251 bytes.
+Compression = 46% of filesize = 54% saved space.
+
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file 'aconst.txt'. End of source file.
+Compiling file '../part1.l9/mconst.txt'. End of source file.
+Compiling file 'sconst.txt'. End of source file.
+Compiling file 'pconst.txt'. End of source file.
+Compiling file '../part1.l9/chain.txt'. End of source file.
+Compiling file 'aparse.txt'. End of source file.
+Compiling file 'acore.txt'. End of source file.
+Compiling file 'converse.txt'. End of source file.
+Compiling file 'npc.txt'. End of source file.
+Compiling file '../part1.l9/oops.txt'. End of source file.
+Compiling file 'averb.txt'. End of source file.
+Compiling file 'aspecial.txt'. End of source file.
+Compiling file 'score.txt'. End of source file.
+Compiling file '../part1.l9/book.txt'. End of source file.
+
+Number of vars=215
+Number of source lines=11563
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+                               A .. main.l9
+Only one sub-directory - proceeding with finish
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling Lords of Time
+Level 9 table.dat generation done.
+
+
+COMPACT 2.3
+7th September 1987
+Available memory = 1048576 bytes
+
+Options: N N 128
+
+
+
+
+                             Level 9 Adventures
+
+                  Copyright (C) 1986-1988 Level 9 Computing
+
+
+
+
+                               A .. st.l9
+Only one sub-directory - proceeding with squash
+
+Phase 1 - Clear memory
+Phase 2 - Sort into message number order
+
+Squashing. Please wait.
+
+Length of SMT = 82450 bytes.
+Number of modifications = 304.
+Number of text characters = 70741.
+
+Phase 3 - Construct 'Frequency Table'
+
+Line number = 47. Line number = 84. Line number = 120. Line number = 155. Line number = 192. Line number = 247. Line number = 297. Line number = 358. Line number = 404. Line number = 455. Line number = 526. Line number = 562. Line number = 601. Line number = 636. Line number = 669. Line number = 705. Line number = 737. Line number = 769. Line number = 805. Line number = 939. Line number = 1079. Line number = 1215. Line number = 1254. Line number = 1306. Line number = 1347. Line number = 1383. Line number = 1418. Line number = 1486. Line number = 1569. Line number = 1614. Line number = 1690. Line number = 1751. Line number = 1833. Line number = 1901. Line number = 1976. Line number = 2043. Line number = 2113. Line number = 2181. Line number = 2217. Line number = 2253. 
+
+Number of 'words' = 3557.
+Length of 'Frequency Table' = 33437 bytes.
+
+Phase 4 - (Optional) Display 'Frequency Table'
+Phase 5 - Construct 'Common Word Dictionary'
+Phase 6 - Construct 'Message Descriptors'
+
+Line number = 47. Line number = 84. Line number = 120. Line number = 155. Line number = 192. Line number = 247. Line number = 297. Line number = 358. Line number = 404. Line number = 455. Line number = 526. Line number = 562. Line number = 601. Line number = 636. Line number = 669. Line number = 705. Line number = 737. Line number = 769. Line number = 805. Line number = 939. Line number = 1079. Line number = 1215. Line number = 1254. Line number = 1306. Line number = 1347. Line number = 1383. Line number = 1418. Line number = 1486. Line number = 1569. Line number = 1614. Line number = 1690. Line number = 1751. Line number = 1833. Line number = 1901. Line number = 1976. Line number = 2043. Line number = 2113. Line number = 2181. Line number = 2217. Line number = 2253. 
+
+Longest compressed message = 428 bytes.
+Length compressed Message Desriptors = 23120 bytes.
+
+Phase 7 - Construct 'Word Dictionary'
+Phase 8 - Construct 'Word Dictionary Index'
+Phase 9 - Build Squash File
+
+Writing squash.dat ...
+
+File 'message.txt' length = 93695 bytes.
+Number of characters = 70741. Number of words = 3557.
+
+File 'squash.dat' length = 35908 bytes.
+Compressed size of message descriptors = 23120 bytes.
+Compressed size of word dictionary     = 12103 bytes.
+Compression = 50% of filesize = 50% saved space.
+
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file 'mconst.txt'. End of source file.
+Compiling file 'pconst.txt'. End of source file.
+Compiling file 'aconst.txt'. End of source file.
+Compiling file 'apconst.txt'. End of source file.
+Compiling file '../red_moon.l9/acore.txt'. End of source file.
+Compiling file '../red_moon.l9/aparse.txt'. End of source file.
+Compiling file '../red_moon.l9/hires.txt'. End of source file.
+Compiling file 'demo.txt'. End of source file.
+Compiling file 'aspecial.txt'. End of source file.
+Compiling file '../red_moon.l9/oops.txt'. End of source file.
+Compiling file '../red_moon.l9/chain.txt'. End of source file.
+Compiling file '../red_moon.l9/book.txt'. End of source file.
+Compiling file '../red_moon.l9/cheat.txt'. End of source file.
+
+Number of vars=192
+Number of source lines=5804
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+                               A .. st.l9
+Only one sub-directory - proceeding with finish
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling Red Moon
+Level 9 table.dat generation done.
+
+
+COMPACT 2.3
+7th September 1987
+Available memory = 1048576 bytes
+
+Options: N N 128
+
+
+
+
+                             Level 9 Adventures
+
+                  Copyright (C) 1986-1988 Level 9 Computing
+
+
+
+
+                               A .. st.l9
+Only one sub-directory - proceeding with squash
+
+Phase 1 - Clear memory
+Phase 2 - Sort into message number order
+
+Squashing. Please wait.
+
+Length of SMT = 55115 bytes.
+Number of modifications = 171.
+Number of text characters = 46309.
+
+Phase 3 - Construct 'Frequency Table'
+
+Line number = 48. Line number = 83. Line number = 117. Line number = 155. Line number = 191. Line number = 253. Line number = 300. Line number = 338. Line number = 384. Line number = 436. Line number = 500. Line number = 532. Line number = 565. Line number = 597. Line number = 630. Line number = 662. Line number = 694. Line number = 804. Line number = 935. Line number = 1034. Line number = 1143. Line number = 1250. Line number = 1349. Line number = 1447. Line number = 1534. Line number = 1588. Line number = 1630. Line number = 1674. Line number = 1723. Line number = 1797. 
+
+Number of 'words' = 2681.
+Length of 'Frequency Table' = 24787 bytes.
+
+Phase 4 - (Optional) Display 'Frequency Table'
+Phase 5 - Construct 'Common Word Dictionary'
+Phase 6 - Construct 'Message Descriptors'
+
+Line number = 48. Line number = 83. Line number = 117. Line number = 155. Line number = 191. Line number = 253. Line number = 300. Line number = 338. Line number = 384. Line number = 436. Line number = 500. Line number = 532. Line number = 565. Line number = 597. Line number = 630. Line number = 662. Line number = 694. Line number = 804. Line number = 935. Line number = 1034. Line number = 1143. Line number = 1250. Line number = 1349. Line number = 1447. Line number = 1534. Line number = 1588. Line number = 1630. Line number = 1674. Line number = 1723. Line number = 1797. 
+
+Longest compressed message = 319 bytes.
+Length compressed Message Desriptors = 15355 bytes.
+
+Phase 7 - Construct 'Word Dictionary'
+Phase 8 - Construct 'Word Dictionary Index'
+Phase 9 - Build Squash File
+
+Writing squash.dat ...
+
+File 'message.txt' length = 63819 bytes.
+Number of characters = 46309. Number of words = 2681.
+
+File 'squash.dat' length = 25304 bytes.
+Compressed size of message descriptors = 15355 bytes.
+Compressed size of word dictionary     = 9256 bytes.
+Compression = 54% of filesize = 46% saved space.
+
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file '../timelord.l9/mconst.txt'. End of source file.
+Compiling file 'pconst.txt'. End of source file.
+Compiling file 'aconst.txt'. End of source file.
+Compiling file 'apconst.txt'. End of source file.
+Compiling file 'acore.txt'. End of source file.
+Compiling file 'aparse.txt'. End of source file.
+Compiling file 'hires.txt'. End of source file.
+Compiling file 'aspecial.txt'. End of source file.
+Compiling file 'oops.txt'. End of source file.
+Compiling file 'chain.txt'. End of source file.
+Compiling file 'book.txt'. End of source file.
+Compiling file 'cheat.txt'. End of source file.
+
+Number of vars=191
+Number of source lines=5687
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+                               A .. st.l9
+Only one sub-directory - proceeding with finish
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling The Price of Magik
+
+COMPACT 2.3
+7th September 1987
+Available memory = 1048576 bytes
+
+Options: N N 128
+
+
+
+
+                             Level 9 Adventures
+
+                  Copyright (C) 1986-1988 Level 9 Computing
+
+
+
+
+                               A .. msx.l9
+Only one sub-directory - proceeding with squash
+
+Phase 1 - Clear memory
+Phase 2 - Sort into message number order
+
+Squashing. Please wait.
+
+Length of SMT = 73002 bytes.
+Number of modifications = 254.
+Number of text characters = 62732.
+
+Phase 3 - Construct 'Frequency Table'
+
+Line number = 46. Line number = 81. Line number = 115. Line number = 153. Line number = 189. Line number = 246. Line number = 295. Line number = 335. Line number = 385. Line number = 437. Line number = 501. Line number = 533. Line number = 566. Line number = 598. Line number = 631. Line number = 663. Line number = 695. Line number = 843. Line number = 1005. Line number = 1106. Line number = 1231. Line number = 1351. Line number = 1473. Line number = 1631. Line number = 1729. Line number = 1815. Line number = 1861. Line number = 1901. Line number = 1945. Line number = 2019. Line number = 2078. Line number = 2118. Line number = 2153. 
+
+Number of 'words' = 3334.
+Length of 'Frequency Table' = 31066 bytes.
+
+Phase 4 - (Optional) Display 'Frequency Table'
+Phase 5 - Construct 'Common Word Dictionary'
+Phase 6 - Construct 'Message Descriptors'
+
+Line number = 46. Line number = 81. Line number = 115. Line number = 153. Line number = 189. Line number = 246. Line number = 295. Line number = 335. Line number = 385. Line number = 437. Line number = 501. Line number = 533. Line number = 566. Line number = 598. Line number = 631. Line number = 663. Line number = 695. Line number = 843. Line number = 1005. Line number = 1106. Line number = 1231. Line number = 1351. Line number = 1473. Line number = 1631. Line number = 1729. Line number = 1815. Line number = 1861. Line number = 1901. Line number = 1945. Line number = 2019. Line number = 2078. Line number = 2118. Line number = 2153. 
+
+Longest compressed message = 353 bytes.
+Length compressed Message Desriptors = 20498 bytes.
+
+Phase 7 - Construct 'Word Dictionary'
+Phase 8 - Construct 'Word Dictionary Index'
+Phase 9 - Build Squash File
+
+Writing squash.dat ...
+
+File 'message.txt' length = 82437 bytes.
+Number of characters = 62732. Number of words = 3334.
+
+File 'squash.dat' length = 32642 bytes.
+Compressed size of message descriptors = 20498 bytes.
+Compressed size of word dictionary     = 11451 bytes.
+Compression = 52% of filesize = 48% saved space.
+
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file '../timelord.l9/mconst.txt'. End of source file.
+Compiling file 'pconst.txt'. End of source file.
+Compiling file 'aconst.txt'. End of source file.
+Compiling file 'acore.txt'. End of source file.
+Compiling file 'aparse.txt'. End of source file.
+Compiling file '../red_moon.l9/hires.txt'. End of source file.
+Compiling file 'averb.txt'. End of source file.
+Compiling file 'aspecial.txt'. End of source file.
+Compiling file '../red_moon.l9/book.txt'. End of source file.
+Compiling file '../red_moon.l9/cheat.txt'. End of source file.
+
+Number of vars=158
+Number of source lines=7946
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+                               A .. msx.l9
+Only one sub-directory - proceeding with finish
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling Snowball
+Level 9 table.dat generation done.
+
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file 'aconst.txt'. End of source file.
+Compiling file 'apconst.txt'. End of source file.
+Compiling file 'acore.txt'. End of source file.
+Compiling file 'aparse.txt'. End of source file.
+Compiling file 'aspecial.txt'. End of source file.
+Compiling file 'chain.txt'. End of source file.
+Compiling file 'oops.txt'. End of source file.
+Compiling file 'book.txt'. End of source file.
+
+Number of vars=196
+Number of source lines=5334
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+                               A .. st.l9
+Only one sub-directory - proceeding with finish
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling Return to Eden
+Level 9 table.dat generation done.
+
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file 'aconst.txt'. End of source file.
+Compiling file 'apconst.txt'. End of source file.
+Compiling file 'acore.txt'. End of source file.
+Compiling file 'aparse.txt'. End of source file.
+Compiling file 'aspecial.txt'. End of source file.
+Compiling file 'chain.txt'. End of source file.
+Compiling file 'oops.txt'. End of source file.
+Compiling file 'book.txt'. End of source file.
+
+Number of vars=193
+Number of source lines=5756
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+                               A .. st.l9
+Only one sub-directory - proceeding with finish
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling The Worm in Paradise
+Level 9 table.dat generation done.
+
+
+COMPACT 2.3
+7th September 1987
+Available memory = 1048576 bytes
+
+Options: N N 128
+
+
+
+
+                             Level 9 Adventures
+
+                  Copyright (C) 1986-1988 Level 9 Computing
+
+
+
+
+                               A .. st.l9
+Only one sub-directory - proceeding with squash
+
+Phase 1 - Clear memory
+Phase 2 - Sort into message number order
+
+Squashing. Please wait.
+
+Length of SMT = 43279 bytes.
+Number of modifications = 173.
+Number of text characters = 35995.
+
+Phase 3 - Construct 'Frequency Table'
+
+Line number = 46. Line number = 97. Line number = 139. Line number = 180. Line number = 214. Line number = 253. Line number = 289. Line number = 333. Line number = 366. Line number = 407. Line number = 450. Line number = 487. Line number = 541. Line number = 585. Line number = 625. Line number = 666. Line number = 713. Line number = 759. Line number = 803. Line number = 851. Line number = 901. Line number = 936. Line number = 1003. Line number = 1051. Line number = 1110. Line number = 1176. Line number = 1234. Line number = 1284. Line number = 1351. Line number = 1423. 
+
+Number of 'words' = 1833.
+Length of 'Frequency Table' = 16500 bytes.
+
+Phase 4 - (Optional) Display 'Frequency Table'
+Phase 5 - Construct 'Common Word Dictionary'
+Phase 6 - Construct 'Message Descriptors'
+
+Line number = 46. Line number = 97. Line number = 139. Line number = 180. Line number = 214. Line number = 253. Line number = 289. Line number = 333. Line number = 366. Line number = 407. Line number = 450. Line number = 487. Line number = 541. Line number = 585. Line number = 625. Line number = 666. Line number = 713. Line number = 759. Line number = 803. Line number = 851. Line number = 901. Line number = 936. Line number = 1003. Line number = 1051. Line number = 1110. Line number = 1176. Line number = 1234. Line number = 1284. Line number = 1351. Line number = 1423. 
+
+Longest compressed message = 267 bytes.
+Length compressed Message Desriptors = 12133 bytes.
+
+Phase 7 - Construct 'Word Dictionary'
+Phase 8 - Construct 'Word Dictionary Index'
+Phase 9 - Build Squash File
+
+Writing squash.dat ...
+
+File 'message.txt' length = 48473 bytes.
+Number of characters = 35995. Number of words = 1833.
+
+File 'squash.dat' length = 18790 bytes.
+Compressed size of message descriptors = 12133 bytes.
+Compressed size of word dictionary     = 5972 bytes.
+Compression = 52% of filesize = 48% saved space.
+
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file 'aconst.txt'. End of source file.
+Compiling file 'acore.txt'. End of source file.
+Compiling file 'aparse.txt'. End of source file.
+Compiling file 'averb.txt'. End of source file.
+Compiling file 'aspecial.txt'. End of source file.
+Compiling file 'chain.txt'. End of source file.
+Compiling file 'oops.txt'. End of source file.
+Compiling file 'book.txt'. End of source file.
+
+Number of vars=149
+Number of source lines=6164
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+                               A .. st.l9
+Only one sub-directory - proceeding with finish
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling Colossal Adventure
+Level 9 table.dat generation done.
+
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Forced long jumps are now on
+Compiling file 'aconst.txt'. End of source file.
+Compiling file 'apconst.txt'. End of source file.
+Compiling file 'acore.txt'. End of source file.
+Compiling file 'aparse.txt'. End of source file.
+Compiling file 'aspecial.txt'. End of source file.
+Compiling file 'chain.txt'. End of source file.
+Compiling file 'oops.txt'. End of source file.
+Compiling file 'book.txt'. End of source file.
+
+Number of vars=138
+Number of source lines=4664
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+                               A .. st.l9
+Only one sub-directory - proceeding with finish
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling Grange Mudrders for ST
+Level 9 table.dat generation done.
+
+
+COMPACT 2.3
+7th September 1987
+Available memory = 1048576 bytes
+
+Options: N N 128
+
+
+
+
+                             Level 9 Adventures
+
+                  Copyright (C) 1986-1988 Level 9 Computing
+
+
+
+
+
+No suitable sub-directories available - searching current.
+
+Phase 1 - Clear memory
+Phase 2 - Sort into message number order
+
+Squashing. Please wait.
+
+Length of SMT = 40849 bytes.
+Number of modifications = 131.
+Number of text characters = 34373.
+
+Phase 3 - Construct 'Frequency Table'
+
+Line number = 144. Line number = 277. Line number = 345. Line number = 420. Line number = 468. Line number = 502. Line number = 597. Line number = 831. Line number = 875. Line number = 916. Line number = 952. Line number = 1186. Line number = 1237. Line number = 1286. Line number = 1345. Line number = 1393. Line number = 1448. Line number = 1487. Line number = 1534. Line number = 1574. Line number = 1619. Line number = 1661. Line number = 1716. Line number = 1758. Line number = 1808. Line number = 1877. Line number = 1932. Line number = 1984. Line number = 2023. Line number = 2078. Line number = 2127. Line number = 2209. 
+
+Number of 'words' = 1494.
+Length of 'Frequency Table' = 13060 bytes.
+
+Phase 4 - (Optional) Display 'Frequency Table'
+Phase 5 - Construct 'Common Word Dictionary'
+Phase 6 - Construct 'Message Descriptors'
+
+Line number = 144. Line number = 277. Line number = 345. Line number = 420. Line number = 468. Line number = 502. Line number = 597. Line number = 831. Line number = 875. Line number = 916. Line number = 952. Line number = 1186. Line number = 1237. Line number = 1286. Line number = 1345. Line number = 1393. Line number = 1448. Line number = 1487. Line number = 1534. Line number = 1574. Line number = 1619. Line number = 1661. Line number = 1716. Line number = 1758. Line number = 1808. Line number = 1877. Line number = 1932. Line number = 1984. Line number = 2023. Line number = 2078. Line number = 2127. Line number = 2209. 
+
+Longest compressed message = 57 bytes.
+Length compressed Message Desriptors = 12546 bytes.
+
+Phase 7 - Construct 'Word Dictionary'
+Phase 8 - Construct 'Word Dictionary Index'
+Phase 9 - Build Squash File
+
+Writing squash.dat ...
+
+File 'message.txt' length = 84214 bytes.
+Number of characters = 34373. Number of words = 1494.
+
+File 'squash.dat' length = 18459 bytes.
+Compressed size of message descriptors = 12546 bytes.
+Compressed size of word dictionary     = 5244 bytes.
+Compression = 53% of filesize = 47% saved space.
+
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file 'mconst.txt'. End of source file.
+Compiling file '../aahead.txt'. End of source file.
+Compiling file '../aconst.txt'. End of source file.
+Compiling file '../sconst.txt'. End of source file.
+Compiling file '../pconst.txt'. End of source file.
+Compiling file '../aaconst.txt'. End of source file.
+Compiling file '../aavars.txt'. End of source file.
+Compiling file '../aacore.txt'. End of source file.
+Compiling file '../display.txt'. End of source file.
+Compiling file '../aaprint.txt'. End of source file.
+Compiling file '../aaspec.txt'. End of source file.
+Compiling file '../aastand.txt'. End of source file.
+Compiling file '../aaverbs.txt'. End of source file.
+Compiling file '../aalogic.txt'. End of source file.
+Compiling file '../aanpc.txt'. End of source file.
+Compiling file '../menu.txt'. End of source file.
+Compiling file '../floors.txt'. End of source file.
+Compiling file '../goal.txt'. End of source file.
+Compiling file '../cache.txt'. End of source file.
+
+Number of vars=358
+Number of source lines=15689
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling Grange Mudrders for PC
+Level 9 table.dat generation done.
+
+
+COMPACT 2.3
+7th September 1987
+Available memory = 1048576 bytes
+
+Options: N N 128
+
+
+
+
+                             Level 9 Adventures
+
+                  Copyright (C) 1986-1988 Level 9 Computing
+
+
+
+
+
+No suitable sub-directories available - searching current.
+
+Phase 1 - Clear memory
+Phase 2 - Sort into message number order
+
+Squashing. Please wait.
+
+Length of SMT = 40849 bytes.
+Number of modifications = 131.
+Number of text characters = 34373.
+
+Phase 3 - Construct 'Frequency Table'
+
+Line number = 144. Line number = 277. Line number = 345. Line number = 420. Line number = 468. Line number = 502. Line number = 597. Line number = 831. Line number = 875. Line number = 916. Line number = 952. Line number = 1186. Line number = 1237. Line number = 1286. Line number = 1345. Line number = 1393. Line number = 1448. Line number = 1487. Line number = 1534. Line number = 1574. Line number = 1619. Line number = 1661. Line number = 1716. Line number = 1758. Line number = 1808. Line number = 1877. Line number = 1932. Line number = 1984. Line number = 2023. Line number = 2078. Line number = 2127. Line number = 2209. 
+
+Number of 'words' = 1494.
+Length of 'Frequency Table' = 13060 bytes.
+
+Phase 4 - (Optional) Display 'Frequency Table'
+Phase 5 - Construct 'Common Word Dictionary'
+Phase 6 - Construct 'Message Descriptors'
+
+Line number = 144. Line number = 277. Line number = 345. Line number = 420. Line number = 468. Line number = 502. Line number = 597. Line number = 831. Line number = 875. Line number = 916. Line number = 952. Line number = 1186. Line number = 1237. Line number = 1286. Line number = 1345. Line number = 1393. Line number = 1448. Line number = 1487. Line number = 1534. Line number = 1574. Line number = 1619. Line number = 1661. Line number = 1716. Line number = 1758. Line number = 1808. Line number = 1877. Line number = 1932. Line number = 1984. Line number = 2023. Line number = 2078. Line number = 2127. Line number = 2209. 
+
+Longest compressed message = 57 bytes.
+Length compressed Message Desriptors = 12546 bytes.
+
+Phase 7 - Construct 'Word Dictionary'
+Phase 8 - Construct 'Word Dictionary Index'
+Phase 9 - Build Squash File
+
+Writing squash.dat ...
+
+File 'message.txt' length = 84214 bytes.
+Number of characters = 34373. Number of words = 1494.
+
+File 'squash.dat' length = 18459 bytes.
+Compressed size of message descriptors = 12546 bytes.
+Compressed size of word dictionary     = 5244 bytes.
+Compression = 53% of filesize = 47% saved space.
+
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file 'mconst.txt'. End of source file.
+Compiling file '../aahead.txt'. End of source file.
+Compiling file '../aconst.txt'. End of source file.
+Compiling file '../sconst.txt'. End of source file.
+Compiling file '../pconst.txt'. End of source file.
+Compiling file '../aaconst.txt'. End of source file.
+Compiling file '../aavars.txt'. End of source file.
+Compiling file '../aacore.txt'. End of source file.
+Compiling file '../display.txt'. End of source file.
+Compiling file '../aaprint.txt'. End of source file.
+Compiling file '../aaspec.txt'. End of source file.
+Compiling file '../aastand.txt'. End of source file.
+Compiling file '../aaverbs.txt'. End of source file.
+Compiling file '../aalogic.txt'. End of source file.
+Compiling file '../aanpc.txt'. End of source file.
+Compiling file '../menu.txt'. End of source file.
+Compiling file '../floors.txt'. End of source file.
+Compiling file '../goal.txt'. End of source file.
+Compiling file '../cache.txt'. End of source file.
+
+Number of vars=358
+Number of source lines=15689
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling Billy the Kid for ST
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file '../firstvar.txt'. End of source file.
+Compiling file 'mconst.txt'. End of source file.
+Compiling file '../aahead.txt'. End of source file.
+Compiling file '../language.txt'. End of source file.
+Compiling file '../aaconst.txt'. End of source file.
+Compiling file '../aavars.txt'. End of source file.
+Compiling file '../demo.txt'. End of source file.
+Compiling file '../standard.txt'. End of source file.
+Compiling file '../menu.txt'. End of source file.
+Compiling file '../walkabou.txt'. End of source file.
+Compiling file '../fx.txt'. End of source file.
+Compiling file '../arcade.txt'. End of source file.
+Compiling file '../vectors.txt'. End of source file.
+Compiling file '../strategy.txt'. End of source file.
+Compiling file '../comms.txt'. End of source file.
+Compiling file '../floors.txt'. End of source file.
+Compiling file '../goal.txt'. End of source file.
+Compiling file '../cache.txt'. End of source file.
+Compiling file '../duel.txt'. End of source file.
+Compiling file '../fire.txt'. End of source file.
+Compiling file '../movecurs.txt'. End of source file.
+Compiling file '../spaniob.txt'. End of source file.
+Compiling file '../music.txt'. End of source file.
+Compiling file '../display.txt'. End of source file.
+Compiling file '../print.txt'. End of source file.
+Compiling file '../intro.txt'. End of source file.
+
+Number of vars=252
+Number of source lines=15109
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+
+Compiling Billy the Kid for PC
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Compiling file '../firstvar.txt'. End of source file.
+Compiling file 'mconst.txt'. End of source file.
+Compiling file '../aahead.txt'. End of source file.
+Compiling file '../language.txt'. End of source file.
+Compiling file '../aaconst.txt'. End of source file.
+Compiling file '../aavars.txt'. End of source file.
+Compiling file '../demo.txt'. End of source file.
+Compiling file '../standard.txt'. End of source file.
+Compiling file '../menu.txt'. End of source file.
+Compiling file '../walkabou.txt'. End of source file.
+Compiling file '../fx.txt'. End of source file.
+Compiling file '../arcade.txt'. End of source file.
+Compiling file '../vectors.txt'. End of source file.
+Compiling file '../strategy.txt'. End of source file.
+Compiling file '../comms.txt'. End of source file.
+Compiling file '../floors.txt'. End of source file.
+Compiling file '../goal.txt'. End of source file.
+Compiling file '../cache.txt'. End of source file.
+Compiling file '../duel.txt'. End of source file.
+Compiling file '../fire.txt'. End of source file.
+Compiling file '../movecurs.txt'. End of source file.
+Compiling file '../spaniob.txt'. End of source file.
+Compiling file '../music.txt'. End of source file.
+Compiling file '../display.txt'. End of source file.
+Compiling file '../print.txt'. End of source file.
+Compiling file '../intro.txt'. End of source file.
+
+Number of vars=252
+Number of source lines=15109
+
+Acode finish 1.1 (for Linux)
+Copyright (C) 1986-1988 Level 9 Computing
+
+Loading exit.txt
+Loading table.dat
+Loading squash.dat
+Saving acode.acd
+Saving gamedata.dat
+

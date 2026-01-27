@@ -1,0 +1,202 @@
+
+; Tables used for Standard Adventure
+;
+ ORG 0
+start
+ dc.l LIST1-start-80
+ dc.l $8000
+ dc.l LIST3-start
+ dc.l 0
+ dc.l 0
+ dc.l 0 ;LIST6
+ dc.l $8110 ;LIST7
+ dc.l $8150 ;LIST8
+ dc.l $81D0 ; LIST9
+ dc.l LASTPTR-start
+;
+LIST1
+; Init.pos: TAB 1 (obj.num - 81)
+ dc.b 036 ; Armour         80
+ dc.b 179 ; Cap/Visor      81
+ dc.b 113 ; Dark Glasses   82
+ dc.b 226 ; Gown           83 (worn)
+ dc.b 190 ; Meter/Bracelet 84 (on body)
+ dc.b 254 ; Helmet         85 (hidden)
+ dc.b 190 ; Leotard        86 (on body)
+ dc.b 190 ; Necklace       87 (on body)
+ dc.b 255 ; ******         88
+ dc.b 255 ; ******         89
+;
+ dc.b 106 ; Aerosol/Paint  90
+ dc.b 197 ; Battery        91 (in viewer)
+ dc.b 086 ; Body           92
+ dc.b 150 ; Credit/Card    93
+ dc.b 140 ; Catsucker      94
+ dc.b 073 ; Coffin         95
+ dc.b 092 ; Cup            96
+ dc.b 043 ; Cylinders      97
+ dc.b 193 ; Electro-flute  98 (on tray)
+ dc.b 048 ; Extinguisher   99
+ dc.b 254 ; Fault/Probe   100 (under bed)
+ dc.b 106 ; Flask         101
+ dc.b 103 ; Red Form      102
+ dc.b 102 ; Orange Form   103
+ dc.b 103 ; Yellow Form   104
+ dc.b 102 ; Green Form    105
+ dc.b 160 ; Gun           106
+ dc.b 150 ; Holo-Wand     107
+ dc.b 254 ; Bunch of Keys 108 (buried)
+ dc.b 255 ; ******        109
+ dc.b 103 ; Lance         110 (in stores)
+ dc.b 131 ; Laser         111
+ dc.b 088 ; Mempak        112
+ dc.b 255 ; ******        113
+ dc.b 255 ; ******        114
+ dc.b 255 ; ******        115
+ dc.b 255 ; ******        116
+ dc.b 082 ; Scalpel       117
+ dc.b 196 ; Screwdriver   118 (in toolbox)
+ dc.b 029 ; Shovel        119
+ dc.b 196 ; Spanner       120 (in toolbox)
+ dc.b 104 ; Red Ticket    121
+ dc.b 105 ; Green Ticket  122
+ dc.b 255 ; *****         123
+ dc.b 135 ; Bomb          124
+ dc.b 164 ; Bumble/Bearing125
+ dc.b 098 ; Maxwell/Sink  126
+ dc.b 163 ; Peg/Warp      127
+ dc.b 165 ; 101-Way Cable 128
+;
+ dc.b 082 ; Stacker       129
+ dc.b 255 ; ************* 130
+ dc.b 255 ; ************* 131
+ dc.b 255 ; ************* 132
+ dc.b 255 ; ************* 133
+ dc.b 255 ; ************* 134
+ dc.b 092 ; Lamp          135
+ dc.b 195 ; Viewer        136 (on table)
+ dc.b 145 ; Silver Tray   137
+ dc.b 087 ; Table         138
+ dc.b 065 ; Toolbox       139
+;
+ dc.b 255 ; ************* 140
+ dc.b 255 ; ************* 141
+ dc.b 255 ; ************* 142
+ dc.b 255 ; ************* 143
+ dc.b 255 ; ************* 144
+ dc.b 255 ; ************* 145
+ dc.b 255 ; ************* 146
+ dc.b 255 ; ************* 147
+ dc.b 255 ; ************* 148
+ dc.b 255 ; ************* 149
+;
+ dc.b 255 ; ************* 150
+ dc.b 255 ; ************* 151
+ dc.b 155 ; ************* 152
+ dc.b 155 ; ************* 153
+ dc.b 155 ; ************* 154
+ dc.b 155 ; ************* 155
+ dc.b 155 ; ************* 156
+ dc.b 155 ; ************* 157
+ dc.b 155 ; ************* 158
+ dc.b 155 ; ************* 159
+;dc.b 155 ; ************* 157
+;
+LIST3
+; Rob walk (add 100 to msgs>100)
+;
+ dc.b 83 ;Room
+ dc.b 168 ;circle it descended on
+ dc.b 169 ;onto red circle $ rises up
+;
+ dc.b 79 ;Room
+ dc.b 170 ;after rising on circle
+ dc.b 8  ;to north
+;
+ dc.b 80 ;Room
+ dc.b 11 ;from south
+ dc.b 17 ;to down
+;
+ dc.b 81 ;Room
+ dc.b 171 ;from above
+ dc.b 10 ;to east
+;
+ dc.b 82 ;Room
+ dc.b 14 ;from west
+ dc.b 14 ;to west
+;
+ dc.b 81 ;Room
+ dc.b 10 ;from east
+ dc.b 172 ;to above
+;
+ dc.b 80 ;Room
+ dc.b 174 ;ramp below
+ dc.b 14 ;to the west
+;
+ dc.b 78 ;Room
+ dc.b 10 ;from the east
+ dc.b 17 ;to down
+;
+ dc.b 100 ;Room
+ dc.b 171 ;from the ramp above
+ dc.b 172 ;up the ramp
+;
+ dc.b 78 ;Room
+ dc.b 174 ;from the ramp below
+ dc.b 11 ;to the south
+;
+ dc.b 77 ;Room
+ dc.b 8  ;from the north
+ dc.b 14 ;to the west
+;
+ dc.b 79 ;Room
+ dc.b 10 ;from east
+ dc.b 173 ;onto the circle and descends
+;
+ dc.b 0 ;End of robot walk list
+ dc.b 0
+ dc.b 0
+ dc.b 0
+;
+; Computer menu structure
+;
+ dc.b 0  ; MAIN MENU (40)
+ dc.b 6  ; Instructions
+ dc.b 47 ; -> Info Menu
+ dc.b 53 ; -> Desk Menu
+ dc.b 7  ; Library
+ dc.b 59 ; -> Maps Menu
+ dc.b 40 ; Main Menu
+;
+ dc.b 1  ; INFO MENU (47)
+ dc.b 8  ; Damage Info
+ dc.b 9  ; Flight Log
+ dc.b 10 ; Droid Info
+ dc.b 11 ; Passenger Info
+ dc.b 40 ; -> Main Menu
+;
+ dc.b 2  ; DESK MENU (53)
+ dc.b 65 ; -> In Tray
+ dc.b 70 ; -> Out Tray
+ dc.b 12 ; Files
+ dc.b 13 ; Diary
+ dc.b 40 ; -> Main Menu
+;
+ dc.b 3  ; MAPS MENU (59)
+ dc.b 14 ; Overview Map
+ dc.b 15 ; Freezer Map
+ dc.b 16 ; Accommodation Map
+ dc.b 17 ; Engine Map
+ dc.b 40 ; -> Main Menu
+;
+ dc.b 4  ; IN-TRAY MENU (65)
+ dc.b 18 ; Worried re flight
+ dc.b 19 ; Can't find people
+ dc.b 20 ; Murderer at door
+ dc.b 40 ; -> Main Menu
+;
+ dc.b 5  ; OUT-TRAY MENU (70)
+ dc.b 21 ; Send U/S
+ dc.b 40 ; -> Main Menu
+;
+LASTPTR

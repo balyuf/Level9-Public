@@ -1,0 +1,207 @@
+;--------------------------Duel Code -----------------------------;
+ begin
+
+.Duel
+.Theduel
+ if GameOverTimer=0 then DuelNotEnding
+ sub GameOverTimer,c1
+ if GameOverTimer=0 then @DuelGameOver
+
+.DuelNotEnding
+; in case the initialisation wait went wrong, keep sending
+; signal that the duel has started
+ v1=CommsDuelReady
+ gosub @SendPadding ; send v1 several times because receiver waits till
+; several bytes have been received before processing them
+
+ gosub @sGetControls
+ if duelstatus<4 then notfourthstage ;<> Mike 19 dec 90
+ if duelStatus>6 then NotFourthStage ; started to die.
+;duelstatus=4 is in process of draw
+  gosub @fourthstage 
+;;  goto duelend
+
+.NotFourthStage
+ if duelstatus<>7 then notdying
+  dx4=fighteracb
+  if playergundrawn<>0 then gunfall  
+  v1=0
+  gosub @PlaySample
+  objectnumber=6
+  add ObjectNumber,DuelPlayerBase ; 3756
+  goto setupdyingplayer
+.GunFall
+  objectnumber=4
+  add ObjectNumber,DuelPlayerBase ; 3754
+.SetupDyingPLayer
+  Won=false
+  gosub @changeacbdx4
+  GameOverTimer=20 ; time till we terminate
+  duelstatus=8
+
+.NotDying
+ if duelstatus<>3 then notthirdstage
+  gosub @thirdstage 
+  goto duelend
+
+;duelstatus=2 is waiting for bell
+
+.NotThirdStage
+;  if duelstatus<>1 then notsecondstage
+;  gosub @secondstage   ; press fire to set up bell
+;  goto duelend
+;
+;.NotSecondStage  ; look for draw (up key)
+  if duelstatus<>0 then notfirststage
+  gosub @setupfigures  ; set up duel figures
+  gosub @SecondStage ; set up delayed bell
+ v4=DuelSamples
+ gosub @LoadSamplesForGame
+; if TwoPlayerMode=false then NotInitTwoPlayerDuel
+; if EnemyName>2 then NotInitTwoPlayerDuel
+; if EnemyName<1 then NotInitTwoPlayerDuel
+; gosub @InitTwoPlayerDuel
+
+
+.NotInitTwoPlayerDuel
+.NotFirststage
+.duelend
+ return
+;----------------
+.DuelGameOver
+ if Won=false then LoseDuel
+
+ if EnemyName<>255 then @WinGame ; won final conflict 
+ 
+ m1=PlayersName
+ m2=101 ; win duel
+ gosub @DisplayInstructionsM1M2
+ add PlayerReputation,c16
+ PlayingDuel=0
+ DuelStatus=0
+ goto @BackToWalkabout ; ReturnToMap
+
+.LoseDuel
+ if EnemyName<>255 then @LoseGame ; lose final conflict 
+ m1=PlayersName
+ m2=102 ; lose duel
+ gosub @DisplayInstructionsM1M2
+ gosub @DisplayNursingPicture
+ PlayingDuel=0
+ DuelStatus=0
+ goto @ReturnToMap
+
+;---------------
+.SetupFigures
+  objectnumber=0
+  add ObjectNumber,DuelOpponentBase ; 3700
+  dv2=opponentx
+  dv3=opponentz
+  dv4=opponenth
+  dv5=1
+  dv6=0
+  gosub @StartFreeACB
+  enemyacb=dx4
+
+  objectnumber=0
+  add ObjectNumber,DuelPlayerBase ; 3750
+  dv2=Startplayerx
+  dv3=Startplayerz
+  dv4=startplayerh
+  dv5=1
+  dv6=0
+  gosub @StartFreeACB
+  fighteracb=dx4
+  duelstatus=1
+  CrossHairACB=0 ; ensure cross hair is not visible
+  EnemyStatus=0 ; enemy not killed yet
+
+ if TwoPlayerMode=false then SUFigRet
+ if EnemyName=Billy then SUFWait
+ if EnemyName<>Pat then SUFigRet
+; two-player mode, final duel. Wait for other computer
+; to be ready.
+.SUFWait
+ v2=3 ; send ready byte this many times
+
+.SUFWait2
+ v1=CommsDuelReady
+ gosub @SendPadding ; send v1 several times because receiver waits till
+; several bytes have been received before processing them
+ if v1<>CommsDuelReady then SUFWait
+; read again, to make sure it's not just a stray byte...
+ gosub @ReadSerial
+ if v1<>CommsDuelReady then SUFWait
+
+.SUFigRet
+ return
+;------------
+.secondstage
+;;if fire key pressed, then setup bell ring
+;  if FireKey=0 then NoStart
+;  if FireKeyChange=0 then NoStart
+; then setup bell to ring after a delay
+  x1=32
+  objectnumber=bellani
+  dv1=objectnumber
+  dv2=Startplayerx
+  dv3=Startplayerz
+  dv4=startplayerh
+  add dv4,x1
+  x1=16
+  add dv4,x1
+  add dv2,x1
+  dv5=1
+  dv6=0
+  gosub @StartFreeACB
+  duelstatus=2
+
+.NoStart
+ return
+;----------
+.ThirdStage
+  if UpKey<>0 then ThirdS2
+  if FireKey=0 then @nodraw
+  if FireKeyChange=0 then @NoDraw
+  v1=0 
+  gosub @PlaySample
+
+.ThirdS2
+  if EnemyName=255 then TSDontNotify
+  v1=CommsIveDrawn
+  gosub @SendPadding ; send v1 several times because receiver waits till
+; several bytes have been received before processing them
+
+.TSDontNotify
+  duelstatus=4
+  if CrossHairACB<>0 then NoDraw
+  ObjectNumber=1
+  add ObjectNumber,DuelPlayerBase ; 3751 ;draw
+  dx4=fighterACB
+  gosub @ChangeACBdx4
+  playergundrawn=1
+  Rasteroffset=0
+  objectnumber=crosshairani
+  dv1=objectnumber
+  dv2=startcrossx
+  dv3=startcrossz
+  dv4=startcrossh
+  dv5=1
+  dv6=0
+  gosub @startfreeacb
+  crosshairacb=dx4
+
+.Nodraw
+ return 
+;------------
+.FourthStage
+  dx4=crosshairacb
+  gosub @readacbdx4
+  cursorx=dv2
+  cursory=dv3
+  sub cursory,dv4
+
+  gosub @checkcursor
+  return
+
+;---------------------------end duel code -------------------------;

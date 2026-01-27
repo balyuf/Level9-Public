@@ -1,0 +1,327 @@
+; Standard adventure source, copyright (C) 1988 Level 9 Computing.
+;
+; SCONST, game-specific constants. You will probably need to change 
+; most of the values of these. 
+;
+; A standard labelling convention for constants is that constants 
+; preceded by I (e.g ILOOK) are relative to their appropriate offset 
+; (e.g verboffset).
+;
+CONST
+;; StandardAdventure=1405 ; unique game identifier value
+ Scapeghost=1930
+;
+ AllowBoat=1 ; set to 1 if you want boat/vehicle code
+;
+; STARTsynthSHORTdescs=1199 ; shortroomdescs+minsynthroom
+ SHORTroomDESCS=800
+ LONGroomDESCS=1100
+;
+ MAXMOVEABLE=109 ; MAX OBJECT WHICH MAY BE TAKEN, THROWN ETC.
+;; MAXMOVEAPLUS1=110 ; >> Pete 14/9/89 
+;
+ xmax=4 ; co-ords go 0..xmax - remember to change room 1 exits.
+ xmaxplus1=5
+ ymax=3
+; 
+;; minsynthroomminus2=38 ; >> Pete 14/9/89 
+ minsynthroomminus1=39
+ minsynthroom=40 ; the first room on the grid (bottom left hand corner)
+ maxsynthroom=59
+;
+ minecholoc=20
+ maxecholoc=35
+ maxecholocplus1=36
+;
+ minsceneryobj=180
+ minsceneryobjminus1=179
+ maxsceneryobj=190
+;; maxsceneryobjplus1=191 ; >> Pete 14/9/89 
+ minsceneryobjt2m1=359
+ maxsceneryobjtimes2plus2=382
+;; numsceneryobjplus1=11 ; >> Pete 14/9/89 
+;
+;; minweaponminus1=39 ; >> Pete 14/9/89 
+;; minweapon=40 ; >> Pete 14/9/89 
+ maxweapon=43
+;; maxweaponplus1=44 ; >> Pete 14/9/89 
+;
+ minclothes=60
+ maxclothes=69
+;
+;; minfood=80 ; >> Pete 14/9/89 
+;; maxfood=81 ; >> Pete 14/9/89 
+;; maxfoodplus1=82 ; >> Pete 14/9/89 
+;
+ mintreasure=80
+;=====
+; special constant to allow the three light objects just heavier 
+; than the heaviest carried so far to be lifted
+ mintreasureminus2=78
+;=====
+ maxtreasure=91
+;; maxtreasureplus1=92 ; >> Pete 14/9/89 
+;
+ minallobject=40
+ maxallobject=109
+;
+ MAXOBJECTVISIBLE=149
+ MAXOBJECT=189 ; includes scenery objects.
+; goes wrong for maxobject>190 (dunno why!)
+; - inventory gets a funny value for hisearchpos (24)
+ MAXOBJECTPLUS1=190
+; 
+ MINOMNI=190 ; 158 ; all real objects above this are omni-present
+;; MINOMNIMINUS1=189 ; 159 ; >> Pete 14/9/89 
+ MAXOMNI=260 ; must include ieverything, except, it
+;
+; Preposition values (all relative to prepoffset)
+;
+ FASTENEDTO=14
+ through=209
+;
+; VERBS...
+;; iburn=115 ; >> Pete 14/9/89 
+;; ikiss=129 ; >> Pete 14/9/89 
+;; ipast=162 ; >> Pete 14/9/89 
+;; iwalk=164 ; >> Pete 14/9/89 
+;; icatch=165 ; >> Pete 14/9/89 
+;
+; Offsets into SCORETABLE.. ( table 7 ) (starts at 32...)
+;; scBase=32 ; >> Pete 14/9/89 
+;; scmax=75 ; >> Pete 14/9/89 
+ scmaxplus1=76
+;
+ VisitTableStart=76 ; 34
+ VisitTableEnd=226 ; 255 ; 213 ; VisitTableStart + (150=num of "Real" rooms)
+;
+;; MeetingTable=226 ; 255 ; 213 ; >> Pete 14/9/89 
+;; MeetingTableEnd=290 ; 319 ; 277 ; meetingTable+MaxNpc ; >> Pete 14/9/89 
+;
+;; startliedowntable=290 ; >> Pete 14/9/89 
+;; endliedowntable=329 ; >> Pete 14/9/89 
+;
+ minpeople=1 ; = creaturebase
+ maxpeople=15
+;; maxpeopleplus1=16 ; >> Pete 14/9/89 
+;
+;; creaturebase=1 ; including people, user etc. ; >> Pete 14/9/89 
+;; creaturebaseminus1=0 ; including people, user etc. ; >> Pete 14/9/89 
+ MINNPC=2 ; all except user
+;; MINNPCMINUS1=1 ; all except user ; >> Pete 14/9/89 
+ MAXNPC=15
+ MAXNPCPLUS1=16
+ maxtalkingnpc=14
+;=====
+ maxghost=9
+;=====
+ MAXTALKINGNPCPLUS1=15
+;
+; npc status in list 6..
+ NPCTABLESIZE=128 ; MAXNPCPLUS1*NpcEntrySize
+;; NPCTABLESIZEPLUS8=136 ; >> Pete 14/9/89 
+;; NPCCURRENTOFFSET=0 ; >> Pete 14/9/89 
+;
+;; NPCENTRYSIZE=8; >> Pete 14/9/89 
+; npc command queues follow the above in list 6..
+ npcstackbase=128 ; immediately after npc table
+;; npcstackbaseplus5=133 ; >> Pete 14/9/89 
+ maxnpcentries=52 ; 5 bytes per queued-command entry on stack
+;
+ npcstackentrysize=5 ; each entry is 5 bytes (hence the 5's above)
+;
+ npctablesizetozero=1535 ; now fixed. was 785
+;
+; offsets within each npc table entry in list 6..
+;; enemyoffset=0; >> Pete 14/9/89 
+ followoffset=1 ; person to follow normally
+ masteroffset=2 ; the person or creature who subdued this npc
+;; hitpointoffset=3; >> Pete 14/9/89 
+;; hatredoffset=4 ; the amount which this npc hates its enemy; >> Pete 14/9/89 
+ npcptroffset=5
+;; boredomoffset=6 ; >> Pete 14/9/89 
+; attentionoffset=7
+; and offsets within each corresponding entry in npcinitial, list 5..
+;; attackoffset=2 ; >> Pete 14/9/89 
+; hitpoint offset=3
+ obedienceoffset=4
+;; patienceoffset=5 ; >> Pete 14/9/89 
+ goldsingingoffset=6 ; in static data - word (hi byte first)
+;
+TABLE
+;; list6=6 ; >> Pete 14/9/89 
+;
+CONST
+;
+;objects
+;
+ User=1
+;
+;=====
+ Joe=2
+ Bert=3
+ Edna=4
+ David=5
+ Alex=6
+ Edith=7
+ Colonel=8
+ Violet=9
+ mourners=10
+ man=11
+ supervisor=12
+;; workman=13 ; >> Pete 14/9/89 
+ vandals=14
+ dog=15
+;
+; ordinary objects (80 onwards)
+;
+; light objects in order...
+;; thistledown=80 ; >> Pete 14/9/89 
+;; petal=81 ; >> Pete 14/9/89 
+;; dry=82 ; >> Pete 14/9/89 
+ matchbook=83
+;; pebble=84 ; >> Pete 14/9/89 
+ defaultcard=85
+ whitecard=85
+ yellowcard=86
+ fishbone=87
+;; twig=88 ; >> Pete 14/9/89 
+ watch=89
+ bell=90
+ gnomon=91
+;
+; heavy objects...
+ bag=95
+;; Newspaper=96 ; >> Pete 14/9/89 
+ Magazine=97
+;; bottle=98 ; >> Pete 14/9/89 
+;; shovel=99 ; >> Pete 14/9/89 
+ defaultwreath=100
+ newwreath=100
+ greenwreath=101
+ fadedwreath=102
+; 
+; static objects (110 onwards) 
+ button=110
+ switch=111
+ lightbulb=112
+ lock=113
+ barrel=114
+ defaultlever=115
+ lever1=115
+ lever2=116
+ lever3=117
+ rope=118
+ gravel=119
+ vase=120
+ bush=121
+ branches=122
+ mound=123
+;; vault=124 ; >> Pete 14/9/89 
+ spotlight=125
+ thermometer=126
+;; yew=127 ; >> Pete 14/9/89 
+ seat=128
+ stonework=129
+ carvings=130
+ plinth=131
+ statue=132
+ sundial=133
+ brokensundial=134
+;; sarcophagus=135 ; >> Pete 14/9/89 
+ urn=136
+ timeobject=137 ; "time" object written in gravel. marked as 
+; "time" and "message" for erasing purposes.
+ sheddoor=138
+ wall=139
+;
+; vehicles (140 onwards)
+ cart=140
+; 
+; invisible objects (150 onwards)
+ headstone=150
+ grave=151
+ bushes=164
+ WallAboveVault=169
+ company=172
+;
+ minlightminus1=174 ; start of light sources... 
+;; minlight=175 ; >> Pete 14/9/89 
+ shedlight=175 ; if shedlighton=true, present in 42
+ spotlightlight=176 ; if spotlighton=true, present in 3-7
+ streetlights=177 ; if nighttime, present in 8-10
+ lightair=178 ; examine air, reveals light. this is used because 
+; violet is blind and complains about "something in the air"
+;; maxlight=179 ; >> Pete 14/9/89 
+;
+ timenoun=220 ; marked only as "time" for writing purposes.
+;=====
+; 
+;; ithing=246 ; >> Pete 14/9/89 
+;; iroom=243 ; >> Pete 14/9/89 
+;
+; game-specific constants...
+;
+;=====
+ urnstrength=9 ; strength required to push urn
+ timelimit=300 ; day breaks
+;=====
+;
+; game-specific variables...
+;
+VAR
+ TotalMoves
+ ProblemObject 
+;; ProblemVerb ; >> Pete 14/9/89 
+ gdCurrentSave gdHiSave
+ GalahadComment
+ ALREADYDONEPROTECT
+ startpicturetable
+ examinemarked
+;
+ GeneralScoreAddition
+ t1 t2 t3 ; temps for preserving x1,x2,x3 in printm1
+ outofreach
+;
+;=====
+ playerstrength ; progressive strenght of player
+ playerobject ; number of object carried
+ failedlift ; last light object that user failed to lift
+ dogfriendly ; set when dog will help player
+ dogobject ; number of object carried by dog
+ dogverb
+ dogprep
+ dognoun1
+ dognoun2 ; used for dog stored command when copying player
+ shedlighton ; set when shed light on
+ spotlighton ; set when spotlighton
+ sheddooropen ; set when shed door open
+ nighttime ; set when ghosts emerge
+ ednagotwreath ; set when edna given wreath
+ alreadysaidnmw ; flag to prevent edna repeated saying "that's not 
+; my wreath" when it is taken to here
+ alreadysaidnmfw ; flag to prevent edna repeated saying "that's not 
+; my faded wreath" when it is taken to here
+ pushingsundial ; number of ghosts pushing sundial
+ pushingthermometer ; number of ghosts pushing thermometer
+ joecommented ; prevents joe repeating his thermometer comment
+ pushingbutton ; number of ghosts pushing button
+ edithfree ; set when edith free from "end of time" curse
+ examinebushes ; count for successively examining bushes
+ urnrocked ; set when urn rocked and david is recruited
+ pushlever1
+ pushlever2
+ pushlever3 ; set when pushing lever1,lever2,lever3
+ actorturningbarrel ; contains person who is turning the barrel
+ shedunlocked ; set when shed door unlocked
+ dogcalmed ; incremented when successively calming dog
+ alreadyknelt ; prevents repetative kneeling to calm dog
+ npcdistressed ; set in specialactivate when npc is distressed by 
+; light and can only obey movement verbs
+ vandaljoke ; flag to prevent "dead bulb" joke being repeated
+ npcsfollowing ; number of followers. if >4, then print "the company 
+; entered from the <dir>", instead of a full screen of NPCs.
+ companyfollowing ; prevents "the company arrived" being repeated
+ gametimer ; overall game timer for duration of night
+;=====
+;

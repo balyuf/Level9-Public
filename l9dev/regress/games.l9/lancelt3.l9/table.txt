@@ -1,0 +1,956 @@
+; Standard adventure source, copyright (C) 1987 Level 9 Computing.
+;
+; TABLE.TXT, assembler format data for tables, a.k.a lists/arrays. 
+; (Save the assembled data as TABLE.DAT). 
+;
+; You must start all DEFWs on EVEN boundaries, else subsequent code 
+; seems to be padded to make it even (according to the GENST listing, 
+; anyway). The EVEN directive inserts a padding byte if appropriate.
+;
+ ORG 0
+starttables
+ dc.l LIST1-starttables ; MOVEABLE OBJECT START
+ dc.l $8000 ; OBJECT CURRENT
+ dc.l $8000+NUMOBJ ; HI OBJECT CURRENT
+ dc.l LIST4-starttables ; scenery table
+ dc.l NPCINITIAL-starttables ; npc initial and 'floor pointers'
+ dc.l $8000+LIST23SIZE ; 6 - NPC current attributes, stack
+ dc.l $8000+LIST236SIZE ; 7 - output buffer,scoretable
+ dc.l list8-starttables ; 8 - assorted fixed system tables
+ dc.l $8000+LIST2367SIZE ; 9 - input table,object table
+ dc.l ENDTABLE-starttables
+;---
+; CONTAINER POSITONS
+ON EQU 1
+UNDER EQU 2
+BEHIND EQU 3
+CARRIED EQU 4
+WORN EQU 5
+riddenby EQU 6
+PREPIN EQU 7
+HANGINGFROM EQU 8 ; E.G. TREE
+growingfrom equ 9 ; e.g goat, other people
+LIEON EQU 12
+SITON EQU 13
+fastenedto equ 14
+holdingthelid equ 15 ; for strap/chest
+;
+; additions to high initial position
+OBV EQU $80
+ita equ 0
+itan equ $10 ; starts with a vowel
+singularsome equ $20 ; "some cheese is tasy"
+he equ $30
+she equ $40
+pluralsome equ $50 ; "some ropes are strong"
+you equ $60
+properMale equ $70
+; ProperFemale is handled by SpecialConjugate
+;
+NUMOBJ EQU 192
+NUMHIOBJ EQU NUMOBJ ; NO. OF OBJECTS WITH A HIGH POSITION
+minnpc equ 1
+maxnpc equ 29
+npctablesize EQU 240 ; 480 ; (maxnpc+1)*8
+npcstacksize equ 500
+
+STACK EQU 50
+OUTPUTBUFFER EQU 32
+SCORETABLE EQU 30 ;length of score table
+OBJTABLE EQU 16 ; number of objects which can be specified on one line
+SCRATCH EQU 32 ; GENERAL PURPOSE WS LIST
+;
+;
+LIST23SIZE EQU NUMOBJ+NUMHIOBJ
+LIST236SIZE EQU LIST23SIZE+npctablesize+npcstacksize
+LIST2367SIZE EQU LIST236SIZE+OUTPUTBUFFER+SCORETABLE+58+29
+; 58 is num rooms, 29 is MaxNpc
+;;LIST23678SIZE equ LIST2367SIZE ; >>Mike 8/8/87 - reduced from ST version
+;>>mike 8/8/87 LIST23678SIZE EQU LIST2367SIZE+OBJTABLE
+;
+;---
+LIST1
+ dc.b 0,0               ; OBJECT 0
+USER EQU 1
+ dc.b 0+you,50          ;  1 - USER (Lancelot)
+ dc.b he,4		; 2 black knight
+nacien equ 3
+ dc.b ProperMale,33	; 3 Nacien
+ dc.b ProperMale,0	; 4 Ector
+ dc.b ProperMale,56	; 5 Bors
+ dc.b ProperMale,56	; 6 Percival
+ dc.b he,7		; 7 Inquisitive knight in the woodland
+ dc.b ProperMale,34	; 8 Galahad
+ dc.b pluralsome,0	; 9 evil knights (transient)
+priest equ 10
+ dc.b he,13		; 10 priest (must stay outside church)
+pilgrim equ 11
+ dc.b he,37		; 11 pilgrim
+ dc.b she,0		; 12 maid
+Damosel equ 13
+ dc.b she,5		; 13 damosel
+ dc.b he,9		; 14 cleric
+Priests equ 15
+ dc.b pluralSome,9	; 15 priests
+ dc.b 0,0               ; 16
+ dc.b 0,0               ; 17
+ dc.b 0,0               ; 18
+ dc.b 0,0               ; 19
+ dc.b 0,0               ; 20
+ dc.b 0,0               ; 21
+ dc.b 0,0               ; 22
+ dc.b 0,0               ; 23
+ dc.b 0,0               ; 24
+ dc.b pluralsome,53     ; 25 lions
+ dc.b 0,19 	        ; 26 red dragon
+ dc.b 0,0               ; 27 foul fiend
+ dc.b 0,22              ; 28 black dragon
+ dc.b 0,0               ; 29 elemental (transient)
+ dc.b 0,0               ; 30 
+ dc.b 0,0               ; 31 
+ dc.b 0,0               ; 32 
+ dc.b 0,0               ; 33 
+ dc.b 0,0               ; 34 
+ dc.b 0,0               ; 35  
+ dc.b 0,0               ; 36  
+ dc.b 0,0               ; 37
+ dc.b 0,0               ; 38
+ dc.b 0,0               ; 39
+;
+; weapons (40 onwards)..
+ dc.b 0,0               ; 40
+ dc.b 0,0               ; 41
+ dc.b 0,0               ; 42
+ dc.b 0,0               ; 43
+ dc.b 0,0               ; 44
+ dc.b 0,0		; 45
+ dc.b 0,0		; 46
+ dc.b 0,0		; 47
+ dc.b 0,0		; 48
+ dc.b 0,0               ; 49
+ dc.b 0,0               ; 50 
+ dc.b 0,0               ; 51 
+ dc.b 0,0               ; 52 
+ dc.b 0,0               ; 53 
+ dc.b 0,0               ; 54
+ dc.b 0,0               ; 55
+ dc.b 0,0               ; 56
+ dc.b 0,0               ; 57
+ dc.b 0,0               ; 58
+ dc.b 0,0               ; 59
+;
+; clothes...
+ dc.b 0,0		; 60
+ dc.b 0,0
+ dc.b 0,0
+ dc.b 0,0
+ dc.b 0,0               ; 64
+ dc.b 0,0               ; 65
+ dc.b 0,0               ; 66
+ dc.b 0,0               ; 67
+ dc.b 0,0               ; 68 
+ dc.b 0,0               ; 69 
+ dc.b 0,0               ; 70 
+ dc.b 0,0               ; 71
+ dc.b 0,0               ; 72 
+ dc.b 0,0               ; 73
+ dc.b 0,0               ; 74
+ dc.b 0,0               ; 75
+ dc.b 0,0               ; 76
+ dc.b 0,0               ; 77
+ dc.b 0,0               ; 78
+ dc.b 0,0               ; 79
+;
+; now some ordinary objects (80 onwards)..
+crown equ 80
+ dc.b 0,9		; 80 crown
+tray equ 81
+ dc.b 0,0		; 81 tray(plate)
+ dc.b 0,0		; 82 1 cake
+ dc.b pluralsome,0		; 83 2 cakes
+ dc.b pluralsome+on,tray		; 84 3 cakes
+ dc.b 0,0		; 85 body of bad christian
+ dc.b carried,nacien	; 86 chalice
+ dc.b 0,38		; 87 shield
+ dc.b prepin,boat	; 88 horn
+ dc.b prepin,boat	; 89 swprd
+ dc.b 0,56		; 90 key
+ dc.b 0,0		; 91 
+ dc.b 0,0		; 92
+ dc.b 0,0		; 93
+ dc.b 0,0		; 94
+ dc.b 0,0		; 95
+ dc.b 0,0		; 96
+ dc.b 0,0		; 97
+ dc.b 0,0		; 98
+ dc.b 0,0		; 99
+ dc.b 0,0               ;100 
+ dc.b 0,0               ;101 
+ dc.b 0,0               ;102 
+ dc.b 0,0		;103 
+ dc.b 0,0               ;104
+ dc.b 0,0               ;105
+ dc.b 0,0               ;106
+ dc.b 0,0               ;107
+ dc.b 0,0               ;108
+ dc.b 0,0               ;109
+ dc.b 0,0               ;110
+ dc.b 0,0               ;111
+ dc.b 0,0               ;112
+ dc.b 0,0               ;113
+ dc.b 0,0               ;114
+ dc.b 0,0               ;115
+ dc.b 0,0               ;116
+ dc.b 0,0               ;117
+ dc.b 0,0               ;118
+ dc.b 0,0               ;119
+ dc.b 0,0               ;120
+ dc.b 0,0               ;121
+ dc.b 0,0               ;122
+ dc.b 0,0               ;123
+ dc.b 0,0               ;124
+ dc.b 0,0               ;125
+ dc.b 0,0               ;126
+ dc.b 0,0               ;127
+ dc.b 0,0               ;128
+tomb equ 129
+ dc.b 0,38               ;129 tomb
+;
+; some static objects (130 onwards)..
+ dc.b itan,50		; 130 altar
+ dc.b 0,0		; 131 cross
+boat equ 132
+ dc.b obv,123		; 132 boat
+ dc.b 0,8		; 133 thorn
+ dc.b ProperMale,55	; 134 grail
+pavillion equ 135
+ dc.b 0,5		; 135 pavillion
+bed equ 136
+ dc.b 0,51		; 136 bed
+ dc.b 0,130		; 137 fire
+ dc.b 0,42		; 138 sand dune
+ dc.b 0,37		; 139 well
+;----------------------------
+; ADD INVISIBLE OBJECTS HERE (NOT RELEVANT TO GAMEPLAY): 140-149
+ dc.b 0,9		; 140 cross
+ dc.b 0,34		; 141 cross
+ dc.b 0,0		; 142 
+ dc.b 0,0		; 143 
+ dc.b 0,0		; 144 
+ dc.b 0,0		; 145 
+ dc.b 0,0		; 146 
+ dc.b 0,0		; 147 
+ dc.b 0,0		; 148 
+ dc.b 0,0		; 149
+;-----------------------------------
+;
+; some necessary invisible objects (150 onwards)..
+ dc.b 0,0		; 150
+ dc.b 0,0		; 151 stake (Galahad tied to this)
+ dc.b 0,4		; 152 river
+ dc.b 0,0		; 153
+ dc.b 0,0		; 154
+ dc.b 0,0		; 155
+ dc.b 0,0		; 156
+ dc.b 0,0		; 157
+ dc.b 0,0		; 158
+ dc.b 0,0		; 159
+ dc.b 0,0		; 160
+
+;---------------------
+; ADD INVISIBLE OBJECTS HERE (NOT RELEVANT TO GAMEPLAY): 161-179
+ dc.b 0,0		; 161
+ dc.b 0,0		; 162
+ dc.b 0,0		; 163
+ dc.b 0,0		; 164
+ dc.b 0,0		; 165
+ dc.b 0,0		; 166
+ dc.b 0,0               ;167 
+ dc.b 0,0               ;168
+ dc.b 0,0               ;169
+ dc.b 0,0               ;170
+ dc.b 0,0               ;171
+ dc.b 0,0               ;172
+ dc.b 0,0               ;173
+ dc.b 0,0               ;174
+ dc.b 0,0               ;175
+ dc.b 0,0               ;176
+ dc.b 0,0               ;177
+ dc.b 0,0               ;178
+ dc.b 0,0               ;179
+;-------------------------
+;
+; Brief location objects (479+N). See 779+ for examine messages and 
+; 1199+ for their verbose equivalents..
+ dc.b 0,123		; 180 west shore object
+ dc.b 0,115		; 181 southern isle object
+ dc.b 0,130		; 182 sand dune
+ dc.b 0,127 		; 183 east shore object
+; 
+;
+
+
+;---
+ even
+ENDOBJECTS
+terraintable
+LIST4
+; table giving scenery types on grassy plain grid
+m equ 112 ; minsynthroom
+; <<< not used in Lancelot3 >>>
+; dc.b m+1,m+1,m+1,m+1,m+1
+; dc.b m+1,m+1,m+1,m+1,m+1
+; dc.b m+1,m+1,m+1,m+1,m+1
+; dc.b m+1,m+1,m+1,m+1,m+1
+ even
+;---------
+list8
+; table for remarks made by Galahad...
+ dc.b 5,3	; priest laughed and vanished
+;; dc.b 6,4	; made sign of the cross
+ dc.b 7,5	; vanished in a puff of evil
+ dc.b 10,6	; devout prayer
+ dc.b 29,7	; L lies
+ dc.b 35,8	; bonk damosel etc.
+ dc.b 73,0	; I am the best knight
+ dc.b 74,9	; boat would bot move
+ dc.b 75,0	; best knight needed
+ dc.b 81,11	; foul fiend emerged
+ dc.b 86,12	; spared by Gk
+ dc.b 90,10	; blew horn
+ dc.b 110,13	; couldn't drink water
+ dc.b 159,2	; the elementals won that one
+ dc.b 164,1	; use the key dummy
+ dc.b 250,250	;skip
+ dc.b 50,14	; L slept beside cross
+ dc.b 0,0
+;
+;
+;---------
+ even
+NPCINITIAL
+list5
+; first we have a dummy entry for npc 0
+; this is used as some pointers to the *other*
+; things which are used in this list
+; (the equivalent of this area in list6 is used for temp workspace)
+;
+ dc.w floorpointers-npcinitial
+ dc.w racetracks-npcinitial
+ dc.w reversaltable-npcinitial
+ dc.w 0 ; spare (potion table in part2)
+;
+; for each character, have the following info:
+
+; For greed agression, timidity, obediance, there
+; is a special case - if one of the values is 255, then
+; the npc will always choose that one, if it is possible
+; This is particularly useful for slaves etc.
+; Note that npcs will still respond to attacks etc. - 
+; anything which sets the 'attention flag'
+
+FRIENDLY EQU 0
+dodge equ 0
+damage equ 0
+; now the npc tables themselves...
+defaultmale equ 3410
+defaultfemale equ 3420
+defaultanimal equ 3400
+; npc 0 has dummy entry used as pointers above
+
+
+; dc.b enemy, dodge, attack, hit points, obedience, gold-sing
+
+ dc.b FRIENDLY,dodge,20,100,0,1           ; 1 USER
+ dc.w defaultmale ; standard singing
+
+ dc.b friendly,dodge,10,100,50,1     ; 2 
+ dc.w 3700
+
+ dc.b friendly,dodge,40,200,200,1  ; 3 nacien
+ dc.w 3710
+
+ dc.b friendly,dodge,10,100,80,1     ; 4 
+ dc.w 3720
+
+ dc.b friendly,dodge,10,100,255,1     ; 5 bors
+ dc.w 3730
+
+ dc.b friendly,dodge,10,100,255,1     ; 6 percival
+ dc.w 3740
+
+ dc.b friendly,dodge,35,200,80,1     ; 7 woodland knight - very hard to kill
+ dc.w 3750
+
+ dc.b friendly,dodge,10,255,255,1     ; 8 galahad
+ dc.w 3760
+
+ dc.b friendly,dodge,35,250,0,1     ; 9 evil knights
+ dc.w 3770
+
+ dc.b friendly,dodge,10,100,80,1    ; 10 
+ dc.w 3780
+
+ dc.b friendly,dodge,10,100,80,1     ; 11 
+ dc.w 3790
+
+ dc.b friendly,dodge,10,100,80,1     ; 12 
+ dc.w 3800
+
+ dc.b friendly,dodge,10,100,255,1    ; 13  damosel
+ dc.w 0 ; not used 3810
+
+ dc.b friendly,dodge,10,100,200,1    ; 14 
+ dc.w 3820
+
+ dc.b friendly,dodge,10,100,200,1     ; 15 priests
+ dc.w 3830
+
+ dc.b friendly,dodge,10,100,80,1     ; 16
+ dc.w 3840
+
+ dc.b friendly,dodge,10,100,80,1    ; 17
+ dc.w 3850
+
+ dc.b friendly,dodge,10,100,80,1     ; 18
+ dc.w 3860
+
+ dc.b friendly,dodge,10,100,80,1    ; 19
+ dc.w 3870
+
+ dc.b friendly,dodge,10,100,80,1   ; 20
+ dc.w 3880
+
+ dc.b friendly,dodge,10,100,80,1     ; 21
+ dc.w 3890
+
+ dc.b friendly,dodge,10,100,80,1     ; 22
+ dc.w 3900
+
+ dc.b friendly,dodge,10,100,80,1    ; 23
+ dc.w 3910
+
+ dc.b friendly,dodge,10,100,80,1    ; 24
+ dc.w 3920
+
+ dc.b friendly,dodge,40,100,255,1    ; 25 lions
+ dc.w 3930
+
+ dc.b friendly,dodge,35,100,255,1    ; 26 red dragon
+ dc.w 3940
+
+ dc.b friendly,dodge,50,150,80,1    ; 27 foul fiend
+ dc.w 3950
+
+ dc.b friendly,dodge,35,100,255,1   ; 28 black dragon
+ dc.w 3960
+
+; dc.b FRIENDLY,dodge,10,100,3,0,0,0           ; 1 USER
+; dc.w defaultmale ; standard singing
+; dc.b 0,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,50,0,255     ; 2 
+; dc.w 3700
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,200,50,255  ; 3 nacien
+; dc.w 3710
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,255     ; 4 
+; dc.w 3720
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,255     ; 5 
+; dc.w 3730
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,255     ; 6 
+; dc.w 3740
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,255     ; 7 
+; dc.w 3750
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,255     ; 8 galahad
+; dc.w 3760
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,0,0,255     ; 9 
+; dc.w 3770
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,155     ; 10 
+; dc.w 3780
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,255     ; 11 
+; dc.w 3790
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,255     ; 12 
+; dc.w 3800
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,255     ; 13 
+; dc.w 3810
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,255     ; 14 
+; dc.w 3820
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,200     ; 15 
+; dc.w 3830
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,200     ; 16
+; dc.w 3840
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,200     ; 17
+; dc.w 3850
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,200     ; 18
+; dc.w 3860
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,200     ; 19
+; dc.w 3870
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,200     ; 20
+; dc.w 3880
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,200     ; 21
+; dc.w 3890
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,200     ; 22
+; dc.w 3900
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,200     ; 23
+; dc.w 3910
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,200     ; 24
+; dc.w 3920
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,200     ; 25 lions
+; dc.w 3930
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,255,20,200     ; 26 red dragon
+; dc.w 3940
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,80,20,200     ; 27 foul fiend
+; dc.w 3950
+; dc.b 1,0,0,0,0,0
+;
+; dc.b friendly,dodge,10,100,3,255,20,200     ; 28 black dragon
+; dc.w 3960
+; dc.b 1,0,0,0,0,0
+
+;---
+
+floorpointers
+; part of list5
+; now 'floor pointers'
+; there is one bye pair for each static room - the
+; first byte gives the direction to go inwards
+; and the second byte gives direction for going outwards
+; (i.e. towards the synthesised grid)
+;
+; ** BIG WARNING **
+; all shapes must be simply connected. i.e. given a pair of rooms,
+; you must be able to trace a path between them using only the
+; OUT paths of one OR the other.
+; This is because of the way the follow and GO code works.
+north equ 1
+ne equ 2
+east equ 3
+se equ 5
+south equ 4
+sw equ 6
+west equ 7
+nw equ 8
+up equ 9
+down equ 10
+verbin equ 11
+out equ 12
+cross equ 13
+climb equ 14
+jump equ 15
+
+ dc.b 0 ; room 0 (not used)
+ dc.b 0 ; room 1 (not used)
+ dc.b 0 ; 2 - 
+ dc.b east ; 3 - wasteland
+ dc.b east ; 4 - ford
+ dc.b east ; 5 - clearing
+ dc.b 0 ; 6
+ dc.b east ; 7 - 
+ dc.b south ; 8 - 
+ dc.b se ; 9 - 
+ dc.b east ; 10 - 
+ dc.b 0 ; 11
+ dc.b sw ; 12 - 
+ dc.b south ; 13 - 
+ dc.b south ; 14 - 
+ dc.b north ; 15 - 
+ dc.b west ; 16 - 
+ dc.b south ; 17 - 
+ dc.b south ; 18 - 
+ dc.b south ; 19 - 
+ dc.b north ; 20 - 
+ dc.b north ; 21 - 
+ dc.b north ; 22 - 
+ dc.b west ; 23 - 
+ dc.b 0 ; 24
+ dc.b west ; 25 - 
+ dc.b 0 ; 26
+ dc.b 0 ; 27
+ dc.b 0 ; 28
+ dc.b down ; 29
+ dc.b down ; 30
+ dc.b down ; 31
+ dc.b down ; 32
+ dc.b out ; 33
+ dc.b east ; 34
+ dc.b east ; 35
+ dc.b east ; 36
+ dc.b north ; 37
+ dc.b north ; 38
+ dc.b south ; 39
+ dc.b south ; 40
+ dc.b north ; 41
+ dc.b south ; 42
+ dc.b 0 ; 43
+ dc.b 0 ; 44
+ dc.b 0 ; 45
+ dc.b 0 ; 46
+ dc.b 0 ; 47
+ dc.b 0 ; 48
+ dc.b 0 ; 49
+ dc.b out ; 50
+ dc.b out ; 51
+ dc.b out ; 52
+ dc.b west ; 53
+ dc.b west ; 54
+ dc.b west ; 55
+ dc.b west ; 56
+;---
+ even
+racetracks
+; sequences of commands which actors obey
+; each is referred to by a 16-bit offset from the start of list5
+; the initial sequences are contained in this table at the start..
+ dc.w 0 ; 0
+ dc.w 0 ; 1 - 
+ dc.w 0 ; 2 - 
+ dc.w NacienRt-list5 ; 3 - Nacien
+ dc.w 0 ; 4 - 
+ dc.w 0 ; 5 - 
+ dc.w 0 ; 6 - 
+ dc.w 0 ; 7 - 
+ dc.w GalahadRT-List5 ; 8 - galahad
+ dc.w 0 ; 9
+ dc.w 0 ; 10
+ dc.w PilgrimRT-list5 ; 11 - pilgrim
+ dc.w 0 ; 12
+ dc.w DamoselRt-list5 ; 13 - damosel
+ dc.w ClericRT-List5 ; 14 - penniless cleric
+ dc.w PriestsRT-list5 ; 15
+ dc.w 0 ; 16
+ dc.w 0 ; 17
+ dc.w 0 ; 18
+ dc.w 0 ; 19
+ dc.w 0 ; 20
+ dc.w 0 ; 21
+ dc.w 0 ; 22
+ dc.w 0 ; 23
+ dc.w 0 ; 24
+ dc.w LionsRt-list5 ; 25 - lions
+ dc.w 0 ; 26
+ dc.w 0 ; 27
+ dc.w 0 ; 28
+
+
+StartRt
+; each of the race track entries has a 4-byte entry:
+; VERB PREP NOUN1 NOUN2
+ipin equ 7
+ipwith equ 16
+
+drop equ 107
+attack equ 90 ; 40
+open equ 114 ;64
+go equ 96 ; go to room noun1 (=setupgo)
+close equ 140 ; 90
+wait equ 92
+examine equ 100
+take equ 105
+give equ 111
+eat equ 123
+find equ 139
+kill equ 93
+waitforperson equ 89
+waituntiltime equ 90
+waitforperiod equ 91
+put equ 108
+returnobject equ 136
+
+Conditional equ 247
+
+ActorVaryMessage equ 248 ; goes straight on in same turn to next step in rt
+WRtActorVaryMessage equ ActorVaryMessage*256
+
+ActorSingleMessage equ 249 ; this completes actor's turn. Like ActorM1Dot
+WActorSingleMessage equ ActorSingleMessage*256
+
+;; racetrackActorM1Dot equ 250
+racetrackmessage equ 251
+WRtMessage equ racetrackMessage*256
+
+racetrackgosub equ 253
+WRtGosub equ racetrackGosub*256
+
+racetrackgoto equ 254
+WRtGoto equ racetrackGoto*256
+
+racetrackreturn equ 255
+light equ 165 ; 115
+ride equ  185 ; 135
+
+stand equ 46
+lie equ 47
+drink equ 60
+;;examine equ 100
+wear equ 106
+remove equ 109
+
+; nouns...
+people equ 237
+everything equ 234
+nullobject equ 255
+
+water equ 241 ; noun
+
+; prepositions...
+to equ 202
+; note that:
+;
+; NOUN1 will always be searched for if not accessible
+; to the verb (using the usual accessability rules)
+;
+; NOUN2 will normally be searched for using the same rules.
+; There are situations where this is awkward - so if the
+; preposition is WITH, then NOUN2 must be carried (or it will
+; be searched for by the npc).
+LionsRt
+ dc.b WaitForPerson,0,user,nullobject
+ dc.w WRtActorVaryMessage,3930
+ dc.b WaitForPeriod,0,0,nullobject
+ dc.w WRtActorVaryMessage,3930
+ dc.b WaitForPeriod,0,0,nullobject
+ dc.w WRtActorVaryMessage,3930
+ dc.b WaitForPeriod,0,0,nullobject
+; if user is still around, kill him
+  dc.b Conditional,0,user,nullobject
+   dc.b kill,0,user,nullobject
+ dc.w WRtGoto,LionsRt-list5
+;
+DamoselRtCakes
+ dc.w WRtActorVaryMessage,2880
+ dc.b waitForPeriod,0,0,nullobject ; prevent looping
+; drop through to main racetrack
+
+DamoselRt
+; dc.b WaitForPerson,0,user,nullobject
+  dc.b Conditional,0,pavillion,nullobject
+   dc.w WRtGoto,DamoselRtPavillion-list5
+  dc.b Conditional,0,tray,nullobject
+   dc.w WRtGoto,DamoselRtCakes-list5
+; neither tray nor pavillion - invite him to bed
+;; dc.b lie,0,bed,bed
+damoselRtBed
+ dc.w WRtActorVaryMessage,2890
+ dc.b WaitForPeriod,0,0,nullobject
+ dc.w WRtGoto,DamoselRtBed-list5
+
+DamoselRtPavillion
+ dc.w WRtACtorVaryMessage,2860
+ dc.b waitForPeriod,0,0,nullobject ; prevent looping
+ dc.w WRtgoto,DamoselRt-list5
+;----- 
+PriestRt
+ dc.b WaitForPerson,0,crown,nullobject
+ dc.w WRtActorVaryMessage,2870 ; give it to me!
+ dc.b WaitForPeriod,0,1,Nullobject
+ dc.w WRtGoto,PriestRt-list5
+
+NacienRt
+ dc.b WaitForPerson,0,User,Nullobject
+ dc.w WActorSingleMessage,2840
+ dc.w WactorSingleMessage,2841
+ dc.w WActorSingleMessage,2842
+ dc.w WActorSingleMessage,2843
+ dc.w WActorSingleMessage,2844
+ dc.w WActorSingleMessage,2845
+ dc.w WActorSingleMessage,2846
+ dc.w WActorSingleMessage,2847
+ dc.w WActorSingleMessage,2848
+ dc.w WActorSingleMessage,2849
+ dc.w WActorSingleMessage,2850
+ dc.b go,0,32,nullobject
+ dc.w WActorSingleMessage,2851
+ dc.w WActorSingleMessage,2852
+ dc.w WActorSingleMessage,2853
+ dc.w WActorSingleMessage,2854
+ dc.b go,0,33,nullobject
+ dc.w WRtGoto,NacienRt-list5
+
+PilgrimRt
+ dc.b WaitForPerson,0,user,nullobject
+ dc.b examine,0,user,nullobject
+ dc.w WActorSingleMessage,2609 ; couldn't get to well
+ dc.w WRtGoto,PilgrimRt-list5
+;---
+GalahadRt
+ dc.w WRtGosub,GalahadDoNw-list5
+ dc.w WRtActorVaryMessage,2920 ; random group
+ dc.w WRtGosub,GalahadToCentre-list5
+ dc.w WRtActorVaryMessage,2920 ; random group
+ dc.w WRtGosub,GalahadDoSe-list5
+ dc.w WRtActorVaryMessage,2920 ; random group
+ dc.w WRtGosub,GalahadDoNacien-list5
+ dc.w WRtActorVaryMessage,2920 ; random group
+
+ dc.w WRtGosub,GalahadDoSe-list5
+ dc.w WRtActorVaryMessage,2920 ; random group
+ dc.w WRtGosub,GalahadDoNw-list5
+ dc.w WRtActorVaryMessage,2920 ; random group
+ dc.w WRtGosub,GalahadToCentre-list5
+ dc.w WRtActorVaryMessage,2920 ; random group
+ dc.w WRtGosub,GalahadDoNacien-list5
+ dc.w WRtActorVaryMessage,2920 ; random group
+ dc.w WRtGoto,GalahadRt-list5
+;---
+GalahadDoNw
+ dc.b go,0,9,nullobject ; go to cross
+ dc.w WActorSingleMessage,2960 ; rested before cross
+ dc.b go,0,50,nullobject ; go to vagon castle
+ dc.w WActorSingleMessage,2961 ; prostrated himself before altar
+ dc.b go,0,13,nullobject	; go to false priest
+  dc.b Conditional,0,priest,nullobject
+   dc.w WActorSingleMessage,2970 ; warned L about priest
+ dc.b go,0,52,nullobject ; go inside church
+ dc.w WActorSingleMessage,2961 ; prayed
+ dc.b RacetrackReturn,0,Nullobject,Nullobject
+;---
+GalahadDoSe
+ dc.b go,0,34,nullobject ; go to wasteland cross
+ dc.w WActorSingleMessage,2960 ; rested before cross
+ dc.b go,0,37,nullobject ; visit pilgrim
+  dc.b conditional,0,pilgrim,nullobject
+   dc.w WActorSingleMessage,2820 ; tended to pilgrim
+ dc.b go,0,38,nullobject ; go to white abbey
+ dc.w WActorSingleMessage,2971 ; great evil once done here
+ dc.b examine,0,tomb,nullobject
+ dc.b go,0,123,nullobject ; go to shore
+ dc.b RacetrackReturn,0,nullobject,nullobject
+;---
+GalahadToCentre
+ dc.b go,0,7,nullobject ; to woodland knight
+ dc.w WActorSingleMessage,2972 ; give name
+ dc.b go,0,5,nullobject ; go to pavillion
+  dc.b conditional,0,damosel,nullobject
+   dc.w WActorSingleMessage,2969 ; don't trust the damosel
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+GalahadDoNacien
+ dc.b go,0,39,nullobject ; go to base of cliff
+ dc.w WRtActorVaryMessage,2980 ; random Nacien messages
+ dc.b go,0,33,nullobject ; go to hermitage
+ dc.w WActorSingleMessage,2962 ; knelt before Nacien
+ dc.w WActorSingleMessage,2963 ; said "I have sinned"
+ dc.w WActorSingleMessage,2964 ; "sin1"
+ dc.w WActorSingleMessage,2965 ; "sin2"
+ dc.w WActorSingleMessage,2966 ; "sin3"
+ dc.w WActorSingleMessage,2967 ; "sin4" + reply by Nacien
+ dc.w WActorSingleMessage,2968 ; "byee"
+ dc.b RacetrackReturn,0,NullObject,Nullobject
+;---
+ClericRt
+ dc.b go,0,4,nullobject ; go to ford
+ dc.w WActorSingleMessage,2810 ; and drink
+ dc.b go,0,7,nullobject ; to woodland knight
+ dc.w WActorSIngleMessage,2811 ; greet him
+ dc.b go,0,9,nullobject ; go to cross
+ dc.w WActorSingleMessage,2812 ; kneel and pray
+ dc.b go,0,13,nullobject ; go up to false priest
+  dc.b Conditional,0,priest,nullobject
+   dc.w WActorSingleMessage,2818 ; lookat him
+ dc.b go,0,52,nullobject ; go to church
+ dc.w WActorSingleMessage,2813 ; pray in church
+ dc.w WActorSingleMessage,2814 ; pray
+ dc.w WActorSingleMessage,2815 ; pray
+ dc.w WActorSingleMessage,2816 ; get up and face altar
+ dc.b go,0,7,nullobject ; to woodlnd knight
+ dc.w WActorSingleMessage,2811 ; greet him again
+ dc.b go,0,5,nullobject ; to pavillion
+  dc.b Conditional,0,pavillion,nullobject
+   dc.w WActorSingleMessage,2819 ; look at it
+ dc.b go,0,37,nullobject
+  dc.b Conditional,0,pilgrim,nullobject
+   dc.w WActorSingleMessage,2820 ; said hi to pilgrim
+ dc.b go,0,38,nullobject ; to white abbey
+ dc.w WActorSingleMessage,2817 ; kneel and pray
+ dc.w WRtGoto,ClericRt-list5
+
+PriestsRt
+ dc.b go,0,4,nullobject ; go to stream
+ dc.w WActorSingleMessage,2830 ; drank at stream
+ dc.w WActorSingleMessage,2831 ; greeted black knight, but no response
+ dc.b go,0,7,nullobject ; go to woodland knight
+ dc.w WActorSingleMessage,2837 ; greet woodland knight
+ dc.b go,0,52,nullobject ; go to church
+ dc.w WActorSingleMessage,2832 
+ dc.w WActorSingleMessage,2833
+ dc.w WActorSingleMessage,2834
+ dc.w WActorSingleMessage,2835
+ dc.b go,0,38,nullobject ; go abbey
+ dc.w WActorSingleMessage,2836
+ dc.b examine,0,tomb,nullobject ; examine the tomb
+ dc.w WRtGoto,PriestsRt-list5
+
+EndRt
+ list
+Size_Of_Racetracks equ EndRt-StartRt
+ nolist
+
+
+
+
+
+
+;---
+ even
+reversaltable
+; part of list5
+; gives reverse directions for directions
+ dc.b 0,4,6,7,1,8,2,3,5 ; compass directions
+ dc.b 10,9,12,11,13,14,15
+;-----------
+ even
+
+ENDTABLE
+;---------
+ END
+

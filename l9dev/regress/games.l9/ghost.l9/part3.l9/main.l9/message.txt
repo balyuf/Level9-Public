@@ -1,0 +1,2763 @@
+; Scapeghost part III text. 
+; Copyright (C) 1989 Level 9 Computing. 
+; 
+; ST version of MESSAGE.TXT: messages/keywords for the game. 
+; 
+; Messages are of the form: [ number : text ] ; comment 
+; They must be in numeric order, but gaps are allowed in the number 
+; sequence, of course. 
+; 
+; | (vertical bar) terminates the printable part of a message. It 
+;   is typed by shifting backslash (to the left of the keyboard). 
+; / forces the following character to be printed literally. 
+; % is carriage return. Note that carriage return is ignored if 
+;   the printing is already at the start of a line, to make coding 
+;   simpler. To force a real carriage return, print space first. 
+; ^ (shift 6) marks a word for recognition by the parser. It is 
+;   followed by a letter for word type: 
+;   Adjective; Comment; conJunction; Noun; Preposition; Verb. 
+; 
+; Capitalization is done automatically on output and you are 
+; recommended to use lower case for the first letter of messages 
+; as this improves compression and will make no difference on 
+; output, providing all punctuation is correct. 
+; 
+; Please ensure that all long room descriptions and first-time 
+; messages are there. Comment blank msgs..  ;; [1375:] ; etc.. 
+; Please comment all long room descriptions, first-time messages, 
+; examine messages etc so we know what they refer to. e.g: 
+; [1125:, where Luke had died] ; living room. 
+; Exits must be clear from room descriptions or first-time msgs. 
+; 
+;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
+;>> NB: Grouped messages which lie in unusual areas (e.g. 2500-2799) >> 
+;>> are marked with GROUP.                                           >>  
+;>>                                                                  >>  
+;>> For future games, SEARCH for "I " (case specific) "Scapeghost"   >>  
+;>> "ghost" "spook" "Alan" "=="                                      >> 
+;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
+; 
+; punctuation messages.. 
+[1: ] 
+[2::] 
+[3:, ] 
+[4:.] ; dot with no space 
+[5:%] 
+[6:and ] 
+[7:.%] 
+[8:?%] 
+[9:. ] 
+; 
+; positions etc.. 
+[10:exits led ] 
+[11:an exit led ] 
+[12: through a door] 
+[13: through an open door] 
+[14: and ] 
+[15:%A haunting breeze carried away the "What now" prompts. ] 
+[16:%> ] 
+[17:%What now? ] 
+[18:: ]; 
+[19:"] 
+; 
+; Messages for printing objects.. 
+[20:a ] 
+[21:the ] 
+[22:an ] 
+[23:some ] 
+[24:." ] ; dot quote 
+[25:% %] ; blank line 
+[26:worn] ; for 'couldn't have worn' 
+[27:taken] ; for 'couldn't have taken' 
+; 
+; exits directions, doubling as movement verbs.. 
+[51:^V north|^V north ^V n ^V n ^V northwards ^V northwards] 
+[52:^V northeast|^V northeast ^V ne ^V ne] 
+[53:^V east|^V e ^V eastwards] 
+[54:^V south|^V s ^V southwards] 
+[55:^V southeast|^V se] 
+[56:^V southwest|^V sw] 
+[57:^V west|^V w ^V westwards] 
+[58:^V northwest|^V northwest ^V nw ^V nw] 
+[59:^V upwards|^V u ^V up] 
+[60:^V downwards|^V d ^V down] 
+[61:^V inside|^V in ^V inwards ^V into ^V enter] 
+[62:^V outside|^V out ^V leave] 
+[63:^V cross|^V across ^V over] 
+[64:with the ^V climb|^V scramble ^V ascend ^V mount] 
+; is in 'you struggle with the climb and are in' 
+; 
+; Intransitive verbs.. 
+[70:^V i] 
+[71:^V again|^V a] 
+[72:^V look|^V l ^V display ^V redisplay ^V refresh] 
+[73:^V inventory|^V inv ^V possessions ^V possess ^V list] 
+[74:^V quit ^V RESTART] 
+[75:^V RESTORE ^V LOAD] 
+[76:^V save] 
+[77:^V RAMSAVE ^V RAM] ; && 
+[78:^V ramload] ; && 
+[79:^V score ^V rating ^V status] 
+[80:^V verbose] 
+[81:^V brief] 
+[82:^V wait|^V wa ^V pause ^V z] 
+[83:^V blew|^V ring ^V play ^V blow ^V toot ^V sound] 
+[84:^V on] 
+[85:^V off] ; >> 
+[86:^V pictures ^V graphics] ; && disc 
+[87:^V words ^V text] ; && disc 
+[89:^V UNDO ^V OOPS] 
+[90:^V hit|^V attack ^V hit ^V break ^V kick ^V punch 
+^V smash ^V kill] 
+; 
+[92:^V searched|^V search ^V explore] 
+[93:^V dug|^V dig] 
+[94:^V sniffed|^V sniff ^V smell] 
+[95:^V knocked|^V knock] 
+[96:got|^V stood ^V stand ^V jump] ; output e.g. "L got out", "L got in" etc. 
+[97:^V lay|^V lie] 
+[98:^V got|^V sat ^V sit] 
+[99:^V hid|^V hide] 
+[100:^V said|^V say ^V whisper ^V call ^V talk] 
+;; [101:^V teleported|^V teleport] 
+;; [102:^V getme] 
+[103:^V filled|^V fill] 
+[104:^V ran|^V run ^V fly] 
+[105:^V made|^V make] 
+; 
+[107:I couldn't ^V eat anything, being a ghost|^V bite ^V taste ^V nibble 
+^V lick] ;== scapeghost == 
+[108:^V went|^V go ^V goto ^V find ^V walk ^V fly] 
+[109:stopped|^V stop ^V abort] 
+[110:I couldn't ^V drink anything, being a ghost|^V sip] 
+; 
+[112:^V exits ^V exit] 
+[113:^V manifested|^V materialise ^V materialize ^V manifest 
+^V appear] ; == scapeghost.3 == 
+; 
+; verbs for output.. 
+[130:^V had|^V have ] ; mainly for output 
+[131:^V had|^V has ] ; mainly for output 
+[132:^V was|^V am ] ; mainly for output 
+[133:^V were|^V are ] ; mainly for output 'you were' 
+[134:^V was|^V is ] ; mainly for output 'someone was' 
+[135:are] ; output only - present tense for 'tell me about' 
+[136:is] ; output only - present tense for 'tell me about' 
+;; 137 is 'GO IN' 
+;; 138 is 'GO OUT' 
+;; 139 is 'wait for person' 
+;; 140 is 'wait until time' 
+;; 141 is 'wait for (length of time)' 
+;; 142 is 'wait for single turn' 
+; 
+;; [143:^V fought|^V fight ^V kill]  ; >> Pete 13/9/89 
+[145:^V dodged|^V dodge] 
+; 
+; 146 and 147 have text for debugging output only - do not mark 
+[146:gdgo] ; 196 - gdgo 
+[147:gdrun] ; 197 - gdrun 
+;; [148:^V stuff] 
+; 
+; Transitive verbs.. 
+[150:^V examined|^V examine ^V read ^V x] 
+[151:^V cut|^V chop] 
+[152:^V woke|^V wake ^V rouse] 
+; 
+[154:^V got|^V get] 
+[155:^V took|^V take ^V carry ^V acquire ^V steal ^V picked ^V pick 
+^V catch ^V lift ^V hold ^V keep ^V grab] 
+[156:^V wore|^V wear] 
+[157:^V dropped|^V drop ^V discard] 
+[158:^V put|^V conceal ^V wrap] 
+[159:^V removed|^V remove ^V free ^V release] 
+[160:^V threw|^V throw ^V chuck ^V toss ^V hurl] 
+[161:^V gave|^V give ^V offer ^V show ^V offered ^V sell] 
+[162:^V asked|^V ask ^V question] 
+[163:^V followed|^V follow ^V chase] 
+[164:^V opened|^V open ^V unlock ^V unbolt] 
+; 
+[168:^V pushed|^V tug ^V push ^V launch ^V shove ^V rock ^V turn 
+^V rotate ^V paddle ^V press ^V select ^V depress ^V poke ^V prod 
+^V touch ^V switch] ; ===== switch  rccb on, pump sprayer ===== 
+[169:^V fastened|^V fasten ^V tie ^V attach] 
+[170:^V unfastened|^V unfasten ^V untie] ; == scapeghost.3 additions == 
+[171:^V pulled|^V pull ^V yank] 
+[172:^V cooled|^V cool ^V chill ^V freeze ^V chill] 
+;===== scapeghost.3 cool room ===== 
+[173:^V charged|^V light ^V spark ^V shock ^V charge] ; == scapeghost.3 == 
+[174:^V bent|^V bend ^V twist] ; == scapeghost.3 bend key == 
+[175:^V deflated|^V deflate ^V let] ; == scapeghost.3 deflate tyres == 
+[176:^V inserted|^V insert] 
+[177:^V sprayed|^V spray ^V pump] ; == scapeghost.3 pump sprayer == 
+; 
+; 186, 187 and 189 have text for debugging only 
+[186:return object] ; 186 is 'return object to initial' (for npcs) 
+;; [188:find] ; set up find. 
+[189:gdfind] ; 239 is gdfind 
+; 
+[190:^V closed|^V close ^V shut ^V lock ^V bolt] 
+; 
+[192:told] ;; "tell" removed by Pete, 13/9/89  
+; 
+[194:struggled] ; mainly for output 
+; 195 is 'steal all from' 
+; 
+[197:killed] ; output only 
+; 
+[210:reached] ; output only 
+[211:dragged] ; output only 
+[212:passed] ; output only 
+[213:flew] ; output only 
+[214:walked] ; output only 
+[215:caught] ; output only 
+[216:entered] ; output only, e.g 'Fred entered from the east'. Do not mark 
+; 
+; Echo verbs (250-299) which just print the message containing them.. 
+[250:OK, if you say not|^V no] 
+[251:right, so be it|^V yes] 
+[252:oh yes! It's good to do something now and then to keep the 
+old spirits up. Now then, back to business|^V leap ^V hop ^V skip 
+^V dance ^V celebrate] 
+[253:As I spoke the word, I felt my strength drain|^V plugh 
+^V xyzzy ^V sesame ^V plover ^V humakaat ^V satarh ^V ollabin 
+^V obis] ; magic words for amusing response 
+; 
+[255:if you want to talk to someone, follow their name with what you 
+want to say to them. For example JOE, HELLO|^V hello ^V welcome ^V hi 
+^V greetings ^V day ^V afternoon] 
+[256:I heard nothing that I hadn't heard before|^V 
+listen ^V hear] 
+[257:send the coupon to Level 9 for a ^V hint|^V help] 
+; 
+[263:why not|^V y ^V why] 
+[267:you'll have me turning in my grave|^V sod ^V motherfucker 
+^V crap ^V nipples ^V bloody ^V frigging ^V wanker ^V turd 
+^V piss ^V privatisation ^V shit ^V twat ^V cunt ^V bollocks 
+^V jesus ^V christ ^V god ^V devil ^V tits ^V asshole 
+^V arsehole ^V cretin ^V conservatives ^V spastic ^V coon 
+^V wog ^V fucking ^V fucker ^V bastard ^V bugger ^V damn 
+^V sex ^V hell ^V bonk ^V pratt ^V rape ^V shag ^V fuck] 
+; lower case swear words 
+; 
+[273:what? Off already? Try CONTROL C, but don't forget to save 
+your position first|^V goodbye ^V bye] 
+[274:you're forgiven|^V sorry] 
+; 
+;; [277:] 
+; 
+[279:I closed my eyes but it made no difference. There was to be 
+no ^V sleep for me this night] 
+[280:spirits are better kept away from water|^N swim] 
+;
+[281:for all I tried, I could pick up no sensation of 
+anything important having happened in this place. As I was 
+tiring and getting nowhere, I stopped ^V concentrating|^V concentrate 
+^V meditate ^V recreate ^V reconstruct ^V meditating ^V recreating 
+^V reconstructing] ; ==
+; 
+[283:hit] ; the object 'hit' target 
+; 
+; ===== Scapeghost.3 Inflate (tyres) ===== 
+[284:I didn't have the breath to ^V inflate anything] 
+; 
+[285:ghosts don't ^V drink] 
+;
+; >> TRANSITIVE ECHO VERBS FOLLOW
+;
+[286:shaking it would be a waste of telekinetic power|^V shake] 
+[287:I had no need to ^V heat things in this house, when I could 
+chill them, or charge them with static|^V warm ^V ignite ^V burn] 
+[288:it's not your job to ^V bury things] 
+; 
+[290:I tried to ^V polish it|^V rub ^V clean] 
+[291:you ^V fill a container by, e.g, "PUT THING IN CONTAINER"] 
+[292:please ^V empty a container by removing its contents in turn] 
+; 
+;; [294:I had nothing with which to ^V light anything. I was 
+;; a non-smoker, you see] ; == Removed for Scapeghost only == 
+; 
+[297:my lips passed straight through|^V kiss] 
+;
+; -------------------------------------------------------------- 
+; 
+; Objects (300+N).. 
+; 
+; NPCs (1 onwards) 
+; People 
+[301:^N I|^N player ^N me ^N Alan ^N Chance ^N myself] 
+[302:^N Sarah|^N Pearson ^N hostage] 
+[303:the ^N priest|^N vicar] 
+[304:^N Big ^N John|^N B] 
+[305:^N John|^N Q] 
+[306:^N Weasel] 
+[307:^N Jude] 
+[308:the ^N Professor] 
+[309:^N Severian] 
+; 
+; ordinary objects (80 onwards) 
+; 
+; light objects in order... 
+[380:^N holy ^N water|^N phial] ; singularsome 
+[381:^N whisky ^N flask|^N booze] 
+[382:^N broken ^N glass] ; singularsome 
+[383:^N bulb|^N lamp ^N lightbulb] 
+[384:^N gag] 
+[385:^N ropes|^N bonds] ; pluralsome 
+[386:^N insecticide ^N sprayer|^N spraypump ^N pump] ; itan 
+[387:^N key] 
+; 
+; heavy objects... 
+[390:^N briefcase] 
+[391:^N chair] 
+[392:^N hammer] 
+; 
+; static objects (110 onwards) 
+[410:^N hay|^N straw] ; singularsome 
+[411:^N taxi] 
+[412:^N van|^N transit] 
+; 
+[415:^N window] ; in attic 
+[416:^N window] ; in cellar door 
+[417:^N cupboard|^N closet ^N wardrobe] 
+[418:^N circuit ^N breaker] 
+[419:^N curtains] ; pluralsome 
+[420:^N shelf] 
+[421:^N lampholder|^N socket] 
+[422:^N table] 
+[423:^N rubble|^N stone] ; singularsome 
+[424:^N connectors|^N connecters ^N terminals] ; pluralsome 
+[425:^N wires|^N leads] ; pluralsome 
+[426:^N heavy ^N oak ^N door] 
+[427:^N collapsed ^N vault|^N heap ^N rubble] 
+[428:^N creaky ^N stair] 
+; 
+[430:^N pocket] 
+; 
+; invisible objects (150 onwards) 
+; 
+[450:^N farmhouse|^N farm ^N house ^N hideout] ; omni outside house 
+[451:^N church] ; partially collapsed. omni in cemetery 
+; 
+[460:^N grave|^N headstone] ; my grave 
+[461:^N police] ; seen in attic. "They were closing in". pluralsome 
+[462:^N movements|^N disturbances ^N trees ^N shadow] ; seen in attic. 
+; "They were indications that the police were closing in". pluralsome 
+[463:^N playing ^N cards] ; owned by John (gambling sequence) 
+[464:^N money|^N cash ^N dosh] ; owned by John (gambling) 
+[465:^N cigarette|^N fag ^N tab] ; owned by John (gambling) 
+[466:^N whisky ^N bottle] ; brought in by Jude 
+[467:^N barn|^N shed ^N hut] 
+; Synonyms for TAXI TYRES and VAN TYRES are used, although these 
+; may cause errors if the player EXAMINEs TAXI/VAN when it is not 
+; present, resulting in "You can't see the tyres".
+; However, this is outweighed by the availability of the command, 
+; "DEFLATE TAXI/VAN TYRES" as an oppose to "GO VAN/TAXI. DEFLATE 
+; TYRES".
+[468:^N tyres|^N taxi ^A whitewall] ; taxi tyres 
+[469:^N tyres|^N van ^A muddy] ; van tyres 
+[470:^N attic|^N loft ^N bedroom] ; used for CHILL ATTIC 
+[471:^N newspaper|^N paper] ; for weasel to read 
+[472:^N jacket] 
+[473:^N copy of "The Beano"|^N beano ^N comic]
+; 
+; light sources that are present in many locations... 
+[475:^N light in the house] 
+; 
+; Brief location objects (479+N). 
+; 
+; These are used for seeing from a distance and for input, e.g for 
+; 'examine tower' and 'go castle'. (Note that 'go scenery' also works). 
+; They also provide a link between the grid of synthesised locations 
+; and the real, static locations used for rooms inside buildings etc. 
+; 
+[480:^N farmyard] 
+; 
+; Cheat mode nouns 
+; 
+;; [530:^N Ingrid] 
+;; [531:^N turnips] 
+; 
+; Collective nouns... 
+[534:^N everything ^N all ^N every] 
+[535:^N ingredients] ; collective noun - was 'treasure' 
+;; [536:^N weapons] ; collective noun 
+[537:^N people|^N everyone ^N everybody] ; collective noun 
+;; [538:^N clothes|^N armour] 
+; 
+; -------------------------------------------------------------- 
+; 
+; Omni-present objects.. 
+[539:^N door] ; normal door, for the benefit of PRINTACTORACTION. It 
+; is apparently never described by PRINTOBJECT (so?). 
+; 
+[541:^N plants|^N weeds ^N flowers ^N daisy ^N bean ^N husk ^N grass 
+^N soil] 
+[542:^N be] 
+[543:^N room|^N ground ^N floor ^N air] ; used for output as well 
+[544:^N wall|^N walls] 
+[545:^N sky|^N sun ^N moon ^N stars] 
+; 
+; and finally, some miscellaneous nouns which are used miscellaneously. 
+[547:^N except ^N but] 
+[548:^N it|^N that ^N them ^N those ^N none ^N him ^N her] 
+[549:^N minute ^N minutes] 
+ 
+[551:^J then ^J next] 
+[552:^J therefore ^J so] 
+[553:^N I|^N you] ;you 
+; 
+; Pronouns... 
+[560:it] ; ita 
+[561:it] ; itan 
+[562:some] 
+[563:he] 
+[564:she] 
+[565:they] 
+[566:I] ; you ; "Scapeghost special" 
+[567:he] ; proper male 
+[568:she] ; proper female 
+; 
+[570:it] ; ita 
+[571:it] ; itan 
+[572:them] 
+[573:him] 
+[574:her] 
+[575:them] 
+[576:me] ; you ; "Scapeghost special" 
+[577:him] ; proper male 
+[578:her] ; proper female 
+; 
+; SEE ALSO 2430 - GRAHAM 
+; 
+; and some misc output messages 
+; plural endings, and other odd verb declension... 
+[579:~] ; print to avoid bug which can print a space after previous word 
+[580:s] 
+[581:es] 
+[582:is] ; used in examine 
+; 
+; Entry directions, in the form 'The animal enters from the 
+; outside'. (As opposed to 'The animal goes in' - the normal 
+; verb table.) Note that directions are reversed, so the offset 
+; into the table is the direction of the moving npc. 
+; 
+[585:from the south]      ; north  
+[586:from the southwest]  ; northeast   
+[587:from the west]       ; east   
+[588:from the north]      ; south  
+[589:from the northwest]  ; southeast   
+[590:from the northeast]  ; southwest   
+[591:from the east]       ; west  
+[592:from the southeast]  ; northwest   
+[593:from below]          ; above   
+[594:from above]          ; below  
+[595:from outside]        ; inside   
+[596:from inside]         ; outside   
+[597:from across the way] ; across  
+[598:by climbing]         ; climb  
+[599:with a jump]         ; jump 
+; 
+; -------------------------------------------------------------- 
+; 
+; Examine messages (600+N). NO full stops at end please. 
+; 
+; NPCs (1 onwards) 
+; People 
+[601:the ghost of Alan Chance; my spirit earthbound for one last 
+night by the pressing need to clear my name. They say only the good 
+die young. I was trying to prove it] 
+; Me 
+; 
+[602:street wise and a natural actress. She had seemed to find 
+it easier than I did to infiltrate the gang and to keep her 
+cover. Once my partner, she had apparently betrayed me when it 
+came to the crunch. Was it an act? Anyway, I would need her help 
+against the crooks tonight] 
+; Sarah 
+; 
+[603:the local clergyman, a kindly man in normal circumstances, 
+but now he looked terrified] 
+; Priest 
+; 
+[604:a big heavy man, slow-moving but powerful. He had the 
+battered face and slurred speech of an ex-boxer who has taken one 
+too many] 
+; Big John 
+; 
+[605:the leader of the drug importers and a man that nobody 
+crossed. His ruthlessness was only partly cloaked by his well-cut 
+business suit and clean-shaven jaw. He was the one with the 
+overseas contacts, who handled the import end of the traffic. He 
+was wearing a smartly-pressed tweed jacket] ; Leave jacket reference in!
+; John Q 
+; 
+[606:a small, grey ex-con, sinking into a shabby middle-age. A 
+newspaper was thrust into a ^N pocket of his grey coat] 
+; newspaper reference is in examine message because he is 
+; OBVious, but the newspaper should only be described on examining 
+; him. 
+; Weasel 
+; 
+[607:a lithe, classy woman; attractive if you were into tough 
+Sloane chic. She made a big show of being fond of John Q., but 
+this may just have been good business sense on her part] 
+; Jude 
+; 
+[608:"the best brains in the drugs business" - according to 
+him - and leader of the drugs buyers. He was fond of describing 
+himself as faster than a calculator when working out the profit 
+on a deal. John Q. wasn't going to be able to put one over on him! 
+But currently the Professor was not happy at all the police 
+activity nearby, or at having to hole up overnight with a 
+bunch of third-rate crooks, until he could leave under cover 
+of next morning's rush hour traffic] 
+; Professor 
+; 
+[609:a snake in a suit, a nasty, shifty piece of work. He was 
+a crooked policeman who had wormed his way into the drugs 
+squad. He was responsible for my death and the failure of the 
+police operation. He seemed to work for the Professor]
+; Severian 
+; 
+; ordinary objects (80 onwards) 
+; 
+; light objects in order... 
+[680:about to be sprinkled over my grave by the priest as part 
+of the rite of exorcism] 
+; holy water 
+; 
+[681:Big John's ^N hipflask, which he kept topped up with Scotch 
+and which kept him company when he stood on lookout] 
+; whisky flask 
+; 
+[682:the ^A sharp ^N remains of a ^A shattered ^N lightbulb] 
+; broken glass 
+; 
+[683:an ^A ordinary ^A low-wattage ^N lightbulb] 
+; bulb 
+; 
+[684:made from a ^N handkerchief and a ^A boot ^N lace] 
+; gag 
+; 
+[685:of ^A twisted ^N nylon, frayed here and there, but too strong 
+for anyone to break] 
+; ropes 
+; 
+[686:an ^A old-fashioned ^A pump-action ^N sprayer. Its ^A metal 
+^N body had turned green with age and neglect] 
+; spraycan 
+; 
+[687:a ^A flimsy ^A vehicle ^N key] 
+; key 
+; 
+; heavy objects... 
+[690:a ^A very ^A heavy ^A black ^N leather ^N briefcase, stuffed 
+tight with the ^N drugs that this case was all about. I would need 
+it as ^N evidence|^N case] 
+; briefcase 
+; 
+[691:a ^A rickety ^N wood and ^N steel affair, the ^N cane ^N seat 
+sagging with age after six month's careful use] 
+; chair 
+; 
+[692:a ^A heavy ^A club ^N hammer] 
+; 
+; static objects (110 onwards) 
+[710:damp and full of ^N fungus ^N tendrils] 
+; hay 
+; 
+[711:a ^A dusty ^A black ^A London ^N cab, probably stolen 
+for the use of the gangsters. It had seen better days. Now 
+its ^N bumpers were dented, its ^N chrome flaking off and the 
+whitewall tyres were streaked with grey|^N car] 
+; taxi - must keep tyres reference (tyres are an invisible object, 
+; because the taxi is OBVious. This prevents tyres being described 
+; every time we see the taxi). 
+; 
+[712:a ^A dented ^A old ^A transit ^N van, used by the drugs 
+importers. There were deep shadows to hide me, should I get 
+inside] 
+; van - keep tyres reference 
+; 
+[715:a ^A small ^N window, looking out from beneath the eaves 
+onto the farm and beyond to the nearby village] 
+; attic window 
+; 
+[716:a ^A dirt-encrusted ^N window, set into the thick cellar door] 
+; cellar window 
+; 
+[717:a ^A walk-in ^N wardrobe, that may have been used for storing 
+brooms and coats but was now bare] 
+; cupboard 
+; 
+[718:the switch controlling the mains electricity supply. The 
+backup supply from the generator bypassed this, so the lights 
+in the house could still glow dimly. On the ^N RCCB were the 
+words "Plessey Electricals Inc"|^N CEGB ^N trip ^N switch] 
+; circuit breaker 
+; 
+[719:a pair of ^A old ^A flowered ^N curtains] 
+; curtains 
+; 
+[720:set into the wall above the door] 
+; shelf 
+; 
+[721:a ^A cheap ^A plastic ^N lampholder, hanging from the ceiling 
+on a ^A twisted ^N flex|^N lamp ^N holder] 
+; 
+[722:^A large and ^A circular, with ^N Fablon peeling from its 
+^A cheap ^N Formica ^N top] 
+; kitchen table 
+; 
+[723:the fallen remains of the church wall] 
+; rubble 
+; 
+[724:where the electricity supply cables joined the house] 
+; connectors 
+; 
+[725:connected to the electricity supply terminals. They were well 
+insulated, unlike the connectors] 
+; wires 
+; 
+[726:made of ^A solid ^N oak and held in place by ^A two ^A hefty 
+^A iron ^N hinges and a thick ^N bolt] 
+; cellar door 
+; 
+[727:the remains of the vault which had collapsed beneath the church 
+wall] 
+; collapsed vault 
+; 
+[728:a ^A creaky ^N floorboard at the top of the stairs|^N loose] 
+; loose stair 
+; 
+[730:just a pocket] 
+; pocket 
+; 
+; invisible objects (150 onwards) 
+; 
+[750:the place where John Q had set up his base. He had not 
+intended to bring the gang here, but had been forced to when 
+I was revealed as an agent - he could not be sure that I had 
+not revealed the location of their original hideout. The 
+smallholding was in a well-chosen spot - close enough to 
+the main road so that transport was no problem, but far enough 
+from the village to be free of nosey neighbours. It was here 
+that the importers and buyers had met to exchange drugs and money] 
+; farmhouse 
+; 
+[751:a ruined church, with the rubble of the collapsed wall 
+piled high along one side] 
+; church 
+; 
+[760:my own resting place, the fresh earth above it still 
+bearing the marks of the grave-digger's shovel. The parish 
+priest stood beside it, with his ^N bible and holy ^N water, 
+performing the rite of exorcism] 
+; my grave 
+; 
+[761:closing in gradually, some across the fields and others 
+down the road] 
+; police from attic window 
+; 
+[762:signs that the boys in blue were closing in on the farm] 
+; movements from attic window 
+; 
+[763:John's special pack of playing cards. He said they were 
+his lucky cards and always insisted on using them whenever he 
+played poker with the gang] 
+; playing cards 
+; 
+[764:most of it belonged to John by now] 
+; money 
+; 
+[765:smouldering slowly, filling the room with a hanging haze 
+of blue-grey smoke] 
+; cigarette used in gambling sequence 
+; 
+[766:full of of Jack Daniels. The level of whisky in it seemed to 
+have gone down every time I noticed it|^N booze ^N scotch] 
+; bottle in kitchen. sometimes passed around in gambling sequence 
+; 
+[767:a decrepit stone and brick building which the gang had pressed 
+into use as a garage] 
+; barn 
+; 
+[768:well-worn and almost shiny smooth in places. If nothing 
+else, the police could always do this lot for insufficient 
+tread] 
+; taxi tyres 
+; 
+[769:large black round objects which, when filled with air, made 
+the van a lot easier to drive. But that's not important] 
+; van tyres 
+; 
+[770:a dark, but comfortable, little bedroom that had been 
+created in the loft. It must have been cosy up here,  
+beneath the eaves, when this had been a family house] 
+; attic (used for CHILL ATTIC) 
+; 
+[771:Weasel's "Daily Express", which helped him pass the 
+hours. It was folded open at the racing pages and a mess 
+of underlinings and crossings-out showed where Weasel had 
+been trying to pick himself some winners] 
+; newspaper 
+; 
+[772:lightweight woollen coat] 
+; jacket 
+; 
+[773:Big John's favourite read, though he spent most of the 
+time looking at the pictures] 
+; Beano 
+; 
+; light sources that are present in many locations... 
+[775:dim, as the generator was running low] ; light must be dim if 
+; we are inside the house, EXCEPT if we are in the attic, and the 
+; attic bulb has been removed from the socket... 
+; 
+[776:bright downstairs, and I didn't fancy leaving the friendly 
+shadows of the attic] 
+; general light in the house (NB: 776 is not a true object!) 
+; 
+; Brief location objects (479+N). 
+; 
+; These are used for seeing from a distance and for input, e.g for 
+; 'examine tower' and 'go castle'. (Note that 'go scenery' also works). 
+; They also provide a link between the grid of synthesised locations 
+; and the real, static locations used for rooms inside buildings etc. 
+; 
+[780:a cobbled square, reeking with the ^N silage which ran between 
+the ^N cobble ^N stones on the ground. Scatterings of ^N straw lined 
+the way to the east] ; farmyard 
+; 
+; -------------------------------------------------------------- 
+; 
+; Short-Form room Descriptions (800+N). No full stops at end please. 
+; These are the brief mode descriptions; they are prefixed by 'you 
+; are' and, in verbose mode, messages 1100+N are appended. 
+; 
+; room 1 is used as exit modifier for synthesised rooms. 
+; rooms 2..20 are those with static connections; i.e. not on the 
+; synthesised grid. 
+; 
+; description order is: 
+; 'I was' '800++'   '1100++'  '.'   
+;          short     long 
+; 
+; Outdoors 
+; 
+[803:overlooking my own grave] 
+[804:on a ^N path of ^A stone ^N chippings|^N cemetery] 
+[805:on a ^N path leading south out of the ^N cemetery] 
+[806:at a ^N junction in the ^N path|^N drugs] 
+[807:outside the cemetery ^N gate] 
+[808:at a ^N junction|^N main ^N road] 
+[809:at a ^N junction|^N main ^N road] 
+[810:at a ^N sharp ^N bend in the ^N road|^N corner] 
+[811:on a ^N narrow ^N dirt ^N track] 
+[812:on a ^N muddy ^N track] 
+[813:in the front of the ^N barn] 
+[814:in the back of the ^N barn] 
+[815:by the side of the ^N farmhouse] 
+[816:at the back of the ^N house] 
+; 
+; Indoors 
+; 
+[820:in the ^N hallway|^N hall] 
+[821:on a flight of ^N steps] 
+[822:in a large ^N cellar] 
+[823:in the back of the ^N cellar|^N basement] 
+[824:in the ^N kitchen] 
+[825:in the ^N living ^N room|^N lounge] 
+[826:at the ^N top of the ^N stairs|^N landing] 
+[827:in the ^N attic|^N loft] ; by hatch 
+[828:in the ^N attic ^N bedroom|^N loft] ; by window 
+; 
+; "echo locations..." 
+; 
+; Outdoors 
+; 
+[830:among some of the graves which had been exorcised. There 
+was a powerful aura to the place which made my figure disperse 
+into a thin mist and sent me floating back to the path. It was 
+only when I reached a safe distance that I recovered my form] 
+; exorcised graves 
+; 
+[831:among the graves which had already been exorcised by the 
+priest. Everything began to fade to darkness, and I felt myself 
+being drawn back to my grave] 
+; exorcised graves 
+; 
+[832:blocked by a pile of fallen rubble. I found that I could 
+get neither through it nor over it, so I returned to where I 
+had come from] 
+; blocked by rubble 
+; 
+[833:dazzled by a row of bright street lights. I backed away 
+swiftly before my powers became completely drained] 
+; too light south of cemetery 
+; 
+[834:on a main road that seemed to run on for endless miles 
+through the countryside. I could see no point in following it 
+further, so turned back to return to the junction] 
+; north road 
+; 
+[835:on a wide road. It was covered with a thin film of 
+drizzle that made it glisten in the moonlight as it snaked away 
+into the distance. Rather than spending the rest of the night 
+following it, I decided to head back to the junction] 
+; south road 
+; 
+[836:on a main road which led down into a valley towards 
+the street lamps of the town. There was too much light down 
+there for me to be able to get far on that road, so I turned 
+around and headed back] 
+; east road 
+; 
+[837:in a cold and windy field, where tall blades of grass 
+whisped through me and made me shiver. There didn't seem to be 
+anything else for miles in this direction, so I drifted back 
+to the track] 
+; field 
+; 
+; Indoors 
+; 
+[840:in a draughty stone outhouse which contained a small standby
+generator in case the farm had an electricity cut. I thought about 
+trying to disable it, but it was a solid old thing and its control 
+levers were so stiff with rust that I couldn't make any impression 
+on them. I left it alone and went back outside] 
+; outhouse 
+; 
+[841:in the bathroom. There was nothing here to interest a ghost, 
+so I returned to the stairs] 
+; bathroom 
+; 
+[842:among the bedrooms. They were bare and unlived-in, though 
+judging by the odd mattress lying on the floor, some of the 
+gang may have dossed down there from time to time. After a brief 
+look around I decided to drift back to the stairs] 
+; 
+; Grid rooms 
+; 
+[850:in the ^N farmyard] 
+; 
+; -------------------------------------------------------------- 
+; 
+; Now verbose additions to brief location descriptions (1100+n). No 
+; full stops at end please. These are printed immediately after each 
+; short description (800+N), without any intervening punctuation. 
+; (You may start a message with either punctuation or just text.) 
+; 
+; Outdoors 
+; 
+[1103:. It was difficult to see anything to the north, as that 
+part of the cemetery seemed somehow drained of colour and form. 
+To the west, a path led towards the pile of rubble that had once 
+been the abbey wall] 
+; overlooking my own grave 
+; 
+[1104:, running east-west between my grave and the rubble of 
+the wall. A ^A second ^N path led off to the south through a 
+^N scattering of ^A fallen ^N stones] 
+; on a path of stone chippings 
+; 
+[1105:. The church wall had collapsed into a ^A great ^N pile of 
+^N rubble that was strewn across the graveyard, though much of 
+the debris had by now been cleared] 
+; on a path leading south out of the cemetery 
+; 
+[1106:. The ^N ruins of the ^N church lay to the northwest. 
+The ^A last ^A remaining ^N shards of ^N glass in its ^A shattered 
+^N southern ^N tower twinkled with reflected light from the 
+^A distant ^N street ^N lamps. A ^A narrow ^N path led east 
+towards the ^N gate to the ^N car ^N park] 
+; at a junction in the path 
+; 
+[1107: where there was a ^A small ^N car ^N park] 
+; outside the cemetery gate 
+; 
+[1108:. A ^A narrow ^N track split off from the ^A main 
+^A north-south ^N road and disappeared into the darkness 
+to the west] 
+; at a road junction 
+; 
+[1109: where the ^A muddy ^N track opened out a ^A main 
+^A north-south ^N road] 
+; at a junction 
+; 
+[1110:, sweeping from north to east as it came into a ^A wooded 
+^N valley. It was almost pitch black between the ^N trees]
+; at a sharp bend in the road 
+; 
+[1111:. I could see a farmhouse ahead of me to the west. The 
+^N junction with the ^N road, to the east, was lost in the dark] 
+; on a narrow dirt track 
+; 
+[1112:, running from the farmyard, south-east across a ^A grassy 
+^N field. Other ^N fields lay to the east and west beyond ^A low 
+^N hedges of ^N thorn] 
+; on a muddy track 
+; 
+[1113: at the western edge of the ^A farmyard. The ground inside 
+was thick with ^N dung and ^A sodden ^N straw] 
+; in the front of the barn 
+; 
+;; [1114:] 
+; in the back of the barn 
+; 
+[1115:, where stood a ^A small ^A stone-built ^N outhouse. 
+A ^N crazy ^N paving ^N path carried on northwards around 
+the back of the house] 
+; by the side of the farmhouse 
+; 
+[1116:. ^A Thick ^N clumps of ^N nettles and ^N weeds thrust upwards 
+between the ^N paving ^N stones and the ^N wall. Behind them, 
+two thick electricity supply cables emerged from the house] 
+; at the back of the house 
+; 
+; Indoors 
+; 
+[1120:. It was a cold room with a ^A hard ^A quarry ^N tiled 
+^N floor. ^N Stairways led up and down from here, and there 
+were two doors. The one to the east had "Kitchen" carved on 
+the ^A ornamented ^N woodwork above it. The one to the north 
+was marked in discriminatory fashion, "Living Room"]
+; in the hallway 
+; 
+[1121: cut into the stone foundations of the house and leading 
+down into a dank basement] 
+; on a flight of dusty stone steps 
+; 
+[1122: which stretched to the north beneath a low ceiling] 
+; in a large cellar 
+; 
+[1123:] ; in the back of the cellar 
+; 
+[1124: where John had made himself at home, turning the place 
+into a ^N gambling ^N den. In the middle of the room, below a 
+^A flickering ^A  oil ^N lamp, there was a ^A large ^A round 
+^N table, where he would pass his time beating everyone at poker] 
+; in the kitchen 
+; 
+[1125:. There had been some attempt to make this room comfortable, 
+with ^A sagging ^N armchairs pulled up beside an ^A oversprung 
+^N sofa in front of the hearth. A ^N scatter of ^A threadbare 
+^N rugs broke up the ^A bare ^N expanse of ^N floorboards] 
+; in the living room 
+; 
+[1126: next to the bathroom door. A ^A narrow ^N corridor hung 
+with ^A cheap ^N prints led off northwards to the bedrooms, and 
+a small ^N hatch above gave access to the attic] 
+; at the top of the stairs 
+; 
+[1127: which had been converted into a ^A small ^N bed-sitting 
+^N room. At its western end there was a ^A low ^N bed beneath a 
+^A small ^N window] 
+; in the attic by hatch 
+; 
+[1128:. A ^A small ^A single ^N bed had been pushed hard up 
+against the wall] 
+; in the attic bedroom ; by window 
+; 
+; Grid rooms 
+; 
+[1150: outside a ^A small ^A stone ^N farmhouse. A ^A ramshackle 
+^A old ^N barn stood to the west, from which ^N scatterings of 
+^N straw were strewn all the way to the ^N track on the east. 
+A ^A small ^N passage ran northeast to the side of the house] 
+; in the farmyard 
+; 
+; -------------------------------------------------------------- 
+; 
+; 1350+n are messages printed on first entering each room 
+; (VisitTable) 
+; 
+; Outdoors 
+; 
+[1353:% %the priest made the sign of a cross, his eyes raised 
+blankly towards heaven. Beside him, the villain that they 
+called Weasel rubbed his hands together in evil satisfaction. 
+%"Get a move on", John urged the priest. "We all dreamed of 
+Luke last night, and he warned us that the ghost of this one 
+was still walking. Let's get the holy water business over with". ] 
+; overlooking my own grave 
+; 
+[1354:% %I sensed that if I returned to my exorcised grave I would 
+be banished forever. It would be the same if I returned as a free 
+spirit or if I were cast there by sudden light. I would have to be 
+very careful on this last night as a ghost... ] 
+; on a path of stone chippings 
+; 
+[1355:% %I felt a twinge of guilt about the damage that I had 
+caused - even though it had been in a good cause. One thing was 
+certain: the church was going to need an even bigger thermometer 
+for its repair fund. I wondered if what they would fasten it to 
+this time. ] 
+; on a path leading south out of the cemetery 
+; 
+[1356:though there was no sign of Joe that night, I thought I 
+heard him saying, "Good luck and happy haunting". 
+% %I would need all the luck going, if I were going to slow 
+down the gangsters. ] 
+; at a junction in the path 
+; 
+[1357:] 
+; outside the cemetery gate 
+; 
+[1358:% %drizzle began to patter lightly on the roof of the van. ] 
+; at a road junction 
+; 
+;; [1359:] 
+; at a road junction 
+; 
+;; [1360:] 
+; at a sharp bend in the road 
+; 
+[1361:% %I knew where we were now; this was the track I had 
+seen on the criminals' map. Obviously they were still using 
+their new hideout, which meant that the police had not yet 
+closed in, and that I still had work to do... ] 
+; on a narrow dirt track 
+; 
+[1362:] 
+; on a muddy track 
+; 
+[1363:% %a dull glimmer caught my eye for a moment, but I couldn't 
+see anything when I looked again. I guessed I must have frightened 
+a ^N rat, but there bigger rats around the place that needed my 
+attention more. ] 
+; in the front of the barn 
+; 
+;; [1364:] 
+; in the back of the barn 
+; 
+[1365:the long shadow of the farmhouse made it difficult to see 
+much along that side. ] 
+; by the side of the farmhouse 
+; 
+[1366:% %the insulation on the connectors had crumbled away, 
+leaving them dangerously exposed. ] 
+; at the back of the house 
+; 
+; Indoors 
+; 
+[1370:% %the electricity supply to the house now came from the 
+ancient generator outside, so the lights only glowed dimly. 
+% %I realised that my powers had grown since the previous night, 
+and that now I had the power to charge things with static, and 
+to manifest myself if I wished. ] 
+; in the hallway 
+; 
+[1371:% %droplets of icy water dripped from the ceiling and 
+splashed onto the steps, making patterns in the dust. ]
+; on a flight of dusty stone steps 
+; 
+[1372:the cobwebs passed straight through me as I floated further 
+into the gloom. ] 
+; in the cellar 
+; 
+;; [1373:] 
+; in the back of the cellar 
+; 
+[1374:% %"Luck may have been on his side", I thought grimly, "but 
+Chance was against him."] 
+; in the kitchen 
+; 
+[1375:a wood fire crackled warmly in the open grate. ] 
+; in the living room 
+; 
+[1376:I glanced at the prints. They were of thatched cottages, 
+horse-drawn ploughs, bright clean farmyards - and always the sun 
+shone gaily and the people were tanned and smiling. 
+Country-living as it never was. ] 
+; at the top of the stairs 
+; 
+[1377:tiny motes of dust danced lazily in the moonbeams that 
+shone through the window. ] 
+; in the attic ; by hatch 
+; 
+[1378:% %I looked through the window with concern. I felt 
+sure that my colleagues would soon have puzzled out the clues 
+that I had left for them. But the window overlooked several 
+points on the main ^N road to the farm, and anyone sitting here 
+would be sure to see the police coming. Unless he was 
+distracted, of course, and I somehow knew that I would have 
+to do this five times... ] 
+; in the attic ; by window 
+; 
+; Grid rooms 
+; 
+[1400:% %the farm stood on a small hill, with views of the 
+countryside all around. The ^N rain would help restrict visibility, 
+but if the police were to have a chance of closing in without 
+being seen, I would have to help. Otherwise, the evidence would 
+all be destroyed before they got here. ] 
+; in the farmyard 
+; 
+; -------------------------------------------------------------- 
+; 
+; Message pairs for use in describing containment positions 
+; also used for preposition table 
+; 
+; part printed before container 
+; 
+[1600:I could see]                     ; 0 - you can see 
+[1601:^P on |^P onto]                  ; 1 - on 
+[1602:^P underneath|^P below ^P under] ; 2 - under 
+[1603:^P behind]                       ; 3 - behind 
+[1604:]                                ; 4 - carrying 
+[1605:]                                ; 5 - wearing   
+;; [1606:in|^P at]                     ; 6 - blocking the hole 
+[1607:^P in |^P into ^P inside]        ; 7 - in 
+;; [1608:hanging from]                 ; 8 - hanging from 
+;; [1609:growing from ]                ; 9 - growing from 
+;; [1610:^P between]                   ;10 - tied between is tied a rope 
+;; [1611:]                             ;11 - the carter was pushing a cart 
+;; [1612:lying on]                     ;12 - lying on 
+;; [1613:sitting on]                   ;13 - sitting on 
+[1614:frozen to]                       ;14 - (fastened to) ==scapeghost== 
+[1615:]                                ;15 - escorting ==scapeghost== 
+[1616:^P with|^P using] 
+[1617:^P from] 
+ 
+; part printed between container and contained. 
+; 
+[1640:]                                ; 0 - you can see 
+[1641:was]                             ; 1 - on 
+[1642:was]                             ; 2 - under 
+[1643:was]                             ; 3 - behind 
+[1644:was carrying]                    ; 4 - carrying 
+[1645:was wearing]                     ; 5 - wearing 
+;; [1646:was blocked by]               ; 6 - is blocked by 
+[1647:was]                             ; 7 - in 
+;; [1648:was]                          ; 8 - hanging from 
+;; [1649:was]                          ; 9 - growing from 
+;; [1650:was tied]                     ;10 - tied between 
+;; [1651:was driving]                  ;11 - the carter was pushing a cart 
+;; [1652:]                             ;12 - lying on 
+;; [1653:]                             ;13 - sitting on 
+[1654:was]                             ;14 - (fastened to) ==scapeghost== 
+[1655:was escorting]                   ;15 - escorting ==scapeghost== 
+; 
+; for plural contents... 
+[1670:]                                ; 0 - you can see 
+[1671:were]                            ; 1 - on 
+[1672:were]                            ; 2 - under 
+[1673:were]                            ; 3 - behind 
+[1674:was carrying]                    ; 4 - carrying 
+[1675:was wearing]                     ; 5 - wearing 
+;; [1676:was blocked by]               ; 6 - is blocked by 
+[1677:were]                            ; 7 - in 
+;; [1678:were]                         ; 8 - hanging from 
+;; [1679:were]                         ; 9 - growing from 
+;; [1680:were tied]                    ;10 - tied between 
+;; [1681:were driving]                 ;11 - the carter was pushing a cart 
+;; [1682:]                             ;12 - lying on 
+;; [1683:]                             ;13 - sitting on 
+[1684:was]                             ;14 - (fastened to) ==scapeghost== 
+[1685:was escorting]                   ;15 - escorting ==scapeghost== 
+; 
+; (1700+N is part printed before 'you') 
+; 
+; 1740+N is part printed between you and object(s) 
+[1741:was on]                          ; 1 - on 
+[1742:]                                ; 2 - under 
+[1743:]                                ; 3 - behind 
+[1744:owned]                           ; 4 - carried 
+[1745:was wearing]                     ; 5 - worn 
+;; [1746:was riding]                   ; 6 - riding 
+[1747:was in]                          ; 7 - in 
+;; [1748:]                             ; 8 - hanging from 
+;; [1749:]                             ; 9 - growing from 
+;; [1750:]                             ;10 - tied between 
+;; [1751:was driving]                  ;11 - pushing 
+;; [1752:was lying on]                 ;12 - lying on 
+;; [1753:was sitting on]               ;13 - sitting on 
+[1754:was frozen to]                   ;14 - (fastened to) ==scapeghost== 
+[1755:was escorted by]                 ;15 - escorting ==scapeghost== 
+; 	 
+; for plural prepositions... 
+; 1770+N is part printed between you and object(s) 
+[1771:were on]                         ; 1 - on 
+;; [1772:]                             ; 2 - under 
+;; [1773:]                             ; 3 - behind 
+[1774:owned]                           ; 4 - carried 
+[1775:were wearing]                    ; 5 - worn 
+;; [1776:were riding]                  ; 6 - riding 
+[1777:were in]                         ; 7 - in 
+;; [1778:were]                         ; 8 - hanging from 
+;; [1779:were]                         ; 9 - growing from 
+;; [1780:were tied]                    ;10 - tied between 
+;; [1781:were driving]                 ;11 - the carter was pushing a cart 
+;; [1782:were lying on]                ;12 - lying on 
+;; [1783:were sitting on]              ;13 - sitting on 
+[1784:were frozen to]                  ;14 - (fastened to) ==scapeghost== 
+[1785:were escorted by]                ;15 - escorting ==scapeghost== 
+; 
+[1800:^P off] 
+[1801:^P up] 
+[1802:^P down] 
+[1803:^P to] 
+[1804:^P out] 
+[1805:^P from the ] ; used for npc motion 
+[1806:^P for] 
+[1807:^P until] 
+[1808:^P debug] 
+[1809:^P through] 
+[1810:^P about] 
+; 
+; Parser messages.. 
+[2000:you don't need to use "] 
+[2001:" to finish the game] 
+; 
+[2003:I don't understand the word "] 
+[2004:" when used like that] 
+; 
+[2006:I was ] 
+[2007:in a ] ; as in 'You are in an alder forest 
+[2008:in an ] 
+[2009:exits led in all directions] 
+; 
+; general error message when parsing has broken down. 
+[2010:I don't understand what you mean] 
+[2011:I couldn't see] 
+[2012:I didn't have] 
+[2013:I already had] 
+[2014:(Perhaps I'm having just being dead stupid, but I don't seem 
+to be able to grasp the body of your meaning)]
+[2015:it's too far away] ; examine, take etc. scenery objects 
+[2016:I can't find a verb in that sentence] 
+[2017:it's not there] 
+[2018:there were too many nouns in that sentence] 
+[2019:I couldn't see that here] 
+[2020:I owned nothing at all. ] 
+[2021:it was dark. ] 
+[2022:I couldn't reach that from here] 
+; 
+[2036:sorry, I don't fully understand that verb] 
+; ^ verb in keyword table but not in CALLVERB routine 
+[2037:there didn't seem to be anything suitable. ]
+[2038:said "That was a rhetorical question"] 
+[2039:what a mouthful! ] 
+; 
+[2044:couldn't have ] ; as in 'I couldn't have hit that' 
+[2046:that] 
+[2047:here] 
+[2048:I couldn't find ] 
+; 
+[2053:it's not clear what ] 
+[2054: refers to] 
+; 
+; error messages for NPC's 
+[2060:are you talking to yourself again? ] 
+[2061:I couldn't talk to several people at once] 
+; 
+; Standard Adventure output messages 
+; 
+[2100:Welcome to part 3 of Scapeghost, copyright (C) 1989 from 
+Level 9 Computing. 
+% %I awoke abruptly at the start of my third night, feeling 
+stronger than ever and wondering if I would be able to achieve 
+such feats as bending metal and manifesting myself to mortals. 
+% %With a shock, I noticed a priest kneeling before my grave, 
+mumbling passages from a leather-bound book. Two men stood over 
+him. I thought at first they were some kind of assistants, until 
+I saw through their disguises and recognised them as members of 
+the drugs gang. They weren't helping him. They were making
+sure he did what he was told.. ] 
+; 
+; examining something greater than maxobject: (but not scenery) 
+; rare occurrence - mostly for omnipresent objects, numbers, spells 
+[2112:it looked exactly as I had expected. ] 
+; 
+[2114:I couldn't go that way] 
+[2115:through the door] 
+; 
+[2117:it's already open] 
+; 
+[2123:I couldn't put ] ; paired with 2124 
+[2124:there] 
+; 
+[2126:I would have to drop it first] 
+;; [2127:I would have to pick it up first] ; >> Pete 28/2/89 
+[2128:%did you know that you can go quickly to a far off place? E.g 
+"RUN TO ATTIC" or "GOTO SARAH".%] 
+; 
+; 2130 is used when player refers to scenery which is not nearby 
+[2130:I can't find a reference to "] 
+[2131:I was on it! ] 
+[2132:what? ] 
+[2133:where? ] 
+[2134:I was wearing ] 
+[2135:please try again, saying what with. ] 
+[2136:which one? ] 
+[2137:at what? ] 
+[2139:was full] 
+[2140:" here] 
+; 
+[2142:I couldn't wear ] 
+; 
+[2147:I was already wearing that] 
+[2148:I found that I didn't need to do that] 
+; 
+; Confirmation messages 
+; 
+[2152:worn] 
+[2153:OK] 
+; 
+[2155:time passed. ] 
+[2156:said] 
+; 
+[2158:I found that I would have to untie it first] 
+[2160:YES or NO please.%] 
+; 
+[2172:you didn't mention anyone who wants it] 
+; 
+; Death, scoring, game control etc. 
+; 
+[2200:really restart? ] 
+; 
+[2202:really restore? ] 
+[2203:% %did I continue? ] 
+;;[2204:said, "Thank you"]  ; >> Pete 14/9/89 
+; 
+[2209:%the adventure had come to an end. 
+%Please type RESTART, UNDO, RESTORE or RAM RESTORE: ] ; && 
+[2210:the room was badly damaged] ; attack/fireball room 
+[2211:the place was already damaged] 
+[2212:really! You're so destructive! ] 
+[2213:it looked badly damaged] 
+; 
+[2215:that's too long to wait] ; won't wait 
+[2216:try eg Wait for Sarah or Wait 3] 
+; 
+; Score messages.. 
+[2240:%I had scored ] 
+[2241:% %the adventure had come to an end.%] 
+[2242: out of 1000 and was ] 
+[2243:-] ; minus sign 
+; 
+; Ratings 
+[2249:a faded vision] ; -ve score 
+[2250:a vain spirit] 
+[2251:an incompetent ghost] 
+[2252:a harmless apparition] 
+[2253:an ordinary ghost] 
+[2254:a competent spirit] 
+[2255:progressing in the spirit world] 
+[2256:a strong presence] 
+[2257:a powerful phantasm] 
+[2258:a vivid phantom] 
+[2259:a dominant supernatural force] 
+[2260:a poltergeist] ; not normally printed. Used for score overflow 
+; 
+[2300:UNDO and RAM SAVE//RESTORE don't work in this version. ] ; && 
+[2301:%please insert save disk and press a key. %] ; && 
+[2302:%please insert game disk. %] ; && 
+[2308:I couldn't go back further than this. ] ; && 
+[2309:%(this version allows you to use RAM SAVE and RAM RESTORE to 
+save a position in memory, and UNDO to take back bad moves).%] ; && 
+[2310:can't return to that saved position in memory. Perhaps you've 
+restarted the game since it was saved. ] ; && 
+; 
+[2311:% %I am about to start another part of the game. Do you 
+want to save my position first, just in case? ] ; && tape 
+[2312:that data was not saved from Scapeghost. ] 
+[2313:play the game tape to load part ] ; && tape 
+[2314:% %I am about to start another part of the game. Do you 
+want to go ahead? ] ; && tape
+; 
+; misc jokey messages (slightly more complex than echo verbs).. 
+;;[2401:that would be a pretty silly thing to do] ; attack me ; >> Pete 14/9/89 
+[2404:I could smell nothing] 
+[2405:I found nothing much to write about] 
+[2406:I didn't smell of anything, being a ghost] ; == altered for ghost == 
+[2407:I said hello] 
+[2416:to be, or not to be, that is the question] 
+[2417:knocked with a ghostly scratching] 
+; follow target is destroyed 
+[2420:I couldn't seem to find what I was looking for] 
+; 
+; Additional pronouns used when actor is referring to himself. 
+; This prevents: 
+; EXAMINE JOE ... "Joe was whatever" <last word is now joe> 
+; JOE, EXAMINE JOE ... "Joe examined HE". 
+[2430:itself] ; ita 
+[2431:itself] ; itan 
+[2432:themselves] 
+[2433:himself] 
+[2434:herself] 
+[2435:themselves] 
+[2436:myself] ; <you> ; "Scapeghost special" 
+[2437:himself] ; proper male 
+[2438:herself] ; proper female 
+; 
+; used by vehicles 
+[2470:got out ] 
+[2471:drove the van ] 
+[2472:drove the taxi ] 
+; 
+;===== 
+; used when Weasel carries Sarah 
+[2473:escorted Sarah ] 
+;===== 
+; 
+; movement of animals 
+;; [2480:trotted] 
+;; [2481:ran] 
+;; [2482:darted] 
+;; [2483:wandered] 
+;; [2484:went] 
+; 
+; movement of people 
+[2490:walked] 
+[2491:trudged] 
+[2492:stomped] 
+[2493:wandered] 
+[2494:went] 
+; 
+; add your messages for special cases here.... 
+; 
+; Note to both Pete's: Many of the special case messages are carefully 
+; worded so that both male and female crooks can use them. Also, when 
+; a crook shouts a warning, it is worded in such a way so that it can 
+; be displayed in each room within the house, regardless of whether 
+; or not the player is in the same room as the crook. 
+; Be VERY careful in changing the context of these messages! 
+; 
+; movement of ghosts 
+[2500:floated] 
+[2501:drifted] 
+[2502:hovered] 
+[2503:glided] 
+[2504:went] 
+; 
+; long distanced can only be travelled in a vehicle. 
+[2510:didn't fancy going in that direction by foot, for there was 
+nothing to be seen for miles] ; not in vehicle 
+[2511:drove for miles through the damp and dismal countryside, 
+while I hid in the shadows at the back of the van. At last, we 
+began to slow down..] ; human drives vehicle 
+[2512:I tested the controls to see if I could drive, but hands 
+couldn't get a proper grip on the wheel and my feet went straight 
+through the pedals] ; player cannot drive 
+[2513:% %as I heard John and Weasel driving off into the distance, I 
+realised that I had blown my last chance of getting to their new 
+hideout. 
+%I got the feeling that I had used up all my valuable time, and I 
+simply faded away in disappointment] 
+; player was not in van when it set off 
+; 
+; messages concerning exorcism of my grave 
+[2520:% %my grave had been exorcised and I suddenly found myself 
+fading to nothingness. I couldn't find the strength to move away, and 
+I was soon banished from the earth forever] ; exorcised 
+[2521:% %the priest ran past me in a panic as I heard the cruel 
+laughter of John and Weasel coming from my grave] ; priest is released 
+; 
+; light messages 
+[2530:the attic was then much darker, lit only by the light that came 
+through the window, casting long shadows across the floor] 
+; bulb removed 
+[2531:the bulb glowed dimly] ; bulb is in low power socket 
+[2532:the electricity supply had been reconnected, and the bulb came on 
+with a bright flash] ; insert bulb into live socket 
+[2533:the house was brightly lit, and I dared not risk being banished 
+back to my exorcised grave] ; can't enter lit house 
+[2534:the lights had come back on to their full brightness downstairs, 
+and I was trapped in the attic] ; attic is dark (bulb removed) 
+[2535:it was switched off] 
+[2536:it was switched on] ; examine rccb 
+[2537:switched off the circuit breaker] 
+[2538:switched on the circuit breaker] ; switch circuit breaker on/off 
+[2539:I touched the sprayer on the connectors but nothing happened, 
+as the electricity had already been shorted out] ; 2nd attempt at 
+; shorting supply 
+[2540:I touched the sprayer on the connectors and there was a swift 
+shower of crisp blue sparks and a sharp crack as I shorted out the 
+electricity supply to the house] ; short supply 
+[2541:% %suddenly, the lights in the house came back on to their 
+full brightness] ; lights come back on 
+[2542:% %the sudden shock of light instantly blinded me and I was 
+banished back to my exorcised grave, where I could not remain. 
+% %My three days on earth were at an end, and I passed on to 
+the hereafter. But I had failed to clear my name among those I 
+left behind..] ; startled by light 
+[2543:said, "You must be joking! The shock could kill me"] 
+; humans cannot short supply 
+[2544:there wasn't much light here. ] ; examine light when dark 
+[2545:the backup generator was still running, and the house switched 
+back to a lower voltage] ; supply is shorted for the second time 
+[2546:smashed to smithereens] ; bulb is dropped 
+[2547:"Not another power cut", groaned John] ; (John B) sees bulb taken 
+[2548:"Ah, it's come back on again", said John] ; (John B) bulb put back 
+; 
+; special message to stop player putting things on the table while 
+; the gang are gambling 
+[2550:the table was covered with playing cards and money, and there 
+was no room for anything else] 
+; now to stop player taking an object from a crook 
+[2551:felt it move and placed a hand over it] 
+[2552:would never be strong enough to carry that] ; heavy object 
+; 
+; deflating tyres on van and taxi 
+[2560:could only deflate the tyres from the outside] 
+[2561:was moving, making it rather difficult to let the tyres down] 
+[2562:the tyres were already deflated] 
+[2563:they were flat] ; examine deflated tyres 
+[2564:took a foot pump out of the boot and inflated the tyres] ; npc 
+; inflates tyres 
+[2565:kicked the tyres impatiently and said, "We don't have time to 
+inflate those. Let's go! Just drive the damn thing carefully"] ; no 
+; time to inflate tyres 
+; 
+; progressive messages when player enters back of barn 
+[2570:% %pain struck me as I entered the back of the barn, as if 
+something ghastly had once happened here. A powerful sense of 
+danger overwhelmed me, and I found myself driven away..] 
+[2571:% %at the back of the barn were spectral images. I saw 
+a bound figure, guarded by an armed man. Severian raised his 
+weapon; the prisoner tried a futile attack; the gun went off. 
+I felt a stabbing pain, then a second shot rang out and 
+everything went black. 
+% %I found myself at the front of the barn and knew now what 
+this place was. It was the place of my death] 
+[2572:% %no matter how hard I fought to stay here, I could not 
+remain at the place of my death. I weakened and fled] 
+; 
+; bending John's van key 
+[2580:found that the key was already bent] 
+[2581:John felt the movement in his pocket and guessed that Jude 
+was feeling friendly. He casually put his hand on her knee and 
+was taken aback when she pulled it away and hissed, "Not now"]
+[2582:it was bent] ; examine bent key 
+; 
+; Severian has seen me, but I leave before his last warning 
+[2590:% %"I think I just saw somebody", I heard Severian shout 
+from the kitchen. "But I'm not sure". 
+%"Let's not take any chances", said the Professor, "Come on, we'd 
+better get going early". 
+%John shouted to tell the others in the house to meet in the hallway] 
+; 
+; Sequence of movements begin outside attic window, when player is 
+; not in attic 
+[2591:% %I heard Big John muttering upstairs in the attic, as if he had 
+seen something through the window] 
+; 
+; John is distracted while movements are in sequence outside the window 
+[2592:nervously, he looked away from the window and so didn't see 
+the signs of the police approaching] 
+; 
+; Waiting in attic brings us up to the next stage of the police 
+; closing in 
+[2593:I waited patiently for a while, and then noticed something 
+going on outside the window... ] 
+; 
+; Big John sees movements and shouts a warning. message printed in all 
+; locations throughout the house. 
+[2600:suddenly, I heard Big John shout a warning to the rest of the 
+gang. "The filth have found us!", he spluttered, "There's jam 
+sandwiches in the village!" 
+%The next thing I heard was a clattering of chairs in the kitchen as 
+everyone got up. "All meet in the hall!", shouted John, "We're 
+getting out of here before we're busted!"] 
+; 
+; Big John distracted by various actions 
+[2620:"Whassat!", snapped John as he heard the bulb smash] 
+; (John B) drop bulb 
+[2621:the stair creaked eerily and I heard Big John let out a 
+nervous whine. 
+"T-there's s-something creepy going on here", he stammered] 
+; push stair. 
+[2622:the curtains wafted into the room and John stared at them 
+uneasily] ; (John B) blow curtains 
+[2623:John clasped his arms around himself, shivering in the 
+sudden cold. He sat on the edge of his bed, eyes darting nervously 
+around the attic] ; (John B) cool room 
+[2624:John's hair stood on end and panic got the better of him. 
+"Aargh! I'm being possessed!", he spluttered, spraying whisky all 
+over the place] ; (John B) charge John. 
+; 
+; Big John comes up with a logical explanation when the same distraction 
+; is used twice. There is no message for smashing the bulb, since 
+; this can only be done once. 
+[2631:the stair groaned again. "Hah", sniggered Big John, "It's 
+just a creaky floorboard somewhere. Fancy me being scared of that!"] 
+; push stair 
+[2632:"There they go again", said John as the curtains wafted into 
+the room. "There must be a draught blowing through the window"] 
+; (John B) blow curtains 
+[2633:"It gets colder by the minute", said John, rubbing his hands 
+together. "Well I know one way to keep out the chill of the night", he 
+added and took a warming swig of whisky] ; (John B) cool room 
+[2634:John put his hand on his head to stop his hair from standing 
+on end. "Blasted nylon carpets", he grumbled, "It's no wonder there's 
+so much static around here"] ; (John B) charge John. 
+; 
+; Charge person other that Big John 
+[2638:walked around, complaining about static from the nylon 
+carpets] 
+; Chill person other than Big John 
+[2639:jogged up and down, complaining about the lack of heating in 
+the farmhouse] 
+; 
+; Manifestation 
+[2640:I prepared to attack by manifesting myself] ; attack crook - treated 
+; as manifest. 
+[2641:I concentrated my ghostly powers and manifested myself] ; manifested 
+[2642:appeared to have seen me, but just seemed to avoid me] ; used at 
+; end of game when gang are leaving, Sarah is free, and there is no real 
+; objective in manifesting myself 
+; 
+; When Big John is calm (0-1 distractions) 
+[2643:John shone his torch and stared at me, making me fade away. 
+He must have caught a glimpse of me though, for he shouted an 
+alarm to warn the rest of the gang of my presence] ; (John B) 
+; 
+; Moderately scared (2-3 distractions) 
+[2644:Already tense with fear, John stared at me wide-eyed and 
+shaking, then fled off towards the hatch in sheer panic] ; (John B) 
+; 
+; Shit scared (4-5 distractions) 
+; (do not make any references to attic here) 
+[2645:John fixed his eyes on me and screamed, firing off the full 
+magazine of his gun through me. The gang must have thought that 
+they were under attack and I heard them running from the kitchen, 
+to see what was going on] 
+; (John B) 
+; 
+; Player fades if he enters an occupied room, or a human enters 
+; the current room. This does not apply for Sarah, for obvious 
+; reasons. 
+[2647:% %In the presence of hostile humans, I became invisible 
+once again] 
+[2648:"Where's Alan got to?", whispered Sarah, slightly puzzled] 
+; Sarah sees player fade 
+; 
+; Cellar door 
+[2650:I couldn't open the door, since it was fastened securely with a 
+heavy bolt] ; open cellar door 
+[2651:I wasn't strong enough to move the thick iron bolt and thus 
+close the door properly] ; close cellar door 
+[2652:I couldn't open the door, so I decided that I would have to 
+float through it] ; go via cellar door 
+[2653:unfortunately, I couldn't carry anything with me and had 
+to drop] ; can't take objects through cellar door 
+[2654:it was closed] 
+[2655:it was open] ; examine cellar door 
+[2656:through it, I could see Sarah tied up at the back of the cellar] 
+; examine window from outside 
+[2657:through it, I could see Weasel fiddling with a bolt at the 
+bottom of the door] ; examine window from inside 
+[2658:was on the other side of the window] ; examine person from other 
+; side of window 
+; 
+; Untie and recruit Sarah 
+[2660:couldn't get on the chair while somebody was tied up to it] 
+; get on chair 
+[2661:Sarah watched me closely, waiting for me to say something] 
+; manifest in front of Sarah before giving an order 
+[2662:Sarah's eyes widened and she let out a muffled shriek. As 
+the initial shock wore off, she realised who I was and her 
+expression slowly changed from fear to amazement. Soon, when she 
+had calmed down, she sat still, hoping that I would cut the ropes]
+; manifest in front of Sarah for first time, whilst she is tied up 
+[2663:I wasn't strong enough to untie that] ; player tries to untie 
+; ropes & gag 
+[2664:untied the ropes and the gag] ; human untied ropes & gag 
+[2665:I cut the ropes and the gag with the glass, freeing Sarah. 
+% %"I don't know how you managed to return from the dead", she 
+whispered with a shudder, "but I never thought I'd be glad to see 
+a ghost. Thank you for freeing me". 
+%She ran over to the cellar door and balanced a hammer on the 
+shelf above it, before returning to her previous position on the 
+chair. 
+%"You know what to do when Weasel returns", she said with a tight 
+smile, tossing the bonds back over her as if she were still tied up] 
+; player frees Sarah 
+[2666:had nothing sharp enough] ; try to cut ropes without glass 
+[2668:the door closed from the other side] ; see door close from 
+; other side 
+[2669:the door opened from the other side] ; see door open from 
+; other side 
+[2670:was frightened by the glass, and squirmed away from it, preventing 
+me from cutting the bonds] ; either try to cut Weasel free, or Sarah 
+; before player has manifested 
+[2671:Sarah shook her head, as if warning me that Weasel was still close 
+by, and that he might notice the ropes being cut] ; can't cut ropes 
+; while Weasel is around, or if he is about to enter the cellar, since 
+; this makes things very complicated. 
+[2672:somebody was already tied up with the ropes and the gag] 
+; try to tie somebody up while somebody else tied up 
+[2673:I wasn't strong enough to tie either the ropes or the gag tight 
+enough] ; player can't tie somebody up 
+[2674:Sarah bound and gagged Weasel, finishing just as he began 
+to wake up] 
+; actor ties up Weasel. he wakes up, enabling him to struggle, and 
+; to shout an alarm if he is untied. 
+[2675:couldn't tie me up, since the bonds kept passing straight through 
+me] ; player can't be tied up 
+[2676:would need] ; paired message when either gag or ropes are missing 
+[2677:to tie somebody up properly] ; when trying to tie somebody up 
+[2678:couldn't tie herself up] ; Sarah can't tie herself up 
+[2679:she bolted the cellar door securely on her way out] ; Sarah 
+; locks Weasel in the cellar 
+; 
+; GROUP message for Weasel or Sarah struggling when tied up. 
+; (Do not use "he" or "she" in this text. Also, do not make any 
+; references to the chair) 
+[2680:bit the gag in frustration, trying to break it] 
+[2681:helplessly tried to wriggle out of the ropes] 
+[2682:let out a muffled cry] 
+[2683:muttered with rage and frustration behind the gag] 
+[2684:pulled at the ropes, trying to break free] 
+; 
+; Push hammer to knock Weasel out 
+[2690:pushed the heavy hammer off the shelf] 
+; 
+; Sarah is recaptured 
+[2700:quickly grabbed hold of Sarah before she could get away. 
+"Not so fast, my girl, you're not going anywhere!", snarled the 
+crook, "Who helped you escape from the cellar?" 
+%Sarah kicked and struggled to break free, but her captor just 
+tightened the grip around her neck] ; seen by a crook. 
+; (Do not refer to captor as "he" or "she" in text) 
+[2701:couldn't help me, since she was still a hostage] ; trying to 
+; command Sarah when recaptured, or before taken to cellar, or while 
+; she waits for me to knock out Weasel. 
+[2702:shouted a warning to the rest of the gang, telling them that 
+Sarah had managed to escape. 
+%The gang guessed that somebody must have helped her, and they 
+decided that it would be best to leave the farm] ; tagged onto the end 
+; of 2700 if Sarah is recaptured before the gang have decided to leave. 
+; (Again, do not refer to the captor as 'he' or 'he') 
+[2703:grabbed hold of Sarah, snarling, "You set us up, you bitch, 
+didn't you?!"] 
+; 
+; Briefcase recovered by a crook 
+[2710:picked up the briefcase, saying, "What the hell are the 
+drugs doing here"]
+; case recovered from floor or obvious container.
+[2711:grabbed the briefcase. "I'll look after this, thank you very 
+much!", he snapped] ; recovered from another npc. 
+; 
+; GROUP message when crooks are escaping 
+[2720:ran] 
+[2721:dashed] 
+[2722:hurried] 
+[2723:rushed] 
+[2724:scuttled] 
+; 
+; Messages used in conjunction with importers' leaving racetrack 
+[2730:"It's bent!", exclaimed John as he took the key from his pocket. 
+"Lucky we've got time to straighten it", he added as he bashed it flat 
+against the dashboard] ; enough time to straighten key 
+[2731:"Hell and Damnation!", stormed John as he took the bent key 
+from his pocket. "Come on! I haven't got time to straighten the 
+damn thing. Let's leg it across the fields before the bill catches us] 
+; no time to straighten key 
+[2732:% %although the police were closing in, they weren't quite quick 
+enough to catch them and John Q. and his gang were able to escape 
+across the fields on foot] ; importers escape across fields 
+[2733:Sarah knew too much to be left behind - or left alive. They 
+took her with them, and murdered her] ; Sarah is killed 
+[2734:% %unfortunately for the drug traffickers, the police had 
+the farm 
+surrounded, making the gang easy prey] ; importers caught in fields 
+[2735:% %the press of people in the van became so great that I 
+faded away, allowing the importers to escape. I was too weak to do 
+anything to prevent the Professor and Severian from leaving either. 
+I had failed at the final hurdle and dissolved into the night, 
+overcome with futility..] 
+; 
+; Messages used in conjunction with buyers' leaving racetrack 
+[2740:in a last attempt to stop the buyers from getting away, I 
+made myself visible and tried to overcome Severian, who was driving] 
+[2741:for all my efforts, all I could achieve was to cause him to 
+swerve around as he fought back. When the Professor joined in I was 
+defeated by their combined strength, and I began to fade, allowing 
+them both to escape] 
+[2742:he fought back, waving his arms about in a frenzy. The taxi 
+began to career madly all over the track. The flat tyres had made 
+it difficult to drive anyway, now it went completely out of control. 
+% %The taxi skidded off the side of the track and crashed into a 
+tree. Severian and the Professor struggled free of the wreck, 
+moments before it burst into flames. Bruised and shaken, they made 
+a run for it across the fields] 
+[2743:% %unfortunately for them, the police were close by, and soon 
+had them caught and cuffed] 
+[2744:% %luck was with them, and they managed to get clear of the 
+area just minutes before the police arrived] 
+; 
+; Player manifests or tries to attack a crook. 
+[2750:stared at me, causing me to fade away, and then shouted an alarm 
+to warn the rest of the gang of my presence] ; crook sees me 
+[2751:"Can't take any chances tonight", I heard John shout. "All meet 
+in the hall and then we'll make tracks"] ; gang decide to leave 
+[2752:In a last attempt to free Sarah, I launched an attack on the 
+gang. It didn't last long, for I faded, unable to resist, under 
+their concentrated attention. And it didn't help to achieve what 
+I really wanted. Sarah was OK. She legged it good and fast, but 
+she did nothing to clear my name as she would otherwise have done] 
+; 
+; Player must have ample strength to manifest himself. 
+[2754:my powers were too weak at this stage, and I found that I didn't 
+have the strength to manifest myself] 
+; 
+; Epilogue 
+[2759:epilogue... ] ; heading 
+; 
+[2760:I had succeeded in bringing John Q and the other drug 
+smugglers to justice. ] ; importers 
+; caught 
+; 
+[2761:my attempts to bring the drug traffickers to justice had failed. ] 
+; importers escaped 
+; 
+[2762:and as for the buyers, Severian and the Professor, they were 
+caught, with the drugs being available as evidence - irrefutable proof 
+of their guilt. ]
+; buyers caught (either caught with drugs, or drugs left behind)
+; 
+[2763:and as for the buyers, they managed to escape. ] ; buyers escape 
+; 
+[2764:, but the drugs were left behind, for the police to collect 
+as evidence. ] ; drugs available (tagged onto 2763) 
+; 
+[2765: with the drugs, thus removing the evidence. ] ; drugs unavailable 
+; (tagged onto 2763) 
+; 
+[2766:%Sarah was still alive] ; Sarah alive 
+; 
+[2767:%Sarah had been killed by John Q.'s gang. I was sorry - 
+for her, despite everything because we had been partners once - 
+and for me as now my name would never be cleared. ] ; Sarah killed 
+; 
+[2768: and gave evidence to the police to clear my name. 
+% %Knowing that my work was done, I returned at peace to the 
+spirit world. My three days on earth were at an end, and I 
+ascended triumphally to Heaven. ] 
+; Sarah is alive and gives evidence to clear my name. 
+; NB: I have used "returned to the spirit world" instead of "faded 
+; away", because the player may have already faded away in the endgame 
+; sequence. (tagged onto 2766) 
+; 
+[2769:, but she had fled and couldn't give evidence to clear my name. ] 
+; Sarah has fled (tagged onto 2766) 
+; 
+[2770:% %having failed in clearing my name, I returned miserably to 
+the spirit world. 
+% %My three days on earth were at an end, and I passed on to the 
+hereafter. My old colleagues would go on believing I had been 
+criminally stupid. I knew I was just incompetent. ] 
+; failed in clearing my name. 
+; NB: Use of "returned to the spirit world" is same as 2768. 
+; (tagged onto 2767 and 2769) 
+; 
+[2771:, but the drugs were utterly destroyed in the burning taxi, 
+leaving nothing that would serve as evidence. ] 
+; buyers escaped, but drugs burned in taxi. (tagged onto 2763) 
+; 
+[2772:she had also taken the drugs with her, thus removing the 
+evidence. ] 
+; 
+; Some miscellaneous hints from Sarah... 
+[2780:% %"I wish someone would fix the loose floorboards in 
+this place?", sighed Sarah] ; hint loose floorboard 
+[2781:% %"Maybe I'd better find somewhere to hide", said Sarah, 
+her eyes exploring the hallway] 
+; 
+; late additions... 
+[2785:try dropping it] 
+[2790:pumped the sprayer, but found that it was empty] 
+[2791:% %there was a long hissing noise as the taxi's tyres were being 
+deflated]
+[2792:I crouched down to sit on the chair and found to my surprise that 
+I floated straight through it and fell onto the floor]
+; 
+; Intermittent messages indicating that police are closing in. 
+; Each message corresponds to one of the last 48 moves towards 
+; the police actually arriving (end of game). 
+[2800:% %with a boost of confidence, I had the feeling that the police 
+were now on their way. ] 
+[2806:% %a feeling of satisfaction coursed through me as I 
+realised that the police should be hot on the trail of the crooks 
+by now. ] 
+[2812:% %the wail of a distant siren drifted faintly through the 
+air and then faded again. It seemed like it wouldn't be long before 
+the police would be here. ] 
+[2818:% %I heard the faint noise of an approaching car and prayed 
+that it was the police. ] 
+[2824:% %the sound of approaching cars gradually became louder. ] 
+[2830:% %I heard the squeal of tyres on a wet road as if a car 
+had just taken a sharp corner. ] 
+[2836:% %the engine noises stopped suddenly, followed by the 
+abrupt slamming of car doors. At the same time, the faint chopping 
+of a helicopter became audible in the distance. ] 
+[2842:% %the thwacking of helicopter blades grew louder, and a 
+beam of light engulfed the whole farm, making me feel dizzy. ] 
+[2848:% %"This is the police! ", blasted an amplified voice from 
+the helicopter, "Come out with your hands up! We have you surrounded!" ] 
+; 
+; "Pet" messages... (table driven) 
+; some remarks made by PET on various occurrences... 
+[2851:%"Maybe I can help you", offered Sarah. ] 
+[2852:% %Sarah sniggered quietly to herself. ] 
+[2853:% %"You won't get him with that one again", sighed Sarah. ] 
+; 
+; messages when people refuse an order. 2900+n 
+; Use ACTORM1Dot 
+; 
+[2902:didn't appear to have seen me at all] ; Sarah (until recruited) 
+[2903:could feel my presence, but he forced himself to ignore me] 
+; Priest 
+[2904:looked straight through me and squinted slightly] ; Big John 
+[2905:didn't appear to have noticed me at all] ; John 
+[2906:glanced through me out of the corner of his eye. He 
+scratched the stubble on his chin thoughtfully for a moment, 
+but still ignored me] ; Weasel 
+[2907:didn't acknowledge my presence in the least] ; Jude 
+[2908:paid no attention] ; Professor 
+[2909:didn't seem to notice me at all] ; Severian 
+; 
+; don't be silly GROUP... 
+[3100:don't be silly] 
+[3101:well, that's new] 
+[3102:sorry, no can do] 
+[3103:that's a funny thing to want to do] 
+[3104:daft, I call it] 
+; 
+; nice try GROUP... 
+;;[3110:nice try, my ghostly friend]  ; >> Pete 14/9/89 
+;;[3111:a good bash at the answer. Shame it doesn't work]  ; >> Pete 14/9/89 
+;;[3112:not a ghost of a chance, chum]  ; >> Pete 14/9/89 
+;;[3113:good idea, but it didn't work]  ; >> Pete 14/9/89 
+;;[3114:a good try, but it doesn't work]  ; >> Pete 14/9/89 
+; 
+; just scenery GROUP... 
+[3120:you might as well leave it alone] 
+[3121:I suggest that you forget about it] 
+[3122:that's not important to the game] 
+[3123:forget it. It's only scenery] 
+[3124:pay it no heed] 
+; 
+; missing object... 
+[3130:now what was the object of that? Try again] 
+[3131:sorry, I couldn't find an object in that] 
+[3132:please be more specific] 
+[3133:there was no object in that command] 
+[3134:do it to what? You didn't say] 
+; 
+; Nothing happened GROUP... 
+[3140:nothing happened] 
+[3141:that didn't seem to work] 
+[3142:there was no effect on anything] 
+[3143:that was remarkably useless] 
+[3144:that did nothing at all, I'm afraid] 
+; 
+; the following are printed after the object name.. 
+; 
+[3150:wouldn't move] ; try to move static object GROUP 
+[3151:didn't budge] 
+[3152:refused to be moved] 
+[3153:seemed fixed in place] 
+[3154:was unmoved] 
+; 
+[3160:don't bother, it would do nothing] ; don't bother GROUP 
+[3161:that would be a waste of time] 
+[3162:that would be pointless] 
+[3163:that will get you nowhere] 
+[3164:don't expect any results from that] 
+; 
+; GROUP messages for hello responses 
+[3170:smiled crookedly] 
+[3171:returned my greeting] 
+[3172:started to shake hands, but changed her mind] 
+[3173:raised an eyebrow] 
+[3174:nodded politely] 
+; 
+; GROUP messages for npc's being unable to carry out an order 
+[3180:seemed puzzled] 
+[3181:shook a puzzled head] 
+[3182:looked distinctly confused] 
+[3183:didn't seem to understand what was wanted] 
+[3184:looked at me with a blank expression] 
+; 
+; GROUP messages for npc's being unable to carry out an order 
+[3190:had had problems with ] 
+[3191:looked troubled about ] 
+[3192:mentioned trouble with ] 
+[3193:obviously hadn't understood about ] 
+[3194:had been mystified about ] 
+; 
+; now, npc accepts an order GROUP 
+[3230:nodded in acknowledgement] 
+[3231:nodded slowly] 
+[3232:nodded obediently] 
+[3233:agreed] 
+[3234:nodded enthusiastically] 
+; 
+; now response to questions when not obedient GROUP... 
+[3250:refused to answer that] 
+[3251:remained silent as the grave] 
+[3252:pretended to ignore the question] 
+[3253:refused to give any help whatsoever] 
+[3254:looked back stubbornly] 
+; 
+; response to requests to give anything(s) to anyone GROUP 
+[3270:refused to part with anything] 
+[3271:refused to give it away] 
+[3272:didn't want to give anything away] 
+[3273:clutched it tightly] 
+[3274:stared back in silent refusal] 
+; 
+; npc is puzzled by a request 
+[3290:said, "Sorry Alan, I don't quite follow you"] 
+[3291:said, "It must be me, Alan, but I can't make head nor 
+tail of what you're saying"] 
+[3292:said, "Come again? Could you put that another way"] 
+[3293:looked blank and said, "Eh?.."] 
+[3294:said, "Can we try that again?"] 
+; 
+; 
+; Goldsinging... 
+; 
+; NB: Goldsinging is now used less frequently, since racetrack 
+; messages are now used more extensively. 
+; 
+; Sarah 
+[3310:looked around] 
+[3311:sighed] 
+[3312:muffled a cough] 
+[3313:looked worried] 
+[3314:sneezed] 
+; 
+; priest 
+[3320:twitched nervously] 
+[3321:began to shake a little] 
+[3322:was sweating] 
+[3323:looked at John and Weasel nervously] 
+[3324:tried to steady his shaking hands] 
+; 
+; Big John, John, Weasel 
+[3330:narrowed his eyes] 
+[3331:coughed loudly] 
+[3332:spat on the floor] 
+[3333:wiped his nose on his hand] 
+[3334:smoothed his tangled hair] 
+; 
+; Jude 
+[3340:smoothed her dress] 
+[3341:tossed her head back] 
+[3342:chewed on some gum] 
+[3343:stretched sensuously] 
+[3344:toyed with her ^N earrings] 
+; 
+; Professor, Severian 
+[3350:looked at his watch] 
+[3351:sighed impatiently] 
+[3352:smiled crookedly] 
+[3353:chewed a fingernail] 
+[3354:stroked his chin] 
+; 
+; again used following a command referring to scenery 
+[3530:the previous command was not repeatable] 
+[3531:you can't do that again] 
+[3532:it wouldn't help to try that again] 
+[3533:that was a once-only command] 
+[3534:oh, not again] 
+; 
+[3560:not around] ; printed by follow code 
+; npc stack overflow 
+[3600:a voice moaned about a stack overflow. ] 
+[3605:sorry, I can't find my way here] 
+[3614:I wailed eerily. ] 
+; 
+; 'npc, rude' word for talking people 
+[3620:laughed] 
+[3621:paid me no heed] 
+[3622:had not heard] 
+[3623:took no notice] 
+[3624:ignored me] 
+; 
+; 'npc, help' for talking people 
+[3640:needed specific orders] 
+[3641:waited for instructions] 
+[3642:looked me up and down] 
+[3643:asked, "Why?"] 
+[3644:did not know what to do] 
+; 
+; 'npc, echo verb' for talking people 
+[3660:raised an eyebrow] 
+[3661:gave a spirited response] 
+[3662:looked offended] 
+[3663:laughed, "Oh! You are a hoot"] 
+[3664:looked askance at me] 
+; 
+; Garbage words.. 
+[4000:^N the ^N this ^N these ^N that ^N some ^N and ^N also 
+^N before ^N wade ^N jog ^N plod ^N rush ^N dash ^N march ^N amble 
+^N good ^N of ^N there] 
+[4001:^N therefore ^N am ^N my ^N your ^N try ^N carefully ^N slowly 
+^N warily ^N quickly ^N rapidly ^N following ^N around] 
+[4002:^N please] 
+[4003:^N road ^N Mister ^N Mr ^N Mrs ^N Miss ^N hand] 
+; for put hand thru 
+; 
+;; Book protection code... 
+;; 
+;; [4200:%a glowing figure appeared, carrying a copy of a faded book. ] 
+;; [4201:page ] 
+;; [4202:, line ] 
+;; [4203:, word ] 
+;; [4204:?"%] 
+;; [4205:the figure smiled sadly and I knew that I was wrong. ] 
+;; [4206:the angel vanished with a wave of his hand. ] 
+;; [4207:he wanted to know the word at ] 
+;; [4208:wrong again! The angel at first sadly, but then happily, 
+;; beckoned me upwards towards the sound of music... ] 
+;; 
+;; ADD PROTECTION WORDS HERE, BUT DO NOT MARK NUMBERS (digits) e.g. 20 
+;; [4301:^C even ^C maintain] ; 18,9,8 
+;; [4400:^C the] ; 13,2,7 
+; 
+;===== 
+; Special messages for police closing in, as seen from the attic window. 
+; There are 6 consecutive sequences (each of 5 messages), tie-in with 
+; the 0-5 (inclusive) possible levels of Big John's distractions. 
+; 
+; Sequence no.0 
+[4500:looking through the window, I noticed a series of flashing 
+lights in the nearby village] 
+; 
+[4501:the lights in the village continued, and it became apparent 
+that they were coming from the police station. Luckily, John was too 
+busy drinking his whisky to notice anything] 
+; 
+[4502:John slouched against the window, almost catching a glimpse 
+of the lights in the village] 
+; 
+[4503:I knew that I had to distract John away from the window, 
+or even he would eventually notice the disturbances in the nearby 
+village] 
+; 
+[4504:John rubbed his tired eyes and squinted out of the window 
+as if he had seen something] 
+; 
+; Sequence no.1 
+[4510:from the window, I saw the lights of a fleet of cars leaving 
+the centre of the village. It looked like the police were now on 
+their way] 
+; 
+[4511:luckily, John didn't see the police cars as they left the 
+village, but he would soon spot them unless I could distract him 
+in some way] 
+; 
+[4512:John glanced up briefly from his magazine and took a casual 
+look out of the window. "Wonder who's out driving at this hour", 
+he murmured, before returning to his reading] 
+; 
+[4513:the approaching cars cast beams of light across the distant 
+fields. John looked out of the window again and stroked his chin in 
+suspicion] 
+; 
+[4514:John continued looking out of the window. If I didn't distract 
+him soon, I knew that he would see the police arriving and alert the 
+rest of the gang] 
+; 
+; Sequence no.2 
+[4520:I caught a glimpse of some cars passing over a nearby hill. 
+A number of them disappeared back into the valley, but one of them 
+parked by the side of the road] 
+; 
+[4521:in the distance, the headlights of the parked car went off 
+and a much dimmer light began to move slowly away from the car] 
+; 
+[4522:John squinted through his bloodshot eyes and looked out of 
+the window. If he spotted the dim light in the distance, he didn't 
+seem to take much notice of it] 
+; 
+[4523:the dim light turned out to be from a torch, casting its beam 
+across the fields as it slowly approached] 
+; 
+[4524:John looked through the window again, this time it was 
+clear from his expression that he had seem something. I would 
+have to act quickly to distract his attention before it was too 
+late] 
+; 
+; Sequence no.3 
+[4530:looking through the window again, I noticed a series of 
+torch beams passing along a hedge in a field outside] 
+; 
+[4531:although they were quite a distance away, I could make out 
+three policemen walking alongside a hedge. I thought I caught a 
+glimpse of dogs with them] 
+; 
+[4532:John took a brief look out of the window, but he didn't 
+appear to have seen the police yet] 
+; 
+[4533:I knew that it was only a matter of time before John would 
+notice the police arriving] 
+; 
+[4534:John scratched his head as he noticed a torch beam cast its 
+light across a field. He fixed his eyes on the field, but the light 
+disappeared behind a tall hedge] 
+; 
+; Sequence no.4 
+[4540:the police were closing in through the fields beyond the 
+window. By now I could make out all three figures quite well, but 
+luckily John was too drunk to notice them yet] 
+; 
+[4541:I briefly took my eyes off the police in the fields, and I 
+noticed a number of cars passing along the adjacent road] 
+; 
+[4542:John watched the approaching cars curiously for a while, until 
+they disappeared behind a nearby hill. He scratched his head 
+thoughtfully for a while then went back to his magazine, spreading 
+the pages wide and turning it round to get a better look] 
+; 
+[4543:looking back to the fields, I saw that the police were closing 
+in around the farm. At the same time, I heard the faint sound of 
+approaching cars] 
+; 
+[4544:John's eyes scanned the fields outside the farm. If I wasn't 
+careful, it wouldn't be long until he noticed the police] 
+; 
+; Sequence no.5 
+[4550:bright torch beams shone across the nearby fields, while police 
+cars screeched along the narrow country roads] 
+; 
+[4551:John slouched on the bed, pulling hard on his whisky flask 
+and missing all the excitement outside] 
+; 
+[4552:the movements outside the window continued, and John stirred 
+himself and began to ease himself up off the bed] 
+; 
+[4553:John had almost reached the window when he rolled drunkenly 
+off the end of the bed, and missed all the action outside] 
+; 
+[4554:the police could clearly be seen outside the window as John 
+began to pick himself off the floor. Reeling with drink, he 
+staggered over to the window] 
+;===== 
+; 
+; Racetrack Messages... 
+; Mostly, these start with actors name. The one's starting with 
+; a carriage return (i.e. "%") are used for other peoples reactions 
+; to the actors Rt. Varied messages are marked with GROUP 
+; 
+; priest performs exorcism ceremony 
+; 
+[5000:reached into his pocket and removed a small phial of holy water. 
+He blessed it and read another passage from his ^N book before preparing 
+to sprinkle the water over my grave. My powers began to drain] 
+; 
+[5001:sprinkled the holy water over my grave and I faded away to 
+the laughter of John and Weasel. I was banished from the earthly 
+spirit world to the hereafter, and had failed to clear my tarnished 
+reputation] 
+; 
+; Big John waits for priest to finish exorcism, collects drugs and 
+; is driven by Weasel to the farm 
+; 
+[5010:grinned contentedly to Weasel. "There's no need to worry about 
+him coming back to haunt us now", he laughed. "Come on, let's grab the 
+drugs and disappear"] 
+; 
+[5011:and Weasel collected the ^N drugs from the rubble and stuffed 
+them into the deep pockets of their overalls] 
+; 
+; Weasel follows Big John to the van and then drives him to the farm 
+; 
+[5020:started the engine and said, "Right, let's be off then"] 
+; 
+[5021:"Bit of a rough night, Weasel", moaned John. "Better not get one 
+of those blasted power cuts at the farm tonight"] 
+; 
+[5022:"Park the van in the barn", said John. "And make sure it's 
+facing out in case we need to do a runner"] 
+; 
+; John comes starts the generator in the outhouse 
+; 
+[5030:John cursed the electricity board vigorously, and went 
+into the outhouse to start the backup generator. 
+%"Ruddy thing's knackered", he complained as he reappeared. 
+"It's only giving out sixty flamin' volts"] 
+; 
+; John waits for the drugs, exchanges the money, gives a few orders, 
+; and then plays cards. 
+; 
+[5035:John and Weasel emptied the drugs onto the table for Severian 
+and the Professor to inspect] ; (John B) 
+; 
+[5036:"As agreed", asked Severian as he took two thick wads 
+of money from his briefcase and handed them to John. 
+%John counted the money and nodded confirmingly] 
+; 
+[5037:split the money evenly between the rest of his gang of 
+importers, keeping a large cut for himself. Severian crammed 
+the drugs into his briefcase and put it beneath his ^N chair] 
+; 
+[5038:nodded briefly to Weasel and said, "Well, I think this calls 
+for a bit of entertainment. Don't you?". Weasel returned a devious 
+smile and got up from his chair. 
+%With some help from Big John, he grabbed Sarah in a headlock and 
+took back her share of the loot while she shouted and struggled. 
+"Didn't think we'd really cut in a spy did you?" sneered Weasel. 
+"The police think you're a hostage, and now you are one"] 
+; 
+; TRIGGER Weasel'S RACETRACK HERE (Message 5039) 
+[5039:"So sorry to see you go, Sarah", said Weasel as he tossed 
+her share of the money to John. "But don't worry, you're our 
+insurance police and will be quite safe for a few hours"..] 
+; 
+; TRIGGER Big John'S RACETRACK HERE (Message 5040) 
+[5040:sniggered as he heard Sarah being dragged through the hallway. 
+"Okay, the cabaret's over", he said, turning to Big John. "Now it's 
+time for you to play night watchman"] 
+; 
+; GROUP Message to pass the time... 
+[5045:John smoked a cigarette contentedly] 
+[5046:Severian and the Professor talked between themselves about 
+how they were going to distribute the drugs] 
+[5047:Severian made some rude comments to John about the cackhanded
+way his gang had operated. "Bunch of bleedin' amateurs", he sneered] 
+[5048:John apologised to the Professor about the way things had 
+almost gone wrong with the operation. He would keep everything 
+under better control next time] 
+[5049:the Professor discussed the next drugs deal with John] 
+; 
+[5050:took a deck of cards out of his pocket and began shuffling 
+them. "We're not going anywhere until the morning rush-hour hides 
+us from the police, are we? So how about a few hands to pass the 
+time?", he said with a smile] 
+; 
+[5051:Jude cleared the table while John cut the deck of cards. "Are we 
+all in?", he asked the crooks. Each of them returned a nod and John 
+continued, "Good. Table stakes, no limit. OK?"]
+; 
+[5052:The crooks fished into their pockets and each slapped a pile 
+of notes onto the table in front of them. Severian fingered his 
+nervously; watching while John dealt the first hand; watching the 
+cards intently as he dealt] 
+; 
+[5053:The players studied their hands thoughtfully, passing 
+around a bottle of whisky. "Can't keep a clear head drinking 
+that stuff", said the Professor as he passed on the bottle 
+untouched. "You'll all see when I clean you out." 
+%John smiled slyly but said nothing]
+;
+[5054:The first game began in earnest as they all pushed an 
+initial twenty into the middle of the table. Jude took two new 
+cards, but was unimpressed by them and dropped out]
+;
+[5055:Severian grunted, "Two", took the new cards and slotted 
+them purposefully into his hand. "I'll raise you twenty", he 
+said, trying to hold back a grin.%The Professor and John both 
+took new cards and stayed in the game]
+;
+[5056:Severian took a single on the next round and pushed the 
+stakes up higher. The other two folded and gave him the game; 
+the Professor after a long while apparently calculating the odds, 
+John after a long thoughtful stare at the back of Severian's
+cards]
+;
+[5057:the second game lasted for some time, all four pushing the 
+stakes higher all the time. There was an argument at one point 
+when John dealt himself a card out of turn, but tempers were soon 
+soothed with whisky] 
+;
+[5058:Jude was running a straight bluff with her singleton King. 
+Severian was hopeful with his pair of Queens. The Professor had 
+calculated the odds and reckoned that his flush was 90/% certain 
+to win. John knew nobody was going to beat his four Twos]
+;
+[5059:Jude lit a cigarette and drew deeply on it before tossing 
+her hand on the table and saying, "Maybe next time." The Professor 
+followed the betting for another round before deciding that 
+perhaps a 90/% chance wasn't good enough]
+;
+[5060:"Let's see you", snapped Severian, pushing another hundred 
+into the pile. John smiled and lay down his hand. His opponent 
+scowled as he threw his cards down. "Do you know the odds against 
+four of anything are nearly a quarter of a million to one?" asked 
+the Professor]
+;
+[5061:Severian had a good hand on the third game, and set out to 
+play it cool, aiming to sucker John in and win back his money. But 
+John seemed to know it and folded early, losing hardly anything]
+;
+[5062:John played the next hand cautiously until Jude - whose 
+straight was a winner, had she known it - dropped out. Then he 
+pushed the stakes up steadily to scoop a big pot at the showdown]
+;
+[5063:the deal was with the Professor. Cards flashed from his 
+nimble fingers, winging low across the table to land in four 
+compact piles. John struggled to follow the deal, his eyes 
+flickering rapidly in a vain attempt to see each card properly]
+;
+[5064:the Professor scooped his cards up and held them close, 
+concealed behind his outspread fingers. John surveyed his hand 
+then let his gaze pass across the backs of the other player's 
+cards. A flicker of anger escaped him as his eyes fell on the 
+Professor's hand]
+;
+[5065:the Professor lay down his cards and picked up the deck. 
+He glanced around the table, "Who's in?" he asked, then noticing 
+John's interest in his hand, said, "I sometimes think you can see 
+through the backs of cards"]
+;
+[5066:laughed it off. "That would be a handy trick! Give me two", 
+he added with sudden decision]
+;
+[5067:"Let's make things interesting", suggested John. "Opening 
+at five hundred. Anybody playing?" He tossed a thick wad of notes 
+onto the table. Severian and the Professor matched his bid 
+reluctantly. But Jude just shook her head and made it clear 
+that she was dropping out of the game]
+;
+[5068:the other two would have been wise to follow Jude's example, 
+but they had good hands and were feeling lucky. In the end, John 
+just about cleaned them out. 
+%"Poker's supposed to be a game of chance", the Professor glared 
+at John, "but it isn't the way you play it"]
+;
+[5069:collected his winnings from the table and smiled broadly as 
+he lit up a cigarette. 
+%"Pity you don't handle the business as well as you play cards", 
+said Severian, angry at his losses]
+;
+[5070:"Ah, easy come, easy go", said Jude soothingly, handing 
+the whisky to Severian. He refused it angrily. "Maybe you'll 
+have better luck next time", she went on, "Tonight is John's 
+lucky night. Isn't that right, honey?" John slipped his arm 
+around her waist and smiled again]
+;
+; Special addition to gambling racetrack, when severian thinks he 
+; sees me
+; WARNING 1
+[5071:Severian cast his gaze angrily across the room, looking 
+anywhere except at John and Jude. Suddenly, his eyes stopped 
+and focussed on where I was standing. "What the hell's that", 
+he yelled]
+;
+; WARNING 2
+[5072:Severian pointed towards me and the others turned in my 
+direction too. From their confused expressions, it was clear 
+that they couldn't see me, but their combined stares began to 
+make me feel very weak]
+;
+; WARNING 3
+[5073:All four of the crooks squinted towards me, as if they 
+could almost see me, and I suddenly felt very drowsy. 
+%I couldn't stand them all staring at me any longer, and I 
+felt myself dissolving into the air and being drawn back to 
+my exorcised grave. 
+% %Within seconds I was banished to darkness, leaving the spirit 
+world forever, and failing to clear the blemished name that I 
+had left behind..]
+;
+[5074:shuffled his deck of cards and announced, "Okay, how about 
+another little game of cards, then?"]
+; 
+; jude waits in hall for Big John to arrive, then she goes into lounge 
+; for a while, before going to the kitchen to meet the rest of the 
+; gang (see comments at start of John's racetrack)
+;
+[5080:piled some more logs onto the fire]
+;
+[5081:stirred the fire up into a steady blaze]
+;
+[5082:emptied some papers from her pockets and threw them onto the fire]
+;
+[5083:went around the room tidying up the newspapers and a few letters]
+;
+[5084:threw some ^N newspapers and ^N letters onto the fire]
+;
+[5085:picked up the ^N telephone and dialed a number]
+;
+[5086:talked to someone over the telephone. It seemed that she 
+was arranging for some money to be laundered]
+;
+[5087:opened the cocktail ^N cabinet and took out a bottle of whisky. 
+"This should keep us occupied", she said to herself as she walked 
+towards the door]
+;
+[5088:"I've brought something to help us through the night", said 
+Jude as she put a bottle of whisky on the table and sat down with 
+the rest of the crooks]
+;
+; Big John is sent to attic to keep lookout
+;
+[5090:"I always get the worst jobs around here", grumbled Big John 
+as he reluctantly got up out of his chair]
+;
+[5091:sat down on the bed next to the window and opened his flask of 
+whisky. "Well, at least I won't be losing all my money to John when he 
+plays poker", he sighed. "I can get sloshed in peace up here"]
+;
+[5092:took his copy of "The Beano" out his pocket and began to read it. 
+"Gosh!", he exclaimed, "Isn't Dennis being naughty this week"]
+;
+[5093:began to pour whisky down his throat like there was no tomorrow. 
+"Sheesh!", he wheezed as he took the flask from his mouth, "Fiery stuff, 
+that"]
+;
+[5094:flicked through his Beano with excitement, as if trying to find 
+something. "Yeah!", he shouted, "The Bash Street kids! I wonder what 
+teach' is going to get up to this week..."]
+;
+[5095:missed his mouth with his flask and dribbled whisky down his chin 
+and onto his comic. "Haw! Haw!", he guffawed, "It's gone all over Walter 
+the softy"]
+;
+[5096:"Ho! Ho! This is fun", giggled John as he rolled about on the 
+bed, reading his Beano and swigging large mouthfuls of whisky. "Ha! Ha! 
+Ha!", he laughed as he rolled off the end of the bed and fell onto the 
+floor] ; (JOHN B)
+;
+[5097:picked his soggy comic up and attempted wring the whisky back into 
+his flask before climbing onto the bed again. Once he had got comfortable, 
+he took another swig from his flask and dribbled a sort of alcoholic ink 
+down his t-shirt]
+;
+[5098:read the letters page of his Beano aloud, occasionally breaking into 
+fits of helpless mirth, and sometimes bashing his fists vigorously against 
+the ^N pillow]
+;
+[5099:put his copy of the Beano back into his pocket. "Drat!", he 
+grumbled, "I wish I had brought my Dandy along as well"]
+;
+[5100:sat quietly, stroking his chin for a while, as if thinking of what 
+to do next. "I know!", he said finally, "I'll write a letter to my best 
+pal"]
+;
+[5101:took a ^N pen and a piece of ^N paper out of his pocket and began 
+to write...%
+"Dear Dennis, I read your comic every week and I think you are 
+really swell. Yours Menacingly, Big John.%
+P.S. Publish this letter or I will blow your nuts off"]
+;
+; Subroutines when Big John is frightened by progressive distractions.
+; When each racetrack comes to an end, John calms down and resumes 
+; his normal "lookout" racetrack.
+;
+; NB: WRtMessage is used instead of WActorSingleMessage so that 
+; unwanted Messages can be "disposed" of easily. See commented 
+; code in SpecialRtMessage just above .distract1.
+;
+[5110:John scratched his head in frustration. "Dunno what it is about 
+this place", he said, shaking his head. "But it sure gives me the 
+willies"] ; (JOHN B)
+;
+[5111:John shone his ^N torch around the room, thinking that the 
+other members of the gang were playing tricks on him. "Come on, 
+I can see you", he shouted, although he couldn't see anyone at 
+all. "It's not funny, y'know"] ; (JOHN B)
+;
+[5112:John put his torch down and sat back on the bed, slightly 
+more at ease. "Must be the gang takin' the Mick", he said. "Well, 
+they won't scare me easily"] ; (JOHN B)
+;
+[5120:John leapt into bed and pulled up the ^N covers until only 
+his eyes were visible. "This attic is haunted", he said in a 
+muffled voice]
+;
+[5121:John climbed hesitantly out of the bed and paced across the 
+attic towards the ^N hatch. "No, I can't do that", he said as he 
+got half way across the room. "If I tell the others they'll just 
+laugh in my face". 
+%He paced reluctantly back to the bed and sat down, shivering] ; (JOHN B)
+;
+[5122:"It must be the booze", decided John. "I've been drinking 
+steady ever since I came up here. No wonder I'm seeing things". 
+%He took another swig of whisky from his flask, to calm himself down]
+;
+[5130:John let out a frightened whine and looked frantically towards the 
+hatch]
+;
+[5131:Big John stood quivering before the crooks. "Th-the at-tic!", he 
+stammered, "It-it's haunted!" 
+%One by one, the crooks burst out with laughter and Big John hung 
+his head in shame. "There's some garlic in the fridge, John", 
+said Jude. "Maybe that will keep the vampires at bay..." 
+%John turned around and shambled back towards the door, amidst 
+everyone's laughter]
+;
+[5132:John sat on the bed again and began to calm down. "Not 
+surprising they laughed at me", he sighed, "I mean, it does 
+sound a bit daft. Huh! Haunted!"] ; (JOHN B)
+;
+[5140:John shrieked and darted into the bed, pulling the covers 
+up to his twitching eyes]
+;
+[5141:John lay trembling in the bed, cautiously edging back the 
+covers with his quivering hands]
+;
+[5142:John climbed hesitantly out of the bed and wiped the sweat 
+from his brow with the back of his hand. 
+%"Pull yourself together", he said to himself, "It's probably 
+just the wind outside". 
+%Having reassured himself a little, he lay back on the bed and 
+tried to calm down again]
+;
+[5150:John squealed in terror and hid in a dark corner of the attic. 
+"Go away!", he pleaded, "Go and haunt somebody else!"]
+;
+[5151:John shivered in terror as he sat crouched in a corner of 
+the attic, his beady eyes scanning the room nervously]
+;
+[5152:slowly, John got out from the corner of the attic and 
+carefully made his way over to the bed. He sat down and began 
+to mutter nervously. 
+%"It's just my imagination", he said, trying to convince himself. 
+"Just my imagination..."]
+;
+; If player manifests himself while Big John is scared (executing 2nd or 
+; 3rd distraction racetrack) then he runs downstairs and convinces gang 
+; to leave.
+;
+[5161:"I-I've s-seen someone!", shouted Big John in the kitchen. 
+"W-we've got to go before we get caught!" 
+%"Are you going mad?", I heard the Professor say. 
+%"Come on, Prof", said Severian, "Better safe than sorry. We'd 
+better make a move"..] ; (OMNI IN HOUSE)
+;
+; Weasel takes Sarah to cellar and ties her up. then, between 
+; visits to check up on her, he sits in the lounge reading a 
+; newspaper and doing the crossword etc.
+; He cannot play cards with the rest of the gang simply because 
+; he must frequently leave the room to check on Sarah.
+;
+[5170:"This should be safe enough for you, Sarah", laughed Weasel as 
+he waggled the bolt at the bottom of the door. 
+%Sarah struggled fiercely to break free, but Weasel just tightened 
+the stranglehold on her neck]
+;
+[5171:held Sarah down on the chair while he bound and gagged her. 
+"If someone 'phones, shall I tell them you're rather tied up at 
+the moment?", cackled Weasel]
+;
+[5172:"Now for a quiet read", said Weasel as he reached down to bolt 
+the door]
+;
+[5173:sat down on the sofa and took a rolled up newspaper from his 
+pocket]
+;
+[5174:flicked through his newspaper leisurely and stopped when he 
+reached the crossword]
+;
+[5175:nibbled the end of his ^N pen as he studied the crossword in his 
+newspaper]
+;
+[5176:"Hmm", pondered Weasel, looking at the crossword. "One across. 
+Medicine or narcotic. Four letters. Hmmm". ]
+;
+[5177:gave up the untouched crossword in disgust and turned to the 
+television page]
+;
+[5178:"Blast!", grunted Weasel as he read the television page of his 
+newspaper. "I've missed Neighbours again"]
+;
+[5179:rolled up his newspaper and put it back in his pocket. "I'd 
+better check on our hostage", he sighed as he got up from the sofa]
+;
+[5180:Weasel suddenly shouted an alarm from the cellar to warn 
+the rest of the gang. "Sarah's escaped!", he yelled, "Somebody 
+must have helped her" 
+%"Let's hit the road!", I heard John call to the others, "All meet 
+in the hallway"]
+; (OMNI IN HOUSE)
+;
+[5181:"Just checking you're still here", said Weasel to Sarah. "If 
+you want anything to eat, just give me a shout and I'll ignore 
+you", he sniggered. 
+%Sarah glared at him and cursed vigorously behind her gag]
+;
+; Weasel is knocked out by hammer.
+;
+[5190:It hit Weasel smack on the back of the head, knocking him 
+flat out on the floor]
+;
+[5191:groaned as he lay there on the floor]
+;
+[5192:groaned louder]
+;
+[5193:twitched and stirred as if he were about to wake up]
+;
+[5194:gradually began to come to. Looking rather dazed, he slowly sat up 
+and then rubbed the back of his head before fully opening his eyes..]
+;
+; When Weasel has been knocked out, Sarah arrives
+;
+[5200:Sarah saw Weasel lying on the floor and smiled in satisfaction. 
+"Greasy little shrimp", she laughed]
+;
+[5201:suddenly, she looked around as if puzzled. "I wonder where Alan's 
+got to?", she continued, "I can't see him anywhere..."]
+;
+; Racetracks used when gang are leaving...
+;
+; John leads check cellar before leaving
+;
+[5205:"Hurry up, Jude", called John. "I want us to check things in the 
+cellar before we go"]
+;
+[5208:John searched through the cellar, to make sure that nobody 
+had left anything behind that could be used to identify them]
+;
+[5209:"We can't leave without our hostage, can we?", laughed John 
+as he seized Sarah]
+;
+[5210:"Fool!", yelled John as he shook Weasel. "How did you manage 
+to foul things up this time?"]
+;
+[5211:"Okay, let's hit the road", said John as he fumbled in his pocket 
+for his ignition key]
+;
+[5212:John turned the key and the engine roared into action]
+;
+[5214:the van sped off into the distance along the track and soon 
+disappeared from sight]
+;
+; Severian gets drugs and then leaves
+;
+[5220:"Better get the drugs from the kitchen", said Severian hastily]
+;
+[5221:"Somebody's swiped my briefcase!", seethed Severian. "I knew 
+I should have chained it to my wrist!"]
+;
+[5223:"Can't leave these behind", said Severian with a smile as he 
+patted his briefcase]
+;
+[5225:with a roar of its engine, the taxi sped away from the farm, 
+taking with it the drugs buyers..] ; This message is printed if the
+; player is outside the taxi when the buyers escape.
+; It is also printed if the player is nowhere near the taxi, as to 
+; signify the end of the game.
+;
+; Big John goes to van and waits for John
+;
+[5230:"Blast!", cursed Big John. "John's got the van key with him. 
+Where the hell's he got to?"]
+;
+; Additions to leaving racetracks
+;
+[5240:"What the hell happened!", demanded John as he tried to slap 
+some sense into Big John. 
+%"I-I seen someone", gibbered Big John, "But he just vanished when 
+I shot him..."]
+;
+[5241:"Whether you saw someone or not", said John, "I think we'd better 
+make tracks..."]
+;
+[5242:stood trembling, clutching his smoking gun in his hand]
+;
+[5243:whined nervously through his chattering teeth]
+; 
+; ============================ END ================================= 
+
+
+
+
+

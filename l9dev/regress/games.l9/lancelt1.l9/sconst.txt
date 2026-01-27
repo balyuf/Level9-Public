@@ -1,0 +1,464 @@
+; Standard adventure source, copyright (C) 1987 Level 9 Computing.
+;
+; SCONST, game-specific constants. You will probably need to change 
+; most of the values of these. 
+;
+; A standard labelling convention for constants is that constants 
+; preceded by I (e.g ILOOK) are relative to their appropriate offset 
+; (e.g verboffset).
+;
+CONST
+ Lancelot=2004 ; unique game identifier value
+;
+; STARTsynthSHORTdescs=1199 ; shortroomdescs+minsynthroom
+ SHORTroomDESCS=800
+ LONGroomDESCS=1100
+;;
+ MAXMOVEABLE=109 ; MAX OBJECT WHICH MAY BE TAKEN, THROWN ETC.
+ MAXMOVEAPLUS1=110
+
+ MinMounted=55
+ MaxMounted=59
+
+; xmax=1 ; co-ords go 0..xmax - remember to change room 1 exits.
+; xmaxplus1=2
+; ymax=3
+;; 
+; minsynthroomminus2=218 ; 111
+; minsynthroomminus1=219 ; 112
+; minsynthroom=220 ; 113 ; the first room on the grid (bottom left hand corner)
+; maxsynthroom=227 ; 132
+;
+ minsceneryobj=180
+ minsceneryobjminus1=179
+ maxsceneryobj=190
+ maxsceneryobjplus1=191
+ minsobjtimes2minus1=359
+ maxsceneryobjtimes2plus2=382
+ numsceneryobjplus1=11
+;
+ minweaponminus1=39
+ minweapon=40
+ maxweapon=43
+ maxweaponplus1=44
+;
+ minclothes=99 ; 60
+ maxclothes=99 ; 61
+;
+ minfood=80
+ maxfood=81
+ maxfoodplus1=82
+
+ mintreasure=84 ; used for ingredients range in gnome2
+ maxtreasure=91 ; used for ingredients range in gnome2
+
+ minallobject=40
+ maxallobject=129
+
+ MAXOBJECTVISIBLE=169
+ MAXOBJECT=189 ; includes scenery objects.
+; goes wrong for maxobject>190 (dunno why!)
+; - inventory gets a funny value for hisearchpos (24)
+ MAXOBJECTPLUS1=190
+; 
+ MINOMNI=190 ; 158 ; all real objects above this are omni-present
+ MINOMNIMINUS1=189 ; 159
+ MAXOMNI=260 ; must include ieverything, except, it
+;
+; Preposition values (all relative to prepoffset)
+;
+;; riddenby=6
+ growingfrom=9 ; >>special to GNOME-II
+ FASTENEDTO=14
+
+ through=209
+;
+; VERBS...
+ iburn=115
+ ikiss=129
+ itakegoldtopub=137 ; for npcs only
+;; irecruit=146
+ ipast=162
+;; ifly=163
+ iwalk=164
+ icatch=165
+;---
+;
+; Offsets into SCORETABLE.. ( table 7 ) (starts at 32...)
+ scBase=32
+ scSerfsGate=32
+ scStudy=33
+ scLibrary=34
+ scHall=35
+ scRoundTable=36
+ scMeliagaunt=37
+ scBoudoir=38
+ scPrison=39
+ scLroom=40
+ scGroom=41
+ scSpareBlackKnight=42
+ scSleptInMews=43
+ scAccused=44
+ scGkilled=45
+ scGburnt=46
+ scForgotG=47
+; part 2...
+ scTurret=48
+ scTurquin=49
+ scChariot=50
+ scBeach=51
+ scServage=52
+ scPerilous=53
+ scReedy=54
+ scWailing=55
+ scGreenLaunds=56
+ scOrkneyStable=57
+ scBurntFleet=58
+ scSleptWithElaine=59
+ scFreedTurquinManor=60
+ scFreedFalcon=61
+ scCompletedLynetQuest=62
+ scLostHonourQueen=63
+ scKilledRedKnight=64
+ scBooks=65
+; scKissedHellawes=65
+; scHurtLynet=66
+
+ scFreedKnightBase=65 ; knight 1 is Tristram: object number 2
+ scFreedKnight1=67
+ scFreedKnightMax=74
+ scFreedKnightMaxPlus1=75
+
+ scmax=75
+ scmaxplus1=76
+
+ VisitTableStart=76 ; 34
+ VisitTableEnd=255 ; 213 ; VisitTableStart + (179=num of "Real" rooms)
+
+ MeetingTable=255 ; 213
+ MeetingTableEnd=319 ; 277 ; meetingTable+MaxNpc
+;
+; Objects..
+ user=1
+ tristram=2
+ galahad=3
+ borsDeGanis=4
+ SirQuestionMark=5 ;  meliagaunt=5
+ Gawain=6
+ RedKnight=7
+ meliot=8
+ lamorak=9
+ ector=10 
+ agravain=11 
+ aliduke=12 
+ brandiles=13 
+ brian=14 
+ geheris=15 
+ gareth=16 
+ lionel=17 
+ marhaus=18 
+ sirBreunis=19 
+ Garlon=20 
+ 
+ magicalKnight=22 
+ turquin=23 
+ pedivere=24 
+ blackKnight=25 
+ greenKnight=26 
+ hellawes=28 
+ queenMorgan=29 
+ queenNorthgales=30 
+ queenEastlands=31 
+ queenOutIsles=32 
+ damoselMaledisant=33 
+ ChariotDamosel=34 
+ damosel=35 
+ lady=36 
+ GiantNabon=37
+
+ army=40
+ carter=41
+ elaine=42 
+ mermaids=43 
+ oldMan=44
+ residents=45 
+ sentries=46
+ ThirtyKnights=47 
+ guard=48
+;  dragon=49 
+ hawk=50
+ brachet=51
+
+
+ Peasants=52
+ Crowd=53
+ Hawks=54
+ Queensknights=55
+ P1blackknight=56
+ Guenever=57
+ SirKay=58
+ SirMeliagaunt=59
+ Arthur=60
+ SirColgreavaunce=61
+ Merlin=62
+ p1Carter=63
+ p1Damosel=64
+; P1Knight=65
+;
+; now some ordinary objects (80 onwards)..
+; brokenBranch=80 
+ cloth=81 
+ food=82 
+ glassOfWine=83 
+ harp=84 
+ horn=85 
+ Coals=86 
+ plate=87 
+;; pot=88 
+ relic=89 
+ sack=90 
+ soup=91 
+ pillow=92 
+ cauldron=93
+ winch=94
+ deadWood=95
+
+ bath=110 
+ beacon=111 
+ bell=112 
+ boat=113 
+ briars=114 
+ bushes=115 
+ cage=116 
+ cart=117 
+ chest=118 
+ crossbow=119 
+ fire=120 
+ lever=121 
+ lid=122 
+ keyhole=123 
+ panel=124 
+ loosePlanks1=125 
+ loosePlanks2=126 
+ loosePlanks3=127 
+ portcullis=128 
+ secretPanel=129 
+ ships=130
+ shutters=131
+ tomb=132
+;;
+ inscription=134
+ sails=135
+;
+ SiegeArmy=137
+ trapdoor=138
+
+; moveable objects are (70..79)
+ footstool=70
+ gloves=71
+ hat=72
+
+; static objects for L1 (150..169)
+ bars=150
+ bed=151
+; bed=152
+; bed=153
+; bed=154
+; bed=155
+ bedofstraw=156
+ bloodstain=157
+ books=158
+ p1cart=159
+ p1chest=160
+ ladder=161
+ pyre=162
+ sieges=163
+ tableround=164
+ window=165
+
+;
+ HawkDroppings=170
+
+ ithing=246
+ iroom=243
+
+ sword=254 ; sword/armour objects...
+;
+ minpeople=1 ; = creaturebase
+ maxpeople=64 ;
+ maxpeopleplus1=65
+;
+ creaturebase=1 ; including people, user etc.
+ creaturebaseminus1=0 ; including people, user etc.
+ MINNPC=2 ; all except user
+ MINNPCMINUS1=1 ; all except user
+ MAXNPC=64
+ MAXNPCPLUS1=65
+ MAXTALKINGNPCPLUS1=40
+;
+; npc status in list 6..
+ NPCTABLESIZE=520 ; MAXNPCPLUS1*NpcEntrySize
+ NPCTABLESIZEPLUS8=528
+ NPCCURRENTOFFSET=0
+;
+ NPCENTRYSIZE=8
+ 
+; npc command queues follow the above in list 6..
+ npcstackbase=520 ; immediately after npc table
+ npcstackbaseplus5=525
+ maxnpcentries=52 ; 5 bytes per queued-command entry on stack
+;
+ npcstackentrysize=5; each entry is 5 bytes (hence the 5's above)
+;
+ npctablesizetozero=1535 ; now fixed. was 785
+;
+; offsets within each npc table entry in list 6..
+ enemyoffset=0
+ followoffset=1 ; person to follow normally
+ masteroffset=2 ; the person or creature who subdued this npc
+ hitpointoffset=3
+ hatredoffset=4 ; the amount which this npc hates its enemy
+ npcptroffset=5
+ boredomoffset=6
+;>>l2 attentionoffset=7
+; and offsets within each corresponding entry in npcinitial, list 5..
+ attackoffset=2
+; hitpoint offset=3
+ obedienceoffset=4
+ patienceoffset=5
+ goldsingingoffset=6 ; in static data - word (hi byte first)
+;
+; 
+;----
+
+ s1=1 ; pride
+ s2=2 ; wrath
+ s3=3 ; envy
+ s4=4 ; lust
+ s5=5 ; gluttony
+ s6=6 ; avarice
+ s7=7 ; sloth
+ v1=8 ; lackOfFaith
+ v2=9 ; lackOfCharity
+ v3=10 ; injustice
+ v4=11 ; lackOfFortitude
+ v5=12 ; lackOfPrudence
+ v6=13 ; intemperence
+ com1=14 ; worshipAnotherGod
+ com2=15 ; gravenImage
+ com3=16 ; to take the name of Lord your God in vain
+ com4=17 ; not to remember the Sabbath] ;? is this possible
+ com5=18 ; not to honour your parents] ; ?ditt
+ com6=19 ; to kill
+ com7=20 ; to commit adultery
+ com8=21 ; to steal
+ com9=22 ; to bear false witness against your neighbour
+ com10=23 ; to covet
+
+;----
+
+TABLE
+ list6=6
+
+; game-specific variables...
+
+VAR
+; CentaurOnHoliday ShopOpen ErrandOffered Itemsdeposited CentaurIntroduced
+; CentaurMetRecently EnvelopeOpened
+; NymphHappy
+; ActorHoldingRock
+; EagleFriendly
+; LeprecaunFriendly
+; DogsHaveToldIngrid
+; DogBarking
+; WitchLookingOut
+; BackDoorBroken
+; DogGone
+; WitchStoningEveryone
+; FollowingSomeone Misty
+; LeprecaunTime
+; DogsHaveFused
+; UnicornHappy
+;----------
+; HaveKilledPlant
+; StartPotionTable
+; IngredientNumber
+; CurrentBook
+; HoldingBreath
+; WeedkillerSmeared
+; BoulderRocking
+; BeanStalkState
+; HOldingCaveMouth
+; HaveDrunkAntidote
+; FlowerRaised
+; GreenSlaveAnimated
+;----
+ TotalMoves
+; LHasLeftVagon LHasStolenCrown
+; DamoselRandy
+; NameGiven ; =1 if L told lie, 2 if told a lie
+; ClimbingPath ; =1 if climbing, =2 if L has met N
+; TombOpen
+; TimeSinceRescueSeen EctorRescued MaidRescued
+; GalahadRescued GalahadCaptured GalahadDeadCounter
+; WindBlowing
+ ProblemObject ProblemVerb
+ gdCurrentSave gdHiSave
+; FireStrength
+; CurrentElemental
+; ChapelUnlocked
+; TempTitle TempTitleCounter
+ GalahadComment
+; LastDream ForgivenessImPossible
+; FirstSin SecondSin LatestSin
+
+
+; vars for L2...
+ OkToVisitTristram
+ TimeCauldronCarried
+; ActorHOldingLid
+; dragonBreathedFire
+ InvitedToEnterCorbin ElaineGreeting
+ PerilousStage PanelClosed OldManTime HaveConceivedGalahad
+ TimeAsleep CurrentPillow NabonAwake
+ TimeSinceHornBlown TimeSinceHornBlownNearby
+ BriarState
+ ChariotUnlocked
+ TurquinManorOpen SecretPanelOpen PeopleInSecretPassage BellRemoved
+ TurquinPrisonersReleased GuardState
+ ShuttersClosed
+ AskedForHawk ArmourRemoved HawkRescued
+ BrachetArrived
+ SwordDropped
+ PortcullisState
+ PushingOrkneyChest OrkneyPrisonOpened TimeInOrkneys
+ SomeonePushingServage ServageOpen
+
+; P1 variables...
+ TimeInMews 
+ TempTitle TempTitleCounter
+ CurrentBook
+ GueneverInMeliagaunt HorseKilled
+ PrisonOpened WillFreeLForAKiss
+; KnightsNotRescued
+ HaveSaidGoodbye
+;---
+ xmax
+ xmaxplus1
+ ymax
+; 
+ minsynthroomminus2
+ minsynthroomminus1
+ minsynthroom
+ maxsynthroom
+;---
+ NumMerlinRescues ; number of times merlin has rescued player*50
+ CurrentRank
+ TimeTillRescue ; till Merlin rescues Player
+ KnightGreetedThisTurn ; prevent Arthur talking to everyone at once
+ KnightsFollowingL
+ GeneralScoreAddition
+ QueenSavedFromBurning
+ RedKnightSpared
+ L1ExitsCommands
+ AltGuardState

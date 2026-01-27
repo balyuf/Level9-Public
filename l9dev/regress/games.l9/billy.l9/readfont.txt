@@ -1,0 +1,10 @@
+Parameters for FONT.BBC are
+
+Neo Filename: WESTERN.NEO
+Fnt Filename: WESTERN.FNT
+ASCII Start : 32
+ASCII End   : 163
+X Pixels    : 16
+Y Pixels    : 9
+Column      : 16
+

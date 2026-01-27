@@ -1,0 +1,2501 @@
+; Lancelot 2 source, copyright (C) 1988 Level 9 Computing.
+;
+; ASPECIAL.TXT, special case handlers for the game. (In practice, 
+; this means most of the code to handle puzzles etc.)
+;
+; Known bugs:
+; The compiler is happier if all DATA statements are followed by 
+; comments, otherwise line numbers for errors go wrong.
+;
+;
+BEGIN
+; now print any messages to be printed after certain movements
+.AFTERMOVE
+; if actor=user then amUser
+;.amUser
+; if room<>39 then amNotUpperPrison
+;; bell here?
+; if BellRemoved=true then amNotUpperPrison
+; if actor<>user then AmAlertGuards
+; m1=2703 ; L saw bell, did he jump back
+; gosub PrintM1
+; gosub YesOrNo
+; if result=true then JumpBack
+;
+;.AmAlertGuards
+; m1=2704 ; bell rang, alerting guards
+; gosub PrintM1Dot
+; gosub ForcedOutOfTurquin
+;
+;.amNotUpperPrison
+
+ if room<>6 then amNotTurquinEntrance
+; into the entrance room. Is the Oubliet fixed by someone's weight?
+ if actor=user then amTurquinUser
+; disappears withoutTrace if unstable...
+ if PeopleInSecretPassage>0 then amNotTurquinEntrance
+ if currentUserRoom<>7 then amtipsUp
+ message 2701 ; grinding noise from the north
+ message dot
+ goto amTipsUp
+
+.amTurquinUser
+ m1=2698 ; L felt floor move. Did he jump back?
+ gosub @PrintM1 ; no dot
+ gosub @YesOrNo
+ if result=false then amTU1
+.Jumpback
+ currentpos(user)=LastRoom
+ gosub @PrintRoom
+ commandFinished=true ; stop gd's
+ goto amNotTurquinEntrance
+
+.amtu1
+ m1=2702 ; floor felt unstable
+ if PeopleInSecretPassage>0 then amNotTurquinEntranceM1
+ m1=2700 ; floor tipped L into prison
+ gosub @PrintM1Dot
+ TimeTillRescue=6 ; prime Merlin to come and rescue him
+
+.amTipsUp
+ x1=3
+ currentpos(actor)=x1
+ gosub @PrintM1
+ goto amNotTurquinEntrance
+
+.amNotTurquinEntranceM1
+ gosub @PrintM1Dot
+.amNotTurquinEntrance
+ if room<>19 then amNotPerilous
+ if PerilousStage=0 then amNotPerilous
+ if HaveConceivedGalahad=true then amNotPerilous
+ object=galahad
+ gosub @FreeKnight ; mainly for scoring
+ x1=scSleptWithElaine
+ gosub @AddScore20
+ m1=2629 ; conceive galahad on the way out
+ gosub @PrintM1Dot
+ HaveConceivedGalahad=true
+ x1=71 ; thrown out of castle
+ currentpos(user)=x1
+
+.amNotPerilous
+ if room<>22 then amNotElaineBedroom
+ object=elaine
+ gosub @CheckIfPresent
+ if result=false then amNotElaineBedroom
+ m1=2612 ; did he withdraw?
+ gosub @PrintM1
+ gosub @YesOrNo
+ if result=false then amStayWithElaine
+ x1=19
+ currentpos(user)=x1
+ gosub @SetUpRoom
+ m1=2614 ; left
+ goto @PrintM1Dot
+
+.amStayWithElaine
+ x1=scSleptWithElaine
+ gosub @AddScoreMinus20
+ currentpos(elaine)=c0
+ HaveConceivedGalahad=true
+ m1=2613 ; stayed with elaine overnight
+ goto @PrintM1Dot
+
+.amNotElaineBedroom
+ if room<>18 then amNotCorbin
+ if ElaineGreeting=true then amNotCorbin
+ ElaineGreeting=true
+ m1=2611 ; offer from Elaine
+ gosub @PrintM1Dot
+ x1=22 ; elaine's bedroom
+ currentpos(elaine)=x1
+
+.amNotCorbin
+ if room<122 then amNotEcho
+ if room>131 then amNotEcho
+ currentpos(actor)=lastroom
+ gosub @SetUpRoom
+ verb=dir
+ gosub @PrintArrival
+
+.amNotEcho
+ if actor<>user then @amNotUser
+ if room<>106 then amNotLady
+ if HawkRescued=true then amNotLady
+ object=lady
+ gosub @CheckIfPresent
+ if result=false then amNotLady ; only waiting if she's asked for hawk
+ m1=2743 ; the lady was disappointed
+ gosub @PrintM1Dot
+
+.amNotLady
+ object=elaine ;>>mike 24/8/88
+ gosub @CheckifPresent ;>>mike 24/8/88
+ if result=false then amNotElaine ;>>mike 24/8/88
+ if room<>17 then amNotElaine
+ gosub @CalcScore
+ m1=2600 ; tried to lift elaine, but not good enough knight yet
+ if x4<150 then amElaineActorM1Dot
+ if x4>32000 then amElaineActorM1Dot
+ x1=18 ; corbin castle
+ currentpos(elaine)=x1
+ hicurrentpos(elaine)=c0
+ currentpos(Inscription)=c0
+ InvitedToEnterCorbin=true
+ m1=2601 ; succeeded in lifting elaine, she vanished
+.amElaineActorM1Dot
+ gosub @ActorM1Dot
+
+.amNotElaine
+
+;-- some scoring matters...
+ if room<>54 then amNotTurret
+ x1=scTurret
+ gosub @AddScore
+
+.amNotTurret
+ if room<>7 then amNotTurquin
+ x1=scTurquin
+ gosub @AddScore
+
+.amNotTurquin
+ if room<>69 then amNotServage
+ x1=scServage ; isle of servage
+ gosub @AddScore
+
+.amNotServage
+ if room<>20 then amNotScPerilous
+ x1=scPerilous ; Perilous bedroom
+ gosub @AddScore
+
+.amNotScPerilous
+ if room<>98 then amNotReedy
+ x1=scReedy ; reedy isle
+ gosub @AddScore
+
+.amNotReedy
+ if room<>86 then amNotWailing
+ x1=scWailing ; Wailing castle
+ gosub @AddScore
+
+.amNotWailing
+ if room<>103 then amNotGreenLaunds
+ x1=scGreenLaunds
+ gosub @AddScore
+
+.amNotGreenLaunds
+ if room<>33 then amNotOrkneyStable
+ x1=scOrkneyStable
+ gosub @AddScore
+
+.amNotOrkneyStable
+;-- end of scoring code
+
+.amNotUser
+ if room=38 then @ForcedOutOfTurquin ; enter guardroom
+
+;;.amret
+.FOOTNoScore ;>>mike19/9/88
+ RETURN
+;---
+.CheckTurquinCell
+; is there anyone in cell?
+ object=user
+.FootCheckScore
+ x1=currentpos(object)
+ if x1=3 then FOOTNoScore
+ add object,c1
+ if object<MAxNpcPlus1 then FOOTCheckScore
+ x1=scFreedTurquinManor
+ goto @AddScore20 ;>>mike19/9/88 gosub @AddScore20
+
+ ;>>mike19/9/88.FOOTNoScore
+ ;>>mike19/9/88 return
+;---
+.ForcedOutOfTurquin
+; all of L's party forced out of Turquin's manor
+ pos=cage
+ hipos=ipin
+ dest=3
+ hidest=0
+ gosub @PossLoop ; capture everyone
+
+ gosub CheckTurquinCell
+; everyone else from castle goes outside...
+ object=user
+ x2=50 ; track outside
+.FOOT1
+ x1=currentpos(object)
+ if x1=38 then FOOT2
+ if x1=39 then FOOT2
+ if x1<4 then FOOT3
+ if x1>7 then FOOT3
+.FOOT2
+ currentpos(object)=x2
+ hicurrentpos(object)=c0
+.FOOT3
+ add object,c1
+ if object<MaxNpcPlus1 then FOOT1
+
+; was Lancelot captured?
+ x1=currentpos(user)
+ m1=2714 ; guard looked down, lancelot knew it was all over
+ if x1=3 then @UserDeathM1
+ if room=39 then footMessage ;>>mike 31/8/88
+ if room=38 then footMessage ;>>mike 7/9/88 - guardroom
+ if room>7 then footNoMessage ;>>mike 31/8/88
+.footMessage
+ message 2716 ; guards drove everyone out
+ message dot
+.footNoMessage
+ return
+;---
+.PRAY
+ m1=2510 ; said a devout prayer
+ goto @Actorm1dot
+;---
+.SPECIALMOVES
+;
+; Given ROOM, HIDEST, DEST, ACTOR is to move that way
+; and exit has been validated as possible (and hence described)
+; in SPECIALEXITS. The purpose of code here is when something
+; happens on moving. If exit is to be blocked, code here should
+; print the appropriate message and set RESULT=FALSE.
+;
+
+
+
+; check for moves into part 1...
+ if dest<>227 then smNotToCamelot
+
+ m1=2499 ; can't go to camelot - sorry!
+ if actor>18 then @smPreventM1Dot
+
+
+; drop everything
+ pos=actor
+ hipos=nonspecific
+ dest=room
+ hidest=0
+ gosub @Possloop
+
+ dest=227
+ if actor<>user then smdeactivate ; normal move for npcs
+
+ cif NotDiskVersion
+; before moving L, save position for cassette version
+ gosub @OfferSave
+ cend
+
+ currentpos(actor)=dest
+ hicurrentpos(actor)=c0
+ GalahadComment=0 ; prevent Damosel coments.
+ partToChain=1
+ gosub @SwapDisabledFlags
+
+ cif DiskVersion
+  gosub @ChainPartToChain
+ cend
+
+ cif NotDiskVersion
+; have already done @OfferSave above
+  thispart=ConstantPartNum ;>>mike 12/9/88
+  gosub @CassetteChain
+ cend
+
+
+ gosub @SwapDisabledFlags
+ goto smNotToCamelot
+
+.smDeactivate
+; move npc into the other part, then deactivate it.
+ object=actor
+ gosub @SwapDisabledFlag
+
+.smNotToCamelot
+ if dest=103 then smColouredKnight
+ if dest=102 then smColouredKnight
+ if dest<>101 then smNotCOlouredKnight
+.smColouredKnight
+ object=BlackKnight
+ gosub @CheckIFPresent
+ if result=true then smCK1
+ object=GreenKnight
+ gosub @CHeckIfPresent
+ if result=true then smck1
+ object=RedKnight
+ gosub @CheckIfPresent
+ if result=false then smNotCOlouredKnight
+ if RedKnightSpared=true then smNotColouredKnight
+
+.smck1
+ gosub @PrintTheObject
+ m1=2761 ; blocked
+ gosub @PrintM1
+ gosub @PrintActor
+ gosub @PrintDot
+ goto @smPrevent
+
+.smNotColouredKnight
+ if actor<>user then @smnotuser
+ if from<>106 then smUserNotLeavePedivere
+ object=pedivere
+ gosub @CheckIfPresent
+ if result=false then smUserNotLeavePedivere
+ m1=2751 ; stabbed in back whilst running away
+ gosub @ActorM1Dot
+ goto @userDeath
+
+.smUserNotLeavePedivere
+ if SwordDropped=false then smNotSword
+ SwordDropped=true
+ m1=2775 ; picked up sword again
+ gosub @PrintM1Dot
+
+.smNotSword
+; is guard here?
+ if from=111 then smNoSignal ; right outside portcullis >>mike 29/8/88
+ x1=currentpos(guard)
+ if x1=from then @SignalPortcullis ;SmPreventM1Dot
+;>>mike 29/8/88 if x1=dest then @SignalPortcullis ;smPreventM1Dot
+.smNoSignal
+
+ if from<>111 then smNotPortcullis1
+ if dest=33 then smPortcullis
+
+.smNotPortcullis1
+ if from<>33 then smNotPortcullis
+ if dest<>111 then smNotPortcullis
+
+.smPortcullis
+; is guard here?
+ m1=2784 ; guard blocked L
+ x1=currentpos(guard)
+ if x1=from then @SmPreventM1Dot
+ if x1=dest then @SmPreventM1Dot
+
+ m1=2786 ; couldn't fit through portcullis
+ if PortcullisState>3 then @smPreventActorM1Dot
+
+.smNotPortcullis
+ if from<>119 then smNotFromChariot
+; are queens there waiting for an answer?
+ object=QueenEastLands
+ gosub @CheckIfPresent
+ m1=2667 ; must choose
+ if result=true then @smPreventM1Dot
+
+.smNotFromChariot
+.smNotUser
+
+ if dest<>15 then smNotServagePrison
+ m1=2529 ; door locked
+ if ServageOpen=false then @smPreventM1Dot
+
+.smNotServagePrison
+ if dest<>36 then smNotTunnel
+ if from<>35 then smNotTunnel
+ m1=2795 ; chest blocking trapdoor
+ x1=hicurrentpos(chest)
+ if x1<>0 then @smPreventM1Dot
+
+.smNotTunnel
+ if dest<>37 then smNotOrkneyPrison
+ if OrkneyPrisonOpened=true then smNotOrkneyPrison
+ m1=2790 ; prison bolted on this side
+ goto @smPreventM1Dot
+
+.smNotOrkneyPrison
+
+
+
+ if dest<>24 then smNotLyonesse
+ x1=currentpos(SiegeArmy)
+ if x1<>101 then smNotLyonesse
+.SiegeArmyStop
+ m1=2765 ; a flurry of arrows disuaded
+ gosub @PrintM1
+ LastWordPrinted=0 ; prevent use of article
+ gosub @PrintActor
+ gosub @PrintDot
+ goto @smPrevent
+
+.smNotLyonesse
+ if dest=21 then smTree
+ if dest<>29 then smNotTree
+.smTree
+ m1=2744 ; "I would prefer Lancelot to rescue my cat - oops - hawk"
+ if actor<>user then @smPreventM1Dot
+; if ArmourRemoved<>0 then smNotTree
+; ArmourRemoved=true
+ if from<>106 then smNotTree
+ gosub @PrintActor
+ m1=2745 ; removed armour+climbed the tree
+ goto @smOkM1Dot
+
+.smNotTree
+ if dest<>5 then smNotSecretPassage
+ m1=2695 ; the panel was closed
+ if SecretPanelOpen=0 then @smPreventM1Dot
+
+.smNotSecretPassage
+ if dest<>6 then smNotFireCrossbow
+ if from<>7 then smNotFireCrossbow
+ goto @TriggerCrossbow ;>>mike 23/8/88 - changed from gosub
+
+.smNotFireCrossbow
+ if dest<>7 then smNotManor1
+ if from<>50 then smNotManor1
+ if TurquinManorOpen=true then smNotManor1
+.ManorNotOpenToVisitors
+ if actor=Turquin then @smOk
+ m1=2687 ; knocked on door, got bucket of water for pains
+ goto @smPreventActorM1Dot
+
+.smNotManor1
+ if dest=8 then smChariotCell
+ if dest=10 then smChariotCell
+ if from=8 then smChariotCell
+ if from<>10 then smNotFromCell
+.smChariotCell
+ if actor=ChariotDamosel then smNotFromCell
+ if actor=QueenMorgan then smNotFromCell
+ if ChariotUnlocked=true then smNotFromCell
+ if actor<>user then @smPrevent
+ m1=2529 ; door was locked
+ if ChariotUnlocked=false then @smPreventM1Dot
+
+.smNotFromCell
+ if dest<>119 then smNotChariot
+ x1=currentpos(briars)
+ if x1<>room then smNotChariot
+ m1=2660 ; couldn't pass briars
+ goto @smPreventActorM1Dot
+
+.smNotChariot
+ if dest<>98 then smNotMarsh
+ m1=2655 ; disoriented+back to edge
+ if TimeSinceHornBlownNearby>5 then @smPreventM1Dot
+
+.smNotMarsh
+ if dest<>71 then smNotToPerilous
+ m1=2609 ; can't enter corbin
+ if actor<>user then @smPreventActorM1Dot
+
+.smNotToPerilous
+ if from<>20 then smNotPerilous
+ if PerilousStage>4 then smLeavePerilous
+ m1=2615 ; L could not leave until morning
+ goto @smPreventM1Dot
+
+.smLeavePerilous
+.smNotPerilous
+ if from<>71 then smNotCorbin
+ if dest<>18 then smNotCorbin
+ m1=2610 ; L could not enter Corbin castle
+ if InvitedToEnterCorbin=false then @smPreventActorM1Dot
+ m1=2608 ; could not return
+ if HaveConceivedGalahad=true then @smPreventActorM1Dot
+
+.smNotCorbin
+;
+ x1=hicurrentpos(actor)
+ if x1=0 then smNotInBoat
+; in the boat - going onto water?
+ if dest<minSynthRoom then smInBoatToLand
+; going onto water - move the person, then make the boat catch up.
+; if actor=galahad then smMoveBoat
+; gosub PrintActor
+; m1=2573 ; was not worthy to direct the boat
+; goto smPreventM1Dot
+;
+;.smMoveBoat
+; m1=2574 ; no wind
+; if WindBlowing=false then SmPreventM1Dot
+ currentpos(boat)=dest
+ dest=boat
+ hidest=ipin
+ goto @smOk
+
+.smInBoatToLand
+; get out of boat first...
+ prep=ipout
+.smGetIntoBoat
+ prep=0
+ gosub @NpcPushFifo
+ gosub @LinkOnFifoCommandQueue
+
+ verb=istand
+ gosub @Stand
+; prep=0
+; gosub @NpcPushFifo
+; gosub @LinkOnFifoCommandQueue
+ dest=0 ; prevent normal motion, but don't terminate gd's
+ goto @smok ; return
+
+.smNotInBoat
+; going onto water anyway?
+ if hidest<>0 then smNotOntoWater ; getting into boat etc.
+ if dest<MinSynthRoom then smNotOntoWater
+ if dest=241 then smNotOntoWater
+ if dest=236 then smNotOntoWater
+ if dest=244 then smNotOntoWater
+; can we get into the boat?
+ object=boat
+ gosub @CheckIfPresent
+ prep=ipin
+ if result=true then SmGetIntoBoat
+ m1=2570 ; would have got wet!
+ goto smPreventActorM1Dot
+
+.smNotOntoWater
+ if dest<>12 then smNotTPrison
+;; army check is now sufficient. if OkToVisitTristram=true then smIntoTPrison
+ object=army
+ gosub @CheckIfPresent
+ if result=false then smIntoTPrison
+ m1=2503 ; army blocked
+ gosub @PrintM1
+ m1=2504
+ goto smPreventActorM1Dot
+
+.smIntoTPrison
+ if actor<>user then smNotIntoTPrison
+ TimeTillRescue=25
+ m1=2508 ; captured, put in tintagel prison
+ gosub @PrintM1Dot
+ currentpos(user)=dest
+ hicurrentpos(user)=c0
+ goto smPrevent
+
+.smNotIntoTPrison
+
+
+
+.smNotTPrison
+ if dest<>64 then smNotBeach
+ if actor=carter then smCarter
+ object=sentries
+ gosub @CheckIfPresent
+ if result=false then smNotBeach
+ m1=2501 ; sentries blocked
+ gosub @PrintM1
+ m1=2502 ; and waved pikes
+ goto smPreventActorM1Dot
+
+.smCarter
+ m1=2523 ; Lancelot in cart etc.
+ x1=currentpos(user)
+ if x1=cart then smOkM1Dot
+; otherwise, treat as normal move
+
+.smNotBeach
+ m1=2529 ; door was locked
+ if from=12 then smPreventM1Dot
+
+.smok
+; code which MUST come after SMOK
+; check people leaving/entering secret passage so
+; as to calculate the weight in there
+; people entering?
+ if dest<>5 then smNotSP1
+ add PeopleInSecretPassage,c1
+.smNotSP1
+; people leaving?
+ if from<>5 then smNotSP2
+ sub PeopleInSecretPassage,c1
+.smNotSp2
+ if actor<>user then smOkNotUser
+ TimeTillRescue=0 ; don't need rescuing if can move around
+
+.smOkNotUser
+ RESULT=TRUE
+ RETURN
+;
+.smPreventActorM1Dot
+ gosub @ActorM1Dot
+ goto smPrevent
+
+.smpreventm1dot
+ gosub @printm1dot
+.smprevent
+ executeprocessed=true ;>>mike 29/8/88
+ FatalError=True
+ result=FALSE
+ commandfinished=TRUE
+;;.garet
+.tcNotFireCrossBow ;>>mike19/9/88
+ return
+
+.smokm1dot
+ gosub @printM1dot
+ goto @smok
+;---
+
+.TriggerCrossbow
+ x1=currentpos(crossBow)
+ if x1<>5 then tcNotFireCrossbow
+ m1=2689 ; trod on the loose planks
+ gosub @ActorM1Dot
+ if SecretPanelOpen<>0 then tcNotPanel
+ m1=2690 ; the panel opened
+ gosub @PrintM1Dot
+ SecretPanelOpen=1 ; temporarily open
+
+.tcNotPanel
+ m1=2691 ; an arrow flew from the open panel
+ gosub @PrintM1
+ m1=2692 ; which lancelot dodged
+ if actor=user then @smOkM1Dot
+ m1=2693 ; which hit
+ gosub @SMPreventM1Dot
+
+ m1=2694 ; fell to the ground, motionless
+ goto @smPreventActorM1Dot
+
+ ;>>mike19/9/88.tcNotFireCrossbow
+ ;>>mike19/9/88 return
+;---
+.specialtakes
+; is POS to be allowed to gain OBJECT?
+; return result=FALSE to prevent action
+ result=FALSE ; just do a return in any of the handlers to prevent
+ if object=soup then @silly
+ m1=2526 ; pain excruciating
+ if object<>coals then stNotCoals
+
+ x1=scBeach ; score for reaching beach
+ gosub @AddScore
+
+ gosub @ActorM1Dot
+ goto stOk
+
+.stNotCoals
+ if object<>winch then stNotWinch
+; pull/turn winch...
+ add GuardState,c1
+ m1=2706 ; the winch squeaked
+; raise/lower cage...
+ x1=currentpos(cage)
+ x2=3
+ if x1=39 then MoveCage1
+ x2=39
+.MoveCage1
+ currentpos(cage)=x2
+ m1=2709 ; cage appeared
+ if x2=currentUserRoom then MoveCage2
+ m1=2708 ; cage disappeared
+ if x1<>CurrentUserRoom then MoveCageNoReport
+.MoveCage2
+ x1=hicurrentpos(user) ; is user in cage?
+ if x1=0 then MoveCage3
+ m1=2710 ; cage rose
+ if x2=39 then MoveCage3
+ m1=2711 ; cage descended
+.MoveCage3
+ message m1
+ message dot
+ room=CurrentUserRoom
+ gosub @PrintRoom
+; gosub SetUpRoom ; setup for actor again
+.MoveCageNoReport
+ goto @ReturnFalse
+
+.stNotWinch
+ if object<>lever then stNotLever
+; toggle prisoner's state
+ x1=1
+ sub x1,TurquinPrisonersReleased
+ TurquinPrisonersReleased=x1
+ m1=2706 ; loud grating noises below
+ goto stPreventM1Dot
+
+.stNotLever
+ if object<>SecretPanel then stNotSecretPanel
+ if SecretPanelOpen=false then @Immovable ; stret ; Prevent take
+ m1=2697 ; grabbed the panel to hold it
+ SecretPanelOpen=2 ; being held
+ goto stPreventActorM1Dot
+
+.stNotSecretPanel
+; if object<>lid then stNLid
+;.TryOpenTomb
+; x1=hicurrentpos(lid)
+; if x1=0 then AlreadyOpen
+;
+; if actor=ActorHoldingLid then stLid1
+; if actorHoldingLid<>0 then stTakeLid
+;.stLid1
+; m1=2602 ; lifted the lid but couldn't move it laterally as well
+; actorHoldingLid=actor
+; goto stpreventActorm1dot
+;
+;.stTakeLid
+; actorHOldingLid=0
+; currentpos(lid)=room
+; hicurrentpos(lid)=c0
+; currentpos(dragon)=room
+; m1=2603 ; lid moved, dragon appeared
+; goto stpreventm1dot
+;
+;.stNLid
+.stok
+ result=TRUE ; allow actor to take object
+.stret
+ return
+
+.stokm1dot
+ result=true ; allow actor to take object
+ goto @printm1dot
+;---
+.StPreventActorM1Dot
+ gosub @PrintActor
+
+.stpreventm1dot
+ result=FALSE ; prevent taking
+ goto @printM1dot
+;--------
+.specialaftermoveobj
+; OBJECT has just been moved from HIFROM, FROM to POS, HIPOS
+; do anything you want, then return
+; no values to return
+;
+ if hipos=0 then @samoNotToObject
+ if object<>cloth then samoNotCloth
+; is hellawes here?
+ x1=currentpos(Hellawes)
+ if x1<>room then samoNotCloth
+ currentpos(thirtyKnights)=c0
+ currentpos(hellawes)=c0
+ m1=2778 ; hellawes, knights vanished
+ goto @PrintM1Dot
+
+.samoNotCloth
+ if object<>bell then samoNotBell
+ if BellRemoved=true then samoNotBell
+ BellRemoved=true
+ m1=2705 ; grabbed bell and pulled it off
+ gosub @ActorM1Dot
+
+.samoNotBell
+ if pos<>cauldron then SamoNotCauldron
+ if object<>coals then samoNotCauldron
+ x1=currentpos(soup)
+ if x1<>cauldron then samoNotCauldron
+ m1=2525 ; hiss!
+ currentpos(soup)=c0
+ goto @PrintM1Dot
+
+.samoNotCauldron
+ if pos<>GiantNabon then samoNotNabon
+; we know hipos<>0 here
+; new pillow for nabon.
+ CurrentPillow=object
+ x1=15 ; lying on
+ hicurrentpos(object)=x1
+ m1=2641 ; slept on
+ gosub @PrintM1Dot
+
+.samoNotNabon
+ if object<>harp then samoNotHarp
+ if hipos=0 then samoNotHarp
+ m1=2636 ; mermaids retrieved harp
+ if pos=mermaids then @PrintM1Dot
+
+ if hifrom=0 then samoNotHarp
+ if from<>mermaids then samoNotHarp
+ m1=2635 ; stole harp
+ goto @ActorM1Dot
+
+.samoNotHarp
+ if pos<>sails then samoNotSails
+ if object<>coals then samoNotSails
+.FireShips
+ x1=scBurntFleet
+ gosub @AddScore20
+ currentpos(ships)=c0
+ pos=13
+ hipos=0
+ dest=64
+ hidest=0
+ gosub @PossLoop ; move everyone out of the ship
+ currentpos(sails)=c0
+ currentpos(Cauldron)=c0
+ hicurrentpos(cauldron)=c0
+ currentpos(sentries)=c0
+ currentpos(carter)=c0
+ currentpos(army)=c0
+ OkToVisitTristram=true
+ m1=2507 ; sails caught fire etc.
+ goto @PrintM1Dot
+
+.samoNotSails
+.samoNotToObject
+ if hifrom=0 then samoNotFromObject
+ if from<>GiantNabon then samoNotFromNabon
+ if object<>CurrentPillow then samoNotFromNabon
+ CurrentPillow=0
+
+.samoNotFromNabon
+.samoNotFromObject
+ return
+;---
+.specialaftergive
+; NOUN1 has just been given to the npc NOUN2
+; giving glass of wine to damosel?
+ if noun2=GiantNabon then @WakeNabon ;>>mike 29/8/88
+
+ if noun2<>ChariotDamosel then sagNotDamosel
+ if noun1<>GlassOfWine then sagNotDamosel
+ m1=2678 ; damosel kissed L
+
+.UnlockChariot
+ gosub @PrintM1Dot
+; used if choose a queen as well
+ ChariotUnlocked=true
+ currentpos(ChariotDamosel)=c0
+ currentpos(Food)=c0
+ gosub @GetRidOfQueens
+ object=Gawain
+ goto @FreeKnight
+
+.sagNotDamosel
+;;.saythankyou
+ object=noun2
+ gosub @printTheobject
+ m1=2204 ; said "thankyou"
+ goto @printM1Dot
+;---
+.MerlinRescue
+ actor=user
+ m1=2530 ; merlin appeared:
+ gosub @VaryMessageDot
+ m1=2580 ; want rescuing?
+ gosub @PrintM1
+ gosub @YesOrNo
+ if result=false then NoRescue
+ m1=2582 ; "I'll see what I can do"
+ gosub @PrintM1Dot
+; move Lancelot to safety
+ x1=59 ; triumphal avenue
+ currentpos(user)=x1
+ hicurrentpos(user)=c0
+ add numMerlinRescues,c1 ; reduce player's score
+ gosub @SetUpRoom
+ goto @ReturnTrue
+
+.NoREscue
+ m1=2581 ; ok, stay then
+ gosub @PrintM1Dot
+ goto @ReturnFalse
+;---
+.TIMEDEPENDENTCODE
+; called for every minute that goes past
+ actor=user ; just in cast there is any doubt!
+;
+ KnightsFollowingL=0
+ if TempTitle=0 then tdNotTempTitle
+ add TempTitleCounter,c1
+ if TempTitleCounter<8 then tdNotTempTitle ; life of title
+ TempTitle=0
+ TempTitleCounter=0
+
+.tdNotTempTitle
+ if TimeInRoom>75 then tdRescue
+ if TimeTillRescue=0 then tdnotRescue
+ sub TimeTillRescue,c1
+ if TimeTillRescue>0 then tdNotRescue
+.tdRescue
+ TimeInRoom=45 ; possibly rescue again
+ gosub MerlinRescue
+
+.tdNotRescue
+ SomeonePushingServage=0
+ PushingOrkneyChest=0
+ Add TimeSinceHornBlown,c1
+ add TimeSinceHornBlownNearby,c1
+ if room<30 then tdNotInOrkneyTower
+ if room>36 then tdNotInOrkneyTower
+ add TimeInOrkneys,c1
+ if TimeInOrkneys<>15 then tdNotTower1
+ m1=2789 ; residents approaching
+ gosub @ActorM1Dot
+
+.tdNotTower1
+ if TimeInOrkneys<20 then tdNotInOrkneyTower
+ TimeInOrkneys=0
+ m1=2796 ; residents captured him
+ goto @UserDeathM1
+
+.tdNotInOrkneyTower
+ if PortCullisState=0 then tdNotPortcullis
+ if portCullisState>3 then tdPortcullis1
+ if room=111 then tdPortcullis
+ if room<>33 then tdPortcullis1
+.tdPortcullis
+ m1=2780 ; p/c descending
+ add m1,PortCullisState
+ gosub @PrintM1Dot
+ TimeInOrkneys=0
+.tdPortcullis1
+ add PortCullisState,c1
+; if PortCullisState<0 then tdNotPortcullis
+ if currentUserRoom=111 then tdNotPortcullis
+ if currentUserRoom<50 then tdNotPortcullis ; inside - e.g. trapped inside!
+; only open portcullis when guard here.
+ x1=currentpos(guard)
+ if x1<>111 then tdNotPortcullis
+ PortCullisState=0
+
+.tdNotPortcullis
+ if room=21 then tdNotElm ; do nothing whilst up tree
+ if room=29 then tdNotElm ; do nothing whilst up tree
+ if timeInRoom>0 then tdNotElm
+ x1=currentpos(lady)
+ if x1=Room then tdNotElm ; already there
+ if HawkRescued=true then tdNotElm
+ currentPos(lady)=c0 ; put her back "in castle"
+ if room<>106 then tdNotElm
+ m1=2740 ; a lady ran out
+ gosub @PrintM1
+ if AskedForHawk=false then tdHawk1
+ m1=2741 ; AGAIN
+ gosub @PrintM1
+.tdHawk1
+ m1=2742 ; will you help please
+ gosub @PrintM1Dot
+
+ AskedForHawk=true
+;;.tdElm1
+ x1=106
+ currentpos(lady)=x1
+ x1=29
+ currentpos(hawk)=x1
+ hicurrentpos(hawk)=c0
+
+.tdNotElm
+; guards awake yet?
+ if GuardState=0 then tdNotGuardsAtAll
+; add GuardState,c1
+ if GuardState<13 then tdGuards1
+ GuardState=12
+.tdGuards1
+ if room<>39 then tdGuards2
+ if AltGuardState=1 then tdGuards2 ; each message appears once only
+ m1=2719 ; from within the guardroom,
+ gosub @PrintM1
+ m1=2719
+ add m1,GuardState
+ gosub @PrintM1Dot
+.tdGuards2
+ if GuardState<>10 then tdNotGuards
+ gosub @ForcedOutOfTurquin
+ GuardState=65535 ; incremented to 0 - terminates guards
+
+.tdNotGuards
+; make only one out of two messages appear for guards.
+ add AltGuardState,c1
+ if AltGuardState=1 then tdNotGuardsAtAll
+ AltGuardState=0
+ add GuardState,c1
+
+.tdNotGuardsAtAll
+; panel in Turquin's manor open?
+ if SecretPanelOpen<>1 then TdNotPanel ; not open (either closed, or held open)
+ SecretPanelOpen=0
+ if CurrentUserRoom<>7 then tdNotPanel
+ m1=2696 ; the panel closed
+ gosub @PrintM1Dot
+
+.tdNotPanel
+; briars cut?
+ if BriarState=0 then tdNotBriars
+ sub BriarState,c1
+ if room<>56 then tdNotBriars
+ message 2662 ; the briars grew a bit
+ message dot
+
+.tdNotBriars
+; is someone carrying the cauldron or hot coals?
+ object=coals
+ x1=hicurrentpos(coals)
+ if x1=0 then tdNotCoals
+ actor=currentpos(coals)
+ if actor>MaxNpc then tdNotCoals
+ add TimeCauldronCarried,c2 ; triple pain rate for coals
+ goto tdCauldron
+
+.tdNotCoals
+ object=cauldron
+ x1=hicurrentpos(cauldron)
+ if x1=0 then tdNotCauldron
+ actor=currentpos(cauldron)
+ if actor>MaxNpc then tdNotCauldron
+.tdCauldron
+ add TimeCauldronCarried,c1
+ if TimeCauldronCarried<3 then tdNotDropIt
+ TimeCauldronCarried=c0
+ currentpos(object)=room
+ hicurrentpos(object)=c0
+ gosub @PrintActor
+ m1=2528 ; had to drop 
+ gosub @PrintM1
+ gosub @PrintTheObject
+ gosub @PrintDot
+ goto tdNotCauldron
+
+.tdNotDropIt
+ m1=2525
+ add m1,TimeCauldronCarried
+ gosub @ActorM1Dot
+
+.tdNotCauldron
+ actor=user ; set up actor again after cauldron code.
+
+; if actorHOldingLid=0 then tdNotLid
+; object=actorHoldingLid
+; gosub checkIfPresent
+; if result=false then TdLid2
+; gosub PrintTheObject
+; m1=2608 ; dropped the lid
+; gosub PrintM1Dot
+;.tdLid2
+; actorHoldingLid=0 ; drop lid
+;
+;.tdNotLid
+ return
+;---
+;---
+;---
+.OBJECTTRIGGER
+; Trigger on OBJECT
+; set PROCESSED=TRUE if the command is completed
+; by this routine (usually by the printing of an
+; error message, or some other general response)
+ processed=FALSE
+ if object<>254 then OtNotSword ; sword, armour etc.
+ if verb<>idrop then OtNotSword
+ if room=27 then dropSword
+ if room<>28 then OtNotSword
+.dropSword
+ SwordDropped=true
+ m1=2773 ; dropped sword
+ goto otpreventM1Dot
+
+.OtNotSword
+ if object=nullobject then otok
+ if verb=iexamine then otExamine
+ gosub @checkifpresent
+ if result=FALSE then otret ; not here, so do nothing
+ OTPOS=CURRENTPOS(OBJECT) ; remain set throughout this routine
+ OTHIPOS=HICURRENTPOS(OBJECT)
+ processed=TRUE ; prevent processing unless cleared at end of routine
+
+ if object<>relic then otNotRelic
+ x1=currentpos(relic)
+ m1=2651 ; relic was under nabon's head
+ if x1=CurrentPillow then otPreventM1Dot
+
+.otNotRelic
+.otExamine
+.OTOK
+ processed=FALSE ; PROCESSING MAY CONTINUE
+.otret
+ RETURN
+
+.otpreventm1dot
+ gosub @printM1dot
+;;.otprevent
+ processed=TRUE
+ return
+
+.FUNNIES
+; Value of word entered is in 'OBJECT' (relative to NOUNOFFSET)
+; Also have 'VERB' and may have 'PREP' if one has been entered
+; before this noun on the input line.
+; Return processed=TRUE if a special message is printed in this routine
+; which should prevent the printing of other messages
+ if object=nullobject then funniesok
+ processed=true ; prevent action unless drop through to end
+; if verb<>iexamine then fnotexamine
+; gosub isroomvandalised
+; if result=false then fnotvandalised
+; message 2213 ; vandals seem to have been at work here
+; message dot
+; if noun1<255 then fnotvandalised ; normal object, so also
+;; print normal description
+; return
+;
+;.fnotvandalised
+; if object<600 then nothingspecial ;*needed?
+; if object>699 then funniesok ;nothingspecial
+;; examining tree/terrain
+; verb=iam
+; gosub @printOBJECTverb
+; x1=object
+; x2=340
+; add x1,x2
+; message x1 ; examine message for tree/terrain
+; message dot
+; return
+;
+;.nothingspecial
+ if verb<>iexamine then examNotScenery
+ if object<240 then examnotscenery
+ if verb=idrop then examNotScenery
+ m1=2514 ; below your knightly gaze
+ if object=254 then @printM1Dot
+ message 2112 ; it looks exactly as you would expect
+ return
+
+;.fnotexamine
+; if object<240 then notvandal
+; if verb=iattack then vandal
+;
+;.notvandal
+.examnotscenery
+.funniesok
+ processed=FALSE
+ RETURN
+;---
+;.vandal
+;; vandalising scenery in ROOM
+;; has it already been vandalised?
+; if noun1<minsceneryobj then notvandal
+; gosub isroomvandalised
+; if result=true then alreadyvandalised
+; if x2=vandalmax then cantaddentry ; off end of table
+;
+;; add entry
+; message 2210 ; vandal!
+; message dot
+; vandaltable(x2)=room
+; add vandalptr,c1
+; return
+;
+;.cantaddentry
+;; can't add any more vandalised locations, so be rude to player..
+; message 2212 ; get knotted!
+; message dot
+; return
+;
+;.alreadyvandalised
+; message 2211 ; don't bother.. you made a good job last time
+; message dot
+; return
+;;---
+;.isroomvandalised
+;; has room already been vandalised?
+;; return result=true or false accordingly
+; result=false
+; x2=vandalbase ; pointer into table
+;.vandal1
+; x1=vandaltable(x2)
+; if x2=vandalptr then irvret ; return false
+; if x1=room then @returntrue
+; add x2,c1
+; if x2<vandalmax then vandal1
+;.irvret
+; return
+
+.SPECIALEXAMINE
+; print any special examine messages which follow
+; the basic message but are before any contents are printed
+; set processed=TRUE if the contents should not be printed
+
+ if object=user then seMounted
+ if object>MaxMounted then seNotMounted
+;; if object<MinMounted then seNotMounted
+ if object=brachet then seNotMounted
+ if object=carter then seNotMounted
+.seMounted
+ if room<45 then seNotMounted
+ x1=hicurrentpos(object)
+ if x1<>0 then seNotMounted
+ if object=army then seNotMounted
+ if object=mermaids then seNotMounted
+ gosub @PrintTheObject
+ m1=2516 ; was riding a horse
+ gosub @PrintM1Dot
+
+.seNotMounted
+ if object<>generaldoor then seNotDoor
+ if room<>35 then seNotOrkneyPrison
+ m1=2790 ; prison bolted on this side
+ if OrkneyPrisonOpened=false then @printM1Dot
+.seNotOrkneyPrison
+
+.seNotDoor
+ if object<>guard then seNotGuard
+ if PortcullisState=0 then seNotGuard
+ m1=2785 ; guard standing inside
+ if room<>111 then @PrintM1Dot
+
+.seNotGuard
+ if object<>CrossBow then seNotCrossBow
+ currentpos(object)=c0
+
+.seNotCrossBow
+ if object<>SecretPanel then seNotSecretPanel
+ m1=2695 ; closed
+ if SecretPanelOpen=false then @printM1Dot
+
+.seNotSecretPanel
+ if object<>panel then seNotPanel
+ m1=2630 ; open
+ if PanelClosed<3 then @PrintM1Dot
+
+.seNotPanel
+ m1=2640 ; giant was sleeping soundly
+ if object<>giantNabon then seNotNabon
+ if NabonAwake=true then seNotNabon
+ m1=2640 ; giant was sleeping soundly
+ goto @PrintM1Dot
+
+.seNotNabon
+ if object<>sack then seNotSack
+ x1=currentpos(sack)
+ m1=2652
+ if x1=GiantNabon then @setProcessedM1Dot
+
+.seNotSack
+ if room<>3 then seNotLowerPrison
+ x1=hicurrentpos(object)
+ if x1<>0 then seNotLowerPrison
+ if object<ector then seNotLowerPrison
+ if object>marhaus then seNotLowerPrison
+ m1=2718 ; locked up
+ goto @PrintM1Dot ;>>mike19/9/88 gosub @PrintM1Dot
+
+ ;>>mike19/9/88.seNotLowerPrison
+ ;>>mike19/9/88 RETURN
+;---
+.SPECIALPREEXAMINE
+; before printing examine message / contents, check if
+; anything should prevent this. Return TRUE if details should
+; NOT be printed
+; if object>MaxNpc then SPENotPerson
+; gosub ReportHealth
+; if x1=0 then returnTrue ; dead!
+;
+;.SPENotPerson
+
+; if object<>tomb then speNotTomb
+;; is lid on tomb?
+; x1=hicurrentpos(lid)
+; m1=2604 ; tomb wsas closed
+; if x1<>0 then ReturnTrueM1Dot
+;
+;.speNotTomb
+ RESULT=FALSE ; proceed normally
+;;.speok
+.seNotLowerPrison  ;>>mike19/9/88
+ RETURN
+
+.returnTrueM1Dot
+ result=true
+ goto @PrintM1Dot
+;---
+;;.CANTSEETHAT
+;; M1=2019 ; can't see that
+;; GOTO @errorm1
+;---
+.mighthurtyourself
+ m1=2401 ; you might hurt yourself
+ goto @errorm1dot
+;----
+;---
+;;.StopObject
+;; actorsave=actor
+;; actor=object
+;; gosub @stop
+;; actor=actorsave
+;; goto resetactor
+;---
+.resetactor
+ gosub @setACTORATTRIBUTES
+ goto @initfifo
+;---
+;---
+.MAKEENEMIES
+; make TARGET and ACTOR be enemies
+ OBJECT=TARGET
+ GOSUB @setX4toOBJECTATTRIBUTES
+;;; and set up attacker and target to be enemies...
+ NPCCURRENT(X4)=ACTOR
+ NPCCURRENT(ACTORATTRIBUTES)=TARGET
+ return
+;---
+; Routines to return pointer to character 'OBJECT' data. Note that they 
+; rely on npcentrysize=16, so beware if you change this.
+.setACTORATTRIBUTES
+ ACTORATTRIBUTES=ACTOR
+ ADD ACTORATTRIBUTES,ACTORATTRIBUTES
+ ADD ACTORATTRIBUTES,ACTORATTRIBUTES
+ ADD ACTORATTRIBUTES,ACTORATTRIBUTES
+; ADD ACTORATTRIBUTES,ACTORATTRIBUTES
+ RETURN
+;
+.setX4toOBJECTATTRIBUTES
+; return pointer in X4. (Modify .notifynpc if you change this routine)
+ X4=0
+ if object>maxNpc then sxtnnotalive
+ X4=OBJECT
+ ADD X4,X4
+ ADD X4,X4
+ ADD X4,X4
+; ADD X4,X4
+.sxtnnotalive
+ return
+;---
+.SILLY
+; prs "[actor who is being silly is: "
+; x1=actor
+; gosub printTHEobjectx1
+; prs "]"
+; message cr
+ gosub @AbsCancelInput
+ M1=3100
+ GOTO @VARYERRORM1DOT
+;---
+;-------------------
+;.SPECIALDESC
+;; come here after all objects and exits printed
+;; no return necessary
+;;;.sdret
+; RETURN
+;---
+.SPECIALEXITS
+; Given 'FROM' 'DIR' 'DEST'
+; Modify if an exit is blocked for some reason
+ HIDEST=0 ; normally can't move onto a container through an exit
+ X1=HICURRENTPOS(ACTOR)
+ IF X1=0 THEN SEORDINARY
+; ACTOR is on something - so exits may be different
+; Standing on something, but can take as being an
+; ordinary exit from the room in which the container is ('ROOM')
+.SEORDINARY
+; now check any other modified exits
+; if dest<minsynthroomminus1 then senotsynth
+; x1=dest
+; gosub @GetTerrainType
+; if x1<minsynthroomminus1 then seprevent ; should be going to a fixed room
+; if x1=112 then seprevent ; unavailable room
+;
+; If you want to prevent movement onto a particular class
+; of terrain, add the line:
+;
+; IF x1<116 (say) then seprevent
+;
+; then terrain types MINSYNTHROOM to 115 will be impossible to move onto.
+; (You may need to remove the range check on DEST above, as well)
+;.senotsynth
+; if from<>116 then seNotBridge
+; if dir<>4 then seNotBridge
+; dest=28
+;
+;.seNotBridge
+;;.specialexitsok
+
+
+;>>mike 10/9/88 - removed because it messes up gd movement
+;>>mike 10/9/88 - to Meliot area.
+; if dest<>110 then seNotKludge ;>>mike 8/9/88
+;; bug in AbsCheckExit which caused moves west from Western shore
+;; to go to room 110 instead of room 62.
+; if hidest<>0 then seNotKludge ;>>mike 8/9/88
+; dest=60 ;>>mike 8/9/88
+; door=0 ; >>mike 8/9/88
+;
+;.seNotKludge
+
+ if dest<>13 then seNotShips
+ if OkToVisitTristram=true then seprevent
+
+.seNotShips
+ RETURN
+
+.seprevent
+;.SEFALSE
+; Exit is not present
+ DEST=0
+ EXITVISIBLE=FALSE
+ RETURN
+;---
+.SPECIALDROPS
+; trying to drop 'OBJECT' to position HIPOS, POS
+; Print appropriate message if desired
+; and return RESULT=FALSE if ACTOR is to be prevented from dropping it
+; if hipos=0 then sdnotputonobject
+;.sdnotputonobject ; not going to a container
+ if hipos<>0 then sdNotSea
+ if pos<233 then sdNotSea
+; is boat here?
+ x1=currentpos(boat)
+ if x1<>room then sdNotSea ; allow it to happen (probably
+; near the shore anyway)
+ pos=boat
+ hipos=in ; drop it into boat
+
+.sdNotSea
+ RESULT=TRUE ; allow it to be dropped
+ RETURN
+;---
+.SPECIALACTOR
+; print ACTOR
+ x1=hicurrentpos(actor)
+ if x1=0 then specialActor1
+ x1=currentpos(actor)
+ if x1=cart then sa1
+ if x1<>boat then specialActor1
+.sa1
+; print "the container was..."
+ object=x1
+ verb=iam
+ goto @PrintObjectVerb
+
+.specialActor1
+ lastwordprinted=actor ; force it to print the article - 'you'
+ verb=iam
+ goto @printACTORverb
+;---
+.specialcheckifaccessible
+; if no special code is needed, LEAVE RESULT UNCHANGED
+; otherwise return RESULT=TRUE if OBJECT is accessible to VERB
+; or RESULT=FALSE if not accessible.
+
+;>>specials for Lancelot3
+; handle the chalice and cup objects. There
+; are five of each, one empty, the others containing various
+; liquids. If Npcs are instructed to handle the cup (say), they
+; try to find the first one only, regardless of whether or not
+; it exists
+ if object=panel then sciaNotAutomatic
+ if object=SecretPanel then sciaNotAutomatic
+ if object=sword then sciatrue
+ if processingsay=TRUE then sciatrue
+.sciaNotAutomatic
+ if verb<>115 then sciaNotChoose
+; "choose" for queens
+ if object<240 then sciaTrue
+ object=user ; for "GUENVER", etc.
+ goto sciaTrue
+
+.sciaNotChoose
+ if verb=isetupgo then conditionaltrue ; sciatrue
+ if verb=igdgo then conditionaltrue ; sciatrue
+ if verb=isetupfind then conditionaltrue ; sciatrue
+ if verb=igdfind then conditionaltrue ; sciatrue
+ if verb=igetme then sciatrue
+ if verb=iwaitforperson then conditionaltrue ; sciatrue ; wait for ...
+ if verb=iwaitforperiod then conditionaltrue ; sciatrue ; wait for ...
+ if verb=iwaituntiltime then conditionaltrue ; sciatrue ; wait until ...
+ if object<>generaldoor then scianotdoor
+ gosub @setupdoor
+ if door=TRUE then sciatrue
+ goto @returnfalse
+
+ ;>>mike19/9/88.scianotdoor
+ ;>>mike19/9/88 return
+;
+.conditionaltrue
+; only true if OBJECT exists in the game
+ x1=currentpos(object)
+ if x1=0 then @returnfalse
+.sciatrue
+ result=TRUE
+.sciaNotDoor  ;>>mike19/9/88
+ return
+;---
+.isobjectalive
+; return result=TRUE if it is
+ if object>maxnpc then @returnfalse
+ gosub @SetX4ToObjectAttributes
+ x1=hitpointOffset
+ add x1,x4
+ x1=npcCurrent(x1)
+ if x1>0 then sciatrue
+ result=FALSE
+;.ioaret
+ return
+;---
+;
+;.specialdescbeforeexits
+;; printed immediately after short+long room descs.
+;; no return needed
+;
+;;;.printdistantfeatures ;*
+;; what is the height of the current location?
+;; what is the special feature at the current location?
+;;
+; return
+;---
+;;.calcheight
+;;; return x1 = height of ROOM with scenery object x4
+;;; x4=1..25 corresponding to room if special feature
+;; return
+;;;---
+;;.CalcTerrainAndTree
+;;; return x1=tree type and x2+x3=terrain type
+;;; for ROOM.
+;; return
+;---
+.GetXY
+; return X=x co-ordinate on grid
+; Y=y co-ordinate on grid
+ if room>minsynthroomminus1 then getxysynth
+; fixed room
+ x=0
+ y=0
+ return
+
+.getxysynth
+ x1=room
+;;.getxyx1
+ x2=minsynthroomminus1
+ sub x1,x2
+ sub x1,c1
+ x2=xmaxplus1
+ gosub @x1divx2
+ y=x1 ; y:=room div xmax = y co-ordinate
+ add x2,x3
+ x=x2 ; x:=room mod xmax = x co-ordinate
+ return
+;---
+.convertroom
+; return x1 as the room number for the description
+; printed by a room object being here.
+; descriptions are in table with offsets 240..255
+; exits are stored in table from room 10..30
+ x1=minsobjtimes2minus1 ; double to give index into initial pos
+.cr1
+ x2=objectstart(x1)
+ if x2=room then crfound
+ add x1,c2
+ if x1<maxsceneryobjtimes2plus2 then cr1
+ x1=0
+ return
+.crfound
+; objects have numbers minsceneryobj..maxsceneryobj
+; we want offset in objects 1..25
+;; so subtract minsceneryobjminus1
+ x2=2
+ gosub @x1divx2 ; get object number
+ x2=minsceneryobjminus1
+ sub x1,x2
+ return
+;---
+;;.GetUserHitPoints
+;; object=user
+;; gosub SetX4toObjectAttributes
+;; x1=hitpointoffset
+;; add x1,x4
+;; x1=npccurrent(x1)
+;; return
+;---
+.specialactivatenpc
+; We are activating npc ACTOR
+; Put special code handlers for them HERE.
+; Set processed=TRUE if they have already done
+; everything they are going to this turn.
+; return verb<>0 to do that action
+ if room<>currentUserRoom then sanNotWellMet
+ if actor=guard then sanNotWellMet
+ x1=MeetingTable
+ add x1,actor
+ x2=list7(x1) ; have we already met user?
+ if x2>0 then sanNotWellMet
+ list7(x1)=c1 ; mark as met
+ m1=3000 ; greeting
+ add m1,actor
+ gosub @PrintM1 ; no dot!
+ goto @saPrevent
+
+.sanNotWellMet
+; if DragonBreathedFire<>room then sanNoFire
+; if actor=dragon then sanNoFire
+;; everyone except dragon and Lancelot leaves
+; verb=12 ; move out
+; return
+;
+;.sanNoFire
+
+ if actor>Marhaus then saNotFreeKnight
+ if room<45 then saNotFreeKnight ; don't run off when inside
+ if room=102 then saNotFreeKnight ; not red knight when on guard
+ add KnightsFollowingL,c1
+ if KnightsFollowingL<>4 then saNotFreeKnight
+ if room<>CurrentUserRoom then saNotFreeKnight
+ m1=2500 ; no further need of me. Bye!
+ currentpos(actor)=c0
+ hicurrentpos(actor)=c0
+ x1=128
+ npccurrent(actorAttributes)=x1 ; mark as inactive
+ goto @saPreventActorM1Dot
+
+.saNotFreeKnight
+
+
+ if actor<>SirQuestionMark then sanNotQuestionMark
+; is breunis dead?
+ x1=currentpos(SirBreunis)
+ if x1<>0 then @saPrevent
+; already freed?
+ x1=scFreedKnightBase
+ add x1,actor
+ x1=list7(x1)
+ if x1<>0 then sanNotQuestionMark ; already free
+ object=actor
+ gosub @FreeKnight
+ m1=2658 ; thanks!
+ goto @saPreventM1Dot
+
+.sanNotQuestionMark
+ if actor<>hawk then sanNotHawk
+ npccurrent(ActorAttributes)=c0 ; stop hating current enemy
+ return
+
+.sanNotHawk
+ if actor<>SirBreunis then sanNotBreunis
+ npccurrent(ActorAttributes)=c0 ; stop hating current enemy
+; is Breunis hurt?
+ if room=86 then sanNotBreunis ; at home
+ x1=hitpointOffset
+ add x1,ActorAttributes
+ x1=npccurrent(x1)
+ if x1>40 then sanNotBreunis
+; run off home to recuperate
+ verb=igdgo
+ noun1=86
+ noun2=nullobject
+ return
+
+;-
+.sanNotBreunis
+ if actor<>DamoselMaledisant then samoNotMaledisant
+ if GalahadComment=0 then samoNotMaledisant
+ gosub @PrintActor
+ m1=2156 ; SAID
+ gosub @PrintM1
+ m1=space
+ gosub @PrintM1
+ m1=quote
+ gosub @PrintM1
+ m1=GalahadComment
+ gosub @PrintM1
+ GalahadComment=0 ; say it once only!
+ m1=quote
+ goto @SmPreventM1Dot
+
+.samoNotMaledisant
+ if actor<>guard then sanNotGuard
+ if currentUserRoom<>room then sanNotGuard
+; is user hidden?
+ x1=currentpos(user)
+ if x1=bushes then sanNotGuard
+ if PortCullisState>0 then sanNotGuard
+.SignalPortcullis
+ PortCullisState=1 ; starts on its way down
+ m1=2780 ; signalled Portcullis to descend
+ goto @saPreventM1Dot
+
+.sanNotGuard
+ if actor<>thirtyKnights then saNotKnights
+ if CurrentUserRoom<>room then saNotKnights
+ if SwordDropped=false then saNotKnights
+ m1=2774 ; killed quickly
+ goto @UserDeathM1
+
+.saNotKnights
+ if actor<>damosel then saNotDamosel
+ object=cloth
+ gosub @CheckIfPresent
+ if result=false then saNotDamosel
+ object=meliot
+ gosub @FreeKnight
+ x1=scCompletedLynetQuest
+ gosub @AddScore20
+ currentpos(damosel)=c0
+ currentpos(meliot)=c0
+ currentpos(cloth)=c0
+ hicurrentpos(cloth)=c0
+ currentpos(brachet)=c0
+ m1=2779 ; took cloth, healed
+ goto @saPreventM1Dot
+
+.saNotDamosel
+ if actor<>brachet then saNotBrachet
+ if BrachetArrived=true then saNotBrachet
+; is Lancelot here?
+ if room<>CurrentUserRoom then bark
+ if room<>25 then saBrachetNotArrived
+ BrachetArrived=true
+ return
+
+.saBrachetNotArrived
+; go another step closer to the manor
+ verb=igdgo
+ noun1=25
+ return
+
+.bark
+; attract L if adjacent
+ dir=1
+.Bark1
+ exit room dir x1 dest
+ if dest=CurrentUserRoom then BarkNearby
+ add dir,c1
+ if dir<15 then Bark1
+ goto @saPrevent
+
+.BarkNearby
+ message 2770 ; heard a brachet barking
+ m1=584 ; "from the dir"
+ add m1,dir
+ message m1
+ message dot
+ goto @saPrevent
+
+.saNotBrachet
+ if actor=GreenKnight then saKnight
+ if actor=BlackKnight then saKnight
+ if actor<>redKnight then SaNotKnight
+ if RedKnightSpared<>false then saNotKnight
+.saKnight
+; if CurrentUserRoom<>room then saNotKnight
+; if timeInRoom>0 then saKnight1
+; m1=2764 	  ; "the xxx knight" "challenged Lancelot"
+; goto saPreventActorM1Dot
+
+.saKnight1
+ x1=hitPointOffset
+ add x1,ActorAttributes
+ x1=npccurrent(x1)
+ if x1>35 then @SAattackUser
+ gosub @PrintActor
+ m1=2760 ; yielded - did L spare him?
+ gosub @PrintM1
+
+ ActorSave=actor
+ actor=user
+  gosub @YesOrNo
+ actor=ActorSave
+ if actor<>RedKnight then saRedKnight
+ if result=false then saRedKnight
+ RedKnightSpared=true
+.saRedKnight
+ npccurrent(actorAttributes)=c0 ; no enemies any more
+ currentpos(actor)=c0 ; knight disappears whether spared or killed
+ if result=false then saKillKnight
+ m1=2764 ; rode away, thanking L
+ if actor=RedKnight then @saPreventActorM1Dot
+ m1=2762 ; rode away, clobbered L
+ goto @saPreventActorM1Dot
+
+.saKillKnight
+ target=actor
+ gosub @TargetDeath ; reduce score if red knight
+ m1=2763 ; ran him through
+ goto @saPreventActorM1Dot
+
+.saNotKnight
+ if actor<>pedivere then saNotPedivere
+; if currentUserRoom=106 then saPedivere2a
+; anyone here to attack?
+; object=2
+;.saPedivere1
+; if object=pedivere then saPedivere2
+; if object=lady then sapedivere2
+; gosub CheckIfPresent
+; if result=true then saPedivere3
+;.saPedivere2
+; add object,c1
+; if object<maxNpcPlus1 then saPedivere1
+;; is Lancelot here?
+ if CurrentUserRoom<>room then @saPrevent ; do nothing until L appears
+.saPedivere2a
+; if TimeInRoom>1 then saPedivereAttack
+; m1=2750 ; pedivere taunted him
+; goto saPreventM1Dot
+
+.saPedivereAttack
+; attack user - this is going to hurt a lot!
+ target=user
+ BlowStrength=40
+ gosub @GBNDodge
+ goto @saPrevent
+
+;.saPedivere3
+; message 2749 ; heard sounds of fighting
+; message dot
+
+.saNotPedivere
+ if actor<>garlon then saNotGarlon
+; in turret?
+ if room<>54 then saNotTurret
+ if currentUserRoom<>52 then saNotTurret
+ verb=1 ; go out to face lancelot!
+ return
+
+.saNotTurret
+;; attack L if in same room
+; if room=currentUserRoom then saAttackUser
+; if CurrentUserRoom=54 then saAttackUser
+; goto saPrevent ; do nothing otherwise
+ goto @saAttackUser
+
+.saNotGarlon
+ if actor<>Turquin then sanNotTurquin
+ x1=hitPointOffset
+ add x1,ActorAttributes
+ x1=npcCurrent(x1)
+ if x1>35 then sanNotTurquin
+ currentPos(Actor)=c0
+ TurquinManorOpen=true
+ m1=2688 ; Turquin submitted+fled
+ goto @SaPreventM1Dot
+
+.sanNotTurquin
+; if actor<>QueenNorthGales then sanNotNorthGales
+; if TimeInRoom<>1 then sanNotNorthGales
+; m1=2666 ; which of us will you choose?
+; goto saPreventM1Dot
+
+.sanNotNorthGales
+ if actor<>QueenEastLands then sanNotEastLands
+; is Lancelot here?
+; object=user
+; gosub CheckIfPresent
+; if result=false then sanNotEastLands
+ if CurrentUserRoom<>room then sanNotEastLands
+; m1=2667 ; must choose
+; if TimeInRoom=3 then saPreventM1Dot
+; if TimeInRoom=5 then saPreventM1Dot
+ if TimeInRoom<7 then sanNotEastLands
+; put Lancelot in prison
+.IntoChariotPrison
+ x1=scChariot
+ gosub @AddScore
+
+ TimeTillRescue=40 ; prime Merlin's rescue, but give time to escape
+ m1=2668 ; queens furious
+ gosub @PrintM1Dot
+ gosub GetRidOfQueens
+ x1=9 ; prison corridor
+ currentpos(QueenMorgan)=x1
+ x1=10
+ currentpos(user)=x1
+; and put everyone else into other cell...
+ pos=room
+ hipos=0
+ dest=8
+ hidest=0
+ gosub @PossLoop
+ m1=2669 ; put him in prison
+ goto @PrintM1Dot
+
+.GetRidOfQueens
+ currentpos(QueenMorgan)=c0
+ currentpos(QueenNorthGales)=c0
+ currentpos(QueenEastLands)=c0
+ currentpos(QueenOutIsles)=c0
+ return
+
+.sanNotEastLands
+ if actor<>GiantNabon then @saNotGiant
+ if NabonAwake=true then @saAttackUser
+; sleep unless pillow has been taken, or day has broken
+ x1=currentpos(CurrentPillow)
+ if x1=GiantNabon then saPillowOk
+; giant wakes!
+ m1=2643 ; giant fell to the ground
+
+.WakeNabonM1
+ gosub @PrintM1Dot
+.WakeNabon
+ if NabonAwake=true then WakeNabon1
+ m1=2653 ; giant woke
+ gosub @PrintM1Dot
+ NabonAwake=true
+
+ x1=currentpos(sack)
+ if x1=GiantNabon then WakeNabon1
+ if x1=0 then WakeNabon1
+ m1=2648 ; grabbed back the sack
+ gosub @PrintM1Dot
+.WakeNabon1
+ currentpos(sack)=c0
+ hicurrentpos(sack)=c0
+ goto saAttackUser
+
+.saPillowOk
+ if CurrentPillow=81 then saPillow1
+ if CurrentPillow=82 then saPillow1
+ if CurrentPillow=90 then saPillow1
+ if CurrentPillow=92 then saPillow1
+ m1=2644 ; too uncomfortable
+ goto WakeNabonM1
+
+.saPillow1
+ if currentUserRoom<>Room then saNotGiant
+ add TimeAsleep,c1
+ if TimeAsleep<20 then @setProcessed
+ m1=2645 ; dawn broke, giant awoke
+ goto WakeNabonM1
+
+.saNotGiant
+ if actor<>mermaids then saNotMermaids
+; is harp here to steal?
+ object=harp
+ gosub @CheckIfPresent
+ if result=false then saNoHarp
+; are mermaids carrying it?
+ x1=currentpos(harp)
+ if x1=mermaids then saPlayHarp
+; grab it back!
+ verb=itake
+ noun1=harp
+ return
+
+.saPlayHarp
+ random x1
+ m1=2638 ; played harp
+ if x1<80 then saPreventM1Dot
+
+.saNoHarp
+
+.saNotMermaids
+ if actor<>MagicalKnight then sanNotMagicalKnight
+; attack L until wounded, then retreat+be healed immediately
+ if PanelClosed>2 then sanMagicalKnight1
+; wounded enough to retreat?
+ x1=hitPointOffset
+ add x1,ActorAttributes
+ x2=npccurrent(x1)
+ if x2>40 then sanMagicalKnight1
+ m1=2624 ; knight staggered back, then re-appeared, healed
+ x2=npcinitial(x1)
+ npccurrent(x1)=x2
+ goto saPreventM1Dot
+
+.sanMagicalKnight1
+.saAttackUser
+ verb=iattack
+ noun1=user
+ return
+
+.sanNotMagicalKnight
+ if actor<>OldMan then sanNotOldMan
+ add OldManTime,c1
+ if OldManTime<4 then sanNotOldMan
+ m1=2628 ; old man blessed L, delivered message
+ currentpos(OldMan)=c0
+ goto saPreventM1Dot
+
+.sanNotOldMan
+ if actor<>tristram then saNTristram
+; carrying harp?
+ object=harp
+ gosub @IsObjectCarried
+ if result=false then saTristramNoHarp
+ if room=12 then saTristram1 ; escape immediately
+ random x1
+ if x1>40 then saNTristram ; play harp at random
+.saTristram1
+ verb=iplay
+ noun1=harp
+ return
+
+.saTristramNoHarp
+; in prison?
+ random x1
+ if x1>40 then saNTristram ; ask for harp at random
+ m1=2509 ; T wanted harp - only printed 1 in 6 turns
+ if room=12 then saPreventM1Dot
+
+.saNTristram
+; if actor<>dragon then saNDragon
+; DragonBreathedFire=room
+; m1=2606 ; dragon breathed Fire
+; gosub PrintM1Dot
+; target=user
+; blowstrength=20
+; gosub DoDamage
+;
+;.saNDragon
+;;.sanOK
+ processed=false ; no special code - so allow npc to activate
+;;.sanRet
+ return
+
+.saPreventActorM1Dot
+ gosub @PrintActor
+
+.setProcessedM1Dot
+.saPreventM1Dot
+; print m1, do nothing else this turn
+ gosub @PrintM1Dot
+
+.saPrevent
+.SetProcessed
+ processed=true
+ return
+;---
+;;.isobjectalert
+;;; return result=TRUE if OBJECT is awake
+;; gosub @isobjectalive
+;;;; if result=FALSE then ioalertret
+;;.ioalertret
+;; return
+;---
+.canactormove
+; return result=FALSE if ACTOR is prevented from moving
+ result=TRUE
+;;.camret
+ return
+;---
+.canactorrandommove
+; return result=TRUE if actor can make random moves
+ result=false ; no-one moves at random in this part. TRUE
+;;.carmret
+ return
+;---
+;;.handleinterruption
+;;; ACTOR has been interrupted in the middle of something
+;;; Do whatever you see fit, then return
+;;; No values need be returned
+;; return
+;---
+.specialrtmessage
+; actor is just about to print M1 as part of a racetrack
+; instruction. Use this hook to intercept particular things
+; which may happen in the message which cannot be easily
+; coded elsewhere.
+ if m1<>2679 then srtNotNightMessage
+ if CurrentUserRoom<>10 then srtNotNightMessage
+ message m1
+ message dot
+
+.srtNotNightMessage
+ if m1<>2670 then SrtNotOfferWine
+ x1=enemyOffset
+ add x1,ActorAttributes
+ npccurrent(x1)=c0 ; don't hate Lancelot any more...
+; does Morgan still have the wine?
+ x1=currentpos(GlassOfWine)
+ if x1=QueenMorgan then srtNotOfferWine
+ m1=2677 ; drink of it at your leisure...
+
+.SrtNotOfferWine
+ if m1<>2676 then srtNotOfferFood ; damosel offered food
+ x1=currentpos(food)
+ if x1=0 then srtFood1
+ object=food
+ gosub @IsObjectCarried
+ if result=true then srtNotOfferFood
+ m1=2680 ; kill message
+ return
+.srtFood1
+ x1=ChariotDamosel
+ currentpos(food)=x1
+ x1=carried
+ hicurrentpos(food)=x1
+
+.srtNotOfferFood
+ if m1<>2671 then srtNotQuestion ; "have you changed your mind?"
+ if room<>CurrentUserRoom then srtNotQuestion
+ message m1
+ actorSave=actor
+ actor=user
+ gosub @YesOrNO
+ actor=actorSave
+ m1=2672 ; then here you shall stay
+ if result=false then srtNotQuestion
+ x1=scLostHonourQueen
+ gosub @AddScoreMinus20
+ m1=2673 ; you may go free
+ goto @UnlockChariot
+
+.srtNOtQuestion
+ return
+;---
+.newracetrackforobject
+; start racetrack x6 for actor OBJECT
+ actorsave=actor
+ actor=object ; replace its racetrack with a new one...
+ gosub @setACTORATTRIBUTES
+ gosub @stop ; kill existing racetrack
+ x1=x6 ; race track number to execute
+ gosub @initracetrackx1
+ actor=actorsave
+ goto @resetactor ; from actorsave
+;---
+.checknullaction
+; ACTOR has no stack actions to do, so we may want to start up a new 
+; one. This is used for people such as the valkyrie in Knight Orc, 
+; for whom it is VITAL that they should not become 'unhooked'. Set 
+; ORDERWAITING to the first command to  execute, if you want ACTOR 
+; to obey it immediately.
+ if actor=QueenMorgan then RestartRacetrack
+ if actor=ChariotDamosel then RestartRaceTrack
+ if BrachetArrived=false then CNANotBrachet
+ if actor=brachet then RestartRaceTrack
+
+.CNANotBrachet
+ return
+.RestartRacetrack
+; restart the original racetrack
+ x6=actor
+ object=actor
+ goto NewRaceTrackForObject
+;---
+.specialcheckifpresent
+; have just checked if object is present
+; Add special modifiers here.
+; return RESULT=TRUE if object here.
+ return
+;---
+;>>removed by L2.initialscenecode
+;>>removed by L2 return
+;---
+.specialinitnpcs
+ return
+;---
+;;.destroyobject
+;;; object gets destroyed, and replaced in a location as appropriate
+;; currentpos(object)=c0
+;; hicurrentpos(object)=c0
+;; return
+;---
+;;.createobject
+;;; OBJECT gets created in current room
+;; currentpos(object)=room
+;; hicurrentpos(object)=c0
+;; return
+;---
+;;.createobjectpos
+;;; create OBJECT at position HIPOS, POS
+;; currentpos(object)=pos
+;; hicurrentpos(object)=hipos
+;; return
+;---
+.Choose
+ if room=119 then choose1
+ if room<>10 then @NothingHappens
+.choose1
+ if noun1<QueenMorgan then sanWrongChoice
+ if noun1>QueenOutIsles then sanWrongChoice
+ goto sanTakenQueen
+;---
+.TRIGGERWORDS
+; check current word to see if it is a trigger word
+; ACTOR is the target of conversation
+ SEARCHTYPE=NOUNTYPE
+ GOSUB @CHECKTYPE
+; see if there is any action to take on VALUE
+
+;>>L2 specials...
+ if room=10 then twQueens
+ if room<>119 then sanNotQueens
+.twQueens
+; see if there is any action to take on VALUE
+ if value=NullValue then @setProcessed
+ if value=iyou then sanTakenQueen
+ if value<QueenMorgan then sanWrongChoice
+ if value>QueenOutIsles then sanWrongChoice
+
+.sanTakenQueen
+; L has taken a queen...
+ x1=100
+ sub GeneralScoreAddition,x1
+ m1=2674 ; she said "very well, stay faithful"
+ gosub @UnlockChariot
+
+.ToRealSayEnd
+ goto @RealSayEnd ; terminates, ends
+
+.sanWrongChoice
+ if room=10 then ToRealSayEnd ; no response
+ gosub @IntoChariotPrison
+ goto TorealSayEnd
+
+.sanNotQueens
+;>>L2
+
+; see if there is any action to take on VALUE
+ if value=nullvalue then tgret
+ gosub @checknoun
+ if processed=TRUE then tgret
+
+; OBJECT is a word spoken TO actor
+; if twNoun<>0 then tw2 ; verb seems to be cleared before subsequent words.
+; if verb<>itell then tgret
+;.tw2
+; if object<>user then tellNotUser
+; if twNoun=object then TellNotUser ; "tell me about me"
+; twNoun=object ; "tell me about.. "
+; return
+;
+;.tellNotUser
+; result=false
+; gosub doquestion
+; if result=true then @realsayend ; clear stack, terminates if processed
+.TGRET
+ return
+
+
+; if verb=itell then tgret ; process as parsed sentence
+;; OBJECT is a word spoken TO actor
+; result=false
+; gosub doquestion
+; if result=true then @realsayend ; clear stack, terminates if processed
+;.TGRET
+; RETURN
+;---
+;---
+;---
+;;.isactorflying
+;;; return RESULT=TRUE if ACTOR is flying
+;; result=FALSE
+;;.iafret
+;; return
+;----------------
+.specialconversation
+; USER is saying 'verb prep noun1 noun2' to ACTOR
+; make any intercepts you fancy.
+; If the command is not to be stored, set PROCESSED=TRUE
+; and SAYRESPONSE=TRUE
+;
+; see also TRIGGERWORDS
+ if actor<QueenMorgan then scNotQueen
+ if actor>QueenOutIsles then scNotQueen
+ goto @sanWrongChoice
+
+.scNotQueen
+ if actor=Guard then @SetProcessed ; Orkney's guard
+
+ if actor<>GiantNabon then scNotNabon
+ m1=2641 ; slept on
+ if NabonAwake=False then scPreventM1Dot
+
+.scNotNabon
+ if actor<>SirQuestionmark then sanNotQM
+ x1=currentpos(SirBreunis)
+ if x1=0 then sanNotQM
+ m1=2659 ; a prisoner
+ goto ScPreventM1Dot
+
+.sanNotQM
+ if verb=ihello then npchello
+
+;; if verb=itell then @tell
+
+; m1=3270 ; won't give anything away
+; if verb=igive then scprint
+
+ if verb<211 then scnonotquestion
+;>>mike 31/8/88 m1=3250 ; won't answer that
+ m1=2038 ; that was a rhetorical question ;>>mike 31/8/88
+ if verb<217 then scPreventActorM1Dot ;>>Mike 31/8/88scprint
+.scnonotquestion
+ m1=3620 ; seemed very offended
+ if verb=217 then scprint
+;>>mike 23/8/88 m1=3640 ; won't help
+;>>mike 23/8/88 if verb=207 then scprint
+
+ m1=2038 ; said "that was a rhetorical question"
+ if verb=199 then scPreventActorM1Dot
+ if verb=201 then scPreventActorM1Dot
+ if verb=244 then scNotSystem ;>>mike 29/8/88
+
+ m1=3660 ; echo verb - can't do it etc.
+ if verb>199 then scprint
+ if verb<20 then scNotSystem
+ if verb<32 then scPrint ; system verbs - SAVE, RESTORE etc.
+.scNotSystem
+ return ; nothing unusual - probably an order, so pass back
+; for normal handling code to cope with it.
+
+;---
+.scPreventActorM1Dot
+ gosub @ActorM1Dot
+ goto scPrevent
+;
+.NPCHELLO
+; ACTOR is the person the user is trying to talk to, who is here
+ m1=3170 ; hello
+
+.scprint
+.scPreventVaryM1Dot
+ LASTWORDPRINTED=0 ; prevent use of IT
+ gosub @varysaym1dot
+
+.scprevent
+ SAYRESPONSE=TRUE
+ processed=TRUE
+ RETURN
+;
+.scpreventm1dot
+ gosub @printm1dot
+ goto scprevent
+;---
+;;.empty ;** remove verbs?
+;;.pour
+;; if noun1<>cauldron then emptyNotCauldron
+;; x1=currentpos(soup)
+;; if x1<>cauldron then EmptyNotSoup
+;; currentpos(soup)=c0
+;; m1=2505 ; soup drained away
+;; goto PrintM1Dot
+;;
+;;.EmptyNotSoup
+;; x1=currentpos(coals)
+;; if x1<>cauldron then EmptyNotCauldron
+;; currentpos(coals)=room
+;; if room=13 then FireShips
+;;; currentpos(ships)=c0
+;;; OkToVisitTristram=true ; invited into castle
+;;; m1=2507 ; sails caught fire
+;;; goto PrintM1Dot
+;;
+;;.emptyNotCauldron
+;; goto @silly
+;---
+.knock
+ if room<>50 then KnockNotTurquin
+ if TurquinManorOpen=false then @ManorNotOpenToVisitors
+
+.KnockNotTurquin
+ goto @NothingHappens
+
+;;.WaterSomething
+;;.checkForWater
+;; goto @noverb
+;---
+;;.win
+;;; gamefinished=40 ; score for finishing game
+;; message blankline
+;; gosub @score
+;; gosub @restartorrestore
+;; goto @startgame
+;---
+.SpecialConjugate
+; return x1 as type for noun x2 (if different to that in the table)
+ if x1=42 then scProperFemale
+ if x2<28 then scNotPF
+ if x2<34 then scProperFemale
+.scNotPF
+ return
+.scProperFemale
+ x1=ProperFemale
+ return
+;---
+.SpecialEchoVerb
+; trap any unusual responses, then set result=true to prevent
+; printing the standard reply
+ result=true
+ if verb<>217 then sevNotRude
+ m1=2605 ; "rude word" npc reply
+ if noun1<MaxNpcPlus1 then @PrintM1Dot
+
+.sevNotRude
+ if verb<>247 then sevNotKiss
+ if ChariotUnlocked<>false then sevNotKissChariot
+ if room=119 then @choose
+ if room=10 then @choose
+.sevNotKissChariot
+ if room<>28 then sevNotKiss
+; x1=scKissedHellawes
+; gosub AddScoreMinus20
+ if noun1<>Hellawes then sevNotKiss
+ x2=20
+ sub GeneralScoreAddition,x2
+ m1=2777 ; kissed her, captured
+ gosub @ActorM1Dot
+ goto @UserDeath
+
+.sevNotKiss
+ if verb<>244 then sevNotLight
+ if noun1<>beacon then sevNotLight
+ if currentUserRoom=111 then LitBeacon ;>>mike 29/8/88
+ x6=53 ; look at beacon rt
+ object=guard
+ gosub @NewRacetrackForObject
+.LitBeacon
+ ForcePrinting=True
+  m1=2787 ; lit the beacon
+  gosub @ActorM1Dot
+ ForcePrinting=False
+ goto @ReturnTrue ; prevent standard reply
+
+.sevNotLight
+ if verb<>242 then sevNotEmpty
+ if noun1=cauldron then sevCauldron
+ if noun1<>soup then sevNotEmpty
+.sevCauldron
+ currentpos(soup)=c0
+ m1=2505 ; soup drained away
+ goto @PrintM1Dot
+
+.sevNotEmpty
+ if verb<>229 then sevNotSleep
+ if room=20 then @LieBed
+
+.sevNotSleep
+ result=false ; do standard reply
+ return
+;---
+.SpecialEssentialInit
+
+ xmax=3 ; co-ords go 0..xmax - remember to change room 1 exits.
+ xmaxplus1=4
+ ymax=3
+; 
+ minsynthroomminus2=231
+ minsynthroomminus1=232
+ minsynthroom=233 ; the first room on the grid (bottom left hand corner)
+ maxsynthroom=248
+;
+ return
+;---
+.SwapDisabledFlags
+; DEFINE disabled as npc's which are temporarily inactive - 
+; i.e. npc's which are in a different part to the user.
+; disable/re-enable npcs as appropriate - just
+; swap over bit 6 of the "enemy" flag
+ object=2
+.seiLoop1
+ gosub SwapDisabledFlag
+ add object,c1
+ if object<maxNpc then seiLoop1
+; and do MaxNpc by dropping through...
+;
+.SwapDisabledFlag
+ gosub @SetX4ToObjectAttributes
+ x1=npccurrent(x4)
+ x2=64
+ if x1>191 then seiEnable
+ if x1>127 then seiDisable
+ if x1>63 then seiEnable
+.seiDisable
+ add x1,x2
+ goto seiLoop2
+
+.seiEnable
+ sub x1,x2
+
+.seiLoop2
+ npccurrent(x4)=x1
+.FreeKnightRet
+ return
+;---
+.FreeKnight
+ gosub @MakeObjectASlave
+ x1=scFreedKnightBase
+ add x1,Object
+ if x1<scFreedKnight1 then FreeKnightRet
+ if x1>ScFreedKnightMax then FreeKnightRet
+ goto @AddScore20
+;---
+

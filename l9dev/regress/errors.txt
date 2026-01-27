@@ -1,0 +1,132 @@
+* Modified test.txt to cover as many errors as possible
+* To catch all errors use --testcomp
+
+table
+ list1=1
+
+var
+ a b c d e f g x1
+ a1 b1 c1 d1 e1 f1 g1
+ a2 b2 c2 d2 e2 f2 g2
+ a3 b3 c3 d3 e3 f3 g3
+ a4 b4 c4 d4 e4 f4 g4
+ a5 b5 c5 d5 e5 f5 g5
+ a6 b6 c6 d6 e6 f6 g6
+ a7 b7 c7 d7 e7 f7 g7
+ a8 b8 c8 d8 e8 f8 g8
+ a9 b9 c9 d9 e9 f9 g9
+ aa ba ca da ea fa ga
+ ab bb cb db eb fb gb
+ ac bc cc dc ec fc gc
+ ad bd cd dd ed fd gd
+ ae be ce de ee fe ge
+ af bf cf df ef ff gf
+ ag bg cg dg eg fg gg
+ ah bh ch dh eh fh gh
+ ai bi ci di ei fi gi
+ aj bj cj dj ej fj gj
+ ak bk ck dk ek fk gk
+ al bl cl dl el fl gl
+ am bm cm dm em fm gm
+ an bn cn dn en fn gn
+ ao bo co do eo fo go
+ ap bp cp dp ep fp gp
+ aq bq cq dq eq fq gq
+ ar br cr dr er fr gr
+ as bs cs ds es fs gs
+ at bt ct dt et ft gt
+ au bu cu du eu fu gu
+ av bv cv dv ev fv gv
+ aw bw cw dw ew fw gw
+ ax bx cx dx ex fx gx
+ ay by cy dy ey fy gy
+ az bz cz dz ez fz gz
+ a0 b0 c0 ; ERROR: Too many variables
+
+begin
+.Start
+ cls x ; ERROR: Bad argument
+ prs " start of acode: "
+ input x1 x1 x1 x1
+ a=Start ; ERROR: Variable expected
+ a=12345
+ h=a ; ERROR: Instruction not recognized
+ c=1
+ a=h ; ERROR: Syntax error
+
+;code +
+
+ push a ; ERROR: Instruction not allowed in interpreted acode
+code : ; ERROR: Plus or minus expected
+;pop b
+;and a,b
+;or a,b
+;xor a,b
+ add a,b
+ sub a,b
+ sub a-b ; ERROR: Comma expected
+ list1(0)=a
+ list1(0)>a ; ERROR: Equals expected
+;&list1(2)=a
+ b=4
+&list1(b)=a ; ERROR: Can't do 16 bit tables in interpreted mode
+ d=list1(3)
+ e=list1(b)
+;&f=list1(2)
+;&g=list1(b)
+;code -
+code +
+code + ; ERROR: Already in specified code state
+ push a ; ERROR: Something not implemented
+
+.transcode
+ prs " Not allowed in MC ..." ; ERROR: Instruction not allowed in machine code
+code -
+ jump transcode x1; ERROR: Can't jump into area of different code state
+code + ; ERROR: MC must be even-aligned (not if code is properly implemented)
+code -
+
+ prs " contents of list 1 are: "
+ prs ' contents of list 1 are: ' ; ERROR: Missing quote
+ a=0
+.Tloop2
+ b=list1(a)
+ b=list1[a]; ERROR: Bracket expected
+ print b
+ prs " "
+ b=list1(Start) ; ERROR: Bad table index
+ add a,c
+ if 8<20 then Tloop2 ; ERROR: Variable not defined
+ if a<20 then Tloop2
+ if !<20 then Tloop2 ; ERROR: Bad symbol
+ prs " d="
+ print d
+ if a<20 then OoR
+ prs " This is a very long string to produce out of range error "
+ prs " This is another very long string to produce out of range error "
+ prs " This is again a very long string to produce out of range error "
+.OoR ; ERROR: Forward reference to '%s' out of range
+ prs " This is a final very long string to produce out of range error "
+ if a<20 then Tloop2 ; ERROR: Relative jump out of range
+ prs " e="
+ if a<20 then x1 ; ERROR: Symbol redefined as different type
+ print e
+ if a!=20 then Tloop2 ; ERROR: Bad operator
+ prs " f="
+ prs " This is not allowed: œ ..." ; ERROR: Pound sign is not allowed in prs
+ print f
+.x1 ; ERROR: Can't redefine symbol
+ prs " g="
+ if a<Start then Tloop2 ; ERROR: Bad type
+ print g
+.s12345678901234567890123456789 ; ERROR: Symbol too long
+ input x1 x1 x1 x1
+ jump forward x1
+.x2 ; ERROR: Symbol table overflow
+ jump forward x1
+ jump forward x1 ; ERROR: The forward reference table overflowed
+.forward
+ prs " This should trigger an acode overflow ... " ; ERROR: Acode overflow
+ xyzzy ; ERROR: Fatal compiler bug
+
+

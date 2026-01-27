@@ -1,0 +1,333 @@
+; INTRO.TXT - intro sequence control for Billy the Kid
+;
+; Copyright (C) 1990 Level 9 Computing Ltd.
+;
+; Mike Austin 4 September 1990.
+;
+;
+var
+ CurrentScreenTableOffset
+ CurrentScreenTimer
+ TextBoxAfter
+ TextBoxTime
+ SceneTimer
+
+begin
+
+.vDoWholeIntro
+ gosub @InitIntro
+ gosub @SetDefaultPalettes
+
+ StructureFile=IntroStructures
+ CurrentPrintRaster=2310
+ v1=CurrentPrintRaster
+ code -
+  gosub @iStartPrinting ; make sure SetPrintRaster etc. is done.
+  v1=CurrentPrintRaster
+ code +
+ gosub @SetupPrintRaster
+
+
+
+.RestartIntro
+ CurrentScreenTableOffset=0
+.NextScreen
+; this bit initalises each screen
+ TextBoxWidth=220
+ SceneTimer=0
+ gosub @ChooseCurrentScreen ; which screen?
+
+; 7 jan 1991 - size reduced to prevent PC coming up
+; with a 'no links' error after 2 people in front of mirror scene.
+  v1=1060
+  v2=400 ; (320 shows clipping bug on title screen)
+  v3=1 ; game mode: 0=non-scrolling, 1=scrolling, 2=jumps
+  gosub @MCInitScrolling
+
+ cif Amiga
+; do another initscrolling to try to fix this
+; peculiar 8-pixel-non-alignment bug (partic on Amiga)
+  v1=1060 ; 640
+  v2=640 ; 1280 (320 shows clipping bug on title screen)
+  v3=1 ; game mode: 0=non-scrolling, 1=scrolling, 2=jumps
+  gosub @MCInitScrolling
+ cend
+
+ cif pc
+; need to do SetGraphicsWindow for PC, even though game is scrolling
+  v1=0    ; X1
+  v2=319  ; X2
+  v3=0    ; Y1
+  v4=191  ; Y2
+  gosub @MCSetGraphicsWindow
+ cend
+
+ ScreenX=0
+ ScreenY=0
+ gosub @MCEmptyRoom
+ gosub @InitACBs  
+ RasterOffset=0  
+
+ BuildingRoom=1
+ dv1=CurrentScreen  
+ gosub @PreLoadAndInsertdv1   
+
+
+
+ gosub @HandleText ; insert any initial text box
+
+ v1=0 ; x position in pixels (scrolling)
+ v2=0 ; y position in pixels (scrolling)
+ gosub @BuildRoom
+
+ gosub @ClearKBD ; prevent quitting intro immediately - we need
+; to randomize the random number seed a bit, according to how
+; long the user waits before pressing a key.
+
+ BuildingRoom=0
+ cif NotPC
+  v1=0 ; x step
+ cend
+
+ cif amiga
+  v1=65520 ; x=-16
+.KludgePossee
+ cend
+
+ cif notpc
+  v2=0 ; y step
+  ScreenX=v1
+  ScreenY=0
+  gosub @MCScrollDirection
+ cend
+
+  ScrollXDir=0
+.IntroLoop
+ gosub @PlayTuneForScene
+ gosub @HandleText ; do any text box changes
+ PlotLogicalDone=0
+ gosub @DisplayEverything
+ code -
+  random x1
+ code +
+
+ gosub @SelectLanguage
+
+
+ gosub @sGetControls ; also does KeyScan
+ ScrollXDir=0
+ cif ReleaseGame
+ goto introNotRightKey
+ cend
+  if RightKey<>0 then @NextScreen ; DEBUGGING FEATURE TO SKIP SCREEN ******************
+
+.IntroNotRightKey
+ cif NotDemoVersion
+  if FireKey<>0 then @EndIntro
+ cend
+
+ cif Amiga
+  goto NotScrollMainStreet ; does disk access on Amiga/ST at present...
+ cend
+  if CurrentScreen<>102 then NotScrollMainStreet
+  if SceneTimer<70 then NotScrollMainStreet
+  if SceneTimer>100 then NotScrollMainStreet
+  ScrollXDir=8
+
+.NotScrollMainStreet
+ if CurrentScreen<>107 then NotScrollBuggy
+ if CurrentScreenTimer>50 then NotScrollBuggy
+ if CurrentScreenTimer<32 then NotScrollBuggy
+ ScrollXDir=8 ; (20 frames of scroll seems ABOUT right)
+.NotScrollBuggy
+
+
+ add SceneTimer,c1 ; count-up timer
+ sub CurrentScreenTimer,c1
+ if CurrentScreenTimer>0 then @IntroLoop
+ goto @NextScreen
+;----------------
+.InitIntro
+ LeftMargin=0
+ TopMargin=0
+ v4=IntroSamples
+ gosub @LoadSamplesForGame
+
+ v1=IntroTablesList
+ &v2=IntroTables(74) ; intro sprites filename
+ gosub @MCOpenSpriteFile
+ &v1=IntroTables(76) ; intro structures
+ gosub @LoadStructuresV1
+ goto @SetDefaultPalettes
+;----------------------
+.ChooseCurrentScreen
+; which screen?
+ &x1=IntroTables(90) ; start of ScreenInfo table
+ add x1,CurrentScreenTableOffset
+; called, we'll get the next picture.
+ &CurrentScreen=IntroTables(x1)
+ if CurrentScreen<500 then CCS1
+ if CurrentScreen>2100 then CCS1
+ SceneTimer=65535 ; pretend to have been on this scene a LONG time
+ gosub @HandleText ; discard erroneous text message -
+; only get here if user has skipped a scene (or if there's
+; a bug in the script!)
+ SceneTimer=0
+ goto ChooseCurrentScreen
+
+.CCS1
+ add CurrentScreenTableOffset,c8 ; next time this routine is
+ if CurrentScreen>32767 then EndIntro ; end of intro
+ add x1,c2
+ &CurrentScreenTimer=IntroTables(x1)
+ add x1,c2
+ NextMusic=x1 ; offset of filename in IntroTables
+ add x1,c2
+ &MusicRepeatCount=IntroTables(x1)
+ return
+
+.EndIntro
+; freeze screen for menu to select pat/billy
+ WantCSTB=true
+ gosub @DisplayEverything
+ gosub @InitACBs
+ gosub @PutUpHourglass
+
+ cif DemoVersion
+  goto @RestartIntro ; never leave for demo!
+ cend
+
+ v4=GameMap ; paramter for OverlayEntryPoint
+ goto @AfterIntroStart
+;---------
+.vHandleText
+; format of table entry in IntroTables(ScreenInfo)
+; dc.w 2001, NoDelay, DefaultX,DefaultY,dInsert
+ &x1=IntroTables(90) ; start of ScreenInfo table
+ add x1,CurrentScreenTableOffset
+ &m1=IntroTables(x1) ; is there a queue message waiting?
+ if m1<500 then @HTRet ; not a message - must be next piccy
+ if m1>2100 then @HTRet
+ add x1,c2
+ &x2=IntroTables(x1)
+ if x2>SceneTimer then @HTRet ; not time yet
+ add x1,c2
+
+ BackgroundColour=0 ; don't affect existing text
+ CurrentPrintRaster=2310
+ CurrentDO=2310
+; gosub @DoTextWindow
+ push x1 ; position in IntroTables
+ code-
+; instead of @iStartPrinting, do the following...
+ PrintX=LeftMargin
+ PrintY=TopMargin
+ v1=CurrentPrintRaster ;=1725 (use 431 to display)
+ code +
+  gosub @SetupPrintRaster2 ; don't do SetPrintRaster per se
+; because it's slow, and we've already done it once.
+ code -
+  gosub @iStartPrintToBuffer
+
+  message m1
+; code to finish up, and display the text with an outline...
+  message cr ; ensure buffer is flushed etc.
+  gosub @iEndPrintToBuffer
+; text has been printed between TextBuffer(2..v7)
+ code +
+  ForeGroundColour=7 ; foreground colour=black
+  gosub @OutputText ; my routine which saves start coords
+
+  add PrintX,c2
+  add LeftMargin,c2
+  add TextBoxWidth,c2 ; more like right margin
+  gosub @OutputText ; my routine which saves start coords
+
+  add PrintY,c2
+  gosub @OutputText ; my routine which saves start coords
+
+  sub PrintX,c2
+  sub LeftMargin,c2
+  sub TextBoxWidth,c2 ; more like right margin
+  gosub @OutputText ; my routine which saves start coords
+
+  ForeGroundColour=12 ;yellow=12
+  add PrintX,c1
+  add LeftMargin,c1
+  add TextBoxWidth,c1 ; more like right margin
+  sub PrintY,c1
+  gosub @OutputText ; my routine which saves start coords
+
+  LeftMargin=0
+ pop x1
+ &v2=IntroTables(x1)
+ add x1,c2
+ &x2=IntroTables(x1) ; y
+ add x1,c2
+ v3=400 ; z
+ v4=v3 ; h
+ sub v4,x2 ; y=z-h so h=z-y
+ &v5=IntroTables(x1) ; draw flag
+ add x1,c2
+ x1=10 ; skip onto next entry in table
+ add CurrentScreenTableOffset,x1
+
+ v1=TextBoxDisplayed
+ v6=0 ; non-reflected
+
+ if SceneTimer>32000 then AfterTB ; skipping this text box
+ x1=v5
+ if v5<>65535 then HT3a
+ cif pc
+  gosub @SafePlotLogical
+  gosub @MCDrawObjectV1 ; remove the previous text box
+  gosub @SortAndDisplayObjects
+  gosub @MCUpdateScreen
+  gosub @MCUnplotScreen
+  v1=0
+  v2=0
+  gosub @SafeScrollDirection
+  goto HT4
+ cend
+ goto HT3
+
+.HT3a
+ v5=0 ; insert
+
+.HT3
+ gosub @MCDrawObjectV1
+ v1=ScreenX
+ v2=ScreenY
+ gosub @BuildRoom ; correct for mistakes made by InsRebuild on scrolling screens
+.HT4
+ TextBoxDisplayed=0 ; don't display text as a sprite as well
+
+.AfterTB
+.HTRet
+ return
+
+;-------------
+
+.OutputText
+  push PrintX
+  push PrintY
+  push v7
+  code -
+   gosub @iDisplayBufferedText
+  code +
+  pop v7
+  pop PrintY
+  pop PrintX
+ return
+
+;-----------------
+; dc.w IntroSprites-IntroTables ; offset 74
+; dc.w IntroStructures-IntroTables ; offset 76
+; dc.w 0 ; IdentikitSprites-IntroTables ; offset 78
+; dc.w IdentikitStructures-IntroTables ; offset 80
+; dc.w 0 ; 82
+; dc.w 0 ; 84
+; dc.w 0
+; dc.w 0
+; dc.w ScreenInfo-IntroTables ; offset 90
+;--------------------------

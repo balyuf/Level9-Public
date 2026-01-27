@@ -1,0 +1,262 @@
+; Standard adventure source, copyright (C) 1988 Level 9 Computing.
+;
+; SCONST, game-specific constants. You will probably need to change 
+; most of the values of these. 
+;
+; A standard labelling convention for constants is that constants 
+; preceded by I (e.g ILOOK) are relative to their appropriate offset 
+; (e.g verboffset).
+;
+CONST
+; StandardAdventure=1405 ; unique game identifier value
+ IngridsBack=1910
+;
+ AllowBoat=1 ; set to 1 if you want boat/vehicle code
+;
+; STARTsynthSHORTdescs=1199 ; shortroomdescs+minsynthroom
+ SHORTroomDESCS=800
+ LONGroomDESCS=1100
+;
+ MAXMOVEABLE=109 ; MAX OBJECT WHICH MAY BE TAKEN, THROWN ETC.
+ MAXMOVEAPLUS1=110
+;
+ xmax=2 ; co-ords go 0..xmax - remember to change room 1 exits.
+ xmaxplus1=3
+ ymax=2
+; 
+ minsynthroomminus2=218
+ minsynthroomminus1=219
+ minsynthroom=220 ; the first room on the grid (bottom left hand corner)
+ maxsynthroom=228
+;
+ minsceneryobj=180
+ minsceneryobjminus1=179
+ maxsceneryobj=190
+ maxsceneryobjplus1=191
+ minsceneryobjt2m1=359
+ maxsceneryobjtimes2plus2=382
+ numsceneryobjplus1=11
+;
+ minweaponminus1=39
+ minweapon=40
+ maxweapon=43
+ maxweaponplus1=44
+;
+ minclothes=60
+ maxclothes=69
+;
+ minfood=80
+ maxfood=81
+ maxfoodplus1=82
+;
+ mintreasure=84 ; used for ingredients range in gnome2
+ maxtreasure=91 ; used for ingredients range in gnome2
+;
+ minallobject=40
+ maxallobject=109
+;
+ MAXOBJECTVISIBLE=149
+ MAXOBJECT=189 ; includes scenery objects.
+; goes wrong for maxobject>190 (dunno why!)
+; - inventory gets a funny value for hisearchpos (24)
+ MAXOBJECTPLUS1=190
+; 
+ MINOMNI=190 ; 158 ; all real objects above this are omni-present
+ MINOMNIMINUS1=189 ; 159
+ MAXOMNI=260 ; must include ieverything, except, it
+;
+; Preposition values (all relative to prepoffset)
+;
+ FASTENEDTO=14
+ through=209
+;
+; VERBS...
+ iburn=115
+ ikiss=129
+ ipast=162
+ iwalk=164
+ icatch=165
+;
+; Offsets into SCORETABLE.. ( table 7 ) (starts at 32...)
+ scBase=32
+ scmax=75
+ scmaxplus1=76
+;
+ VisitTableStart=76 ; 34
+ VisitTableEnd=226 ; 255 ; 213 ; VisitTableStart + (150=num of "Real" rooms)
+;
+ MeetingTable=226 ; 255 ; 213
+ MeetingTableEnd=290 ; 319 ; 277 ; meetingTable+MaxNpc
+;
+ startliedowntable=290
+ endliedowntable=329
+;
+ minpeople=1 ; = creaturebase
+ maxpeople=38
+ maxpeopleplus1=39
+;
+ creaturebase=1 ; including people, user etc.
+ creaturebaseminus1=0 ; including people, user etc.
+ MINNPC=2 ; all except user
+ MINNPCMINUS1=1 ; all except user
+ MAXNPC=38
+ MAXNPCPLUS1=39
+ maxtalkingnpc=34
+ MAXTALKINGNPCPLUS1=35
+;
+; npc status in list 6..
+ NPCTABLESIZE=312 ; MAXNPCPLUS1*NpcEntrySize
+ NPCTABLESIZEPLUS8=320
+ NPCCURRENTOFFSET=0
+;
+ NPCENTRYSIZE=8
+; npc command queues follow the above in list 6..
+ npcstackbase=312 ; immediately after npc table
+ npcstackbaseplus5=317
+ maxnpcentries=52 ; 5 bytes per queued-command entry on stack
+;
+ npcstackentrysize=5; each entry is 5 bytes (hence the 5's above)
+;
+ npctablesizetozero=1535 ; now fixed. was 785
+;
+; offsets within each npc table entry in list 6..
+ enemyoffset=0
+ followoffset=1 ; person to follow normally
+ masteroffset=2 ; the person or creature who subdued this npc
+ hitpointoffset=3
+ hatredoffset=4 ; the amount which this npc hates its enemy
+ npcptroffset=5
+ boredomoffset=6
+; attentionoffset=7
+; and offsets within each corresponding entry in npcinitial, list 5..
+ attackoffset=2
+; hitpoint offset=3
+ obedienceoffset=4
+ patienceoffset=5
+ goldsingingoffset=6 ; in static data - word (hi byte first)
+;
+TABLE
+ list6=6
+;
+CONST
+;
+;objects
+;
+ user=1
+ Gnora=2
+ Gnoah=3
+ Bumpy=4
+ Dimple=5
+ Gnoggin=6
+ Arback=7
+ Grandma=12
+ Seamus=19
+ Jasper=22
+;
+ trolls=24
+ Silas=25
+ Ambul=26
+ Bane=27 ; fancied Ingrid
+ Chugg=28 ; is pissed
+ Doldrum=29 
+ Ergot=30 ; guards barn
+ Fugg=31
+ Gormley=32
+;
+ Flopsy=13
+ bantams=36
+ guineapigs=37
+;
+ rabbit=38
+;
+ lipstick=60
+ perfume=61
+ handbag=62
+;
+ brick=80
+ bottle=81
+ cask=82
+ deeds=83
+ loaf=85
+ plans=86
+ sack=87
+ millstone=88
+ defaulttelelily=89
+ bluetelelily=89
+ greentelelily=90
+ collar=91
+;
+ brake=110
+ bushes=111
+ dam=112
+ gap=113
+ hook=114
+ lever=115
+ turnips=116
+ root=117
+ notice=118
+ kitchentable=119
+ otrapdoor=120
+ ctrapdoor=121
+ well=122
+ chimney=123
+ bog=124
+ brokendam=125
+;
+ steamroller=140
+ ashes=141
+ boat=145	; included to allow for existing boat code
+;
+ pens1=150
+ pens2=151
+ pens3=152
+ pens4=153
+ mill=154
+ ditch=155
+ river=156
+ window=157
+ hurdles1=159
+ hurdles2=160
+ hurdles3=161
+ hurdles4=162
+;
+ ithing=246
+ iroom=243
+;
+; game-specific constants...
+;
+ capturemove=30 ; troll chasing ingrid will capture her after x moves
+;
+; game-specific variables...
+;
+VAR
+ TotalMoves
+ ProblemObject ProblemVerb
+ gdCurrentSave gdHiSave
+ GalahadComment
+ ALREADYDONEPROTECT
+ startpicturetable
+ examinemarked ;*****
+;
+ GeneralScoreAddition
+ t1 t2 t3 ; temps for preserving x1,x2,x3 in printm1
+ rollerstarted
+ actortobemoved
+ lastrollerroom
+ lastrollerdir
+ dambeenbroken
+ draincount
+ trollchasing
+ chasemoves
+ vanesturning
+ actorhooked ; actor currently caught on hook
+ abouttobeunhooked
+ actorincellar ; actor currently in cellar
+ movesincellar
+ actorteleported
+ movesteleported
+ brickcount
+ seamuswarned
+ seamuswarning
+ alltrollscaptured
+;

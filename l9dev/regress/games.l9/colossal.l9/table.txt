@@ -1,0 +1,88 @@
+;LIST INITIAL VALUES
+; for COLOSSAL
+;Copyright (C) 1982 MJ.Austin.
+; 18:40 on 23/5/86
+;
+ ORG 0
+start
+ dc.l $8000
+ dc.l LIST2-start-1
+ dc.l $8070
+ dc.l LIST4-start-1
+ dc.l $8093 ;>> $8091
+ dc.l 0 ;LIST 6
+ dc.l $8140 ; LIST 7
+ dc.l $8180 ; LIST 8
+ dc.l $81C0 ; LIST 9
+ dc.l LASTPTR-start
+;
+LIST2
+ dc.b 14 ;KEYS
+ dc.b 14 ;LAMP
+ dc.b 13 ;FOOD
+ dc.b 14 ;BOTTLE
+ dc.b 27 ;CAGE
+ dc.b 28 ;ROD
+ dc.b 30 ;BIRD
+ dc.b 51 ;GOLD
+ dc.b 54 ;SILVER
+ dc.b 53 ;JEWELRY
+ dc.b 59 ;DIAMONDS
+ dc.b 40 ;BEAR
+ dc.b 26 ;PLATINUM PYRAMID
+ dc.b 18 ;EGG JEWEL
+ dc.b 95 ;EGGS
+ dc.b 84 ;PILLOW
+ dc.b 101 ;MING VASE
+ dc.b 71 ;TRIDENT
+ dc.b 0 ;PEARL
+ dc.b 76 ;MAGAZINE
+ dc.b 41 ;COINS
+ dc.b 0 ;CHAIN
+ dc.b 0 ;RUG
+ dc.b 0 ;CHEST
+ dc.b 36 ;SPICES
+ dc.b 0 ;AXE
+ dc.b 170 ;DYNAMITE
+ dc.b 202 ;JADE SPIDER
+ dc.b 202 ;ELIXIR
+ dc.b 218 ;ORB
+ dc.b 215 ;SCEPTRE
+ dc.b 213 ;CROWN
+;---------
+;NOW OBJECT VALUE
+LIST4
+ dc.b 0
+ dc.b 0
+ dc.b 0
+ dc.b 0
+ dc.b 0
+ dc.b 0
+ dc.b 0
+ dc.b 1 ;GOLD
+ dc.b 1
+ dc.b 1
+ dc.b 1
+ dc.b 0
+ dc.b 1
+ dc.b 1
+ dc.b 1
+ dc.b 0
+ dc.b 1
+ dc.b 1
+ dc.b 1
+ dc.b 0
+ dc.b 1
+ dc.b 1
+ dc.b 1
+ dc.b 1
+ dc.b 1
+ dc.b 0
+ dc.b 0
+ dc.b 0 ;JADE SPIDER
+ dc.b 0 ;ELIXIR
+ dc.b 1 ;ORB
+ dc.b 1 ;SCEPTRE
+ dc.b 1 ;CROWN
+;--------
+LASTPTR

@@ -1,0 +1,294 @@
+; Standard adventure source, copyright (C) 1988 Level 9 Computing.
+;
+; SCONST, game-specific constants. You will probably need to change 
+; most of the values of these. 
+;
+; A standard labelling convention for constants is that constants 
+; preceded by I (e.g ILOOK) are relative to their appropriate offset 
+; (e.g verboffset).
+;
+CONST
+;; StandardAdventure=1405 ; unique game identifier value
+ Scapeghost=1930
+;
+ AllowBoat=1 ; set to 1 if you want boat/vehicle code
+;
+; STARTsynthSHORTdescs=1199 ; shortroomdescs+minsynthroom
+ SHORTroomDESCS=800
+ LONGroomDESCS=1100
+;
+ MAXMOVEABLE=109 ; MAX OBJECT WHICH MAY BE TAKEN, THROWN ETC.
+ MAXMOVEAPLUS1=110
+;
+ xmax=0 ; co-ords go 0..xmax - remember to change room 1 exits.
+ xmaxplus1=1
+ ymax=0
+; 
+;; minsynthroomminus2=48 ; >> Pete 14/9/89 
+ minsynthroomminus1=49
+;; minsynthroom=50 ; the first room on the grid (bottom left hand corner) ; >> Pete 14/9/89 
+;; maxsynthroom=50 ; >> Pete 14/9/89 
+;
+ minecholoc=30
+ maxecholoc=48
+ maxecholocplus1=49
+;
+ minsceneryobj=180
+ minsceneryobjminus1=179
+ maxsceneryobj=190
+;; maxsceneryobjplus1=191 ; >> Pete 14/9/89 
+ minsceneryobjt2m1=359
+ maxsceneryobjtimes2plus2=382
+;; numsceneryobjplus1=11 ; >> Pete 14/9/89 
+;
+;; minweaponminus1=39 ; >> Pete 14/9/89 
+;; minweapon=40 ; >> Pete 14/9/89 
+;; maxweapon=40 ; >> Pete 14/9/89 
+;; maxweaponplus1=41 ; >> Pete 14/9/89 
+;
+ minclothes=255
+ maxclothes=255
+;
+;; minfood=255 ; >> Pete 14/9/89 
+;; maxfood=255 ; >> Pete 14/9/89 
+;; maxfoodplus1=256 ; >> Pete 14/9/89 
+;
+ mintreasure=80
+ maxtreasure=89
+ maxtreasureplus1=90
+;
+ minallobject=40
+ maxallobject=109
+;
+ MAXOBJECTVISIBLE=149
+ MAXOBJECT=189 ; includes scenery objects.
+; goes wrong for maxobject>190 (dunno why!)
+; - inventory gets a funny value for hisearchpos (24)
+ MAXOBJECTPLUS1=190
+; 
+ MINOMNI=190 ; 158 ; all real objects above this are omni-present
+;; MINOMNIMINUS1=189 ; 159; >> Pete 14/9/89 
+ MAXOMNI=260 ; must include ieverything, except, it
+;
+; Preposition values (all relative to prepoffset)
+;
+ FASTENEDTO=14
+;=====
+ escorted=15
+;=====
+ through=209
+;
+; VERBS...
+;; iburn=115 ; >> Pete 14/9/89 
+;; ikiss=129 ; >> Pete 14/9/89 
+;; ipast=162 ; >> Pete 14/9/89 
+;; iwalk=164 ; >> Pete 14/9/89 
+;; icatch=165 ; >> Pete 14/9/89 
+;=====
+ ideflate=125
+;=====
+;
+; Offsets into SCORETABLE.. ( table 7 ) (starts at 32...)
+;; scBase=32 ; >> Pete 14/9/89 
+;; scmax=75 ; >> Pete 14/9/89 
+ scmaxplus1=76
+;
+ VisitTableStart=76 ; 34
+ VisitTableEnd=226 ; 255 ; 213 ; VisitTableStart + (150=num of "Real" rooms)
+;
+;; MeetingTable=226 ; 255 ; 213 ; >> Pete 14/9/89 
+;; MeetingTableEnd=290 ; 319 ; 277 ; meetingTable+MaxNpc ; >> Pete 14/9/89 
+;
+ minpeople=1 ; = creaturebase
+ maxpeople=9
+ maxpeopleplus1=10 
+;
+;; creaturebase=1 ; including people, user etc. ; >> Pete 14/9/89 
+;; creaturebaseminus1=0 ; including people, user etc. ; >> Pete 14/9/89 
+ MINNPC=2 ; all except user
+;; MINNPCMINUS1=1 ; all except user ; >> Pete 14/9/89 
+ MAXNPC=9
+ MAXNPCPLUS1=10
+ maxtalkingnpc=9
+;=====
+ maxghost=1
+ minhuman=2
+;=====
+;; MAXTALKINGNPCPLUS1=10 ; >> Pete 14/9/89 
+;
+; npc status in list 6..
+ NPCTABLESIZE=80 ; MAXNPCPLUS1*NpcEntrySize
+;; NPCTABLESIZEPLUS8=88 ; >> Pete 14/9/89 
+;; NPCCURRENTOFFSET=0 ; >> Pete 14/9/89 
+;
+;; NPCENTRYSIZE=8; >> Pete 14/9/89 
+; npc command queues follow the above in list 6..
+ npcstackbase=80 ; immediately after npc table
+;; npcstackbaseplus5=85 ; >> Pete 14/9/89 
+ maxnpcentries=52 ; 5 bytes per queued-command entry on stack
+;
+ npcstackentrysize=5 ; each entry is 5 bytes (hence the 5's above)
+;
+ npctablesizetozero=1535 ; now fixed. was 785
+;
+; offsets within each npc table entry in list 6..
+;; enemyoffset=0; >> Pete 14/9/89 
+ followoffset=1 ; person to follow normally
+ masteroffset=2 ; the person or creature who subdued this npc
+;; hitpointoffset=3; >> Pete 14/9/89 
+;; hatredoffset=4 ; the amount which this npc hates its enemy; >> Pete 14/9/89 
+ npcptroffset=5
+;; boredomoffset=6 ; >> Pete 14/9/89 
+; attentionoffset=7
+; and offsets within each corresponding entry in npcinitial, list 5..
+;; attackoffset=2 ; >> Pete 14/9/89 
+; hitpoint offset=3
+ obedienceoffset=4
+;; patienceoffset=5 ; >> Pete 14/9/89 
+ goldsingingoffset=6 ; in static data - word (hi byte first)
+;
+TABLE
+;; list6=6 ; >> Pete 14/9/89 
+;
+CONST
+;
+; Objects...
+;
+ User=1
+;
+;=====
+ Sarah=2
+ priest=3
+;; DefaultJohn=4 ; >> Pete 14/9/89 
+ JohnB=4
+ JohnQ=5
+ Weasel=6
+ Jude=7
+ Professor=8
+ Severian=9
+;
+; ordinary objects (80 onwards)
+;
+; light objects...
+;; holywater=80 ; >> Pete 14/9/89 
+;; flask=81 ; >> Pete 14/9/89 
+ glass=82
+ bulb=83
+ gag=84
+ ropes=85
+ sprayer=86
+ key=87
+;
+; heavy objects...
+ briefcase=90
+ chair=91
+ hammer=92
+; 
+; static objects (110 onwards) 
+ hay=110
+ taxi=111
+ van=112
+;; windowA=115 ; >> Pete 14/9/89 
+ windowC=116
+ cupboard=117
+ RCCB=118
+ curtains=119
+ shelf=120
+ lampholder=121
+ tableK=122
+ rubble=123
+ insulators=124
+;; wires=125 ; >> Pete 14/9/89 
+ cellardoor=126
+;; vault=127 ; >> Pete 14/9/89 
+ stair=128
+;; jacket=172; >> Pete 14/9/89 
+;; pocket=130 ; >> Pete 14/9/89 
+; 
+; invisible objects (150 onwards) 
+;
+; used as position shadows (omni present in certain groups of rooms)
+ farmhouse=150
+ church=151
+;
+ tyrest=168
+ tyresv=169
+ attic=170
+;
+ minlightminus1=174 ; start of light sources...
+;; minlight=175 ; >> Pete 14/9/89 
+ houselight=175 ; general light in house
+ maxlight=175 ; ...end of light sources
+;=====
+; 
+;; ithing=246 ; >> Pete 14/9/89 
+ iroom=243
+ iwalls=244
+;
+; game-specific constants...
+;
+;=====
+ tripouttime=20 ; number of moves until rccb comes back on.
+ movementsseen=17 ;11 ; move-1 when john b notices movements outide window.
+ ganginhurry=120 ; point at which gang are in a hurry, and don't bother 
+; to inflate the tyres & straighten the key.
+ policeveryclose=160 ; point at which gang will be caught if they try to 
+; escape across the fields on foot.
+ policemessages=150 ; at this point, and until the end of the game, 
+; occasional messages indicate the closeness of the police
+;=====
+;
+; game-specific variables...
+;
+VAR
+ TotalMoves
+ ProblemObject 
+;; ProblemVerb ; >> Pete 14/9/89 
+ gdCurrentSave gdHiSave
+ GalahadComment
+ ALREADYDONEPROTECT
+ startpicturetable
+ examinemarked
+;
+ GeneralScoreAddition
+ t1 t2 t3 ; temps for preserving x1,x2,x3 in printm1
+ outofreach
+;
+;=====
+ playerobject ; number of object carried
+ supplyintact ; set while mains supply is intact
+ generatoron ; set when backup generator is running
+ triptimer ; counter until rccb resets supply
+ rccbon ; rccb on/off status
+ gangescaping ; flag to signify gang are escaping
+ enterbarn ; number of times player enters back of barn
+ tyresTdeflated ; set when taxi tyres deflated
+ tyresVdeflated ; set when van tyres deflated
+ keybent ; set when key is bent
+ policetimer ; counter until police close in
+ movementtimer ; timer for movement sequence in attic
+ distractions ; counter for number of times john b is distracted
+ pushedstair ; prevents using same distraction twice
+ blowncurtains ; prevents using same distraction twice
+ chargedjohnb ; prevents using same distraction twice
+ cooledattic ; prevents using same distraction twice
+ johnbfrightened ; set while john b is executing "frightened" racetracks
+ persontiedup ; person currently tied up (0 if nobody tied up)
+ cellardooropen ; set when cellar door bolted from outside
+ sarahrecruited ; set when player manifests in front of sarah
+ allowmanifest ; set when I have strength to manifest myself
+ manifested ; set while user is visible to humans
+ sarahisfree ; set while sarah is free
+ weaselunconcious ; set when weasel is knocked out. cleared when he 
+; wakes or when he is tied up.
+ sarahkilled ; endgame flag when sarah killed
+ importersescaped ; flag when importers successfully escaped
+ buyersescaped ; flag when buyers successfully escaped
+ sarahhasfled ; flag when sarah runs away at end of game
+ crooksinvan ; counter until van is full of crooks, upon which I fade
+ fadedatend ; set if player has faded ("died") before epilogue
+ drugsgone ; used in epilogue when drugs destroyed/taken by buyers
+ stairhinted ; prevents repetition of sarah's "stair hint"
+ cupboardhinted ; prevents repetition of sarah's "cupboard hint"
+;=====
+;

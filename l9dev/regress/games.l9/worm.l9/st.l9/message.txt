@@ -1,0 +1,1428 @@
+; Worm in Paradise Descriptions
+; Copyright (C) 1985 Level 9 Computing
+[1:_]
+[2::]
+[3:,_]
+[4:._]
+[5:%]
+[6:and ]
+[7:.%]
+[8:?%]
+[9:._]
+[10:exits are ]
+[11:an exit leads ]
+;;[12: through a door]
+;;[13: through an open door]
+[14:%You are ]
+[15:you are standing on]
+[17:%What now?_]
+[18::_];
+[19:"]
+; Messages for printing objects
+;
+[20:a ]
+[21:the ]
+[22:an ]
+[23:some]
+;
+; Message pairs for use in describing containment positions
+; also used for preposition table
+;
+; part printed before container
+;
+[24:you can see]   ; 0 - you can see
+[25:^Pon |^nonto]   ; 1 - on
+[26:^Punderneath ] ; 2 - under
+[27:^Pbehind ]     ; 3 - behind
+[28:]              ; 4 - carrying
+[29:]              ; 5 - wearing
+[30:hidden in |^Pat ]; 6 - hidden
+[31:^Pin ]         ; 7 - in 
+[32:hanging from ] ; 8
+[33:^nwith|^N using ]        ; 9 - for input ;>>using added
+[34:jammed in ]    ;10 - for behemoth
+[35:loose on ]     ;11 - for behemoth scale
+[36:lying on ]     ;12
+[37:sitting on ]   ;13
+[38:]              ;14 - selling
+[39:fastened to ]  ;15
+;
+; part printed between container and contained.
+;
+[40:]              ; 0 
+[41:is]            ; 1 - on
+[42:is]            ; 2 - under
+[43:is]            ; 3 - behind
+[44:is carrying]   ; 4
+[45:is wearing]    ; 5
+[46:is ]           ; 6
+[47:is]            ; 7 - in
+[48:is]            ; 8
+[49:]              ; 9 - with
+[50:is]            ;10 - behemoth
+[51:is]            ;11 - behemoth scale
+[52:]              ;12
+[53:]              ;13
+[54:is selling]    ;14
+[55:is]            ;15
+;
+; 60: is base for prepositions to use with 'you'
+;
+; part printed before container
+;
+; part printed between container and contained
+;
+[77:are standing on]
+[80:own]
+[81:are wearing]
+[88:are lying on]
+[89:are sitting on]
+;
+;
+[90:^Poff]
+[91:^Pup]
+[92:^Pdown]
+[93:^Pto]
+;
+[95:enters from the]
+[96:leaves, going]
+[97:enter from the]
+[98:leave, going]
+;
+[101:^Vnorth|^Vn ^Vno]
+[102:^Vnortheast|^Vne]
+[103:^Veast|^Ve]
+[104:^Vsouth|^Vs]
+[105:^Vsoutheast|^Vse]
+[106:^Vsouthwest|^Vsw]
+[107:^Vwest|^Vw]
+[108:^Vnorthwest|^Vnw]
+[109:^Vupwards|^Vu]
+[110:^Vdownwards|^Vd]
+[111:^Vin|^Vinside ^Venter ^Vinto]
+[112:^Vout|^Voutside ^Vleave]
+[113:^Vcross|^Vacross]
+[114:^Vclimb]
+[115:^Vjump]
+;
+; Intransitive verbs
+;
+[121:^Vagain ^Va]
+[122:^Vinventory ^Vinv]
+;;[123:^Vplugh ^Vxyzzy]
+[124:^Vquit ^Vrestart]
+[125:^VRESTORE ^Vload ^N RESTORE ^N load]
+[126:^Vsave ^N save]
+[127:^Vscore]
+[130:^Vwait ^Vwa]
+[131:^Vsleep]
+[132:^Von]
+[133:^Voff]
+[134:^Vpictures]
+[135:^Vwords]
+[136:^VRAM]
+[137:^VOOPS ^Vundo]
+[138:^Vcredits ^Vauthors]
+[139:^Vhelp]
+;
+; Possibly transitive verbs
+;
+[141:^Vattack|^Vfight ^Vkill ^Vhit ^Vbreak ^Vkick ^V cut
+^V smash] ;>>cut,smash added
+[142:^Vlook]
+[143:^Vlisten]
+[144:^Vsearch]
+[145:^Vexamine|^Vread ^Vwatch]
+;;[146:^Vblink]
+;;[147:^Vhelp]
+[148:^Vwake|^Vrouse]
+[149:^Vsmell|^Vsniff]
+;
+; Transitive verbs
+;
+[161:^Vtake|^Vget ^Vcarry ^Vbuy ^Vpurchase]
+[162:^Vwear]
+[163:^Vdrop]
+[164:^Vput]
+[165:^Vremove]
+[166:^Vthrow]
+[167:^Vgive|^Voffered ^Vsell]
+[168:^Vstand]
+[169:^Vlie]
+[170:^Vsit]
+[171:^Vfill]
+[172:^Vempty|^Vpour]
+[173:^Vopen|^Vunlock]
+[174:^Vclose|^Vlock]
+;;[175:^Vlight]
+;;[176:^Vextinguish]
+[177:^Vpress|^Vpush ^Vselect]
+[178:^Vpull]
+[179:^Vfasten|^Vtie ^Vattach]
+[180:^Vunfasten|^Vuntie]
+[181:^Vshake|^Vwave]
+[182:^Vblow|^Vplay]
+[183:^Veat|^Vdrink ^Vbite]
+[184:^Vbury|^Vplant]
+[185:^Vrub]
+[186:^Vdig]
+[187:^Vinsert]
+[188:^Vsay|^Vshout]
+[189:^Vpick]
+[190:^Vsqueeze|^Vsquash]
+[192:^Vtoroom|^Vteleport ^Vgoto] ; *** DEBUGGING ONLY ***
+[193:^Vobject|^Vgetme ^Vbringme] ; *** DEBUGGING ONLY ***
+
+;
+; Objects
+;
+[231:^nbadge]            ; OBJECT  1
+[232:^nbrooch]
+[233:^nmedallion|^nplug]
+[234:^ntattoo|^ntime ^nLCD ^ndisplay]
+[235:^nbatpak]
+[236:^nticket]
+[237:^ncard]
+[238:^ncork]
+[239:^ninvitation]
+[240:^nvalve|^ntap]
+[241:^nwallet]           ; OBJECT 11
+[242:^napple]
+[243:^npie]
+[244:^nlentil ^ncustard]
+[245:^nwine]
+[246:^nplate]
+[247:^npizza]
+[248:plastic ^ncollar]   ; broken
+[249:bubble ^nhelmet]
+[250:^nvisor]
+[251:plastic ^ncollar]   ; OBJECT 21
+[252:^nflag]
+[253:^nbouquet of ^nflowers]
+[254:^npot ^nplant]
+[255:^nwreath]
+[256:personal ^nvidcam]
+;
+[258:^nnewspaper|^npapers]
+[259:^nscale|^nshield]
+;
+[262:^nbottle]           ; OBJECT 32
+[263:^ncup]
+[264:^nbox]
+[265:^ndagget]
+[266:^ninflatable ^nKim ^nKimberley]
+[267:^nleotard]
+[268:^ntradclads]
+[269:^nalien ^ncostume]
+[270:^nbench]
+[271:^napple ^ncore]      ; OBJECT 41
+;
+; Non-takeable objects
+;
+[281:^ntree]             ; OBJECT 51
+[282:^nbehemoth]
+[283:^nworm]
+;
+[285:^ncarpet]
+[286:^nlittle ^ndroid]
+[287:^ndumpy ^ndroid]
+[288:^ntiny ^ndroid]
+[290:^nflagseller]
+[291:^nnewsvendor]       ; OBJECT 61
+[292:potential ^nsocialist]
+[293:^ntramp]
+[294:^ntourists]
+[295:^ntourists]
+[296:^nalien ^nwarrior]
+
+[300:^nflorist]
+[301:^njobcentre ^ndroid] ;   OBJ 71
+[302:^nconsultant]
+[303:^nPieman]
+[304:^nCustodian]
+[305:^nfuzbot]
+[308:scruffy ^nhuman ^ntechnician]
+[309:^nwaldroid]
+
+[315:^narm|^nknob]         ; OBJECT 85 
+[316:one-armed ^nbandit]
+[317:^nbed]
+;
+[319:^nbuttons]
+[320:^ncrack]
+[321:^ngrill]            ; OBJECT 91
+[322:^njunk ^nheap]
+[323:^nindicator ^nlights]
+[324:north-south ^ntracks]
+[325:^nmanhole ^ncover in the ceiling]
+[326:^nmemorial]
+[327:^nmeter]
+[328:^nmirror]
+[329:^nnotice]
+[330:^nnozzle]
+[331:^norifice]         ; OBJECT 101
+[332:^npartition around the dais]
+[333:^nposter|^ntv]
+[334:^nsaucer]
+[335:^nscanners]
+[336:^nscreen]
+[337:^nsignboard|^nsign]
+[338:peeling ^nwallpaper]
+;
+[341:^nchasm|^ncrevice]  ;    OBJ 111
+[342:^ncouch]
+[343:^nchair]
+;
+[350:^nhole in the ^nwall]
+[351:temple ^nsalesdroid] ;  OBJ 121
+[352:pet shop ^nsalesdroid]
+[353:kiosk ^nsalesdroid]
+[354:^nhardware salesdroid]
+[355:^ntravel ^nagent]
+[356:^npyramid ^nreception droid]
+;
+[370:^nyou|^nme]         ; OBJECT 140
+;
+[380:^neverything ^nall]
+[381:^nexcept ^nbut]     ; OBJECT 151
+[382:^nit|^nthat ^nthem] ; also printed as 'it'
+[385:^Jthen]
+;
+; Numbers
+;
+[390:^nblack]
+[391:^nbrown]           ; OBJECT 161
+[392:^nred]
+[393:^norange]
+[394:^nyellow]
+[395:^ngreen]
+[396:^nblue]
+[397:^nviolet]
+[398:^ngrey]
+[399:^nwhite]
+;
+; Room Descriptions
+;
+[401:in the crumbling ^ncatacombs]
+[402:in the crumbling ^ncatacombs]
+[403:in the crumbling ^ncatacombs]
+[406:on the crumbling ^nplastic ^ndome above ^nEnoch ^ncity]
+[407:climbing through entangled ^nvines]
+[408:on an ancient ^ncliff above the enormous ^ndome of ^nEnoch
+city]
+[409:in fragrant ^nfields]
+[410:beside a ^nriver]
+[411:on a green ^nhill outside the massive ^ncity ^nwall]
+[412:in an underground ^ntunnel under the ^ncity ^nwall]
+[413:climbing ^nbrick ^nsteps to the ^nfountain]
+[414:in the ^nfountain ^nlake above the ^nplaza. ^nLazlight
+shimmers to simulate cascading ^nwater]
+[415:in a cluttered, stained room with a ^nwaterfall cascading
+down the north ^nwall]
+[416:on a ^nledge behind the ^nwaterfall]
+[417:in the ^nhothouse]
+[418:on a thousand coloured ^nsand ^nshore]
+[419:on ^nVermillion ^nSands]
+[420:in the south ^nbank ^nswamp called ^nEarthsea]
+[421:at a ^nlanding ^nstage on the ^nShore of ^nDeath where
+the fabulous ^nriverboat is moored]
+;
+[423:on the ^nIsland of the ^nMighty where the fabulous
+^nriverboat is now moored]
+[424:at the west end of the ^nroad]
+[425:on a long and winding east-west ^nroad]
+[426:on a ^nyellow ^nbrick ^nroad leading west]
+[427:at the ^nGate of ^nIvril]
+[428:beside the ^nfountain of ^nparadise]
+[429:in the fragrant ^ndream ^npark]
+[430:in ^nDuncton ^nWood]
+[431:in ^nYear ^nWood]
+[432:beside a disgusting little ^nhouse on the ^nprairie]
+[433:on ^nflatlands]
+[434:on east-west ^nGlory ^nRoad]
+[435:beside the ^nWell of ^nSouls]
+[436:in ancient ^nLankhmar]
+;
+[440:on a cobbled ^nplaza with an ornate central ^nfountain]
+[441:on an east bound ^npedway]
+[442:on a west bound ^npedway]
+[443:on a south bound ^npedway]
+[444:on a north bound ^npedway]
+[445:on a north bound ^npedway]
+[446:on a south bound ^npedway]
+[447:east of a ^nroundabout]
+[448:south of a ^nroundabout]
+[449:at the ^nroundabout exit to the plaza]
+[450:north of a ^nroundabout]
+[451:at the ^nroundabout exit to ET west]
+[452:at the ^nroundabout exit to ET north]
+[453:at the ^nroundabout exit to ET east]
+[454:east of a ^nroundabout]
+[455:at the ^nroundabout exit to the ^nmunicipal ^nbuildings]
+[456:at the ^ntheme ^npark ^nroundabout exit]
+[457:at the ^nwork ^nplace ^nroundabout exit]
+[458:west of a ^nroundabout]
+[459:west of a ^nroundabout]
+[460:at the pleasure ^ndome ^nroundabout exit]
+[461:east of a ^nroundabout]
+[462:south of a ^nroundabout]
+[463:on a ^nwalkway around the ^nEden ^nTransport system, a klom
+wide ^nforce ^ngrid which looks like an enormous ^ndart ^ntarget.
+Exits lead north-ish to the 12 ^nET ^nrings]
+[464:on an outer ^nET ^nring with exits all round]
+[465:on an outer ^nET ^nring with exits all round]
+[466:on an ^nET ^nring]
+[467:on an ^nET ^nring]
+[468:on a central ^nET ^nring]
+[469:on a central ^nET ^nring]
+[470:on a central ^nET ^nring]
+[471:on an ^nET ^nring]
+[472:on an ^nET ^nring]
+[473:on an inner ^nET ^nring]
+[474:on an inner ^nET ^nring]
+[475:south of the ^nET ^nhub ^nwall. Exits lead south-ish
+to the rest of the massive ^nEden ^nTransport system]
+[476:in an avenue of trees]
+[477:beside a ^ngate leading to an enormous ^npyramid]
+[478:on the left hand ^ndrive to the ^nmunicipal ^nbuildings]
+[479:in the ^ncobbled ^ncity ^nsquare, surrounded by
+stained ^nconcrete ^nbuildings]
+[480:beside the ^npolice ^nstation]
+[481:beside the ^nmunicipal ^nhospital]
+[482:at the ^nentrance to the ^npleasure ^ndome]
+[483:beside a ^nturnstile]
+;
+[484:in a north-south ^ncorridor between a comfortable
+^nhabihall and a ^nkiosk]
+[485:in the north-south ^ncorridor between the ^nzoo and
+a ^npet ^nshop]
+[486:in the north-south ^ncorridor outside the ^nmuseum]
+[487:in a north-south ^ncorridor between a ^ncasino and
+^nReveline's massive ^ndream ^npalace]
+;
+[490:at the ^ntemple ^nbar and ^nsouvenir ^nstall]
+[491:in a ^npet ^nshop]
+[492:in a ^nrefreshment ^nkiosk]
+[493:in a little plastic ^nkitchen full of ^nadditives]
+[494:in an old ^ncuriosity ^nshop]
+[495:in a fragrant ^nflorist ^nshop]
+[496:in a ^nhardware ^ndiscount ^nwarehouse]
+[497:in a ^ntravel ^nagent]
+;
+[500:beside a ^nreception ^ndesk]
+[501:in a ^nhospital ^nfoyer outside the ^nbody ^nbank]
+[502:in the ^nbody ^nbank where ^ngiblets are traded]
+[503:standing at a plastic ^ncounter]
+[504:at a fabulous ^noffice entrance]
+[505:south of a fabulous ^nfoyer]
+[506:beside an ^nalcove with a ^nreception ^ndesk]
+[507:in one corner of an ^noffice for thousands of people]
+;
+[510:in a plastic ^ncasino]
+[511:at the ^nentrance to a fabulous ^ntemple]
+[512:in the ^ninner ^nsanctum of the ^ntemple]
+;
+[514:in the ^ncutting ^nroom]
+[515:at a guarded ^ngate]
+;
+[520:between the eight ^nbrick ^narches of a beautiful
+^noctagonal room. The west ^narch is widest]
+[521:in an ^nalcove decorated like a beautiful ^ngarden]
+[522:in an ^nalcove with a ^nmural of a shining ^npyramid]
+[523:in an ^nalcove decorated with alien ^ntrees]
+[524:in an ^nalcove decorated like a polluted ^nplanet]
+[525:in a desolate ^nalcove decorated as a ^nbattlefield]
+[526:in an ^nalcove decorated as a winding underground
+^npassage]
+[527:in a plastic ^ntunnel, lined with ^nadverts for
+^nReveline's thousands of ^ndream ^nsimulations]
+[528:in a room featuring ^nReveline's fabulous ^nSilicon
+^nDream]
+[529:in a small ^nmuseum, decorated with fake ^nexhibits from
+^nEnoch history]
+[530:in a disgusting ^nzoo]
+[531:in a comfortable quiet ^nhabihall]
+;
+[534:in the ^nWell of ^nSouls]
+[535:at an massive floodlit ^ndesk, completely surrounded by
+thick carpet in the direct labour organisation boardroom]
+[536:surrounded by head-high carpet]
+[537:surrounded by head-high carpet]
+[538:surrounded by head-high carpet]
+[539:surrounded by head-high carpet]
+[540:surrounded by head-high carpet]
+[541:surrounded by head-high carpet]
+[542:surrounded by head-high carpet]
+[543:surrounded by head-high carpet]
+[544:at a ^nworkstation]
+[545:in a ^nwaldroid control ^ncocoon]
+[546:in a disgusting ^nworkshop]
+[547:in a ^npacking area full of ^njunk]
+[548:in an open plan jobs ^nwarehouse. It is almost entirely
+empty except for thousands of plastic ^npillars]
+[549:in a plastic ^nporch decorated with ^nposters about the
+great job the party, lead by the third Kimberley, has done
+to ensure jobs for all]
+[550:at the west end of a long ^ncorridor]
+[551:in a long east-west ^ncorridor]
+[552:at the east end of the long ^ncorridor]
+[553:in a red ^noffice]
+[554:in an orange ^noffice]
+[555:in a yellow ^noffice]
+[556:in a green ^noffice]
+[557:in a blue ^noffice]
+[558:in a violet ^noffice]
+[559:in a white ^noffice]
+[560:in a short east-west ^ncorridor which ends at a
+full-length ^nmirror]
+[561:in a fabulous ^ncouncil ^nchamber]
+[562:in an attractive ^nboardroom]
+[563:on secret ^nspiral ^nstairs]
+[564:at the top of the secret ^nspiral ^nstairs]
+[565:in the ^ncity ^nfathers' centre of power]
+[566:on the ^nseat of ^npower on a floodlit ^ndais, facing
+thousands of ^nbugs and ^nvidcams. ]
+[567:at the northwest of an attractive ^nfoyer]
+[568:at the northeast of an attractive ^nfoyer]
+[569:in an ^nelevator]
+[570:behind a ^nreception ^ndesk]
+[571:in the ^nquad south of the ^npyramid of ^npower]
+[572:completely surrounded by disgusting ^nwiggly ^nwhite ^nroots.
+Through the roots to the north, you can see a ^nfloodlit ^ncave
+in which sits an alien ^nflying ^nsaucer! Concrete evidence of
+alien invaders]
+[573:in a ^nfloodlit ^ncave]
+[574:inside a ^nfake flying ^nsaucer made of cardboard]
+[575:in an east-west ^nconcrete ^ncorridor]
+[576:at a ^nconcrete ^njunction]
+[577:in a passage with the sweet ^nsmell of ^nexcess]
+[578:in a north-south ^nconcrete ^ncorridor]
+[579:at a ^nhumming ^njunction]
+[580:surrounded by thousands of ^nconcrete ^npillars]
+[581:surrounded by thousands of ^nconcrete ^npillars]
+[582:surrounded by thousands of ^nconcrete ^npillars]
+[583:at a ^ndisgusting ^njunction]
+[584:between dry ^npillars festooned with ^nred ^ntape]
+[585:in ^nprison]
+;
+[590:in the ^nhabihall of your ^nhabihome]
+[592:in your tiled ^nbodymaint ^ncubicle with ^nbasin and ^ntoilet
+etc]
+[593:in your ^nhabihome]
+[594:on a brick ^nbalcony with a marvellous ^nview]
+;
+[596:in a ^nhabihall decorated with disgusting ^nagitprop]
+[598:in a disgusting ^nbodymaint]
+[599:in a scruffy ^nhabihome]
+[600:on a stained ^nbalcony]
+;
+; Paradise 'Dream'
+;
+; All references to the wall must be singular. Each location must
+; have a wall (it can be invisible if necessary).
+;
+[610:on a beautiful ^nlawn in the centre of the ^nparadise
+^ngarden] ; 210
+[611:beside the neat ^nbeds of ^nflowers, ^nseed ^npacket perfect,
+which line the west ^nwall]
+[612:in the northwest corner of a ^ngarden ^nparadise, protected
+by a high ^nwall up which ^nflowers climb. Bright ^nbutterflies
+flutter on the balmy ^nbreeze and ^nskylarks sing overhead]
+[613:in a tidy ^nalpine ^ngarden south of the ^nwall, with narrow
+^nbrick ^npaths winding between thousands of ^nheather ^nmounds
+and ^nlichen-covered ^nboulders]
+[614:in the northeast ^ncorner of the ^ngarden, where fragrant
+^nherbs cluster against the ^nwall]
+[615:at a ^ndoor in the ^ngarden ^nwall. An ^narch of beautiful
+^nroses spells out the word 'EXIT' in ^nflowers, but the ^ndoor
+is mysteriously locked]
+[616:beneath ^ngreenwood ^ntrees in the southeast corner of the
+^ngarden]
+[617:on a fragrant ^nforest ^nlawn beside the ^ngarden ^nwall]
+[618:on a meandering ^npath following the ^nbrick ^nwall round
+the southwest ^ncorner of the ^ngarden]
+[619:standing on a scarred ^nhill beyond the shattered ^nwall.
+^nWasteland surrounds the ^ngarden]
+[620:on worm-blasted ^ngravel] ; 220
+[621:in an east-west ^nsand ^nfurrow]
+[622:in a deep east-west ^nsand ^nfurrow]
+[623:faced by a narrow, north-south ^nravine which splits the
+dry ^ndesert. The grass looks greener on the other side]
+[624:on the grassy west ^nside of the ^nravine]
+[625:]
+[626:on ^nDoom ^nDune in the ^ndesert]
+[627:on a rock scored with thousands of tiny ^npatterns by the
+^ndesert ^nwinds]
+[628:walking gingerly across jagged ^ngravel]
+[629:on a ^nplain of ^nbones]
+[630:in a ^nthornbush ^nthicket. There's only just room to
+squeeze through without being entangled] ; 230
+[631:on ^nflat ^nrock bedrock]
+[632:on a ^nbattered ^nmeadow beside the ^nravine]
+[633:following the worm ^ntracks]
+[634:south of a glowing ^ngate marked 'EXIT'. A ^nheap of ^nrubble
+is piled against a high brick ^nwall to the west]
+;
+; Examine messages
+;
+[701:decorated with: ]             ; OBJECT  1
+[702:decorated with: ]
+[703:A black disc on a long chain]
+[704:looking closer, you see it's really a one-piece colour LCD
+implanted in your wrist. The display shows that]
+[705:a never-ready]
+[706:a season ticket for the fabulous riverboat]
+[707:a card from the jobcentre. "Valid for one day's work only"]
+[708:small and plastic]
+[709:it's an invitation to a meeting of some secret society at 6.
+To join, bring the marks of a Bison: valve and medallion]
+[710:used to block fluid flow]
+[711:made of imitation leather]    ; OBJECT 11 
+[712:rosy. Looks yummy]
+[713:looks revolting]
+[714:lumpy]
+[715:very fizzy]
+[716:plastic]
+[717:reconstituted pepperoni. Yummy]
+[718:round your neck. It's made of strong plastic]
+[719:it completely covers the head, with a coupling at the base]
+[720:a little like a heavy pair of visual acuity prostheses]
+[721:the break doesn't show]       ; OBJECT 21
+[722:it's in aid of the League of Enoch Veterans]
+[723:beautiful]
+[724:poppies, I think]
+[725:in memoriam. . ]
+[726:squeeze it to take pictures]
+;
+[728:contains nothing but adverts and criticism of the third Kim]
+[729:a metre wide flake of armoured skin]
+;
+[732:plastic]                      ; OBJECT 32
+[733:plastic]
+[734:very strong indeed]
+[735:a robot dog, like a plastic Labrador]
+[736:a model of the first Kimberley, founder of Enoch. A plaque
+explains about her heroic exploits]
+[737:very flexible, this garment is made of a remarkable material that
+will stretch to fit all sizes]
+[738:strong but dull utility clothes]
+[739:shaped like a bug-eyed alien]
+[740:strong and light, made from finest beech wood]
+[741:turning brown as the last of the juice evaporates] ; OBJ 41
+;
+[751:an apple tree, though not a profligate variety. It is about 20 feet
+high, with the lowest branches 8 foot up] ; OBJ 51
+[752:massive and menacing, this armoured giant roams the desert by
+night, seeking humans to devour, but sleeps by day]
+[753:an enormous 20 metre version of Lumbricus the earthworm]
+;
+[755:the pile is knee deep]
+[756:a cleaning robot]
+[757:a cleaning robot]
+[758:a cleaning robot]
+[760:selling flags]
+[761:selling papers]               ; OBJECT 61
+[762:could be a spy]
+[763:scruffy]
+[764:a group of tourists following their robot tour guide]
+[765:a group of tourists following their robot tour guide]
+[766:looks like an alien soldier, come to invade Enoch. Fortunately
+he hasn't seen you yet]
+;
+[770:a robot]
+[771:a robot]                      ; OBJECT 71
+[772:a robot]
+[773:a robot]
+[774:a robot guard]
+[775:a robot with a blue flashing light in its head]
+[778:playing cards]
+[779:a robot]
+;
+[785:the arm hinges to the bandit and has a red knob at the
+other end]                         ; OBJECT 85
+[786:a robot with glowing ^neyes]
+[787:looks comfortable]
+;
+[789:10 buttons, each of which can be backlit. Reading from
+left to right, they are coloured black, brown, red, orange, yellow,
+green, blue, violet, grey and white]
+[790:a fine ^nline on the ^nwall in a rectangular shape]
+[791:now the rubbish heap has gone, the grill can be seen to lead
+to a passage] ; OBJ 91
+[792:a pile of junk]
+[793:lights]
+[794:fuzbot wheel tracks]
+[795:in the ^nroof]
+[796:a memorial to the dead of the third world war]
+[798:behind it is a ^ncorridor]
+[799:it shows that there are almost no jobs available]
+[800:above your head, attached to the wall. It has dozens of tiny
+^nperforations to let the water flood through]
+[801:above your head]             ; OBJECT 101
+[802:transparent plastic, completely blocking the way north]
+[803:a plastic wall ^npanel.]
+[804:looks very impressive]
+[805:thousands of scanners pointing at you]
+[806:transparent, it prevents theft of the exhibits]
+[807:it says, "dump garbage here"]
+[808:light yellow plastic with flower patterns]
+;
+[811:too wide to jump]            ; OBJECT 111
+[812:looks comfortable]
+[813:looks comfortable]
+;
+[820:smashed by the worm]
+[821:a robot]                     ; OBJECT 121
+[822:a robot]
+[823:a robot]
+[824:a robot]
+[825:a robot]
+[826:a robot]
+;
+[840:a bit dishevelled]     ; OBJECT 140
+;
+; Parser messages
+;
+;?[1000:don't know the word ]
+;?[1001:don't know what that word is. ]
+;?[1002:you must supply an object! ]
+[1003:you can't use the word_]
+[1004: like that]
+[1010:please rephrase that sentence]
+[1011:you can't see]
+[1012:you don't have]
+[1013:you already have]
+[1014:can't say that. ]
+
+[1030:that's just scenery. ]  ; scenery group
+[1031:that's not important. ]
+[1032:ignore it. ]
+
+; now must supply an object group
+[1033:you must supply an object. ]
+[1034:that verb needs an object. ]
+[1035:could you elaborate? ]
+
+[1036:verb not recognised. ]
+;
+[1039:that sentence is too complex. ]
+;
+[1042:you can't_]
+[1043: on that. ]
+[1044:you can't ]
+[1045:that. ]
+;
+; again used following a command referring to scenery
+[1050:the previous command was not repeatable. ]
+[1051:you can't repeat an invalid command. ]
+[1052:still no effect. ]
+;
+; Standard Adventure output messages
+;
+[1100:Welcome to the Worm in Paradise, copyright (c) 1985 from
+Level 9 Computing. As the game starts, you can remember nothing.
+Most odd.%]
+[1101:you can't see]
+[1102:you don't have]
+[1103:you already have]
+;
+[1106:you own nothing at all! ]
+;;[1107:your hands are full. ]
+;;[1108:%It's dark]
+[1109:nothing happens. ]    ; Nothing happens group
+[1110:doesn't seem to work. ]
+[1111:there is no effect. ]
+[1112:sorry, I can't tell you any more. ]
+[1113: nothing. ]
+[1114:you can't go that way. ]
+[1115:you bump into a door. ]
+[1116:the door closes behind you. ]
+[1117:it's already open. ]
+[1118:it's already closed. ]
+[1119:you find]
+
+[1120:you can't move that. ] ; tried to take fixed object (person) group
+[1121:it's too heavy. ]
+[1122:it's too big. ]
+[1123:you can't put it there. ]
+[1125:you can't go there! ]
+[1126:drop it first. ]
+;
+[1127:you can't climb that. ]
+[1128:you can't drop that. ]
+[1129:whee! That was fun. ] ; jump to no effect
+;
+; 1130 is used when player refers to scenery which is not nearby
+[1130:I think that's just scenery. ]
+[1131:you're on it! ]
+[1132:what? ]
+[1133:where? ]
+[1134:you're wearing it! ]
+;
+[1142:you can't wear that. ]
+[1143:you can't reach it from here. ]
+;
+[1144:don't bother. ] ; don't bother group
+[1145:that would be a waste of time. ]
+[1146:that's pointless. ]
+[1147:you're already wearing that. ]
+[1148:you don't need to do that. ]
+;
+; Confirmation messages
+;
+[1150:taken. ]
+[1151:dropped. ]
+[1152:worn. ]
+[1153:OK. ]
+[1154:yeuch! ] ; don't want to eat it
+[1155:time passes. . . ]
+[1156:said. ]
+;
+[1160:YES or NO please%]
+;
+[1172:nobody wants that. ]
+[1173:you hear nothing special. ]
+[1174:you smell nothing special. ]
+;
+[1190:(]
+[1191:). ]
+;
+; Death, scoring, game control etc.
+;
+[1200:really restart?_]
+[1201:%press space to play again. ]
+[1202:really restore?_]
+[1203:%please answer YES or NO]
+[1204:you score_]
+[1205: out of 1000 and are ]
+[1206:i'm afraid that you've been recycled. ]
+;
+[1250:a mere beginner]
+[1251:a player]
+[1252:an Adventurer]
+[1253:an Experienced Adventurer]
+[1254:a Grand Master Adventurer]
+;
+; 'Game play' messages
+;
+[1500:it's delicious, and you polish it off with relish.% %Then
+most of a worm falls from the core and wriggles, growing, on the
+ground. A wave of horror shimmers across the land. ]
+[1501:. Fortunately it's asleep at the moment]
+[1503:. It wriggles across the chasm]
+[1504:, smashing through the ^ngarden ^nwall]
+[1505:the behemoth wakes up. It doesn't look at all pleased to see you.
+In fact, judging by the way it's coming towards you, I would say it had
+some kind of retribution in mind. ]
+[1506:the behemoth is following you]
+[1507:the enraged behemoth is right behind]
+[1508:the behemoth is almost on you now, towering above like a block of 
+flats (and about as attractive)]
+[1509:the behemoth rushes at you. You dodge nimbly, it overshoots]
+[1510:, turns on a sixpence, leaps, and lands squarely on top of you. ]
+[1511:and struggles to a stop at the very edge of the cliff. This
+gives way, and the behemoth slides majestically into the chasm]
+[1512:and becomes entangled in the brambles! That was too close for
+comfort]
+[1513:the chasm is far too wide to jump - it would be foolhardy to try. ]
+[1514:the tree trunk is too smooth to climb. ]
+[1515:the behemoth wriggles about. You are almost thrown off and teeter
+on the brink. ]
+[1516:the worm spits fuming acid ]
+;
+[1518:and you fail to avoid the searing fluid. Ouch]
+[1519:but the behemoth scale protects you for long enough to reach
+the exit. Well done]
+[1520:you climb up the ^N rubble and jump over the wall. ]
+[1521:a ^nnightingale swoops overhead, singing merrily. ] ; nice garden group
+[1522:a cute ^N squirrel smiles at you. ]
+[1523:a ^ncricket chirps happily in the distance. ]
+;
+[1524:a ^nbat-winged ^nshape crosses the ^nsun. ] ; aggressive group
+[1525:an eerie ^nhowl echoes across the darkening landscape. ]
+[1526:a ^ncloud of ^ninsects buzz angrily past. ]
+;
+[1527:^nvultures circle above. ]
+[1528:something evil is standing behind you, watching. ]
+[1529:a ^nscorpion scuttles under a rock. ]
+;
+[1530:the apple is out of reach overhead. ]
+[1531:the wall is too high to climb. ]
+[1532:despite the bench, the wall is still too high. ]
+;
+[1540:a voice shouts, "Time up"]
+[1541:. Then everything fades. . "Thank you for dreaming
+Reveline's dream". ]
+[1542:something stops you. "Please drop the visor
+here before you go". ]
+[1543:the visor clicks nine times and you fall asleep. ]
+[1544: creds, OK?"_]
+[1545:you have_]
+[1546: creds left]
+[1547:you are ]
+[1548: creds in debt]
+[1551:"Transaction cancelled". ]
+[1552:the turnstile whispers: "You are about to enter the paradise
+pleasure dome for just_]
+[1553:you dream about the noble and altruistic elite whose every
+command must be obeyed. They rule Enoch wisely, despite constant
+attack from revolting socialists and enemy aliens, watching over
+the ordinary people through their collars]
+[1554:you dream about the alien jungle of Eden which completely
+surrounds Enoch]
+[1555:you dream about Earth, wherever than is]
+[1556:you dream is about a terrible war between humans and
+space invaders]
+[1557:you dream a Middle Earth adventure about fighting terrible
+princesses, rescuing ravishing dragons and giving treasure to the
+poor]
+[1558:your dream is long and complex, about the colony starship,
+Snowball, and its return to Eden]
+[1560:the bandit's eyes go dark, then the ]
+[1561:button lights up. ]
+[1562:the bandit's eyes cycle through all the colours and stop
+on ]
+[1563:the bandit's eyes flash brightly and it shouts,
+"Jackpot! You lucky, lucky person! You win_]
+[1564:"You win_]
+[1565: creds". ]
+[1566:the bandit speaks. "Hi-de-hi, citizen. Welcome to the fun-filled
+casino. All bets one cred, jackpot 20 creds. Select the colour of your
+choice and pull my arm". ]
+[1567:the couch revives you with a massage and charges 1 cred. ]
+[1568:you didn't say which button. ]
+[1570: the time is_]
+[1571: and that ]
+[1572:the tattoo beeps. ]
+[1575:the salesdroid speaks. "Cost is_]
+[1576:"Sold!" ]
+;
+[1580:some ^npeople rush past. They all seem to have a sense of purpose,
+but are all going in different directions. ]
+[1581:a few ^npeople hurry past. ]
+[1582:a ^ncrowd of ^npeople push past you on their way somewhere. ]
+[1583:a droid speeds quickly off into the distance. ]
+[1584:a uniformed ^ncitizen strides into view and marches on past. ]
+[1585:a group of smiling people jog by. ]
+[1586:your footsteps echo in the still night air. ]
+[1587:all is quiet. ]
+[1588:you hear shouted orders in the distance. ]
+[1590:you feel rather tired. ]
+[1591:you feel very tired. ]
+[1592:you are about to drop from exhaustion. ]
+;
+[1594:you drop in your tracks from exhaustion. ]
+[1595:you're not sleepy. ]
+[1596:how about finding something to sleep on first? ]
+[1600:the bed is comfortable and sleep comes quickly. ]
+[1601:although you are not very comfortable, you manage to settle
+yourself and are soon asleep. ]
+[1602:you drop where you are. ]
+[1604:you awake refreshed. ]
+[1605:you awake, stiff but fairly refreshed. ]
+[1606:you are woken by a fuzbot. ]
+[1610:you dream about happy robots playing in the sun]
+[1611:you dream about a victory parade in the city]
+[1612:you dream about safety, secure in your place in society]
+[1613:you dream about fighting an endless war amongst rusted robots]
+[1614:you dream about walking along an endless road]
+[1615:you dream that you are along in a bleak landscape]
+[1620:you dream about a beautiful home]
+[1621:you dream about an attack in the park]
+[1622:you dream about bouncing buffalos]
+[1623:you dream about enemies behind the walls]
+[1624:you dream about an alien invasion]
+[1625:you dream about government assassins. You know too much but
+perhaps not enough]
+[1650:the custodian is annoyed. "This is a private party for
+invitation holders only". ]
+[1651:"Pass friend". ]
+[1652:the custodian stops you. "Sorry, the meeting has already
+started". ]
+[1653:some people go up to the custodian. Some show him a small piece of
+paper, others just shake his hand, then they all walk in together. ]
+[1654:the people leave, going south, then wander off in different
+directions. ]
+[1655:some people come in. One of them introduces himself as the Grand
+Master Bison. He is wearing a medallion on a chain round his neck and is
+carrying a valve! He makes a short speech about bison unity and
+concludes by inviting anyone who wishes to become a bison to come to
+another meeting with the 'marks of a bison'. The meeting then
+breaks up, and everyone leaves. ]
+[1656:some people come in. The Grand Master Bison greets you:
+"At last, a suitable candidate! The fee is_"]
+[1657:you hold up your tap and bath plug and roll down your left
+sock in accordance with the ancient ceremony of the watch bisons.
+They teach you the secret Bison hoofshake which can earn wealth,
+power and a council job. The assembled bisons cheer and much
+communion wine is drunk. Eventually, people start to slip away
+until only you are left, talking to a bowl which you had mistaken
+for a bison. ]
+[1658:the Grand Master Bison is crestfallen, and turns away. The meeting
+soon breaks up, and everybody slouches out despondently. ]
+[1659:A group of bisons enter and introduce themselves. Then one
+of them notices your intact collar. "You idiot", he yells, "The
+police are watching us through that!"% %Right on cue, thousands of
+fuzbots charge in, let the bisons off and fine you. ]
+;
+[1660:the guide droid moves over to the screen, and it slides up into
+the ceiling to allow closer inspection of the exhibits. ]
+[1661:the tourists look at the exhibits while the guide gives a running
+commentary on the salient features. ]
+[1662:the screen slides back into place, completely covering the
+exhibits. ]
+[1663:the screen is in the way. ]
+[1664:the screen is unbreakable]
+[1665:it won't fit over the tradclads. ]
+[1666:it's underneath the tradclads! ]
+[1667:the guide sees that you've stolen something and calls the
+cops. ]
+[1668:one of the tourists shrieks upon seeing you! The guide calls
+the cops. ]
+;
+[1680:suddenly fuzbots descend on the suspicious looking man from
+everywhere and drag him off. In the struggle, he drops something which
+lands nearby. ]
+[1690:force fields amplify your move. ]
+[1691:the ^ndoor seems to be locked. ]
+[1692:the ^nfloor is ^ncolour coded: ]
+[1693:a ^ncleaning ^nrobot buzzes up and pushes it back into
+your hands. ]
+[1694:a voice comes from the door: "You cannot enter without the
+correct access device". ]
+[1700:a bed swings down from the crack. ]
+[1701:the bed swings up, ]
+[1702:leaving just a crack to show where it went. You hear muffled
+clanking from behind the bed for a few seconds, then nothing. ]
+[1703:with you on it! You find yourself sliding, then falling, and
+then nothing for a while. When you come to, you find that. . . ]
+
+[1704:the shower whispers seductively. "Please remove your clothes". ]
+[1705:the shower is most refreshing and is followed by warm air jets. ]
+
+[1710:the dumpy droid sweeps some rubbish into a dustpan in its chest. ]
+[1711:the dumpy droid drops some rubbish near the signboard. ]
+;
+[1712:the cork pops out and the wine sprays over everything. ]
+[1713:the wine from the bottle lubricates the manhole cover. ]
+[1714:you climb through the manhole cover, which seals
+invisibly behind you. ]
+[1715:you can't reach the manhole cover from here. ]
+[1716:the bottle is closed by a cork. ]
+[1717:the cover seems to be rusted up. Needs lubricating. ]
+;
+; The TV
+;
+[1720:the poster clicks. ]
+;;[1721:the poster goes dark. ]
+[1722:an advert for a florist at ]
+[1723:an advert for a seedy hardware warehouse. Some items are
+offered to robots for low, low prices at ]
+[1724:an advert for the jobcentre. Government jobs. Come to ]
+[1725:a newsflash about the arrest of a police suspect in the theme
+park. ]
+[1726:yourself being interviewed about the alien invasion plot. ]
+[1727:news of alien death threats against you. ]
+[1730:a newsflash about aliens massing beyond the planets.
+All citizens must support the government. ]
+[1731:a public information broadcast. The government has offered a
+massive reward for evidence about alien spies. ]
+[1732:a public information broadcast about the ET system. Jump to
+reach the centre, or say exit to leave quickly. ]
+[1734:wouldn't you prefer to sit down to watch the poster? ]
+[1735:]
+[1736:%The current program is ]
+[1737:a travel agent advert. Get your ticket at ]
+;
+[1740:cross ]
+[1741:today's ]
+[1742:super ]
+[1743:forty ]
+[1744:]
+;
+[1745:roads]
+[1746:faces]
+[1747:squares]
+[1748:minutes]
+[1749:, a ]
+;
+[1750:soap opera ]
+[1751:documentary ]
+[1752:sitcom ]
+[1753:play ]
+[1754:about ]
+;
+[1755:young ]
+[1756:cute ]
+[1757:wacky ]
+[1758:athletic ]
+[1759:]
+;
+[1760:dancers]
+[1761:doctors]
+[1762:relationships]
+[1763:animals]
+[1764:. ]
+;
+; THE DAGGET
+;
+; First, events while dagget is on sale
+;
+[1800:the dagget looks at you pleadingly. ]
+[1801:the dagget looks very sad. ]
+[1802:the dagget lets out a little whimper. ]
+;
+; Events while player carrying the dagget
+;
+[1803:the dagget struggles as if it wants to get free. ]
+[1804:the dagget snuffles in your ear. ]
+[1805:the dagget licks your face. ]
+;
+; Events while dagget is on ground nearby
+;
+[1806:the dagget jumps up and licks you. ]
+[1807:the dagget follows you very closely. ]
+[1808:the dagget sniffs the air suspiciously. ]
+;
+[1809:the dagget leaps about in a frenzy of joy. ] ; on buying it
+;
+; Other random dagget actions
+;
+[1810:The dagget says, "]
+;
+[1815:Goodnight, boss". ]
+[1816:the dagget finds an invitation behind the wallpaper. ]
+; Events on player actions
+;
+; save/restore
+[1820:Are we going to do something dangerous now?"%]
+[1821:Hey, mind what you're putting in there!" ]
+[1822:"Oy! I need those batteries. My emergency power is limited". ]
+[1823:"Sorry boss, I can't continue on emergency power
+any longer". The dagget grinds to a stop. ]
+[1824:Thank you!". It is obviously delighted to get the batpak
+back and dashes round the room. ]
+[1826:Goodbye, boss" as it watches you move off. ]
+;
+; CRIME and PUNISHMENT
+;
+[1850:a fuzbot appears and looks you over, ]
+[1851:then walks on. ]
+[1852:you are fined_]
+[1853: creds for ]
+;
+; crimes
+;
+[1855:the collar breaks with a snap. ]
+;
+[1860:possession of illegal objects]
+[1861:possession of a museum object]
+[1862:not wearing a collar. The fuzbot replaces it]
+[1863:being a bison member]
+[1864:being a parasite on the state. You have done no work lately]
+[1865:grand theft waldroid]
+[1866:skiving off work]
+[1867:being in debt. It drags you to the hospital with instructions
+to pay off your debts, or else]
+[1868:for nudity in a public place]
+[1869:for breaking the curfew. The fuzbot leads you away and throws
+you into a cell]
+;
+; reporting crimes
+;
+[1870:the fuzbot greets you. "To report crimes you
+must give me some physical evidence. Verbal testimony is not
+enough". ]
+[1871:the fuzbot stares at you blankly. ]
+[1872:the fuzbot takes it. "Thank you, I will have this checked."
+The police robot leaves for a while, then returns. ]
+[1873:"thank you for your evidence. Although we can find no proof
+of crimes, it's on file for future reference". ]
+[1874:"the wallet belonged to a socialist criminal who was
+recently arrested for crimes against the state". ]
+[1875:"your conscientious action in returning this wallet may well
+lead to many further arrests. As a reward, you are authorised to
+say HOME in open areas and use the robot sedan". ]
+[1876:"but we think that you stole something from this man's
+possessions before coming here. Your fine is 500 creds". ]
+[1877:"your valuable evidence proves that the alien threat is real,
+no matter what enemies of the state may claim. It will persuade the
+people to rally behind their government. Go to the pyramid of
+power for a tv interview. It's beyond the riverboat". ]
+[1878:fuzbots disguised as aliens kill you and dump your body on
+the pedway. This provides the final proof that the aliens exist. ]
+[1879:a droid throws you out onto the street. ]
+[1880:you are escorted by elevator to the top floor and interviewed
+about the aliens on tv. The third Kimberley herself rewards you and
+makes you a party member. ]
+;
+[1900:]
+[1901:the consultant looks up. "Greetings citizen. Would you like to
+sell your spare organs?"_]
+[1902:the consultant smiles. "I'm delighted to hear it, citizen. The
+operation is quite painless and takes no time at all". ]
+[1903:the consultant turns away. "Do come back if you change your
+mind". ]
+[1904:the consultant motions to a room off to the east. "Please
+walk this way". ]
+[1905:the consultant looks angry. "I'm sorry, you cannot leave
+whilst in debt". ]
+[1906:the operation is routine and you are released from hospital
+the following morning. ]
+[1907:you seem to hear voices. "This citizen has insufficient spare
+giblets to cover the cred deficiency. We'll have to remove essential
+organs as well". ]
+[1908:you wake up to find a droid standing beside you. It escorts you
+gently outside. ]
+[1909:the consultant seems disappointed and returns to its work. ]
+[1910:the consultant ignores you. ]
+[1911:the consultant looks up. "Greetings citizen. Would you like to
+buy some replacement organs?" ]
+;
+[1922:the droid greets you and says: "How about doing a YTS course?" ]
+[1923:the droid says, "What about doing an eductional YOP course?" ]
+[1924:the droid says, "Do you really need a job?" ]
+[1925:the droid says, "Are you quite sure?" ]
+[1926:the droid says, "Sorry, I have no more jobs. Come back
+tomorrow". It shakes your hand as you turn away. ]
+[1927:the droid says, "OK, I'll have a look". It rummages under the
+counter for a while, then reappears and says: "What about being a
+clerk?" ]
+[1929:the droid says, "What about being a labourer?" ]
+[1930:then its voice changes. "Oops, my mistake, there is one
+trivial little job I forgot. How about being managing director
+of Enoch's direct labour organisation?" ]
+[1931:the droid says, "OK, take this card to the workplace". ]
+[1932:the droid says, "Sorry, you are already registered for a job.
+Come back when you've finished that".  ]
+;
+[1935:the pizza is quite delicious. ]
+[1936:it's already full. ]
+;
+[1940:there's a smell of gas. ]
+[1941:an alarm sounds, lasers flash and gas pours from outlets on
+the saucer. ]
+[1942:it's poison! ]
+[1943:a technician wearing a gas mask looks out of the saucer and
+shouts inside, "False alarm". ]
+[1944:a technician looks out of the saucer and shouts inside, "Another
+false alarm. Turn it off and ask maintenance to check it in the
+morning". ]
+[1945:two human technicians are playing cards as you enter. They are
+not at all pleased to see you. One shouts, "Kill the intruder, if
+proof of this gets out the government is finished!" and reaches
+for a gun at hers). All 
+the resurrected folk clusterCK ** STCK ** STCK ** STCK ** STCK ** STCK ** STCK ** STCK ** STCK ** STCK ** STCK ** STCK side. ]
+[1946:she levels the barrel at you and fires. ]
+[1947:the dagget rushes in heroically and knocks both technicians
+flying. It shouts, "Save yourself, boss. I'll hold them off for as
+long as I can". ]
+[1948:the technician manages to recover, grabs her gun and
+shoots first the dagget, then you. ]
+[1949:The dagget catches up with you. "Woof! That was too close for
+comfort! ]
+;
+[1951:an alien head pokes out of the saucer, looks around ]
+[1952:and sees you! ]
+[1953:and goes back in. ]
+;
+[1955:the camera buzzes and records the scene. ]
+;
+[1960:a droid throws you out. It's too late to start work. ]
+[1961:a droid throws you out. You're not registered for work. ]
+[1962:you receive a day's training in boiling the job centre's
+automatic kettle. ]
+[1963:you get the opportunity of watching paint dry in the job
+centre. ]
+[1964:A droid takes your jobcentre card. ]
+;
+[1970:hisses at you] ; Worm mobile messages.
+[1971:lashes out with its tail]
+[1972:is still growing]
+;
+[1973:photograph the exhibits] ; Tourists mobile messages.
+[1974:chatter exitedly]
+[1975:seem thrilled]
+;
+[1976:picks up some litter] ; Cleaning droid messages.
+[1977:complains about all the dust]
+[1978:shuffles about, cleaning]
+;
+[1979:peers at you] ; Suspect person messages.
+[1980:seems to be waiting for someone]
+[1981:checks his jacket pocket]
+;
+[1990:the carpet snuggles round you to make movement difficult]
+[1991:, but the dagget keeps it at bay]
+;
+[1992:you do a clerk job and are escorted out. ]
+[1993:you enjoy yourself as managing director for a day and are
+escorted out. ]
+[1994:you are soon comfortably settled in the cocoon. The waldroid
+is in the workshop, and you soon forget about your immediate
+surroundings and can move the waldroid about as if it was you.
+After stacking boxes for hours, you get a little time to yourself. ]
+[1995:you are pulled from the cocoon. ]
+[1996:as you enter the workshop, the waldroid controls go dead
+and your attention returns to the cocoon. ]
+[1997:"Get lost, trash can". ]
+[1998:Your waldroid is ]
+[1999:the droid says, "Ok, you can have that on the city account
+for authorised repairs". ]
+[2010:the riverboat attendant pushes you back: "You can't cross
+without a ticket". ]
+[2011:the riverboat attendant inspects your ticket and then takes
+you across the straights. ]
+[2012:the travel agent shakes your hand. "Sorry, all
+our tickets are reserved". ]
+[2013:the travel agent shakes your hand. "Greetings,
+fellow bison". ]
+[2014:the reception droid turns you back. "Get lost, fleshie!
+Only party members are allowed through there". ]
+[2015:the reception droid looks up, smiles, and waves you past. ]
+[2020:the elevator starts with a jerk and moves ]
+[2021:the elevator starts by itself and moves ]
+[2022:it comes to a stop and the doors open. ]
+[2025:the mirror revolves and you find yourself on the other side. ]
+[2026:the partition slides down, blocking the exit north. ]
+[2027:the partition slides back up. ]
+[2028:the partition slides down onto ]
+[2029:and crushes it. ]
+[2030:and stops, whirrs, and goes back up a little way. The box has
+been flattened. ]
+[2031:fire extinguisher foam starts to pour from the orifice! It's
+filling up the dais, prevented from escaping by the partition! ]
+[2032:the foam comes up above your head, and you quickly
+asphyxiate. ]
+[2033:you block the orifice and stop the foam. ]
+[2034:You threaten to tell the truth about the fake aliens, but
+without hard evidence your threats are worthless. Army droids
+close in...] 
+[2035:You threaten to tell the truth about the fake aliens and
+wave the costume as proof. Eventually a deal is struck. You give
+back the alien costume and, in return, are adopted into the party
+leadership. This means wealth, power and status. Congratulations!
+You have won! ]
+;
+[2036:The partition is in the way. ]
+[2037:It lands below the partition. ]
+;
+[2040:that's against the law. ]
+[2041:the birds are singing. ]
+[2042:everything smells nice in paradise! ]
+;
+[2050:your tattoo buzzes. "Curfew in one hour". ]
+[2051:your tattoo buzzes. "Curfew over". ]
+[2052:a salesdroid calls the cops to throw you out. ]
+[2053:your tattoo buzzes. "Curfew". ]
+[2054:the consultant looks grave. "You're in debt but have no
+spare organs. I'll have to remove some vital ones". ]
+[2055:the salesdroid turns up its nose at you. ]
+;
+[2060:a citizen bumps into you, looks horrified and shouts, "Help,
+alien spy!". The fuzbots appear instantly, waving active lazguns. ]
+[2061:seeing the alien costume. It shoots without asking questions. ]
+[2062:a passing droid saw you emerge from the manhole. Noticing
+that you are not a party member, it throws you out. ]
+;
+;
+; help system
+;
+[2100:try examining the tree. ]
+[2101:follow the worm. ]
+[2102:maybe it can be delayed by something. ] ; behemoth
+[2103:the chasm looks behemoth-sized. ]
+[2104:colour codes correspond to where you are in the ET system. Each
+colour corresponds to a number: black=0, brown=1, red=2, orange=3,
+yellow=4, green=5, blue=6, violet=7, grey=8, white=9. The colour
+code thus gives a six-digit number. The first digit shows in which
+pyramid the destination is located.%
+Each time you
+go in towards the centre of the dartboard (north), your movements east
+and west affect your position (colour code) by three times as
+much. The best way to navigate is to go northeast until
+the current colour code passes the one you want. Then go south, and
+west until you pass the desired
+code again. Then go south again, and move east towards the desired
+code until you go too far. Repeat this and you will zig-zag out
+to the outer ring, where you should be at your destination. ]
+[2105:everything in your home is voice-activated, through a central
+computer. This saves on individual conrols, as well as providing
+an integrated buggin system. ]
+[2106:the theme park was set up in honour of some well-known works
+of science fiction. ]
+;
+;
+; sayings
+;
+[3900:^nyes ^ny]
+[3901:^nno ^nn]
+[3902:^ngreetings ^nwelcome ^nhello]
+[3903:^non ^nlight ^nshower ^nposter]
+[3904:^noff ^nextinguish]
+[3905:^nbed ^nsleep]
+[3906:^nexit]
+[3907:two droids run up with a sedan chair and carry you ^nhome. ]
+;
+; Garbage words
+;
+[4000:^nthe ^na ^ngo ^nand ^nalso ^nbefore ^nwalk ^nrun]
+;
+
+
+;Ram save messages:
+;
+[4300:sorry, we couldn't fit that facility into this
+version. ] ;OOPS or RAM
+[4301:(this version allows you to use RAM SAVE and RAM RESTORE
+to save a position in memory).%]
+[4302:(this version allows you to use RAM SAVE and RAM RESTORE
+to save a position in memory, and OOPS to "take back" bad moves).%]
+[4303:you must use RAM SAVE first. ]
+[4304:you can't use OOPS to go back further than this. ] ;Oops command
+;
+[4310:%press SPACE to play again. ] ;trailing space is because
+; osrdch driver call does not clear word-wrap.
+[4311:%Which do you want to do, RESTART or RESTORE?_]
+[4312:please answer YES or NO._]
+[4313:% %if you now SAVE this position to disk//cassette, and RESTORE
+it at the start of the next game, you can go on to achieve the maximum
+score for the whole trilogy. Do you want to SAVE?_] ;>>
+;
+
+
+[4314:that position was not saved from this part of the adventure. ] ;>>
+
+;Message as part of SCORE command:
+[4315:and you solved the previous parts of the game. ]
+;At end of final game:
+[4316:%Well done! You have solved the entire trilogy with a
+display of supreme brilliance, cleverness, ingenuity, intelligence,
+perspicacity, insight, intuition, sagacity, imagination, wisdom and
+sheer genius. Not to mention enduring persistence. This proves you
+to be an intellectual, mastermind and mental giant, all rolled into
+one. Congratulations!% %] 
+;
+[4317:%Congratulations! I now know that you solved both previous
+parts of the game with a maximum score and are on target to solve
+all the Jewels of Darkness. Good Luck!% %] ;>>
+;
+[4319:This game was designed and programmed by Pete, Mike and Nick 
+Austin, with pictures by James Horsler. It is copyright (C) 1986 
+Level 9 Computing, who can be contacted at PO Box 39, 
+Weston-super-Mare, Avon BS24 9UR, England. ]
+;
+[4320:%use '<' and '>' to adjust the width. Then press SPACE: ]
+[4321:%read "OK" and press SPACE. ]
+[4322:%Type the code. ]
+[4323:%No, that's not the code. ]
+[4324:%You took too long to answer. ]
+[4325:%please try again. ]
+[4326:%Wrong again. You'll have to try the command that caused the
+Lenslok test again.%]
+[4327:%Code correct!%]
+;
+[4330:Er, sorry about this, but it's Lenslok (TM) time. You'll
+have to pass a Lenslok (TM) test before you can proceed further
+in the game. Good Luck! ] ;>>
+;

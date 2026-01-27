@@ -1,0 +1,937 @@
+begin
+;--------------------------------------------------------
+; subroutines to fire gun and check for hits
+;--------------------------------------------------------
+.Fire
+ if CurrentScreen<>GameMap then @FireNotGameMap
+; v1=0 ; sample number in current game
+; gosub @PlaySample
+; if FireKeyChange=0 then @FireNotGameMap
+
+ HorseScreen=0 ; will want to ride into town, if we visit there.
+; pointing at a town/ranch etc. ?
+ gosub @HiresCD
+ if result=false then @GMNoFire ; no collision
+; got it: at HiresTable(x1) !
+ asr x1
+ asr x1
+ asr x1
+ asr x1
+ if x1=49 then @DisplaySystemMenu
+ Town=x1 ; standard location number of place to visit
+; This will be used by several of the overlays - e.g.
+; the scrolling games use it to decide which map number
+; to use.
+ m1=500
+ add m1,x1
+
+ if FireKeyChange=false then @FireNoChangeScreen
+ if TextBoxDisplayed=false then @FireNoChangeScreen
+; Text box is already displayed, so must have pressed fire key again.
+
+ push x1 ; place to visit
+  gosub @MaybeRandomMeeting
+  gosub @PutUpHourglass
+ pop x1 ; place to visit
+
+ NextMeetingMenu=0
+; NextMeetingMessage=0 ; quick messages from player's second (Tom O'Foliard
+;; or Barney Mason for Pat)
+
+ MenuNumber=0 ; no 'forced' menu entry
+ m1=0 ; no 'forced' message - comes before first menu
+ gosub @CheckSubPlotVisits ; check any events which happen
+; when visiting a place: returns m1 and menunumber
+; non-zero if either is to be used.
+ if m1=0 then VisitNoText
+ push x1
+  gosub @DisplayInstructions
+  m1=0
+ pop x1
+
+.VisitNoText
+; This is the request to 'visit' the town whose box is displayed.
+; Work out what screen change this requires, if any
+ &x2=ObjectTable(10) ; table giving screen numbers
+ add x2,x1 ; double byte-based table
+ add x2,x1
+ v1=ObjectTable(x2) ; overlay letter to switch to.
+ add x2,c1
+ v4=ObjectTable(x2) ; screen number within overlay.
+
+
+ if x1<10 then @FireStealCows ; cows
+ if x1<19 then @FireVisitPlace ; town
+
+; hide certain places when you visit them - because they have
+; one-shot subplots. Mark in "hidden" table
+ if x1<31 then FVPNotHide
+ if x1>33 then FVPNotHide
+ dx1=SPHiddenOffset
+ add dx1,SubplotsOffset
+ &dx1=TownVarData(dx1)
+ add dx1,x1
+ if dx1>TownVarDataSize then @TVD2Bug ;******
+ TownVarData(dx1)=c1
+
+.FVPNotHide
+
+ Location=x1
+ x2=ML ;=200
+ add Location,x2 ; set up location to be 200+TOWN - this
+; is the same format as used in "PeopleData" and elsewhere.
+; (within town, location is the room number)
+ if x1<24 then @FireVisitPlace ; Fort
+ if x1<35 then @VisitRanch
+ if x1<39 then @FireVisitApache
+ if x1=39 then @TrainCheckGang ; @FireVisitPlace ; FireGotMenuNumber ; train
+ if x1=40 then @FireVisitPlace ; wagon train
+ if x1=48 then @FireVisitPlace ; prospector
+; visit a gang
+
+ if PlayersName=Pat then @FireVisitPlace ; FireGotMenuNumber
+; Billy can go straight there - linking overlay, scene 14
+ gosub @MarkGangAsKnown
+
+ MenuNumber=150 ; visit again message: prints message 1858, quits
+ if x2=0 then FVG2
+ MenuNumber=146
+.FVG2
+ v4=14 ; cowboy picture (round campfire)
+ goto @CallLinkingOverlay
+
+.FireStealCows
+; offer player choice of stealing them, or of
+; taking them to the indians (If we've started that subplot)
+ x4=SPFBeefWanted
+ add x4,SubPlotFlags
+ x4=TownVarData(x4)
+ if x4=0 then @FireVisitPlace
+ if x4>200 then @FireVisitPlace
+ MenuNumber=138 ; take cows to indians?
+
+.FireGotMenuNumber
+ push x1 ; town to visit
+ push v1 ; overlay that will be needed
+ push v4 ; scene within overlay
+  gosub @PrettyMenu
+ pop v4
+ pop v1
+ pop x1
+ if result=DoNothing then @GMNoFire ; 'do nothing' selected
+ if result=760 then @FireVisitPlace ; steal cows
+ if result<>164 then @FireNotTakeCowsToIndians
+ push v1
+  v1=SPFBeefWanted
+  add v1,SubPlotFlags
+  v2=10 ; flag for taking cows to indians (read by SCROLL.TXT)
+  gosub @UpdateVarDataByte
+ pop v1
+ goto @FireVisitPlace
+;----------------
+.TVD2Bug ;******
+ break ;******
+ return ;*******
+.FireVisitApache
+; get Buckshot Roberts encounter?
+ if PlayersName<>Billy then @FireVisitPlace
+ x1=SPFBuckShotRoberts ; Billy ambushed by Buckshot?
+ add x1,SubPlotFlags
+ v2=TownVarData(x1)
+ if v2<>0 then @FireVisitPlace ; already happened
+ v1=x1
+ v2=1
+ gosub @UpdateVarDataByte ; being ambushed right now!
+ M1=1640 ; Buckshot roberts ambush
+ gosub @DisplayInstructions
+ Location=260 ; special code for Buckshot ambush
+ goto @SubPlotShootout
+
+;
+;---------------
+.FireVisitPlaceM1M2
+ push v1
+ push v4
+  gosub @DisplayInstructionsM1M2
+ pop v4
+ pop v1
+
+.FireNotTakeCowsToIndians
+.FireVisitPlace
+ PlayingDuel=false ; reset when ride into town, just in case.
+ if v4=0 then @FireNoChangeScreen
+ if v1<>CurrentAcode then NewScreenDifferentAcode ;'e' - town overlay
+ NewScreen=v4
+ x1=400 ; base for rooms
+ add NewScreen,x1
+ gosub @OpenTownStructures ; in case random sequence removed them.
+ return ; back to caller - will switch screen to visit town.
+
+.NewScreenDifferentAcode
+ if v1=52 then @FireGotoLinking ; to intermission screen
+ gosub @CallOverlayV1 ; call overlay, clearing sprites etc. as necessary.
+.NSDARet
+ return
+;----------------
+.TrainCheckGang
+ m1=0
+ m2=26 ; instructions for Pat (do not mention robbery)
+ if PlayersName<>Billy then @FireVisitPlaceM1M2
+ m1=25 ; train instructions
+; gosub @CheckPlayerGang
+ if PlayerGang<>0 then @FireVisitPlaceM1M2
+ m1=859 ; Billy did not have a gang
+ gosub @DisplayInstructions ; gosub, return
+ goto @ReturnToMap
+;-=---------
+.CallLinkingOverlay
+; goto a linking screen - involves a structure and sprites file
+; switch
+; dc.w LinkingSprites-IntroTables ; offset 70
+; dc.w LinkingStructures-IntroTables ; offset 72
+; dc.w IntroSprites-IntroTables ; offset 74
+; dc.w IntroStructures-IntroTables ; offset 76
+; Screen we want in linking screen is number v4
+ PersonNumber=0 ; remove any person we may have been talking
+; to beforehand
+; Location=0
+
+.FireGotoLinking
+ if v4>19 then FGL2
+ if v4>15 then @LinkingPictureWait ; 16..19 are bordello etc.,
+; so do not have menus
+.FGL2
+ gosub @MCPurgeAllCells
+ gosub @OpenLinkingStructures
+ dv1=v4 ; 1=bank, 2=grave, 3=prospector, 6=fort.
+ goto @DisplayPlaceAndTalk
+;------------
+.CheckSubPlotVisits
+; visiting place x1 - should any subplot events happen
+; immediately?
+ code -
+  v1=SPFAmbushDecision ; cleared whenever go into new town,
+  add v1,SubPlotFlags
+  v2=0
+  gosub @iUpdateVarDataByte ; clear ambush decision flag
+
+
+  v1=SPFSickManOnHorse
+  add v1,SubPlotFlags
+  x3=TownVarData(v1)
+  if x3=0 then CSPV2
+  if x3=255 then CSPV2
+  v2=255 ; don't do this subplot again
+  gosub @iUpdateVarDataByte
+; sick man is on horse - if going to Santa Fe, get a bonus
+  m1=1684 ; thanks!
+  if x1=SantaFe then @CSPVPrint
+  m1=1685 ; F you
+  goto @CSPVPrint
+
+.CSPV2
+
+ if x1<>Fortsumner then CSPV3
+ x2=SPFAccountsRequested ; player been asked to fetch accounts?
+ add x2,SubPlotFlags
+ x3=TownVarData(x2)
+ if x2<>PlayersName then CSPV3
+ v1=SPFAccountsGot ; player got accounts from store?
+ add v1,SubPlotFlags
+ v2=255 ; have got accounts now - and presented them.  So subplot over
+ gosub @iUpdateVarDataByte ; TVD(V1)=v2
+ M1=1516 ; showed the accounts to Colonel Baxter
+ goto @CSPVPrint
+
+.CSPV3
+; SPFGangToGrassOnBilly=8 ; gang name which has promised
+; to grass on Billy
+; SPFTexanPosseeAvailable=10 ; number of members (word)
+; SPFFreeDeputies=12 ; number of deputies unallocated (word)
+; SPFTrackingBarneysOutlaw=14 ; tracking outlaw suggested by
+; Barney Mason
+; SPFBeefWanted=16 ; beef asked for by Indian Chief?
+; SPFUprisingOffered=18 ; number of uprisings available (word)
+; SPFMeetBountyHunter=20 ; meet bounter hunter referred
+; to in 1634. Name of town: word
+
+; SPFCounterfeitOffered=24 ; set when Billy has been offered
+; counterfeit money as his share in a robbery.
+; SPFMcSweenStage=26
+; SPFJoeGrantMet=28 ; met Joe Grant?
+
+
+
+.CSPVPrint ; m1=forced message to print on arrival
+ code +
+ return
+
+
+;-------------
+ code -
+;---
+.iDuel
+ code +
+  goto @Duel
+;-----------
+ code -
+.iSubPlotShootoutNoM1
+ m1=0
+ m2=0
+
+.iSubPlotShootout
+ code +
+.SubPlotShootout
+;[110:the homesteader ] ; followed by 115
+;[111:the prospector ] ; followed by 115
+;[112:Mrs McSween ] ; ; followed by 116
+;[115:came up and said "thanks pard, you've
+;done me a right big favour and I'll be sure to tell everyone
+;about you". ] ;œœœ
+;[116:came up and said "thanks old friend. That's
+;stopped to the Murphy Dolans, at least for a while". ]
+
+; if m1=0 then SPS2
+; WantCSTB=true ; preserve last frame of animation
+; gosub @DisplayInstructions ; TextBigBox
+;.SPS2
+ v1=ArcadeAcode
+
+; 0: facing barn
+; 1: facing farmhouse
+; 2: facing rocks
+; 3: facing chasm
+; 4: facing bank/wagon - looking down main road.
+; 5: facing grain store
+ code -
+  v4=6 ; buckshot roberts
+  if Location>255 then sps4 ; buckshot special
+  v4=0 ; shootout 1 - facing farmhouse
+  if Location>223 then sps3 ; ranches
+  v4=2 ; shootout facing rocks
+  if location>199 then sps4 ; only one outside scene
+  v4=4 ; shootout in town
+
+.sps3
+ random x1
+ if x1>127 then sps4
+ add v4,c1 ; randomly use 1 of the two shootouts
+.sps4
+ code +
+.sps5
+ push v1
+ push v4
+  gosub @PutUpHourglass
+ pop v4
+ pop v1
+ goto @CallOverlayV1
+;------------
+.FireNoChangeScreen
+ CurrentPrintRaster=3361 ; 3361 is 10x2 print raster
+ CurrentDO=270 ; also shows 3361: 20x2 print raster
+ add CurrentDO,x1 ; use display object containing enlarged
+; binoculars graphic suitable for this place, plus the text
+; box below it.
+ TextBoxWidth=124 ; 140
+
+ if x1>16 then FVP1 ; not a town!
+ if x1<10 then FVP1 ; not a town!
+ x4=Town
+ gosub @IsTownLawful ; x2=TVD(x1) non-zero if lawful
+ m2=0 ; no comment for lawless towns
+ if x2=0 then FVP1
+ m2=1881 ; (lawful)
+ 
+.FVP1
+
+
+
+ gosub @DisplayTextFunnyBox ; display M1 in CurrentPrintRaster/CurrentDO
+ m2=0 ; m2 must remain 0 except where it's needed.
+ PlaceCursorX=Cursorx
+ PlaceCursorY=CursorY
+.GMNoFire
+ return
+;-----------
+.CheckPlayerGang
+; modify PlayerGang variable if they've been wiped out
+; (only matters in two player mode - in single player mode,
+; the meeting message handles it)
+ push x1
+  if PlayerGang=0 then CPGEnd
+  x4=PlayerGang
+  gosub @IsTownLawful ; x2=TVD(x1) non-zero if lawful
+  if x2=0 then CPGEnd
+  x4=PlayerGang
+  gosub @bringLawToTown
+; town x4 has become lawful - so remove it from the map etc.
+.CPGEnd
+ pop x1
+ return
+
+;----------
+.MaybeRandomMeeting
+; about 1/3 of the time player goes somewhere, make them meet
+; someone at random. The type of information they give will
+; normally be the same as from meeting someone in town,
+; but occasionally the player will get the intro to a sub-plot.
+ MenuNumber=NextMeetingMenu
+ if NextMeetingMenu=0 then MRM1
+.MRM0
+; forced meeting with someone.
+ NextMeetingMenu=0
+ x1=TomOFoliard
+ if PlayersName=Billy then @MRM4
+ x1=BarneyMason
+ goto @MRM4
+
+.MRM1
+ code -
+ random x1
+ code +
+ if x1<230 then MRMNotStatusReport
+; Tom O'Foliard tells Billy how he's doing
+ if Playersname<>Billy then MRMNotStatusReport
+ gosub @BillyStatusReport
+ goto @MRMRet
+
+.MRMNotStatusReport
+ if x1<200 then @MRMRet
+ code -
+  x3=190 ; room number for random meetings
+  x2=7 ; determines how many people can be met in the wilds
+  random x1
+ code +
+
+ and x1,x2
+.DoSubplotX1
+; is this subplot still available?
+ v1=x1
+ add v1,v1
+ add v1,SubPlotFlags
+ x4=TownVarData(v1)
+ if x4>0 then @MRMRET ; non-zero means it's in progress, or finished.
+
+; do we want to forget about this one this time?
+ code -
+  random x4
+ code +
+ if x4>80 then @MRMRet
+
+ v2=PlayersName
+ gosub @UpdateVarDataByte ; make non-available by setting up to
+; equal the players name - maybe overwritten later.
+
+ add x3,x1 ; choice of 8 people to meet in the wilds
+ gosub @WhoIsAtX3
+; gets x1 as person number * 16 for room x3.
+ if x1=0 then @MRMRet ; no-body there: e.g. that subplot has finished
+ if x1<912 then MRM4 ; pat or Billy can meet this person 57
+ if PlayersName<>Billy then MRM3
+ if x1>928 then MRMRet ; 57/58 are Billy Only, others are Pat Only
+.MRM3
+ if PlayersName<>Pat then MRM4
+ if x1<944 then MRMRet ; 59/60 are pat Only, others are Billy only
+
+.MRM4
+ m1=1854 ;[1854:was stopped on the way. He pulled up his horse
+ push x1
+  gosub @ActorM1NoWait
+
+  code -
+   random x1
+  code +
+;***  dv1=690 ; gen desert 1(road) in town structure/sprites
+;****  if x1>128 then MRM2
+  dv1=691 ; gen desert 2(stream) in town structure/sprites
+;.MRM2
+;  gosub @PreloadAndInsertDV1
+;  v1=0
+;  v2=0
+;  gosub @MCBuildRoom
+ gosub @BuildPicture ; build picture dv1
+ pop x1
+
+.MapInterruption
+; come here with x1=person number*16,
+; and MenuNumber=menu to use, if not their default
+ push x1
+  gosub @OpenIdentikitStructures ; load structure file for identikits
+ pop x1 ; person offset (Number*16)
+
+ gosub @MaybeForceTalkToPerson ; MenuNumber=menu to force them to have
+; (mostly used for talking to Second-In-Command - Foliard or Mason)
+ if result<1100 then MRMNotBackToMap
+ if Result<1130 then @ReturnToMap ; sick man in desert etc - 
+; back to map to give player option of going to a town next
+
+.MRMNotBackToMap
+.MRMRet
+ return
+;------------
+;.DisplayLinkingPicture ;****used?
+; gosub @MCPurgeAllCells
+; gosub @OpenLinkingStructures
+;; gosub @MCEmptyRoom
+; dv1=v4 ; 1=bank, 2=grave, 3=prospector, 6=fort.
+;; gosub @PreloadAndInsertDV1
+;; gosub @MCBuildRoom
+; gosub @BuildPicture
+; return
+;-------------
+;-------------
+.HiresCD
+; check HiresTable(0..SizeHiresTable)
+; for collision with thing at coordinates cursorx,cursory
+; Return result=true if found
+; and x1=offset in HiresTable
+
+.HiresCDRange
+ x1=0
+.FireLoop
+ PosRange=24 ; was 32
+ NegRange=65512 ; -24 was -36
+
+ &x2=HiresTable(x1)
+ sub x2,cursorx
+ gosub AdjustCDSizes
+ if x2<PosRange then FireLX
+ if x2<NegRange then @FireL2 ; -20. x coord 
+.FireLX
+ add x1,c2
+ &x2=HiresTable(x1) ; y coord
+ sub x1,c2
+ if x2=0 then FireL2 ; zero y coord - probably nothing recorded
+ sub x2,cursory
+ gosub AdjustCDSizes
+ if x2<PosRange then FireLY
+ if x2<NegRange then @FireL2 ; -20. y coord
+.FireLY
+ result=true ; found!
+ return
+;
+.FireL2
+ add x1,c16
+ if x1<SizeHiresTable then @FireLoop
+ result=false ; not found
+ return
+;---------------------------
+.AdjustCDSizes
+; x2 is the distance from object x1*16.
+ if x1=624 then ACS1 ; reduce size of train cd
+ if x1<>192 then ACS2 ; reduce size of Lincoln City Cd
+.ACS1
+ PosRange=16 ; normally 24
+ NegRange=65520 ; -16 normally -24
+
+.ACS2
+ if x1<>1344 then ACS3 ; gamblers in saloon?
+ PosRange=80
+ NegRange=65456 ;65504
+
+.ACS3
+ return
+;---------------------------
+
+
+
+.FireNotGameMap
+ if PlayingDuel=0 then @FireNotDuel
+ if DuelStatus=0 then @FireNotDuel
+ if DuelStatus=7 then @FireNotDuel ; player is dying
+ gosub @farcadeshoot ;  gun shot sequence
+ gosub @fHit     ;  who got shot sequence
+
+; move cursor randomly after shot, as if gun jerks back
+code -
+ random x1
+code +
+ asr x1
+ asr x1
+ asr x1
+ cursorspeed=x1 
+ dx4=CrossHairACB
+ gosub @readACBdx4
+ add dv4,x1
+ if dv4< 201 then fNotOffTop
+ dv4=200
+
+; make sure cursor stays on screen
+.fNotOffTop
+ asr x1
+ add dv2,x1
+ if dv2<306 then fNotOffSide
+ dv2=305
+.fNotOffSide
+ gosub @moveACBdx4
+ dx4=0 
+
+.FireNotDuel
+ return
+;------------ end of main fire calls---------------------
+
+;--------------------------------------------------------
+; gun fire sequence
+; parameter:  currentgun
+;--------------------------------------------------------
+.farcadeshoot
+ dv1=3732 ; fire for Billy in foregroung
+ if PlayersName=Billy then fas2
+ dv1=3752           ;fire
+.fas2
+ objectnumber=dv1
+ dx4=fighteracb
+ gosub @ChangeACBdx4
+ return
+;------------------------- end of gunfire sequence--------
+
+;---------------------------------------------------------
+; subroutine checks if anyone or anything hit
+; parameters:  crosshairacb
+;---------------------------------------------------------
+.fCheckHit
+ gosub @fquartercalculation
+ dx4=CrossHairACB
+ push dx4
+ gosub @ReadACBdx4
+ sub dv3,dv4
+ add dv3,c8
+ add dv2,c8
+ if dv2<positionx then fMiss
+ if dv3<PositionY then fMiss
+ gosub @fThreeQuarterCalc
+ if dv2>PositionX then fMiss
+ if dv3>PositionY then fMiss
+ sub dv3,c8
+ sub dv2,c8
+ add dv3,dv4 
+ pop dx4
+ Hit=1
+ dx4=0 
+ Return
+
+.fMiss  ; didn't hit anything
+ sub dv3,c8
+ sub dv2,c8
+ add dv3,dv4
+ pop dx4
+ Hit=0
+ dx4=0 
+ return
+;-----------------------end of hit checking---------
+
+
+;---------------------------------------------------
+;calculate 3/4 of the area of the sprite hit, as 'HIT ZONE'
+;---------------------------------------------------
+.fThreeQuarterCalc
+ add Length,Length; 1/2 in.
+ add PositionX,Length; 3/4 in
+ add Height,Height ;
+ add PositionY,Height;
+ return
+
+.fQuarterCalculation;
+ add Height,Height;1/8 height
+ add Height,Height; 1/4 height
+ push Height
+ add length,length; 1/8 length
+ add length,length; 1/4 length
+ push length
+ add PositionX,length
+ add PositionY,Height
+ pop Length
+ pop Height
+ return
+;------------------end of two routines for area calculation
+
+
+;----------------------------------------------------------
+; Okay, so who got hit ???
+;----------------------------------------------------------
+.fHit
+; hit opponent in Duel?
+ Hit=0 
+   if enemystatus=2 then @fnotpat
+   dx4 =enemyacb
+   ACBHeader=dx4
+   push dx4
+   gosub @fFindPosition
+   pop dx4
+   If Hit=0 then @fNotpat
+   dv1=3707 ; dying unnamed bandit
+   if EnemyName=255 then InsertDead ; =Pat, Billy or $ff for other
+
+
+   if PlayersName=Pat then otherDead ;    if enemystatus<>0 then otherdead
+   dv1=3701  ;dying pat
+   goto insertdead
+.otherdead ; Billy dies
+   dv1=3681 ; animation sequence for small Billy dying
+.insertdead
+  objectnumber=dv1
+;  gosub @changeacbdx4
+  dx4=EnemyACB
+  gosub @ReadACBDx4
+  push ObjectNumber
+   ACBHeader=EnemyACB
+   gosub @KillACBHeader
+  pop ObjectNumber
+  gosub @StartFreeACB
+  EnemyACB=dx4
+  if EnemyName=255 then DontNotifyTwoPlayer
+  v1=CommsIveShotYou
+  gosub @WriteSerial
+
+.DontNotifyTwoPlayer
+;**   dv2=opponentx
+;**   dv3=opponentz
+;**   dv4=opponenth
+;**   gosub @moveacbdx4
+   enemystatus=2
+   Won=true
+   GameOverTimer=20 ; time till game terminates
+.fnotpat
+return
+
+;------------- end of people hit routines
+
+;------------------- nobody hit
+
+; parameters: acbheader,dv1
+.fFindPosition
+   dx4=ACBHeader
+   gosub @ReadACBdx4
+     PositionX=dv2
+     PositionY=dv3
+     sub PositionY,dv4
+     x1=62
+     add x1,dx4
+     &dv1=ACBList(x1)
+   xsize=2 ; cells wide
+   ysize=4 ; cells high
+   if dv1<50 then ffindGotSize ; xzh object: little outlaw for dueel
+   objectnumber= dv1
+   gosub @FindAndDecode
+.ffindGotSize
+   Height=ysize
+   Length=xsize
+   gosub @fCheckHit 
+ return
+;-----------------------------------------
+
+
+;--------------------------------------------
+; find x and y coordinates for an object
+.fGetCoords
+ dx4=ACBHeader
+ gosub @ReadACBdx4
+ PositionX=dv2
+ PositionY=dv3
+ sub PositionY,dv4
+.OTSSRet
+ return
+;--------------------------------------------
+.OpenTownStructures
+ BackgroundColour=1 ; white (changed in some strange places,
+; like card game)
+ if StructureFile=TownStructures then OTSSRet
+ gosub @LoadStructures
+
+ cif pc
+  gosub @SetCGAPalettes
+  gosub @SetPreloadPalettes
+ cend
+
+
+ if StructureFile=IdentikitStructures then OTS2
+; identikits, town structure file share the same sprites file
+ v1=IntroTablesList
+ &v2=IntroTables(34) ; map/town sprites filename
+ v3=1 ; 0=purge, 1=don't purge
+ gosub @MCOpenSpriteFile
+ gosub @MCPurgeAllCells
+
+.OTS2
+ StructureFile=TownStructures
+ goto @InitACBs ; gosub, return
+;---------
+.VisitRanch
+; visit a ranch x1 (24..30) - will a shootout happen here, or
+; do we just talk to someone?
+
+ push x1
+; Has town gone bust, If it's a Murphy Dolan one?
+  x4=x1 ; object number for ranch (24..30, 29=Tunstall Ranch(McSween))
+  gosub @GetLocationData ; returns x2=TVD(x1) where x1=position in ObjectsInfo
+; x2=0 if not gone bust... yet!
+ pop x1 ; number of ranch to visit (24..30)
+
+ push x2 ; decision on bust or not
+  gosub @OpenArcadeStructures
+  code -
+  random x1
+  code +
+  CurrentScreen=0 ; disable scroll decision code, etc.
+  dv1=630 ; ranch picture, no outlaws
+  if x1<128 then VR2
+  dv1=631 ; alternate ranch picture, no outlaws
+.VR2
+ pop x2 ; decision on bust or not
+  if x2=0 then VR3 ; not gone bust yet - get to see Murphy Dolan,
+; or Mrs McSween, if there...
+
+; Has gone bust, so display picture and "Mysteriously deserted message"
+
+
+ gosub @BuildPicture
+ m1=1882 ; mysteriously deserted
+ gosub @DisplayInstructions
+ goto @ReturnToMap
+
+
+.VR3
+.DisplayPlaceAndTalk
+; display place dv1, talk to person at LOCATION
+ gosub @BuildPicture
+ x3=Location ; place we're visiting
+ gosub @WhoIsAtX3
+; gets x1 as person number * 16 for room x3.
+ if x1=0 then DPAT2 ; nobody there, so do animation.
+ push x1 ; person number
+  WantCSTB=true ; do one frame of animation (to put up e.g.
+; sails on windmill
+  gosub @DisplayEverything
+ gosub @OpenIdentikitStructures ; load structure file for identikits
+ pop x1
+
+.DPAT2
+ push MenuNumber 
+  gosub @MaybeForceTalkToPerson ; changed to this for Gang visits.
+ pop MenuNumber
+ if MenuNumber<>150 then DPATNotStatusReport
+ gosub @BillyStatusReport
+
+.DPATNotStatusReport
+ goto @ReturnToMap
+;--------------
+.MarkGangAsKnown
+; gang x1 (41..46) have been visited by player - so
+; make people tell player about another gang next time
+; he pumps them for information
+; Returns x2 as zero if had already visited this gang
+ x2=41 ; 41=first gang
+ sub x1,x2 ; x1=gang number 0..5
+ add x1,x1 ; get offset from SubPlot tables in TownVarData
+ add x1,x1
+ add x1,x1
+ add x1,x1 ; 8 words per entry in TVD
+
+ x4=4 ; offset of gangs
+ add x4,SubPlotsOffset
+ &x4=TownVarData(x4) ; x4 is now start of subplot data word pairs
+ add x4,x1 ; add on gang
+ &x2=TownVarData(x4) ; returns zero if already known about
+ &TownVarData(x4)=c0 ; nothing more to know about this gang now.
+ return
+;----------
+.ToCardGame
+; Location=PlayersName ; do not acknowledge requests for Duel
+;; in two-player game
+ gosub @PutUpHourglass
+ NextMusic=CardMusic
+ v1=ArcadeAcode
+ v4=CardGameScreen
+ goto @FireVisitPlace
+;------------
+.ToBrawlGame
+; Location=PlayersName ; do not acknowledge requests for Duel
+;; in two-player game
+ gosub @FreezeAndPutUpHourglass
+
+ v4=BrawlScreen
+ v1=ArcadeAcode ; '3'
+ gosub @FireVisitPlace
+ goto @BackToWalkabout ; in case we get back here, which is unlikely
+;----------------
+.ToTrackingGame
+ gosub @PutUpHourglass
+
+ NextMusic=102 ; getaway music
+ gosub @PlayTuneForScene
+ v4=TrackingGame
+ goto @CallScrollingOverlay ; to getaway game. Was goto @BackToWalkabout
+;------------
+.ToRustlingGame
+ gosub @PutUpHourglass
+
+ gosub @PlayTuneForScene
+ v4=RustlingGame
+ goto @CallScrollingOverlay ; to getaway game. Was goto @BackToWalkabout
+;------------
+.ToEscapeGame
+ gosub @PutUpHourglass
+
+
+ NextMusic=102 ; getaway music
+ gosub @PlayTuneForScene
+
+ gosub @MCPurgeAllCells ; purge cells from linking picture.
+ v4=EscapeGame
+ goto @CallScrollingOverlay ; to getaway game. Was goto @BackToWalkabout
+;---------------
+.DisplaySystemMenu
+; come here when select system icon on map
+ MenuNumber=274 ; system menu
+ gosub @PrettyMenu
+ if result=68 then SaveGame ;  668-MM,MDoIt+668-MM * save game
+ if result=69 then RestoreGame ; dc.w 669-MM,MDoIt+669-MM * restore
+ if result=70 then @RestartGame ; dc.w 670-MM,MDoIt+670-MM * restart
+ return
+;--------
+.SaveGame
+ gosub @PutUpHourglass
+
+ &v1=IntroTables(2) ; offset of filename within IntroTables
+; from IntroTables(v1) to list17(8)
+ gosub @CopyFilename
+
+ v1=0 ; (list0 is var table start). TownVarDataList ;=7 (list to save)
+ v2=0 ; offset within list
+ v5=0 ; high length
+ v6=1024 ; save variables (up to 512 of them)
+ gosub @MCSaveFile ; address: ListV1(V2), length is v5(hi),v6(lo), 
+
+
+ x1=66 ; 'Billy.sav' -> 'Billy.SAB'
+ list17(16)=x1
+ v1=17 ; save list 17 onwards
+ v6=18000 ; Various things... including...
+; TownVarDataSize=10000 ; space allocated for it
+ gosub @MCSaveFile ; address: ListV1(V2), length is v5(hi),v6(lo), 
+ return
+;-------
+.RestoreGame
+ gosub @PutUpHourglass
+ &v1=IntroTables(2) ; offset of filename within IntroTables
+; from IntroTables(v1) to list17(8)
+ gosub @CopyFilename
+
+ push SmoothScroller ; system option, nothing to do with save file.
+  v1=0 ; (list0 is var table start). TownVarDataList ;=7 (list to save)
+  v2=0 ; offset within list
+  gosub @MCLoadFile ; address: ListV1(V2),
+
+  x1=66 ; 'Billy.sav' -> 'Billy.SAB'
+  list17(16)=x1
+  v1=17 ; list17 is where most of the data is
+  v2=0 ; offset within list
+  gosub @MCLoadFile ; address: ListV1(V2),
+ pop SmoothScroller
+
+; re-initialise the floor maps which appear to get trashed by
+; restore.
+ gosub @InitFloors
+ gosub @FCInitFloorCache
+ goto @ReturnToMap ; build map etc. return
+;-------

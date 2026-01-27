@@ -1,0 +1,2067 @@
+; Demo.TXT Copyright (C) 1989 Level 9 Computing.
+; for Billy The Kid
+;
+; Mike Austin October 1990
+
+
+;**Will palette setting at start work without structure file?
+
+
+; draw flags are...
+; dRemoveRedraw=65535 ;  -1 Remove and redraw
+; dInsert=0 ;             0 insert
+; dPlot=1 ;               1 plot as sprite
+; dInsertRedraw=2 ;       2 insert and redraw
+; dMarkPreload=3 ;        3 mark to preload
+; dSetProtect=4 ;         4 set protection mark
+; dUnsetProtect=5 ;       5 unset protection mark
+
+
+const
+ CurrentAcode=69 ; 'e' - acodE.acd
+ CurrentGamedata=65 ; 'a' - gamedatA.dat
+ Overlay=1 ; town game. (1=map/town, 2=scrolling, 3=shootouts)
+ TownOverlay=1
+ ScrollingOverlay=0
+ ArcadesOverlay=0
+
+
+
+
+;   game constants:
+ MapCursor=2719 ; raster showing little binoculars.
+
+;Scrolling constants:
+ MapTopBorder=7
+ MapBottomBorder=369
+ MapleftBorder=7
+ MapRightBorder=615 ; 8 Jan 1991. was 625
+ Scrollconst=1
+
+;Duel Constants:
+  OpponentX=176
+  OpponentZ=160 ; 153
+  OpponentH=64
+ 
+  StartPlayerX=36
+  StartPlayerZ=192 ;208
+  StartPlayerH=102 ; 128
+  Crosshairani=3941
+  Bellani=3940
+  BellRaster=2457
+
+  StartCrossX=160 ; 80
+  StartCrossZ=500 ; 400; 300 ; 250 ; 
+  StartCrossH=370 ; 270; 170 ; 120 ; 
+
+  BillDrawn=2384
+
+ SizeHiresTable=1760 ; 16 times the number of entries in ObjectTable
+; (Which is used for CD with map objects, and for CD with
+;  people in town.)
+ ArcBigWindowRaster=3360 ; big text window print raster
+ ArcBigWindowDO=202 ; 3360 ; big text window display object
+ MinTown=430 ; min xzh town background
+ MaxTown=599 ; 560 ; max xzh town background. (600 is map)
+ MaxOutside=549
+ TownRoomBase=400 ; this number is subtracted from CurrentScreen
+; in the towns to get the "room number": mainly used for
+; the exit table.
+ PlayerInitialY=120
+ IntroTablesList=9
+
+table
+ ObjectTable=1
+ HiresTable=2 ; 16 bytes per object listed in ObjectTable
+ list4=4
+ list7=7
+ IntroTables=9
+
+
+var
+ cache1 cache2 ; floormap variables
+ MarginZ
+ FSizeZ
+ MarginX
+ FSizeX
+ CurrentCache
+
+
+
+; duel variables
+  enemyacb
+  fighteracb
+  duelstatus ; also used for number of locks wanted on safe.
+  enemystatus
+  playergundrawn
+
+ lastNonZeroScrollXDir
+
+;cursor stuff:
+
+ HandObject
+
+ NewScreen ; set to number of new screen when we want a change.
+; otherwise 0
+
+
+;Scrolling stuff
+; ScrollXDir ScrollYDir
+ ScrollSpeed ; BillACB
+ ScrollDiff
+; screenx screeny
+ screencursorx screencursory
+ Borderleft BorderRight BorderTop BorderBottom
+
+;; MikeTemp
+ 
+ CurrentObjectTable ; offset of start of table for current screen
+; in ObjectTable()
+ AnimationCount
+
+ PlaceCursorX PlaceCursorY
+ BuildingRoom
+
+; MenuDisplayed
+; MenuOffset ; offset of menu tables within IntroTables
+; MenuNumber ; menu we want to display
+; WantedDirection ; not really needed, for compatability with Scroll
+; UpdateACBs ; false if acbs are to be frozen for a while,
+; e.g. whilst displaying menu
+
+ PersonNumber ; set to person number that we are talking to.
+
+ MovingPersonHires ; offset in Hires() of moving scenery person -
+; e.g. hostess in saloon, ladies in street. Max one per scene.
+ WantCSTB ; set to true when want to do a COpyScreenToBuffer
+ PlayingDuel ; set to 1 when we want a duel on the next
+; street scene.
+; DuelStatus<>0 when we've actually started the duel itself
+ TimeInRoom
+ HorseScreen ; screen where player left his horse!
+; 0 if not yet left
+ HorseX HorseZ HorseH
+ PlayerWalking ; set as a boolean, false or true - allows
+; you to continue walking from stopped, in the same direction
+; (i.e. it removes the debouncing on setting up the walk animation).
+
+ DuelPlayerBase DuelOpponentBase
+ Newspaper ; flag: false/true
+
+;===========================================================
+;main loop begin
+;===========================================================
+begin
+code +        ;;;;;;;  Initial setup begins ;;;;;;;;;;; 
+.Start3D
+ gosub @AAEssentialInit
+ gosub @MCHeroOnceOnlyInit
+ cif NotPC
+  SmoothScroller=1 ; ST/AMiga are always smooth scrolling
+ cend
+ cif pc
+  SmoothScroller=v3 ; 0 for jump scrolling, non-zero for smooth scrolling
+ cend
+ CGAMode=v2
+ v1=240 ; $00F0
+ and CGAMode,v1 ; =0 if EGA/VGA, <>0 for CGA2/4.
+ Language=0 ; not yet chosen - choose in intro.
+ gosub @MCOnceOnlyMusicInit
+ v5=0 ; initialise sound system
+ gosub @MCDigitise
+ gosub @Initialise
+
+.PlayAgain
+.RestartGame
+
+ push FirstAsciiInFont
+ push FontHeight
+ push SmoothScroller
+ push Language
+ push CGAMode
+
+ v1=6 ; pointer to variables
+.ClearAllVars1
+ v2=0
+ &list0(v1)=v2
+ v2=2
+ add v1,v2
+ if v1<600 then ClearAllVars1
+ gosub @AAEssentialInit
+ pop CGAMode
+ pop Language
+ pop SmoothScroller
+ pop FontHeight
+ pop FirstAsciiInFont
+
+
+ MusicOn=1 ; default to playing
+ SoundOn=1 ; default to playing sound FX
+ CopyProtectChecked=0
+ PlotLogicalDone=0
+ ScrollDirectionDone=0
+ cif pc
+  gosub @MCInitJoystick
+ cend
+
+
+ TwoPlayerMode=false
+
+
+
+ UpdateACBs=true ; not menu mode
+ push v4 ; parameter
+  gosub @AAEssentialInit
+  v1=65 ; 'A' as in gamedatA.dat ;*******why necessary?3jan90
+  gosub @LoadGamedata
+  pop v4
+  goto @DoWholeIntro ; comment out this line to remove intro from start
+.vAfterIntroStart
+
+; gosub @MCEmptyRoom
+
+
+
+
+ gosub @InitFloors
+ gosub @FCInitFloorCache
+
+ TwoPlayerMode=0 ; when restart after two-player game, important
+; NOT to send the updates of all vars to the other computer,
+; cause it's VERY slow!
+ gosub @InitStrategy ; initialise strategy tables,
+; set up people identikits for this game, etc. etc.
+ PlayerGang=0 ; no gang to start with
+ TicksSinceLawful=3 ; 8-this number is time before first town
+; becomes lawful
+ TotalGoldStolen=0
+ PlayerGold=50 ; amount of gold owned.
+ PlayerIncome=0 ; income next time back to map
+ PlayerReputation=200 ; reward for capture, in Dollars.
+ RobberyTillMDGoesBust=ConstTillMDGoesBust ; make a ranch go bust immediately
+ PatWarnings=0 ; number of warnings about doing a bad job
+ BillyLives=4 ; lives remaining.
+ Newspaper=false
+ EnemyName=255 ; default to fighting generic outlaw
+
+ v4=SelectPlayerScreen ; GameMap
+ goto AfterIntroStart2 ; AfterOverlayEntry
+
+
+.OverlayEntryPoint
+ break ;**********
+ push v4 ; parameter
+  gosub @AAEssentialInit
+  v1=65 ; 'A' as in gamedatA.dat
+  gosub @LoadGamedata
+ pop v4
+; gosub @InitFloors
+; gosub @FCInitFloorCache
+
+.AfterIntroStart2
+ push v4 
+  gosub @vSetDefaultPalettes
+  BuildingRoom=false
+  PlayingDuel=false
+  DuelStatus=0
+  v1=0 ; purge
+  gosub @MCPurgeAllCells
+  StructureFile=0 ; void structure to force loading
+  gosub @OpenTownStructures
+ pop v4 ; parameter
+
+; re-initialise variables that may have been corrupted by
+; overlay code...
+ PlayerDirection=3
+
+; now choose whether to go back to town, or back to the map.
+; (or even into a duel, I guess)
+ if v4=CodeRestartGame then @PlayAgain ; restart game
+ if v4=CodeBackToWalkabout then @BackToWalkabout
+ if v4=GameMap then OverlayRestart
+
+ if v4<>DuelBack then OEPNotDuel
+; if BillyLives<>0 then OEPNotFinalDuel
+; if TwoPlayerMode=false then OEPNotFinalDuel
+; gosub @InitTwoPlayerDuel
+;
+.OEPFinalDuel
+ PlayingDuel=true
+ v4=CurrentScreen
+ if v4<430 then OEPDuel2
+ if v4<MaxOutside then OEPNotDuel ; fight duel where we were
+.OEPDuel2
+; player wasn't on street, so pick a place to fight it...
+ v4=430 ; santa fe, for want of anywhere more scenic
+
+.OEPNotDuel
+
+ NewScreen=v4
+ if v4=SelectPlayerScreen then AfterOverlayEntry2
+ goto @BuildNewScreen
+
+.OverlayRestart
+ NewScreen=GameMap
+ TextBoxDisplayed=0
+
+.AfterOverlayEntry
+; ScrollXDir=0
+; ScrollYDir=0
+ ScreenX=0 ; reset screen pos so e.g. text box appears
+ ScreenY=0
+.AfterOverlayEntry2
+ ForegroundColour=7 ; foreground color (7)
+ BackGroundColour=1 ; background color (1)
+ UpdateACBs=true ; not menu mode
+;; PlayersName=Pat ; 2=billy, 1=Pat
+ duelstatus = 0
+ enemystatus = 0
+ playergundrawn = 0
+
+
+ if NewScreen=IntroScreen then DontLoadTownStructures
+ gosub @LoadStructures
+.DontLoadTownStructures
+ &WordWS(WordVBLDisabled)=c0
+
+ &MenuOffset=IntroTables(32) ; offset of menu data.
+
+ CurrentScreen=0
+ Framecount = 0
+ Scrolldiff = 7
+;; framelimiting = true ;;;set framelimiting on
+ ScrollSpeed = ScrollConst ; initially, scroll everywhere in pixels.
+ add ScrollSpeed,ScrollDiff ; machine dependant scrolling shift
+ 
+;;;;;;;;;;; inital setup ends, main loop begins  ;;;;;;;;;;;;
+ PlayerX=32 ; for town stuff, when we get to it.
+ PlayerZ=PlayerInitialY
+ PlayerDirection=3
+
+.BuildNewScreen  ; this bit initalises each screen ;;
+ Newspaper=false
+ gosub @PutUpHourglass
+
+ gosub @OpenTownStructures
+
+ LeftMargin=7
+ TopMargin=9
+ CurrentPrintRaster=ArcBigWindowRaster ;=3360 ; big text window print raster
+ CurrentDO=ArcBigWindowDO ; =202 ; big text window display object
+; BillACB=0
+; enemyacb=0
+; fighteracb=0
+; CrossHairACB=0
+
+
+ CurrentScreen=NewScreen
+
+ Location=CurrentScreen
+ x2=TownRoomBase
+ sub Location,x2 ; get offset from lowest town number = "room" number
+ AccostCounter=150 ; time until someone in room
+; makes Player a proposition (!)
+
+
+
+
+ NewScreen=0
+ TextBoxDisplayed=0
+ code -
+  stack
+ code +
+ 
+; zero loop for dead npc positions
+ x1 = 0
+ x2 = 0
+.zeroloop
+ &worklist(x1) = x2
+ add x1,c2
+ if x1 < 50 then zeroloop
+
+ gosub @EmptyRoomEtc
+ PersonDisplayed=false
+ WantCSTB=false
+ CursorX=0
+ CursorY=0
+ m2=0
+
+ if CurrentScreen<>GameMap then NotInitGameMap
+ &CurrentObjectTable=ObjectTable(0)
+ NextMusic=ThemeMusic ; game map music
+ gosub @ClockTick
+; v4=DuelSamples
+; gosub @LoadSamplesForGame
+
+.NotInitGameMap
+ RasterOffset = 0  
+ BuildingRoom=true
+ if CurrentScreen=IntroScreen then @DoWholeIntro
+
+
+; cif NotPC ;******
+  gosub @ClearHiresTable ; for CD in map and walkabout stuff.
+; cend ;******
+ ACBSearchStart=ConstACBStart
+ ACBStart=ConstACBStart
+ ACBEnd=ConstACBEnd
+
+ if CurrentScreen=SelectPlayerScreen then @NoInsertScreen
+ PersonDisplayed=0
+ dv1 = CurrentScreen
+ gosub @PreLoadAndInsertdv1    ; does InitACBs as well
+ gosub @ccDoCross   ; setup cursor if needed
+ cursory = cursorz
+ sub cursory,cursorh
+
+ ScrollXDir=0
+ ScrollYDir=0
+ LastNonZeroScrollXDir=0
+ screenx = 0
+ screeny = 0
+ screencursorx = cursorx
+ screencursory = cursory
+ v1=0  ; x position in pixels 
+ v2=0  ; y position in pixels 
+; if CurrentScreen<>GameMap then SB2
+; V1=LastMapX
+; v2=LastMapY
+;
+;.SB2
+ gosub @BuildRoom ; ViewMap
+ gosub @ClearKBD
+
+ arraycount = 0
+ Timeheld = 0
+ MaxCursorSpeed = 16
+ KeyHeld = 0
+
+
+ gosub @PreloadSprites
+ gosub @InitTown
+
+.NoInsertScreen
+; LastTunePlayed=0
+ HourglassState=false ; don't do hourglass until requested
+; by code in this part of the game.
+ if CurrentScreen<>SelectPlayerScreen then @NotInitSelect
+; gosub @AnnounceLoss ; if two-player game is still running
+; on other screen, tell them to stop.
+
+; NewScreen=430 ;******SelectPlayerScreen ; GameMap
+; PlayingDuel=true ;*******
+; goto @BuildNewScreen ;******
+.SelectPlayer
+ MenuNumber=164 ; Billy, Pat, restore
+ gosub @prettyMenu
+;; dc.w 953-MM,MDoIt+953-MM * Billy
+;; dc.w 952-MM,MDoIt+952-MM * Pat
+;[955:Pat, you must track all the outlaw gangs to
+;their hideouts. Talk to people to get information. ] ;|||
+;[956:Billy, rob banks and steal cows from the Murphy-Dolans. ] ;|||
+;[974:2-PLAYER GAME ] ;œœœ
+;[975:Trying serial connection (press FIRE to abandon) ]
+ if result=375 then InitTwoPlayerGame
+ PlayersName=Pat
+ if result=355 then InitSelectEnd
+ PlayersName=Billy
+
+.InitSelectEnd
+ HourglassState=0 ; ensure hourglass is redisplayed
+ goto @ReturnToMap
+
+.InitTwoPlayerGame
+ gosub @TrySerial ; also chooses who we're gonna play
+ goto InitSelectEnd ; to map etc.
+;-----------------
+
+.NotInitSelect
+ GameOverTimer=0 ; not ending
+ GameOver=0
+ Won=false
+ TimeInRoom=0
+ gosub @PlayerNewScreen
+
+;;;;;;;;;  Main loop for any one screen once it is set up ;;;;;;
+.CarryOnLoop
+ BuildingRoom=false
+ gosub @OpenTownStructures ; in case corrupted somewhere
+ gosub @ListenToSerial
+
+ Difficulty=PlayerReputation ; at the moment, make all the
+; arcade games relate directly to reputation
+ add Difficulty,Difficulty ; PlayerReputation starts at 100,
+; so doubled gives approx the standard difficulty of arcade games.
+
+ if NewScreen<>0 then @BuildNewScreen
+ v2 = 0
+
+
+; in street scene?
+ if currentscreen <400 then notduel
+ if CurrentScreen>MaxOutside then NotDuel ; outside
+ if DuelStatus<>0 then DoDuel0
+ if PlayingDuel=false then NotDuel
+.DoDuel0
+ NextMusic=Generic1Music ;  DuelMusic
+; If we want to shoot the generic cowboy, 
+; set variables here as if shooting Billy because his
+; animation sequence fits better onto generic opponent.
+;; DuelOpponentBase=3680 ; Billy as a small person
+
+; now big person...
+ DuelPlayerBase=3730 ; Billy player animations base
+ if PlayersName=Billy then DoDuel1
+ DuelPlayerBase=3750 ; Pat player animations base
+
+.DoDuel1
+ DuelOpponentBase=3680 ;3691 ; Billy as a small person
+; (changed by SPaniob into generic person, if appropriate)
+;; if EnemyName=255 then DuelGotOpponent ; =Pat, Billy or $ff for other
+ if EnemyName=255 then DoDuelGeneric
+; EnemyName=Pat or Billy. Now ignore it,
+; and choose the opposite to player to ensure we can never
+; shoot ourselves!
+ if PlayersName=Pat then DuelGotOpponent ; if EnemyName=Billy then DuelGotOpponent
+
+.DoDuelGeneric
+ DuelOpponentBase=3700 ;3711 ; Pat as a small person
+
+.DuelGotOpponent
+ gosub @theduel
+
+.notduel
+
+
+
+ cif ST
+  if CurrentScreen<>GameMap then NoSpeedUpST2
+  if ScrollXDir<>0 then NoSpeedUpST
+  dx1=ScreenX
+  dx2=15
+  and dx1,dx2
+  if dx1<8 then NoSpeedUpST2
+; on ST, unless scrollxpos mod 15 is >8, DISPLAYROOM is much slower.
+  ScrollXDir=8
+  if LastNonZeroScrollXDir<200 then NoSpeedUpST
+  ScrollXDir=65528 ; -8
+
+.NoSpeedUpST
+ LastNonZeroScrollXDir=ScrollXDir
+
+.NoSpeedUpST2
+ cend ; ST
+
+ gosub @DisplayEverything
+
+
+
+ if CurrentScreen<>GameMap then COLNotMap
+; LastMapX=ScreenX
+; LastMapY=ScreenY
+ DuelStatus=0
+ gosub @MapControls     ;check for map scrolling
+
+; Jose interrupts player looking at Map?
+ if PlayerReputation<400 then MapNotInterrupt
+ code -
+  random x1
+ code +
+ if x1>20 then MapNotInterrupt
+ v1=SPFJoseMcSween ; has player gone to help McSween at ranch?
+ add v1,SubPlotsOffset
+ v2=TownVarData(v1)
+ if v2<>0 then MapNotInterrupt
+ v2=1
+ gosub @UpdateVarDataByte
+ MenuNumber=124
+ x1=0 ; 1360 ; number for jose (person number 85)
+ m1=1670
+ gosub @MapInterruption ; come here with x1=person number*16,
+; m1=interruption message (e.g. "stopped on the way")
+; and MenuNumber=menu to use, if not their default
+;; goto @ReturnToMap
+
+.MapNotInterrupt
+
+
+.COLNotMap  ;  check for keypress for new screen in demo
+
+
+ cif ST
+  if ScrollXDir<>0 then COLNotSpeedST
+  if RepeatScroll=0 then COLNotSpeedST
+  if RepeatScroll>200 then COLNotSpeedST
+  sub RepeatScroll,c1
+  ScrollXDir=LastNonZeroScrollXDir
+  gosub @MoveTheACB
+
+.COLNotSpeedST
+ cend
+ if currentScreen<MinTown then COLNotTown
+ if CurrentScreen>MaxTown then COLNotTown
+ if PlayerACB=0 then COLNotTown ; e.g. riding into town
+ if DuelStatus<>0 then COLNotTown
+ gosub @TownControls
+
+.COLNotTown
+ goto @CarryOnLoop
+
+;.GoTown
+; if x1 > 371 then GoInside
+; currentscreen = 360
+;; if x1 = TrainScreen then BuildNewScreen2
+; add x1,c1
+; currentscreen = x1
+; goto BuildNewScreen2
+;.GoInside
+; if x1 > 619 then GoGunFight
+; currentscreen = 605
+; if x1 = 372 then BuildNewScreen2
+; currentscreen = 607
+; if x1 = 605 then BuildNewScreen2
+; currentscreen = 620
+; if x1 = 607 then BuildNewScreen2
+;.GoGunFight
+; add x1,c1
+; currentscreen = x1
+;
+;.BuildNewScreen2
+; goto @BuildNewScreen
+
+;;;;;;;;;;; end of main loop for any one demo screen ;;;;;;
+
+
+;====================================================
+; end of main bit!!!!
+;====================================================
+
+.mapcontrols
+ ScrollXDir=0
+ ScrollYDir=0
+ gosub @CheckKeys
+
+ if KeyHeld=0 then MC3
+ if PlaceCursorX=0 then MC3 ; no map window open
+; have we moved cursor far enough to close this window?
+ x1=cursorx
+ sub x1,PlaceCursorX
+ gosub @AbsX1
+ if x1>32 then MC2 ; close it!
+ x1=cursory
+ sub x1,PlaceCursorY
+ gosub @AbsX1
+ if x1<32 then MC3
+.MC2
+; close down the magnified view
+ TextBoxDisplayed=0
+ PlaceCursorX=0
+
+.MC3 
+; check key presses for change or start of scrolling
+
+; Now check whether we want to scroll the screen,
+; so convert the map-based coordinates into screen-based
+; coordinates.
+; cursory is the y coord relative to the map
+; ScreenCursorY is the y coordinate relative to the screen
+
+; First check for Map borders
+ if cursory > MapTopBorder then scheckMapBottom
+    ScrollYdir = 0
+    goto @sCheckMapleft
+.sCheckMapBottom
+  if cursory < MapBottomBorder then scheckScreenTop
+    scrollydir = 0
+    goto @sCheckMapleft
+
+.scheckscreentop
+  ScreenCursorY = Cursory
+  sub ScreenCursorY,screeny
+    if screencursory < 10000 then sNotnegative
+    screencursory = 16
+.sNotNegative
+    if ScreenCursorY > 10 then sCheckScreenbottom  ;checkborder
+      ScreenCursory = 16         ;reset cursor
+      ScrollYdir = 0
+      sub ScrollYDir,ScrollSpeed ;set scrolling direction
+;      sub screeny,scrollspeed
+      goto scheckMapleft           
+
+.sCheckScreenBottom
+  if ScreenCursorY < 170 then sCheckMapLeft
+   if ScreenY>192 then sCheckMapLeft ; limit how far down we can scroll
+    Screencursory = 169
+    scrollydir = scrollspeed 
+;    add screeny,scrollspeed
+
+.sCheckMapleft
+ if cursorx>32000 then scheckscreenleft
+  if cursorx > MapLeftBorder then scheckMapright
+    scrollxdir = 0
+    goto @MoveTheACB
+.scheckmapright
+  if cursorx < MapRightBorder then sCheckScreenLeft
+    scrollxdir = 0
+    goto @MoveTheAcb
+
+.scheckscreenleft
+  ScreenCursorX = cursorx
+  sub ScreenCursorX,screenx
+    if ScreenCursorX < 10000 then snotoffscreen
+     screencursorx = 16
+.snotoffscreen 
+    if ScreenCursorX > 10 then scheckScreenright
+      Screencursorx = 16
+      sub scrollxdir,scrollspeed
+ cif ST
+  ScrollXDir=65520 ; -16 - scrolls faster on ST!
+  if RepeatScroll<>0 then MoveTheACB
+  RepeatScroll=4 ; do several scrolls at once
+ cend
+      goto movetheacb
+
+.sCheckScreenRight
+  if ScreenCursorX < 300 then movetheacb
+  if ScreenX>292 then MoveTheACB ; limit how far right we can scroll
+    Screencursorx = 299
+    scrollxdir = scrollspeed
+ cif ST
+  ScrollXDir=16 ; scroll much faster on ST.
+  if RepeatScroll<>0 then MoveTheACB
+  RepeatScroll=4 ; do several scrolls at once
+ cend
+
+
+.movetheacb
+;  calculate coordinates relative to map and reposition cursor
+  cursorx = screencursorx
+  add cursorx,screenx
+  cursory = screencursory
+  add cursory,screeny
+
+  dx4 = crosshairacb
+  gosub @readacbdx4
+ cif TownOverlay
+  if CurrentScreen<>GameMap then MTA2
+  if dv1=0 then @ReturnToMap
+
+.MTA2
+ cend
+  dv2 = cursorx
+  dv3 = cursorz
+  dv4 = cursorz
+  sub dv4,cursory
+  gosub @moveacbdx4 
+ gosub @CheckCursorSpeed 
+ return
+
+;------------------------- end of cursor movement checks----------;
+.moveACBdx4
+ if dx4>ACBListSize then MABug ;****
+ push dx4
+ add dx4,c4
+ &ACBList(dx4) = dv2
+ add dx4,c2
+ &ACBList(dx4) = dv3
+ add dx4,c2
+ &ACBlist(dx4) = dv4
+ pop dx4
+ return
+
+.MABug
+ break ;*******
+ break
+ break
+ return
+;----------------
+.ReadACBdx4
+ if dx4>ACBListSize then MABug ;****
+ push dx4
+ &dv1 = ACBList(dx4)
+ add dx4,c4
+ &dv2 = ACBList(dx4) 
+ add dx4,c2
+ &dv3 = ACBList(dx4) 
+ add dx4,c2
+ &dv4 = ACBlist(dx4) 
+ pop dx4
+ return
+;---------
+.Escape
+.vCloseDown ; .CloseDown
+ cif ST
+  v1=IntroTablesList          ; IntroTables
+  &v2=IntroTables(0) ; system palette
+  v3=16
+  v4=0 ; mode
+  gosub @MCSetPalette
+  gosub @DisplayFrame ; make sure palette has been updated
+  gosub @WaitForFrame
+ cend
+
+
+ v1=0 ; score 0
+ v2=0 ; play
+ v3=2 ; stop
+ cif AllowMusic
+;;  gosub @MCPlayScore
+  gosub @MCMusicCloseDown
+ cend
+
+ gosub @MCCloseDown
+;-----
+;-----
+.ErrorHandler
+ push dv1
+ &dv1=WordWS(66) ;WordErrorNumber
+; cif ReleaseGame
+;  if dv1=512 then EHAbandon
+;  if dv1<>259 then EH1
+; cend
+.EHAbandon
+ pop dv1
+ return
+
+.EH1
+ pop dv1
+
+
+ gosub @SetUpPhysicalTextPtr
+ &WordWS(WordCursorXpos)=c0
+ &WordWS(WordCursorYpos)=c0
+ push v1
+ push v2
+  v1=320
+  v2=16
+  gosub @MCClearRectangle
+ pop v2
+ pop v1
+ push dv1
+ &dv1=WordWS(66) ;WordErrorNumber
+ code-
+ prs "Error Handler ("
+ print dv1
+ message cr ;'DoCr' ignores newlines; this is 'flush'
+ prs ")"
+ code+
+ pop dv1
+
+.WaitKey
+ gosub @KeyScan ; allows for escape/pause as well
+ if v2=0 then WaitKey
+ return
+
+;==========
+
+; upper limits...
+; 50 Hz 12.5 fps
+; 60 Hz 16   fps
+
+.vDisplayEverything ;.DisplayEverything
+ BuildingRoom=false
+ &WordWS(WordMouseXDistance)=c0
+ &WordWS(WordMouseYDistance)=c0
+
+ gosub @PlayTuneForScene
+
+
+; cif NotPC
+; ByteWS(ByteOutputDevice)=c1 ; to rs232
+; code -
+; prs "D "
+; code +
+; ByteWS(ByteOutputDevice)=c2 ; to screen
+; cend
+
+
+
+;;  if framelimiting = false then slowmachine
+; cif NotPC
+;REMOVED FOR SELF-RUNNING DEMO  if FrameCount < 3 then DisplayEverything
+; cend
+;  FrameCount  = 0
+;.WaitFrame
+; cif Amiga
+; gosub @MCClearScreen ; force screen to be displayed &****Temp.
+; goto SlowMachine
+; cend
+; if FrameCount<4 then WaitFrame
+
+;.SlowMachine
+;cif Amiga
+; x1=800
+;.AmiDelay
+; sub x1,c1
+; if x1>0 then AmiDelay ;******************************
+;cend
+
+
+
+ FrameCount=c0
+
+ gosub @SafePlotLogical
+ gosub @MCDisplayRoom ;ViewMap
+
+
+ gosub @DisplayEverythingSprites
+
+
+
+ if WantCSTB=false then BANoCSTB
+ WantCSTB=false
+ gosub @MCCopyScreenToBuffer
+
+.BANoCSTB
+ gosub @DisplayHourglass
+
+  gosub @MCUpdateScreen
+  gosub @DisplayFrame
+ cif NotPC
+  gosub @WaitForFrame
+ cend
+ cif pc
+  gosub @MCUnplotScreen
+ cend
+
+ if ScreenX<32000 then NotLimitLeft
+ ScrollXDir=8 ; bring back on!
+
+.NotLimitLeft
+ if ScreenY<32000 then NotLimitTop
+ ScrollYDir=8 ; bring back on!
+
+.NotLimitTop
+ gosub @ConvertScrollToJump
+
+ if ScreenX>8 then NotLimitLeft2
+ if ScrollXDir<200 then NotLimitLeft2
+; near left, trying to go left - disable
+ ScrollXDir=0
+
+.NotLimitLeft2
+ if ScreenX<300 then NotLimitRight
+ if ScrollXDir>200 then NotLimitRight
+; near right, trying to go right - disable
+ ScrollXDir=0
+
+.NotLimitRight
+ if ScreenY>8 then NotLimitTop2
+ if ScrollYDir<200 then NotLimitTop2
+; near top, trying to go up - disable
+ ScrollYDir=0
+
+.NotLimitTop2
+ if ScreenY<192 then NotLimitBottom
+ if ScrollYDir>200 then NotLimitBottom
+; near bottom, trying to go down - disable
+ ScrollYDir=0
+
+.NotLimitBottom
+ push v1
+ push v2
+  v1 = ScrollXDir ; 65532 ; x step=-4
+  v2 = ScrollYDir ; 0 ; y step
+  if SmoothScroller=false then @MaybeJump
+
+ gosub @SafeScrollDirection ; returns 0,0 if couldn't do it.
+ if v1=32768 then SDErr1
+ add screenx,v1 ; Scrollxdir
+.SDErr1
+ if v2=32768 then SDErr2
+ add screeny,v2 ; Scrollydir
+.SDErr2
+ pop v2
+ pop v1
+
+ ScrollDirectionDone=0
+ PlotLogicalDone=0
+
+; if TextBoxDisplayed=0 then DENoWait
+; TextBoxDisplayed=0
+;.DEWait
+; gosub @WaitKey
+; if v1<>13 then DEWait
+;
+;.DENoWait
+ return
+;-----------------------------------
+
+.DisplayEverythingSprites
+ if CurrentScreen<>GameMap then DE1
+ add AnimationCount,c1
+ if AnimationCount=2 then DE2 ; only recalculate animation every other frame
+ AnimationCount=0
+
+.DE1
+ if UpdateACBs=false then DE2
+
+ gosub @DisplayACBS
+ HourglassState=0 ; have started to animate, so kill the hourglass
+
+.DE2
+ gosub @SortAndDisplayObjects
+
+;; display hand on top
+; v1=HandObject ; hand
+; v2=cursorx
+; v3=cursorz
+; v4=cursorh
+; v5=1 ; sprite
+; v6=0 ; non-reversed
+; gosub @MCDrawObjectV1
+
+
+ if TextBoxDisplayed=0 then BANoBox ;*****MIKE
+ gosub @MenuSprites
+ if TextBoxDisplayed>2379 then BANoBox ; kludge to remove gunfighter
+ dv1=TextBoxDisplayed
+ dv2=screenx
+ dv3=screeny ; z
+ dv4=150 ; h
+ add dv3,dv4 ; bring to higher z coord, so it's in front of intro stuff
+ dv5=1 ; plot
+ dv6=0 ; non-reflected
+ gosub @MCDrawObjectDv1
+
+.BANoBox
+
+ cif ReallyST
+ &WordWS(WordCursorXPos)=c0
+ x1=192
+ &WordWS(WordCursorYPos)=x1
+ v1=320 ; pixels wide
+ v2=8 ; pixels high
+ gosub @MCClearRectangle
+ cend
+ return
+;-------------
+.Initialise
+; VBLInitialised=false ; will prevent any task swaps during init.
+ gosub @MCHeroInit
+
+ cif NotPC
+  &x1=LongWS(HiLongLogicalBase)
+  &LongWS(HiLongGraphicsScreenBase)=x1
+  &x1=LongWS(LoLongLogicalBase)
+  &LongWS(LoLongGraphicsScreenBase)=x1
+ cend
+
+ gosub @AllocateWorkspaceLists
+; x1=0
+; &LongWS(HiLongRandomSeed)=x1
+; &LongWS(LoLongRandomSeed)=x1
+ &WordWS(WordSuspendTaskSwap)=c1 ; suspended during init
+
+ gosub @AAEssentialInit
+ LeftMargin=0
+
+ gosub @SetUpTextPtr
+ x1=39
+ ByteWS(ByteWordWrapWidth)=x1
+
+; initialise 3D.
+ v1=12500 ; number of cells used. (will crash if too small)
+ v2=2400 ; 7 jan 91 - increased for PC. was 2400 ; number of map links
+ v3=200 ; no. of heap entries (only used on PC)
+ cif ST
+  v4=1800 ; unusued
+ cend
+ cif PC
+  v4=800 ;no. of cumulative transparency masks
+ cend
+ v5=5800 ; size of ground map=width*height in cells.
+ gosub @MCSetUpVariablePtrs
+
+  v1=640  ;1280 ; 4 screens, 20 wide each, in pixels
+  v2=384 ; 2 screens, 12 high each, in pixels
+  v3=1 ; game mode: 0=non-scrolling, 1=scrolling, 2=jumps
+  gosub @InitScrolling
+
+
+ gosub @MCEmptyRoom
+ cif pc
+  gosub @BuildRoom ; have to do a buildroom before any plotting,
+; on PC only.
+ cend
+
+ &WordWS(WordRasterOffset)=c0
+
+;; WaitingForInput=false
+; VBLInitialised=true
+ &WordWS(WordSuspendTaskSwap)=c0 ; start swapping!
+cif pc
+ x1=IBMTopOfText
+ &WordWS(WordCursorYPos)=x1
+cend
+ &WordWS(WordVBLDisabled)=c0 ; enable vbl
+ gosub @SafePlotLogical ; tell the PC about the meaning of life.
+
+ v1=100 ; minimum number of milliseconds per frame
+ gosub @MCSetMaxFrameRate
+ return
+;---
+.VBL
+ add FrameCount,c1
+ return
+;---
+.vSpecialAniShift
+; caller does:
+; gosub @SpecialAniShift ; moving dv1 from dv2,dv3,dv4 by dx2,dx3,dx4
+; you can change any of these if necessary.
+; This is for the acb at ACBList(ACBHeader)
+ if StructureFile<>TownStructures then SASNotTown
+ if CurrentScreen<MinTown then SASNotTown
+ if CurrentScreen>MaxTown then SASNotTown
+ if PersonDisplayed<>0 then SASNotTown
+ goto @SpecialAniShiftTown
+
+.SASNotTown
+ return
+;------
+
+.SpecialSetupAniObject
+ if CurrentScreen<MinTown then SSUAONotTown
+ if CurrentScreen>MaxTown then SSUAONotTown
+ if PersonDisplayed<>0 then SSUAONotTown
+ gosub @ScanObjectTables
+
+.SSUAONotTown
+
+.SSAONotBank
+; DyingGreenLaw=3711
+; DyingOneLaw=3710
+; DyingWhiteLaw=3712
+; DyingBlueLaw=3713
+; DyingSmallLaw=3715
+; DyingBrownLaw=3714
+;
+; DyingBlueOut=3735
+; DyingWaistOut=3736
+; DyingWhiteout=3737
+; DyingCoatOut=3738
+; DyingTinyOut=3740
+; DyingMexican=3739
+
+; if dv1 < DyingoneLaw then ssaoEnd
+; if dv1 > DyingSmallTown then ssaoCheckBandits
+; goto ssaoWritelist
+;.ssaoCheckBandits 
+; if dv1 < DyingBlueOut then ssaoEnd
+; if dv1 > DyingTinyOut then ssaoEnd
+;.ssaoWriteList
+; &worklist(arraycount) = dv1
+; add arraycount,c2
+; &worklist(arraycount) = dv2
+; add arraycount,c2
+; &worklist(arraycount) = dv3
+; add arraycount,c2
+; &worklist(arraycount) = dv4
+; add arraycount,c2
+; dv1 = 0
+.ssaoEnd
+return
+
+.StrategyTask
+.DoCr
+.BGSpecial
+.TextDisplayAnimation
+.FGSpecials
+.ExtraTask
+.DamsSpecials
+.FGSpecialsMovedSprite
+;.ErrorHandler
+.IRQScheduler
+.BGSpecials
+;.SpecialACBkilled ;ACBList(ACBHeader) or dv1
+ return
+;---
+.SpecialXZHObject
+; for map, hide some things until the player knows about them...
+ if CurrentScreen<>BankGame then @SXONotBankGame
+ if dv1<27 then SXONotHinge
+ if dv1>32 then SXONotHinge
+; DuelStatus is how many hinges/locks are wanted
+ dx1=dv1
+ dx2=26 ; first lock(27) -1
+ sub dx1,dx2
+; dx1=how many locks using this one would make it.
+ if dx1<DuelStatus then SXORet
+ if dx1=DuelStatus then SXORet
+ dv1=0 ; this would be too many, so hide it.
+.SXONotHinge
+.SXORet
+ return
+
+.SXONotBankGame
+ if CurrentScreen<>GameMap then @SXONotMap9
+; if dv1<290 then @SRONotClickable
+; if dv1>350 then @SRONotClickable
+;; in "hidden" table?
+; dx1=SPHiddenOffset
+; add dx1,SubplotsOffset
+; &dx1=TownVarData(dx1)
+; add dx1,dv1
+; dx2=290
+; sub dx1,dx2
+; dx2=TownVarData(dx1)
+; if dx2=0 then SRONotClickable
+; dv1=0 ; delete object
+; return
+;
+;.SRONotClickable
+ if PlayersName<>Pat then SXOMapNotPat
+ if dv1<>4040 then SXONotPat ; hide train from Pat so 
+ dv1=0 ; he isn't tempted to rob it.
+
+.SXOMapNotPat
+.SXONotPat
+ if dv1<331 then @SXONotHideout
+ if dv1>336 then @SXONotHideout
+; which gang is this, and have they been discovered?
+ dx1=dv1
+ dx2=331 ; first gang
+ sub dx1,dx2
+ add dx1,dx1 ; multiply by 16 - bytes per subplot entry in TVD
+ add dx1,dx1 ; multiply by 16
+ add dx1,dx1 ; multiply by 16
+ add dx1,dx1 ; multiply by 16
+ dx2=SPGangsOffset
+ add dx2,SubPlotsOffset
+ &dx2=TownVarData(dx2) ; get start of gangs sub-plot information.
+ add dx1,dx2
+ &dx1=TownVarData(dx1)
+ if dx1<250 then SXONotMap9 ; hidden from map
+ dv1=0 ; don't add it.
+ return ; discovered
+
+.SXONotHideout
+.SXONotMap9
+ if StructureFile=ArcadeStructures then SXONotTown ; ranch pic etc.
+;; if PlayingDuel<>0 then SXONotTown
+ gosub @ScanObjectTables
+.SXONotTown
+ return
+;---
+.SpecialRasterObject
+ gosub @ScanObjectTables
+ return
+;---
+.ClearHiresTable
+; clear table giving coordinates of objects on current screen
+ x1=0
+.CHT1
+ HiresTable(x1)=c0
+ add x1,c1
+ if x1<SizeHiresTable then CHT1
+ return
+;--------
+.ScanObjectTables
+; scan object tables and set up a list with coordinate inormation
+; e.g. for towns/ranches on map
+; Object DV1 is being plotted.
+ if CurrentScreen<>GameMap then @ScanForWalkabout
+ x1=CurrentObjectTable
+.SOT1
+ &x2=ObjectTable(x1)
+ if x2=65535 then @SOTEnd
+ if x2<>dv1 then SOT2
+; got a match - record coordinates
+ sub x1,CurrentObjectTable
+ x2=65534 ; mask off bottom bit
+ and x1,x2
+ add x1,x1 ; now index into 16-byte-per-entry table: i.e. times 8
+ add x1,x1
+ add x1,x1
+
+.RecordCoordinates
+; x1=number of object times 16
+ if x1>SizeHiresTable then SOTBug ; 19 Jan 1991.
+ &HiresTable(x1)=dv2 ; x coord
+ add x1,c2
+ x2=dv3 ; z
+ sub x2,dv4 ; y=z-h
+ &HiresTable(x1)=x2 ; y coord
+.SOTEnd
+ return
+
+.SOTBug
+ break ;****
+ return ;*(*****
+ break ;******
+
+.SOT2
+ add x1,c2
+ goto @SOT1
+;---------
+.ScanForWalkabout
+; Object dv1..dv4 being plotted 
+; look through TownFixedData(PeopleTableBase...)
+; (numberOfPeople worth of 16-byte entries)
+; First byte is room number person can occur in,
+; second byte is object number they use (0 if any in range)
+; Record any people in HiresTable() for checking with HiresCD
+; This is the same CD routine as used for pointing
+; at things on the game map.
+ if PlayingDuel=0 then SFWNotDuel
+ if CurrentScreen>MaxOutside then SFWNotDuel ; outside
+ if dv3>32019 then SFWNotDuel ; negative - include object
+ if dv6=dPlot then SFWNotDuel ; include all sprites
+ if dv3>160 then @SFWPersonDead ; remove foreground scenery
+
+.SFWNotDuel
+
+ x3=84 ; gambler
+ x1=1344 ; x3*16
+ if dv1=2658 then @SFWPersonX1Time16 ; gamblers in all saloons
+ if dv1<620 then @SFWRet ;*******
+ if dv1>650 then @SFWRet ;*******
+.ScanForWalkabout2
+ &x4=TownFixedData(0) ; offset in TownFixedData()
+ x3=0 ; number of person being examined
+.SFWLoop
+ x1=TownFixedData(x4) ; room number
+; people not specifically named, and for objects e.g. wanted poster
+ add x4,c1
+ if x1=0 then SFW1 ; not fussy about which room it's in - e.g.
+ if x1<>Location then @SFW3
+.SFW1
+ x1=TownFixedData(x4) ; graphics object number used.
+ x2=620 ; base for graphics number
+ add x2,x1
+ if x2=dv1 then SFW2 ; a match!
+; not a match, but...
+ if x1<>0 then @SFW3 ; not "anything vaguely like a person" flag.
+ if dv1<620 then @SFW3 ; lowest graphics number for person
+ if dv2>650 then @SFW3 ; highest graphics number for person
+.SFW2
+; got a match - record it etc.
+ x1=x4
+ &x2=TownFixedData(0)
+ sub x1,x2 * take off start of this table.
+ add x1,x1 ; get number times 16 from number times 8.
+ x2=65520 ; $fff0 ; remove bottom 4 bits.
+ and x1,x2
+
+; person number x1/16
+; are they alive?
+ x2=PeopleVarData
+ add x2,x1
+ x3=TVDPeopleNameOffset
+ add x2,x3
+ x3=TownVarData(x2)
+ if x3=0 then SFWPersonDead
+
+ if PlayingDuel<>0 then SFWPersonDead
+
+.SFWPersonX1Time16
+ if dv1<639 then VRecordCoordinates
+ if dv1>645 then VRecordCoordinates
+; this is a moving person - make a separate record of the offset
+ MovingPersonHires=x1
+.VRecordCoordinates
+ goto @RecordCoordinates ; gosub, return
+
+.SFW3
+ x1=7 ; 8 bytes per entry
+ add x4,x1
+ add x3,c1 ; number of person being examined
+ if x3<NumberOfPeople then @SFWLoop
+.SFWRet
+ return
+
+.SFWPersonDead
+ dv1=0
+ num=0
+.DoorAnimation
+.NotDoorAnimation
+ return
+
+;.SAOStep
+;push v1
+;push v2
+;push v3
+; v1=25 ; sound sample buffer
+; v2=1807 ; offset within list
+; v3=84 ; length to play in samples (5KHz)
+; gosub @StartSound
+;pop v3
+;pop v2
+;pop v1
+; return
+;
+;.StartSound
+;; start sound if nothing already playing.
+;; (priorities?)
+; push v1
+; &v1=WordWS(58) ; snd_len - i.e. samples yet to play.
+; if v1>0 then SSEnd
+; pop v1
+; goto @MCStartSound
+;
+;.SSEnd
+; pop v1
+; return
+;---
+
+.ReadObjectAreas
+ MinXZH=1
+ &MinRaster=StructureBuffer(4)
+ add MinRaster,c1
+ &MinAnimation=StructureBuffer(10)
+ add MinAnimation,c1
+ &MinCompressed=StructureBuffer(16)
+ add MinCompressed,c1
+ &MinCell=StructureBUffer(28)
+.ADRRet
+.SuspendTaskSwap
+.ResumeTaskSwap
+ return
+;---
+.SetUpTextPtr
+; &x1=list11(72) ; list 18's ptr
+; &LongWS(HiLongTextScreenBase)=x1
+; &x1=list11(74)
+; &LongWS(LoLongTextScreenBase)=x1
+ return
+;-----
+;---
+.SetUpLogicalTextPtr
+; &x1=LongWS(HiLongLogicalBase)
+; &LongWS(HiLongTextScreenBase)=x1
+; &x1=LongWS(LoLongLogicalBase)
+; &LongWS(LoLongTextScreenBase)=x1
+ return
+;---
+.SetUpPhysicalTextPtr
+cif PC
+ v1=7                      
+ gosub @MCEnableTextBuffer 
+cend ;PC
+ cif NotPC
+ &x1=LongWS(HiLongPhysicalBase)
+ &LongWS(HiLongTextScreenBase)=x1
+
+ &x1=LongWS(LoLongPhysicalBase)
+ &LongWS(LoLongTextScreenBase)=x1
+ cend
+ return
+
+;---
+.LoadStructures
+ StructureFile=TownStructures
+ &v1=IntroTables(12) ; 's.dat'
+.vLoadStructuresV1 ; .LoadStructuresV1
+
+ gosub @CopyFilename
+ v1=15 ; load list 15 (structureBuffer onwards)
+ v2=0 ; offset within list15
+ v3=0
+ gosub @MCLoadFile ; filename is list17(8...)
+
+ v1=15 ; use list15, please
+ gosub @MCSetUpPtrs ; tell MC about ptrs
+ gosub @ReadObjectAreas ; read mincell, minraster, mincompressed
+;; StartStructureBuffer=32
+ StructureFile=TownStructures
+ return
+;-----------
+.AllocateStructures
+; set up ACBList (14)
+ &x1=longws(HiLongFreeWorkspace)
+ &list11(56)=x1 ; set up list14
+ &x1=longws(LOLongFreeWorkspace)
+ &list11(58)=x1 ; set up list14
+ v1=ACBListSize ; probably excessive
+ gosub @MCReserveMemory
+
+; structure file...
+ &x1=longws(HiLongFreeWorkspace)
+ &list11(60)=x1 ; set up list15
+ &x1=longws(LOLongFreeWorkspace)
+ &list11(62)=x1 ; set up list15
+
+ v1=60000
+ gosub @MCReserveMemory
+
+; drop through to AAEssentialInit...
+
+.AAEssentialInit
+; things which must be initialised after clear etc.
+ c0=0 ;****!
+ c1=1
+ c2=2
+ c3=3
+ c4=4
+ c5=5
+ c6=6
+ c7=7
+ c8=8
+ c9=9
+ c16=16
+ c32=32
+ return
+
+;============
+.DisplayFrame
+ gosub @SetUpTextPtr
+ cif NotPC
+  ByteWS(ByteFrameReadyFlag)=c1
+ cend
+ return
+;------
+; wait for frame to be displayed
+.WaitForFrame
+cif NotPc ; don't wait on pc.
+ x1=ByteWS(ByteFrameReadyFlag)
+ if x1<>0 then WaitForFrame
+cend
+ return
+;----
+;----
+.WP1
+.EBRet
+ return 
+;----
+.DivX1X2
+; x1:=x1/x2
+ x3=minusone ; result = 0 if x2>x1
+.DivLoop
+ add x3,c1
+ sub x1,x2
+ if x1<50000 then DivLoop
+ x1=x3
+ return
+;---
+;.ModX1X2
+;; x1:=x1 mod x2
+;.ModLoop
+; x3=x1 ; trial result
+; sub x1,x2
+; if x1<50000 then ModLoop
+; x1=x3
+; return
+;--------------
+.AllocateWorkspaceLists
+ cif NotPC
+; PC allocates 2.5K for vars/table.txt var lists,
+; ST allocates 0.5K total, but can allocate more here...
+  v1=512 ; space for extra vars
+  gosub @MCreserveMemory
+ cend
+
+ &x1=longws(HiLongFreeWorkspace)
+ &list11(68)=x1 ; set up list17
+ &x1=longws(LOLongFreeWorkspace)
+ &list11(70)=x1 ; set up list17
+ v1=100 ; reserve space for list 17 (filename buffer)
+ gosub @MCReserveMemory
+
+ &x1=longws(HiLongFreeWorkspace)
+ &list11(28)=x1 ; set up list7
+ &x1=longws(LOLongFreeWorkspace)
+ &list11(30)=x1 ; set up list7
+
+ cif pc
+  v1=7 ; load into list 7 (acode doesn't need to
+; access the exponent table again, so this subroutine just
+; allocates some space for it, and we re-set up list7
+; afterward it's been called - thus leaving the data in memory)
+  gosub @LoadExponentTable
+
+  &x1=longws(HiLongFreeWorkspace)
+  &list11(28)=x1 ; set up list7
+  &x1=longws(LOLongFreeWorkspace)
+  &list11(30)=x1 ; set up list7
+ cend
+
+
+ v1=TownVarDataSize ; reserve space for list 7 (TownTempData)
+ gosub @MCReserveMemory
+
+; This is the end of the area saved by the SAVE GAME option
+
+ &x1=longws(HiLongFreeWorkspace)
+ &list11(64)=x1 ; set up list16
+ &x1=longws(LOLongFreeWorkspace)
+ &list11(66)=x1 ; set up list16
+ v1=WorkListSize ; reserve space for list 16
+ gosub @MCReserveMemory
+; if this overspills (as seems to happen in the scrolling games****
+; it will corrupt the thing afterwards
+
+
+; v1=3000 ; attempt to fix bug which manifests in the scrolling
+;; game maps (espec Escape)
+; gosub @MCreserveMemory
+
+; list 2 is used by scrolling games for CD maps etc.
+; It needs a total of 2400 bytes. Now, SizeHiresTable is normally
+; 1440, so they need an extra 1000 bytes - unless you do some
+; re-arrangement.
+; See CDListNum and CDList in AACONST.TXT
+
+ &x1=longws(HiLongFreeWorkspace)
+ &list11(8)=x1 ; set up list2
+ &x1=longws(LOLongFreeWorkspace)
+ &list11(10)=x1 ; set up list2
+ v1=SizeHiresTable ; reserve space for list 2(HiresTable)
+ add v1,c16
+ gosub @MCReserveMemory
+ v1=700
+ gosub @MCReserveMemory ; extra space used by scrolling games
+
+
+ gosub @AllocateStructures
+
+
+ gosub @AllocateAndLoadFont ; in list 26
+
+ gosub @AllocateSamplesAndMusic
+
+
+
+
+  &x1=longws(HiLongFreeWorkspace) ; allocate FloorMap
+  &list11(108)=x1 ; set up list27 ( for floormaps: Walkabout code )
+  &x1=longws(LOLongFreeWorkspace)
+  &list11(110)=x1 ; set up list27
+  v1=EndCache2 ; space for floor map cache.
+  goto @MCReserveMemory ; gosub ,return
+; v1=8000 ;*********** Amstrad still crashes with this present.
+; gosub @MCReserveMemory ;  (it actually crashed
+; whilst apparently within the driver 'open' function
+; Possibly whilst scanning the floor maps before the game
+; proper starts).
+
+;cif amiga
+; v1=16000
+; v2=2 ; type of memory
+; v3=25 ; return address in list 25 ptr
+; gosub @MCReserveChip
+; goto InitSamples2
+;cend
+;
+; return
+;---
+.vPreLoadAndInsertdv1 ;.PreLoadAndInsertdv1
+ push BuildingRoom
+; make sure these system flags are cleared, in case an
+; overlay terminated 'abnormally'
+ ScrollDirectionDone=0
+ PlotLogicalDone=0
+ BuildingRoom=true
+ push dv1
+  gosub @InitACBs
+
+  RasterOffset=0
+  dv2=0
+  dv3=0
+  dv4=0
+  dv5=dMarkPreload
+  dv6=0 ; non-reversed
+  gosub @DrawObjectdv1
+ pop dv1
+
+ if CurrentScreen=GameMap then PLAI2
+; preload the first bit of any animation sequences, doing
+; repeats once and once only...
+ x1=8 ; countdown counter
+ push dv1
+.PLAI1
+  push x1
+   gosub @DisplayACBsDV5
+   gosub @SortAndDisplayObjects
+  pop x1
+  sub x1,c1
+  if x1>0 then PLAI1
+ pop dv1
+ dv2=0
+ dv3=0
+ dv4=0
+ dv6=0
+
+.PLAI2
+ gosub @MCPreLoadCells
+ dv5=dInsert ; insert into structure.
+;;;; if CurrentScreen=GameMap then @MCDrawObjectDV1 ; gosub, return
+ push dv1
+  gosub @InitACBs
+ pop dv1
+ gosub @DrawObjectdv1 ; gosub, return.
+ pop buildingRoom
+ return
+;-----
+.StartFreeACB0
+; ani sequence ObjectNumber, started at coords 0
+; returns dx4 as acb offset
+ dv2=0; x
+ dv3=0 ; z
+ dv4=0 ; h
+
+.StartFreeACB ;ObjectNumber, dv2, dv3, dv4; returns dx4
+ dv1=ObjectNumber
+ dv5=dPlot
+ dv6=0 ; no reflection
+ gosub @FindObjectNumber
+ goto @SetupACB00 ; set up acb, without stepping on other animation.
+
+;-----
+;----------
+
+
+;----
+;.SetUpACBdx4
+; push dx4
+;  gosub @FindObjectNumber
+;  gosub @DecodeHeader
+; pop dx4
+; dv1=ObjectNumber
+; gosub @SUAGotBlankACB
+; return
+;---
+.ChangeACBdx4
+; change acb dx4 to use ani object ObjectNumber
+ push ACBHeader
+  push dx4
+   ACBHeader=dx4
+   push ObjectNumber
+    gosub @KillACBHeader
+   pop ObjectNumber
+   gosub @FindObjectNumber
+   gosub @DecodeHeader
+  pop dx4
+ pop ACBHeader
+ dv1=ObjectNumber
+ dv6=0 ; reset reflection
+ goto @SUAChangeACB
+;---
+; gosub @MCInitSound
+; &WordwS(58)=c0 ; set length of sound to play to zilch.
+
+
+;.[SpecialAniObject
+;****** Now separate file****;KYC
+;; object num has been requested by an animation sequence.
+;; Do any intercepts, and change dv1-6 if you really
+;; want to.
+
+;.StartSound
+;; start sound if nothing already playing.
+;; (priorities?)
+; push v1
+; &v1=WordWS(58) ; snd_len - i.e. samples yet to play.
+; if v1>0 then SSEnd
+; pop v1
+; goto @MCStartSound
+;
+;.SSEnd
+; pop v1
+; return
+;---
+
+
+;---
+;code -
+;code +
+;.MCDrawObjectV1Vec
+; goto @MCDrawObjectV1
+;
+;.MCNoClipSpriteVec
+; goto @MCNoClipSprite
+;
+;.MCFindObjVec
+; goto @MCFindOBj
+;
+
+;------
+
+;----------
+.AbsX1
+; return absolute value of x1, in x1
+ if x1<32768 then AbsX1Ret
+ push x2
+ x2=x1
+ x1=0
+ sub x1,x2
+ pop x2
+.AbsX1Ret
+.SpecialSetUpFork ; with ACB dx4, coords dv2..dv4
+.SpecialSetUpACB
+ return
+;--------
+.MultdX1dx2
+; dx1=dx1*dx2
+ dx3=dx1
+ if dx2=0 then Multdx1dx2Zero
+ if dx2=1 then Multdx1dx2Ret
+.Multdx1dx2Loop
+ add dx1,dx3
+ sub dx2,c1
+ if dx2>1 then Multdx1dx2Loop
+.Multdx1dx2Ret
+ return
+.Multdx1dx2Zero
+ dx1=0
+ return
+;----------
+.PreloadSprites
+; preload sprites for e.g. walkabout, or duel.
+ if CurrentScreen<400 then NotPreloadWalkabout
+ if CurrentScreen>549 then NotPreloadWalkabout
+
+ dv5=dMarkPreload
+ dv1=49 ; person preload screen
+ x1=100 ; 0 for another, 100 for Billy, 200 for Pat.
+ if PlayersName=Billy then NIGM2
+ x1=200 ; pat
+.NIGM2
+ &WordWS(WordRasterOffset)=x1
+ gosub @MCDrawObjectDV1
+ &WordWS(WordRasterOffset)=c0
+ if HorseScreen=0 then PreloadHorse ; riding into town
+ if CurrentScreen<>HorseScreen then PreloadNotHorse
+.PreloadHorse
+ dv1=48 ; horse preload screen
+ gosub @MCDrawObjectDV1
+
+.PreloadNotHorse
+.NotPreloadWalkabout
+ if PlayingDuel=false then @NotPreloadDuel ;  if CurrentScreen<>DuelBack then NotPreloadDuel
+; preload foreground person
+ if CurrentScreen<400 then @NotPreloadDuel ; not in town (kkludge)
+ if CurrentScreen>599 then @NotPreloadDuel
+ &WordWS(WordRasterOffset)=c0
+ x1=20 ; number of objects to preload
+ dv1=2380 ; big Billy Draw
+ if PlayersName=Billy then PLDuel2
+ dv1=2400 ; big Pat draw
+.PLDuel2
+ gosub @MCDrawObjectDV1
+ add dv1,c1
+ sub x1,c1
+ if x1>0 then PLDuel2
+
+ x1=25 ; number of objects to preload
+ dv1=20 ; first frame of generic small person drawing
+ if EnemyName=255 then PLDuel3 ; =Pat, Billy or $ff for other
+ dv1=2530 ; small Billy Draw
+ if EnemyName=Billy then PLDuel3 ; =Pat, Billy or $ff for other
+ dv1=2420 ; small Pat draw
+.PLDuel3
+ gosub @MCDrawObjectDV1
+ add dv1,c1
+ sub x1,c1
+ if x1>0 then PLDuel3
+
+
+.NotPreloadDuel
+ goto @MCpreloadCells ;' gosub, return
+;-----------------
+.DITBug ;****
+ break ;******
+ return
+;-------
+.InitTown
+ if CurrentScreen<MinTown then @NotInitTown
+ if CurrentScreen>MaxTown then @NotInitTown
+ NextMusic=RagTimeMusic ; walkabout music (inside)
+
+ if CurrentScreen>MaxOutside then DoInitTown ; Inside where duels can't happen?
+ NextMusic=ThemeMusic ; outside walkabout
+ 
+ if PlayingDuel<> 0 then @NotInitTown
+.DoInitTown
+ if HorseScreen<>0 then DIT2
+ HorseScreen=CurrentScreen
+ PlayerACB=0 ; prevent anything resetting height when on horse
+ ObjectNumber=3630 ; Billy rides into town
+ if PlayersName=Billy then RideIn2
+ ObjectNumber=3640 ; Pat rides into town
+
+.RideIn2
+ dv2=0 ; x
+ dv3=0 ; z
+ dv4=0 ; h
+ RasterOffset=0
+ gosub @StartFreeACB
+ goto @DIT3
+
+.DIT2 
+ ObjectNumber=3400
+ if PlayerWalking=true then DIT2a
+ ObjectNumber=3410 ; Player stopped in direction
+
+.DIT2a
+ add ObjectNumber,PlayerDirection
+ dv2=PlayerX ; 32
+ dv3=PlayerZ
+ dv4=PlayerHeight ; h
+;; add dv3,dv4 ; z=y+h
+ RasterOffset=100 ; 0 for another, 100 for Billy, 200 for Pat.
+ if PlayersName=Billy then DIT2b
+ RasterOffset=200 ; Pat
+
+.DIT2b
+ gosub @StartFreeACB
+ PlayerACB=dx4
+ dx1=ACBCumulativeShift ; word - for Walkabout: keeps track
+; of how far we've shifted vertically - to allow the up/down
+; movement as we walk to be cancelled when change animation.
+ add dx1,PlayerACB
+ if dx1>ACBlistSize then @DITBug
+ &ACBList(dx1)=c0 ; reset cumulative H shift.
+
+ if CurrentScreen<>HorseScreen then NotAddHorse
+; if in room where we left the horse, put it back!
+ if horseX<150 then NotAddHorse ; horse has gone wrong somehow!
+ if HorseZ<120 then NotAddHorse ; horse has gone wrong somehow
+ ObjectNumber=3624 ; horse standing
+ dv2=HorseX ; x
+ dv3=HorseZ ; z
+ dv4=HorseH ; h
+ sub dv4,c8 ; h coord is slightly wrong as recorded because the
+; raster for the horse's hindquarters is trapped
+ RasterOffset=0
+ gosub @StartFreeACB
+;; gosub @TCSetUpPlayer
+
+.NotAddHorse
+.DIT3
+ dv1=CurrentScreen
+ gosub @FCNewRoomDv1 ; load floor maps in.
+
+ gosub @MoveOffBlockedSquares ; make sure Player isn't standing on
+; something blocked (doesn't matter for horse)
+
+
+.NotInitTown
+ return
+;-------------------------
+;----------------
+
+.vSetDefaultPalettes
+  v1=4          ; list4
+cif notpc
+  &v2=list4(16) ; palette
+cend
+  v3=16
+cif pc
+  &v2=list4(14) ; palette
+cend
+  gosub @MCSetPalette
+ cif pc
+  gosub @SetCGAPalettes
+ cend
+ return
+;--------------
+.SafePlotLogical
+ cif pc
+  if PlotLogicalDone=true then DEPL2
+  gosub @MCPlotLogicalScreen
+  PlotLogicalDone=true
+
+.DEPL2
+ cend
+ return
+;---------------
+.SafeScrollDirection
+ cif pc
+ if ScrollDirectionDone=true then SSD4
+ ScrollDirectionDone=true
+ gosub @MCScrollDirection
+; convert error codes to a sane value which can safely be ignored
+ if v1<>32768 then SSD2
+ v1=0
+.SSD2
+ if v2<>32768 then SSD3
+ v2=0
+.SSD3
+.SSD4
+ cend
+ return
+;-----------------
+.vSelectLanguage
+ if Language<>0 then DontReload ; have already chosen
+ Language=German ;*****
+; MenuNumber=6 ; choose language menu
+; gosub @PrettyMenu
+; Language=result
+ if language=English then DontReload
+ v1=65 ; 'a'
+ gosub @LoadGameData ; reload appropriate town gamedata.
+ &MenuOffset=IntroTables(32) ; offset of menu data.
+
+.DontReload
+ return
+;----------
+.vBuildRoom
+ BuildingRoom=false ; a flag to Acode only, ignored by machine
+; code. Logically it should go after this call, but that
+; would waste a return instruction.
+ goto @MCBuildRoom
+;----------
+.SetCGAPalettes
+ cif pc
+; dc.b $0,$F,$F,$F,$F,$F,$0,$0,$F,$0,$9,$F,$F,$F,$0,$F ; 2 colour text printing
+; dc.b $0,$F,$F,$F,$F,$F,$0,$0,$F,$0,$9,$F,$F,$F,$0,$F ; 2 color map
+; dc.b $0,$F,$F,$1,$F,$F,$1,$1,$7,$0,$F,$0,$F,$F,$9,$0 ; 2 Pat, Billy & Barbrawl
+; dc.b $0,$F,$7,$1,$F,$9,$1,$0,$7,$0,$F,$F,$F,$F,$A,$F ; 2 Outside Buildings
+; dc.b $0,$F,$9,$0,$0,$0,$F,$0,$A,$A,$F,$F,$F,$F,$7,$F ; 2 Saloons
+  v1=4 ; list 4
+  &v2=list4(20) ; CGA2 palette
+  v3=2 ; 2-color palette
+  v4=255 ; 255 is text printing palette
+  gosub @MCSetPalette
+
+  add v2,c16 ; skip on to default palette (map)
+  v4=0 ; default palette
+  gosub @MCSetPalette
+
+  add v2,c16 ; skip on to people palette
+  v4=1 ; palette 1 - people
+  gosub @MCSetPalette
+
+
+  v1=4 ; res-set up list just in case
+  &v2=list4(22) ; CGA4 palette
+  v3=4 ; 4-color palette
+  v4=255 ; 255 is text printing palette
+  gosub @MCSetPalette
+
+  add v2,c16 ; skip on to default palette (map)
+  v4=0 ; default palette
+  gosub @MCSetPalette
+
+  add v2,c16 ; skip on to people palette
+  v4=1 ; palette 1 - people
+  gosub @MCSetPalette
+cend
+
+ cif TownOverlay
+  x1=800 ; first object used for people
+  x2=999 ; last object used for people
+  x3=1 ; palette to set to
+  gosub @SetPreLoadPalettes
+ cend
+
+ return
+;--------------
+.SetPreLoadPalettes
+ cif pc
+; set objects x1..x2 to use cga palette x3
+ v1=x3
+ gosub @MCSetPreloadPalette
+
+ v1=x1
+ v5=7 ; dSetPreloadPalette
+.SPLP1
+ gosub @MCDrawObjectV1
+ add v1,c1
+ if v1<x2 then SPLP1
+
+ v1=0 ; by default, use this cga palette in future.
+ gosub @MCSetPreloadPalette
+
+ cend
+ return

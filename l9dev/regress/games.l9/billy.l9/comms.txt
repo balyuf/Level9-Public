@@ -1,0 +1,614 @@
+; COMMS.TXT
+; 
+; Billy The Kid
+;
+; Copyright (C) 1990 Level 9 Computing Ltd.
+;
+;
+const
+; operations codes to pass down serial link...
+ NameFlag=128 ; 64
+ NameMask=127 ; 63
+
+ begin
+ code -
+.iUpdateVarDataByte
+ code +
+  gosub @UpdateVarDataByte
+ code -
+ return
+;------------
+ code +
+
+
+;--------------
+.UpdateVarDataWordInc
+ gosub UpdateVarDataWord
+ add v1,c2 ; next word entry
+ return
+;-------------
+
+.UpdateVarDataWord
+; general update routine for the TownVarData list:
+; this is used for both people and town parameters,
+; plus anything else for the strategy game.
+; This routine (WILL) handle the communication of some
+; of this information to the other computer in a 2-machine
+; game.
+; Parameters:
+;   v1=offset within list to modifiy
+;   v2=value.
+; Not Supported:  v3=mode: 0=update, 1=add, 2=subtract (limited to 0/FFFF respectively)
+;   TellOtherPlayer=0 if not, =1 if please do.
+; May Corrupt x1, x2.
+; No Return value.
+; if v2<>0 then UVDW2
+ if v1>TownVarDataSize then @cUpdateBug
+ &TownVarData(v1)=v2
+
+ if TwoPlayerMode=false then UVDWRet
+ push v2
+  push v1
+   v1=CommsWordUpdate
+   gosub @WriteSerial ; send v1, waiting if necessary
+  pop v1 ; address to write to
+  gosub @WriteSerialWord ; send v1 word, waiting if necessary
+ pop v1 ; word to write there
+ goto @WriteSerialWord ; send v1 word, waiting if necessary
+
+;.UVDW2
+;
+
+
+; if v2<>1 then UVDW3
+;; add to existing value, limit to FFFF
+; &x1=TownVarData(v1)
+; x2=x1 ; keep original sign
+; add x1,v3
+; xor x2,x1 ; sign changed?
+; if x2<32768 then UVDWNoUpperLimit
+; if x1>32767 then UVDWNoUpperLimit ; now negative
+; x1=65535 ; sign changed to positive when added, so wrapped.
+;
+;.UVDWNoUpperLimit 
+; &TownVarData(v1)=x1
+; return
+;
+;.UVDW3
+;; take off existing value, limit to 0
+; &x1=TownVarData(v1)
+; x2=x1 ; keep original sign
+; add x1,v3
+; xor x2,x1 ; sign changed?
+; if x2<32768 then UVDWNoUpperLimit
+; if x1>32767 then UVDWNoUpperLimit ; now negative
+; x1=65535 ; sign changed to positive when added, so wrapped.
+;
+;.UVDWNoUpperLimit 
+; &TownVarData(v1)=x1
+; return
+;
+;--------------
+.UpdateVarDataByteInc
+ gosub UpdateVarDataByte
+ add v1,c1
+.UVDWRet
+ return
+;---------
+.cUpdateBug
+ cif NotPC
+  break ;********
+ cend
+.UVDBRet
+ return
+;---------------
+.UpdateVarDataByte
+; general update routine for the TownVarData list:
+; this is used for both people and town parameters,
+; plus anything else for the strategy game.
+; This routine (WILL) handle the communication of some
+; of this information to the other computer in a 2-machine
+; game.
+; Parameters:
+;   v1=offset within list to modifiy
+;   v2=value.
+;   TellOtherPlayer=0 if not, =1 if please do.
+; May Corrupt x1, x2.
+; No Return value.
+ if v1>TownVarDataSize then @cUpdateBug
+ TownVarData(v1)=v2
+
+ if TwoPlayerMode=false then UVDBRet
+ push v2
+  push v1
+   v1=CommsByteUpdate
+   gosub UVDBWriteSerial ; send v1, waiting if necessary
+  pop v1 ; address to write to
+  gosub @WriteSerialWord ; send v1 word, waiting if necessary
+ pop v1 ; word to write there
+.UVDBWriteSerial
+ goto @WriteSerial ; send v1 byte, waiting if necessary
+;-------------------
+.TrySerial
+; at initialisation - try to make connection with
+; another computer playing Billy, then return.
+; Space should interrupt and go back to menu,
+; otherwise should keep trying forever.
+ &WordWS(WordCursorXPos)=c0
+ &WordWS(WordCursorYPos)=c0
+ TwoPlayerMode=true ; permit WriteSerial to send stuff...
+
+ cif TownOverlay
+ m1=975 ; 'trying serial connection...'
+ gosub @DisplayTextNoWait
+
+ gosub @MCinitSerial      ;      103
+;    Description: Initialise serial comms/Clear RX and TX buffers
+;    Args:        none
+;    Returns:     V1=0    success
+;                 V1=FFFF no serial port (not installed)
+;
+ if v1=65535 then @SelectPlayer ; no serial port
+ gosub @ClearReadBuffer ; returns v1 as last non-zero character.
+; Each computer starts by listening to the line. If we hear
+; another computer shouting its name, we answer with the alternate
+; name and start the game.
+; If we hear nothing useful, start shouting a name and listen
+; for someone shouting back the other name.
+;
+; V1 is the last non-zero character we heard
+;; if v1<>0 then CBN2
+ x1=50000 ; check input buffer this many times before starting to squawk
+
+.CheckBufferedName
+ gosub @ReadSerialNoWait
+;    Returns:     V1 = FFFF (nothing read)
+;                 V1 = 0 thru 00FF (byte received)
+;                 V2 = bytes remaining in RX buffer (normally 0)
+;                 V3 = bytes remaining in TX buffer (normally 0)
+;; if v1=65535 then NothingHeard
+.CBN2
+ v2=NameMask
+ and v1,v2
+ PlayersName=Pat
+ if v1=Billy then @HeardName
+ PlayersName=Billy
+ if v1=Pat then @HeardName
+ sub x1,c1 ; number of times to check serial inputs
+ if x1>0 then CheckBufferedName ; keep checking many times
+
+.NothingHeard
+; assume we're gonna be Billy, and send stuff on this basis...
+ PlayersName=Billy
+ gosub @SendName
+
+.JustListen
+; check for both trying to be same person
+; gosub @MCOsrdch ;******
+; if v1<>49 then JL2 ;******
+; PlayersName=Pat
+; v1=Billy
+; goto @HeardName
+
+.JL2
+ gosub @readSerialNoWait     ;       104
+
+; push v1 ;**********
+;  v1=6 ; physical, logical                   
+;  gosub @MCEnableTextBuffer 
+;  v1=49 ; '1'
+;  gosub @MCOswrchV1
+; pop v1
+; push v1
+; gosub @MCOswrchV1
+; pop v1
+
+ x1=65000
+.CommsDelay
+ sub x1,c1
+ if x1>0 then CommsDelay
+
+
+ v2=NameMask
+ and v1,v2
+ PlayersName=Pat
+ if v1=Billy then HeardName
+ PlayersName=Billy
+ if v1=Pat then HeardName
+ if v3>10 then @JustListen ; TX buffer is filling up.
+ goto @NothingHeard
+;    Description: Read Serial port (buffered)
+;                 (V2/V3 are status only. Error conditions are always in V1)
+;    Args:        none
+;    Returns:     V1 = FFFF (nothing read)
+;                 V1 = 0 thru 00FF (byte received)
+;                 V2 = bytes remaining in RX buffer (normally 0)
+;                 V3 = bytes remaining in TX buffer (normally 0)
+
+.HeardName
+; check name twice more, just to be certain the other machine
+; is trying to start up.
+ push v1
+  gosub @SendName
+  gosub @readSerial ; wait if necessary
+  v2=NameMask
+  and v1,v2
+ pop v2
+ if v1<>v2 then @JustListen
+ push v1
+  gosub @SendName
+  gosub @readSerial ; wait if necessary
+  v2=NameMask
+  and v1,v2
+ pop v2
+ if v1<>v2 then @JustListen
+
+
+; v1=PlayersName of other machine.
+ if v1=PlayersName then @SelectPlayer ; both trying to play the same.
+; Other player is playing the alternate person, so
+; we're in business!
+ gosub @SendName ; tell other computer our name
+ TwoPlayerMode=true
+
+ m1=954
+ add m1,PlayersName
+;[955:Pat, you must track all the outlaw gangs to
+;their hideouts. Talk to people to get information. ] ;|||
+;[956:Billy, rob banks and steal cows from the Murphy-Dolans. ] ;|||
+ goto @DisplayInstructions ; gosub, return
+;------
+.SendName
+ v1=PlayersName
+ v2=NameFlag
+ or v1,v2
+ gosub WSWWriteSerial ; send name to other computer , with top bit set.
+ v1=PlayersName
+ v2=NameFlag
+ or v1,v2
+ gosub WSWWriteSerial ; send name to other computer , with top bit set.
+ v1=PlayersName
+ v2=NameFlag
+ or v1,v2
+ goto WSWWriteSerial ; send name to other computer , with top bit set.
+;    Description: Writes serial port (buffered)
+;                 (V2/V3 are status only. Error conditions are always in V1)
+;    Args:        V1 (lo byte only) byte to send
+;    Returns:     V1 = 0            byte sent (or put in TX buffer)
+;                 V1 = FFFF         Buffer full
+;                 V2 = bytes remaining in RX buffer (normally 0)
+;                 V3 = bytes remaining in TX buffer (normally 0)
+
+
+ cend ; TownOverlay
+;------------
+.WriteSerialWord
+; write v1 as a word
+ &WorkList(0)=v1
+ v1=WorkList(0)
+ gosub WSWWriteSerial
+ v1=WorkList(1)
+.WSWWriteSerial
+ goto @WriteSerial
+;-----------
+.ClearReadBuffer
+ v4=0 ; last non-zero character
+.CRB0
+ push v4
+  gosub @readSerialNoWait     ;       104
+ pop v4
+;    Description: Read Serial port (buffered)
+;                 (V2/V3 are status only. Error conditions are always in V1)
+;    Args:        v1=0 to read char, FFFF to check status
+;    Returns:     V1 = FFFF (nothing read)
+;                 V1 = 0 thru 00FF (byte received)
+;                 V2 = bytes remaining in RX buffer (normally 0)
+;                 V3 = bytes remaining in TX buffer (normally 0)
+;
+; if v1=65535 then CRBEnd
+ if v2=0 then CRBEnd ; RX buffer empty
+ v4=v1 ; last valid character
+; if v4=129 then CRBEnd ; got notification of other player's name
+; if v4=130 then CRBEnd
+ goto CRB0
+
+.CRBEnd
+ v1=v4 ; last valid character received, or zero if none.
+ return
+;----------
+.WriteSerialWait
+ v1=v5 ; retrieve byte to send
+
+.WriteSerial
+; write v1 as a byte
+ if TwoPlayerMode=false then WriteSerialRet
+ v5=v1 ; save byte to send
+ gosub @MCWriteSerial
+;    Description: Writes serial port (buffered)
+;                 (V2/V3 are status only. Error conditions are always in V1)
+;    Args:        V1 (lo byte only) byte to send
+;    Returns:     V1 = 0            byte sent (or put in TX buffer)
+;                 V1 = FFFF         Buffer full
+;                 V2 = bytes remaining in RX buffer (normally 0)
+;                 V3 = bytes remaining in TX buffer (normally 0)
+ if v1<>0 then WriteSerialWait ; sent ok?
+
+ push x1
+  x1=5000
+.WriteSerialDelay
+  sub x1,c1
+  if x1>0 then WriteSerialDelay
+ pop x1
+.WriteSerialRet
+ return
+;-----------
+.CheckPositions
+; pass on our location to the other player, and check where
+; they are. If in the same place, call for a duel.
+
+;;************
+;  v1=6 ; physical, logical                   
+;  gosub @MCEnableTextBuffer 
+; code -
+;  message cr ; flush buffer
+; code +
+; &WordWS(WordCursorXPos)=c0
+; &WordWS(WordCursorYPos)=c0
+; code -
+;  print location
+;  message dot
+; code +
+; v1=32
+; gosub @MCOswrchV1
+; TwoPlayerMode=true ;********
+;;*********
+
+
+; send our location only occasionally, to avoid slowing down
+; slow machines too much.
+ code -
+  random v1
+ code +
+ if v1<240 then DontSendPosition
+
+ &v1=TownVarData(SPCommsInfoOffset)
+; within CommsInfo, offsets Billy/Pat are location of each player
+ add v1,PlayersName
+ v2=location
+ gosub @UpdateVarDataByte ; pass our location to other person
+
+.DontSendPosition
+ 
+; where is other player?
+ v1=3
+ sub v1,PlayersName ; (3-1 or 2 => 2 or 1)
+ &v2=TownVarData(SPCommsInfoOffset)
+ add v1,v2
+ v2=TownVarData(v1)
+; other player is at v2, if we're also there, then maybe
+; we want a final duel
+
+; code - ;******
+;  print v2 ;******
+;  message dot ;******
+; code + ;******
+; v1=65535 ; check status ;******
+; gosub @MCReadSerial ;*********
+; code - ;******
+;  print v2 ; bytes in read buffer ;******
+;  message dot ;******
+;  print v3 ; bytes in write buffer ;******
+;  message dot ;******
+; code + ;******
+
+ cif TownOverlay
+  if PlayingDuel<>0 then NotTriggerFinalDuel
+  if CurrentScreen<430 then NotTriggerFinalDuel ; MinTown(430)-400
+  if CurrentScreen>599 then NotTriggerFinalDuel ; MaxTown(599)-400
+  if v2<>location then NotTriggerFinalDuel
+  MenuNumber=216 ; hello, want final duel?
+; Menu216 dc.w 1867-MM,MMenu+218,0 ; approached each other, gonna fight?
+  gosub @PrettyMenu
+  if result=1268 then @InitTwoPlayerDuel ;1868-MM
+  goto @ReturnToMap
+.NotTriggerFinalDuel
+ cend
+
+.LTSRet
+ return
+;----------
+.ListenToSerial
+; called every frame - pulls in strings of characters
+; from serial buffer and makes appropriate updates to
+; our local database
+ if TwoPlayerMode=false then LTSRet
+ cif TownOverlay
+  gosub @CheckPositions ; check where the other player is
+ cend
+
+ v3=10 ; timeout value to avoid locking the machine
+.LTSLoop
+ v1=65535 ; check status
+ push v3 ; timeout count
+  gosub @MCReadSerial
+ pop v3
+ if v2<4 then LTSRet ; not a full command string in buffer yet.
+;    Description: Read Serial port (buffered)
+;                 (V2/V3 are status only. Error conditions are always in V1)
+;    Args:        v1=0 to read+check status
+;		     FFFF to just check status
+;    Returns:     V1 = FFFF (nothing read)
+;                 V1 = 0 thru 00FF (byte received)
+;                 V2 = bytes remaining in RX buffer (normally 0)
+;                 V3 = bytes remaining in TX buffer (normally 0)
+ push v3 ; timeout count
+  gosub ReadAndProcessSerial
+ pop v3
+ sub v3,c1
+ if v3>0 then LTSLoop ; carry on till read buffer is nearly empty
+ return ; give up, to avoid locking the machine completely
+;----------
+.ReadAndProcessSerial
+ gosub @ReadSerial ; read, waiting if necessary
+; code -
+;  message Billy ; indicate receipt
+;  print v1
+; code +
+ if v1=CommsByteUpdate then @LTSByteUpdate
+ if v1=CommsWordUpdate then @LTSWordUpdate
+
+ cif TownOverlay
+  if PlayingDuel<>0 then LTS3
+ cend
+  if v1=CommsWantFinalDuel then @AcceptFinalDuel
+  if v1=CommsAcceptFinalDuel then @AcceptFinalDuel
+.LTS3
+ cif TownOverlay
+  if v1=CommsIveDrawn then @OtherHasDrawn
+  if v1=CommsIveShotYou then @OtherHasShotMe
+  if v1=CommsRedisplayMap then @RedisplayMap
+ cend
+ if v1=CommsOtherPlayerHasLost then @WinGame
+ if v1=CommsOtherPlayerHasWon then @LoseGame
+ return
+;-------------
+ cif TownOverlay
+.RedisplayMap
+ if CurrentScreen=GameMap then @ReturnToMap
+ return
+
+.OtherHasDrawn
+  duelstatus = 3
+  dx4 = enemyacb
+  ObjectNumber=5 ; animation object for draw but don't fire (small figure)
+  add ObjectNumber,DuelOpponentBase
+  goto @changeacbdx4 ; gosub, return.
+;-------------
+.OtherHasShotMe
+ v1=0 ; colt45 sample
+ gosub @PlaySample
+ duelstatus = 7 ; player is dying
+ return
+ cend ; TownOverlay
+;-------------
+.LTSByteUpdate
+ gosub @ReadSerialWord ; get address of update
+ push v1
+  gosub @ReadSerial ; read, waiting if necessary
+ pop v2 ; address
+ if v2>TownVarDataSize then @c2UpdateBug ;*****
+ TownVarData(v2)=v1
+; code -
+;  if v2<50 then LTSBU2
+;  print v2 ;*******
+;  message dot ;***********
+;  print v1  ;********
+;  message dot ;******
+;.LTSBU2
+; code +
+ return
+
+.LTSWordUpdate
+ gosub @ReadSerialWord ; get address of update
+ push v1
+  gosub @ReadSerialWord ; get word to write there
+ pop v2 ; address
+ if v2>TownVarDataSize then @c2UpdateBug ;*****
+ &TownVarData(v2)=v1
+ return
+
+.c2UpdateBug
+ break ;*****
+ return ;******
+;--------------
+.ReadSerialWord
+; assumes characters are available in buffer
+ gosub ReadSerial
+ WorkList(0)=v1
+ gosub ReadSerial
+ WorkList(1)=v1
+ &v1=WorkList(0)
+ return
+;-------------
+.ReadSerial ; read, waiting if necessary
+ gosub @ReadSerialNoWait
+ if v1=65535 then ReadSerial ; nothing read, so wait for it!
+;    Description: Read Serial port (buffered)
+;                 (V2/V3 are status only. Error conditions are always in V1)
+;    Args:        v1=0 to read+check status
+;		     FFFF to just check status
+;    Returns:     V1 = FFFF (nothing read)
+;                 V1 = 0 thru 00FF (byte received)
+;                 V2 = bytes remaining in RX buffer (normally 0)
+;                 V3 = bytes remaining in TX buffer (normally 0)
+ return
+;-------------
+.InitTwoPlayerDuel
+ cif TownOverlay
+.ITPD1
+  v1=CommsWantFinalDuel
+  gosub @SendPadding ; send several v1s to evade receiver buffering
+  gosub @ReadSerial
+;  if v1=CommsWantFinalDuel then ITPD2
+;  if v1<>CommsAcceptFinalDuel then ITPD1
+;.ITPD2
+;  gosub @ReadSerial
+;  if v1=CommsWantFinalDuel then ITPD3
+;  if v1<>CommsAcceptFinalDuel then ITPD1
+;.ITPD3
+ cend ; TownOverlay
+
+.SetEnemyName
+; set EnemyName so this duel is the final one.
+ EnemyName=Pat
+ if PlayersName=Billy then FinalConflict
+ EnemyName=Billy
+
+.FinalConflict
+.NotFinalConflict
+ cif TownOverlay
+  goto @OEPFinalDuel
+ cend
+ v4=DuelBack
+; EnemyName already set
+ goto @ToTownOverlayV4
+; call town overlay with parameter v4
+;-----------
+.AcceptFinalDuel
+  v1=CommsAcceptFinalDuel
+  gosub @WriteSerial
+  v1=CommsAcceptFinalDuel
+  gosub @WriteSerial
+  v1=CommsAcceptFinalDuel
+  gosub @WriteSerial
+  v1=CommsAcceptFinalDuel
+  gosub @WriteSerial
+  v1=CommsAcceptFinalDuel
+  gosub @WriteSerial
+  goto @SetEnemyName ;  goto @OEPNotFinalDuel
+ return ; for other overlays
+;---------
+.AnnounceLoss
+ v1=CommsOtherPlayerHasLost
+ goto @SendPadding ; send several v1s to evade receiver buffering
+;--------
+.AnnounceWin
+ v1=CommsOtherPlayerHasWon
+; drop through to SendPadding
+;----------
+.SendPadding ; pad out with v1s to evade receiver buffering
+ gosub SPWriteSerial
+ gosub SPWriteSerial
+ gosub SPWriteSerial
+.SPWriteSerial
+ push v1
+ gosub @WriteSerial
+ pop v1
+ return
+;----------
+.ReadSerialNoWait
+ v1=0 ; request read 
+ goto @MCReadSerial
+;-----------
+
+

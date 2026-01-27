@@ -1,0 +1,243 @@
+; FX.TXT
+;
+; Mike Austin November 1990
+;
+; Copyright (C) 1990 Level 9 Computing Ltd.
+;
+;
+;--------------------------------------
+begin
+
+ cif TownOverlay
+;-----------
+ cif pc
+.LoadExponentTable
+; v1 is list to load into. (Called only at Allocate time)
+ push v1
+  v1=256 ; bytes to reserve for exponent table
+  gosub @MCReserveMemory
+  &v1=IntroTables(20) ; 'exponent.025'
+  gosub @CopyFilename
+ pop v1 ; list to load into
+ push v1
+  v2=0 ; offset in list
+  v3=0
+  gosub @MCLoadFile ; filename is list17(8...)
+; v1 is length loaded
+ pop v1 ; list number we loaded exponent table into
+ v5=8 ; set exponent table
+ v2=0 ; offset within list.
+ goto @MCDigitise ; V5=8 Set exponent v1,v2=exponent table.
+ cend ; PC
+;--------
+ cend ; TownOverlay
+
+
+ cif TownOverlay
+.AllocateSamplesAndMusic
+; allocate a block of memory to be used for samples.
+
+
+; now set up list pointers within this space: list19 for midi scores,
+; list25 for sound samples.
+
+ &x1=longws(HiLongFreeWorkspace)
+ &list11(100)=x1 ; set up list25
+ &list11(76)=x1 ; set up list19
+ &x1=longws(LOLongFreeWorkspace)
+ &list11(102)=x1 ; set up list25
+ &list11(78)=x1 ; set up list19
+
+
+  v1=AllSoundSpace ; total space to allocate - has to be in
+; a block because we're using MCReserveChip, which doesn't
+; allocate areas contiguiously if they're requested separately.
+  v2=2 ; type of memory
+  v3=25 ; return address in list 25 ptr
+ cif Amiga
+  gosub @MCReserveChip ; on ST, just does MCReserveMemory.
+; on Amiga, gets special "Chip" memory which the sound hardware
+; can access.
+ cend
+ cif ReallyST
+  gosub @MCReserveMemory
+ cend
+ cif PC
+  x1=AdlibSpace
+  add v1,x1 ; allocate extra space for adlib file
+  gosub @MCReserveMemory
+ cend
+
+ cif Amiga
+; we've set up list25 in chip memory. Now copy the list
+; pointer to list19 for the midi list.
+  &x1=longws(100)
+  &list11(76)=x1 ; set up list19
+  &x1=longws(102)
+  &list11(78)=x1 ; set up list19
+ cend
+
+;; now move midi file pointer to after samples space
+; v1=19
+; v2=0 ; high word of addition
+; v3=MidiOffset
+; gosub @MCAddToListPtr ; add (V2,V3).l to listv1 
+
+ cif pc
+; load instrument file for adlib board on PC.
+  &v1=IntroTables(18) ; 'intro.adl'
+  gosub @CopyFilename
+  v1=19 ; list to load into
+  v2=AdlibOffset
+  v3=0
+  gosub @MCLoadFile ; filename is list17(8...)
+ cend
+ return
+
+ cend
+;--------------
+.LoadSamplesForGame
+; load samples whose name ptr offsets/2 are in IntroTables(v4)
+; into Samples()
+; i.e.
+;    IntroTables(v4) is a pointer to a table of bytes:
+;       .b Number of introtables filename pointer /2
+;       .b Number of introtables filename pointer /2
+;       ...
+;       0
+; Set up a table at start of Samples() of 4 words for each sample.
+;    .w Offset of sample within Samples() 0=no more samples in table.
+;    .w Length of sample, in bytes.
+;    .w Not used
+;    .w Not used
+; This table is then accessed by PlaySample()
+
+
+ v5=0 ; current pointer
+ v6=128 ; load first sample after table pointers
+ &v4=IntroTables(v4) ; get offset of table
+.LSFG1
+ v1=IntroTables(v4)
+ add v4,c1
+ if v1=0 then @LSFGRet
+ add v1,v1 ; double to get actual pointer
+ &v1=IntroTables(v1)
+ push v4
+  gosub @CopyFilename
+ pop v4
+ v1=SamplesListNumber ; load list 15 (structureBuffer onwards)
+ v2=v6 ; offset within list15
+ v3=0
+ push v2 ; offset in list
+  gosub @MCLoadFile ; filename is list17(8...)
+ pop v2
+; v1=length of file loaded
+; set up table entries
+ if v5>AllSoundSpace then @LSFBug ;***
+ &samples(v5)=c0 ; null pointer if not loaded
+ if v1=0 then @LSFGRet ; not loaded.
+
+; for PC and Amiga, do a translate stage on the sample
+ push v1
+ push v4
+ push v5
+ push v6
+  v6=v1 ; length
+  v1=SamplesListNumber
+  v3=7500 ; frequency in hertz
+  v4=255 ; volume
+  v5=5 ; translate
+  gosub @MCDigitise
+;                V5=5 Translate Sample (V1,V2 = sample, V6 = length,
+;                                       V3=Frequncy, V4=Volume)
+ pop v6
+ pop v5
+ pop v4
+ pop v1
+
+ if v5>AllSoundSpace then LSFBug ;***
+ &Samples(v5)=v6 ; offset pointer
+ add v5,c2
+ &Samples(v5)=v1 ; length
+ add v5,c2
+ &Samples(v5)=c0
+ add v5,c2
+ &Samples(v5)=c0
+ add v5,c2
+ add v6,v1
+ goto @LSFG1
+
+.LSFGRet
+ return
+
+.LSFBug
+ break ;*******
+ return
+;---------------------
+.IsSamplePlaying
+; return v2<>0 if a sample is still playing
+ push v1
+  v5=2
+  gosub @MCDigitise
+  v2=v1 ; function return: FindState Audio  (returns V1=0 or 0FFFF)
+ pop v1
+.PlaySampleRet
+ return
+;---------
+.PlaySample
+; play sample number v1, in Samples()
+ gosub IsSamplePlaying
+ if v2<>0 then @PlaySampleRet ; something already playing
+
+.HiPriPlaySample ; play high priority sample
+ if SoundOn=false then PlaySampleRet
+ add v1,v1
+ add v1,v1 ; get offset into 4-word table at start
+ add v1,v1
+
+; MCDigitise ;        91
+;          /* Paramters:
+;                V5=0 Initialise
+;                V5=1 Terminate System
+;                V5=2 FindState Audio  (returns V1=0 or 0FFFF)
+;                V5=3 Wait For Audio
+;                V5=4 Volume Control   (V5=Volume)
+;                V5=5 Translate Sample (V1,V2 = sample, V6 = length,
+;                                       V3=Frequncy, V4=Volume)
+;                V5=6 Play Sample      (V1,V2 = sample, V3=Frequency,
+;                                       V4(hi)=loop count, (lo)=Repeat count
+;					V6=length
+;                V5=7 Terminate Sample
+;		 V5=8 Set exponent v1,v2=exponent table.
+;		 v5=-1 Change MCDigitiseHandler vector
+
+
+ &v2=Samples(v1) ; offset in list
+ if v2=0 then @PlaySampleRet ; not available
+ add v1,c2
+ &v6=Samples(v1) ; length of sample
+ v3=7500 ; frequency
+ v4=0 ; loop flag
+ v5=6 ; function: play sample
+ v1=SamplesListNumber
+ goto @MCDigitise
+;---------------
+;;LoadSamples
+;cif Amiga
+;; Amiga expects samples to be -128..127, not
+;; the 0..255 used by the ST.
+;; on ST/AMiga, mcloadfile returns v1 as the
+;; length of file loaded
+; v3=v2
+; add v3,v1
+;; v2=start, v3=end of sample
+; x2=128
+;.ModifySampleLoop
+; x1=list25(v2)
+; sub x1,x2
+; list25(v2)=x1
+; add v2,c1
+; if v2<v3 then ModifySampleLoop
+;cend
+; return
+;;-----

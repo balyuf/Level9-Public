@@ -1,0 +1,1444 @@
+; Lancelot 1 source, copyright (C) 1987 Level 9 Computing.
+;
+; TABLE.TXT, assembler format data for tables, a.k.a lists/arrays. 
+; (Save the assembled data as TABLE.DAT). 
+;
+; You must start all DEFWs on EVEN boundaries, else subsequent code 
+; seems to be padded to make it even (according to the GENST listing, 
+; anyway). The EVEN directive inserts a padding byte if appropriate.
+;
+ ORG 0
+starttables
+ dc.l LIST1-starttables ; MOVEABLE OBJECT START
+ dc.l $8000 ; OBJECT CURRENT
+ dc.l $8000+MaxObject ; HI OBJECT CURRENT
+ dc.l LIST4-starttables ; scenery table
+ dc.l NPCINITIAL-starttables ; npc initial and 'floor pointers'
+ dc.l $8000+LIST23SIZE ; 6 - NPC current attributes, stack
+ dc.l $8000+LIST236SIZE ; 7 - output buffer,scoretable
+ dc.l list8-starttables ; 8 - assorted fixed system tables
+ dc.l $8000+LIST2367SIZE ; 9 - input table,object table
+ dc.l ENDTABLE-starttables
+;---
+; CONTAINER POSITONS
+ON EQU 1
+UNDER EQU 2
+BEHIND EQU 3
+CARRIED EQU 4
+WORN EQU 5
+PREPIN EQU 7
+HANGINGFROM EQU 8 ; E.G. TREE
+pushedby equ 11
+LIEON EQU 12
+SITON EQU 13
+fastenedto equ 14
+lyingon equ 15
+;
+; additions to high initial position
+OBV EQU $80
+ita equ 0
+itan equ $10 ; starts with a vowel
+singularsome equ $20 ; "some cheese is tasy"
+he equ $30
+she equ $40
+pluralsome equ $50 ; "some ropes are strong"
+you equ $60
+properMale equ $70
+ProperFemale equ $70
+; ProperFemale is handled by SpecialConjugate
+;
+MaxObject EQU 189 ; should be two bigger than it really needs to be
+NUMHIOBJ EQU MaxObject ; NO. OF OBJECTS WITH A HIGH POSITION
+minnpc equ 1
+maxnpc equ 64
+npctablesize EQU (MaxNpc+1)*8
+npcstacksize equ 260 ; 300
+
+OUTPUTBUFFER EQU 32
+SCORETABLE EQU 44 ;length of score table
+OBJTABLE EQU 16 ; number of objects which can be specified on one line
+;
+;
+LIST23SIZE EQU MaxObject+NUMHIOBJ
+LIST236SIZE EQU LIST23SIZE+npctablesize+npcstacksize
+LIST2367SIZE EQU LIST236SIZE+OUTPUTBUFFER+SCORETABLE+179+maxnpc+10
+; 179 is num rooms
+;;LIST23678SIZE equ LIST2367SIZE ; >>Mike 8/8/87 - reduced from ST version
+;>>mike 8/8/87 LIST23678SIZE EQU LIST2367SIZE+OBJTABLE
+;
+;---
+LIST1
+ dc.b 0,0               ; OBJECT 0
+USER EQU 1
+ dc.b 0+you,164          ;  1 - USER (Lancelot)
+ dc.b ProperMale,12	; 2 tristram
+ dc.b ProperMale,0	; 3 galahad (in part 1 at end)
+ dc.b ProperMale,15	; 4 bors de ganis
+ dc.b ProperMale,86	; 5 meliagaunt (P2)
+ dc.b ProperMale,8	; 6 gawain
+ dc.b ProperMale,102	; 7 red knight
+meliot equ 8
+ dc.b ProperMale,25	; 8 meliot
+ dc.b properMale,37	; 9 lamorak
+ dc.b ProperMale,3	; 10 ector de maris
+ dc.b ProperMale,3	; 11 agravain
+ dc.b ProperMale,3	; 12 aliduke
+ dc.b ProperMale,3	; 13 brandiles
+ dc.b ProperMale,3	; 14 brian
+ dc.b ProperMale,3	; 15 geheris
+ dc.b ProperMale,3	; 16 gareth
+ dc.b ProperMale,3	; 17 lionel
+ dc.b ProperMale,3	; 18 marhaus
+ dc.b ProperMale,86	; 19 sir breunis
+ dc.b ProperMale,52	; 20 sir garlon
+;; dc.b ProperMale,14	; 21 giant nabon
+ dc.b 0,0		; 22
+ dc.b ProperMale,0	; 22 magic knight
+ dc.b ProperMale,50	; 23 turquin
+ dc.b ProperMale,0	; 24 pedivere
+ dc.b ProperMale,104	; 25 black knight
+ dc.b ProperMale,103	; 26 green knight
+ dc.b 0,0		; 27
+ dc.b ProperFemale,28	; 28 hellawes
+QueenMorgan equ 29
+ dc.b ProperFemale,9	; 29 queen morgan
+ dc.b ProperFemale,9	; 30 queen northgales
+ dc.b ProperFemale,9	; 31 queen eastlands
+ dc.b ProperFemale,9	; 32 queen out isles
+ dc.b ProperFemale,59	; 33 damosel maledisant
+damosel equ 34
+ dc.b she,8		; 34 damosel in castle chariot
+ dc.b she,25		; 35 damosel
+ dc.b she,0		; 36 lady below elm
+nabon equ 37
+ dc.b ProperMale,14	; 37 giant nabon
+Beggar equ 38
+ dc.b he,223		; 38 beggar
+TownCrier equ 39
+ dc.b he,221		; 39 town crier
+army equ 40
+ dc.b itan,61		; 40 army
+carter equ 41
+ dc.b he,62	        ; 41 carter
+elaine equ 42
+ dc.b properFemale+prepin,bath       ; 42 elaine
+mermaid equ 43
+ dc.b she,234	; 43 mermaid
+ dc.b he,0             ; 44 old man
+ dc.b pluralsome,31	; 45 residents
+ dc.b pluralsome,63	; 46 sentries
+ dc.b pluralsome,27	; 47 30 knights
+ dc.b he,111		; 48 guard
+ dc.b he,0		; 49 dragon
+ dc.b ita,29		; 50 hawk
+ dc.b 0,108             ; 51 brachet
+; people in part 1...
+ dc.b pluralsome,167	; 52 Peasants
+ dc.b ita,0	; 53 Crowd
+ dc.b pluralsome,0	; 54 Hawks
+ dc.b pluralsome,157	; 55 Queen's knights
+ dc.b ProperMale,165	; 56 black knight
+Guenever equ 57
+ dc.b ProperMale,151	; 57 Guenever
+SirKay equ 58
+ dc.b ProperMale,152	; 58 Sir Kay
+ dc.b ProperMale,161	; 59 Sir Meliagaunt (P1)
+ dc.b ProperMale,151	; 60 Arthur
+ dc.b ProperMale,0	; 61 Sir Colgreavaunce
+Merlin equ 62
+ dc.b ProperMale,141	; 62 Merlin
+P1Carter equ 63
+ dc.b obv+he,176		; 63 Carter
+ dc.b she,160		; 64 Damosel
+ dc.b 0,0		; 65
+ dc.b 0,0		; 66
+ dc.b 0,0		; 67
+ dc.b 0,0		; 68 
+ dc.b 0,0		; 69 
+ dc.b 0,149		; 70 footstool
+ dc.b prepin+SingularSome,chest	; 71 gloves
+ dc.b prepin,chest	; 72 hat
+ dc.b 0,0               ; 73
+ dc.b 0,0               ; 74
+ dc.b 0,0               ; 75
+ dc.b 0,0               ; 76
+ dc.b 0,0               ; 77
+ dc.b 0,0               ; 78
+ dc.b 0,0               ; 79
+;
+; now some ordinary objects (80 onwards)..
+ dc.b 0,0		; 80 broken branch
+ dc.b 0,28		; 81 cloth
+food equ 82
+ dc.b singularSome+on,plate	; 82 food
+Wine equ 83
+ dc.b carried,QueenMorgan	; 83 glass of wine
+ dc.b carried,mermaid	; 84 harp ( starts carried by mermaid )
+ dc.b 0,101		; 85 horn
+ dc.b pluralsome+prepin,fire	; 86 hot coals
+plate equ 87
+ dc.b carried,damosel	; 87 plate
+ dc.b 0,0		; 88
+ dc.b prepin,sack	; 89 relic
+sack equ 90
+ dc.b lyingOn,nabon	; 90 sack
+ dc.b SingularSome+prepin,cauldron	; 91 soup
+pillow equ 92
+ dc.b on,PerilousBed	; 92 pillow
+cauldron equ 93
+ dc.b 0,64		; 93 cauldron
+ dc.b 0,39		; 94 winch
+ dc.b SingularSome,106	; 95 dead wood
+ dc.b 0,0		; 96
+ dc.b 0,0		; 97
+ dc.b 0,0		; 98
+ dc.b 0,0		; 99
+ dc.b 0,0               ;100 
+ dc.b 0,0               ;101 
+ dc.b 0,0               ;102 
+ dc.b 0,0		;103 
+ dc.b 0,0               ;104
+ dc.b 0,0               ;105
+ dc.b 0,0               ;106
+ dc.b 0,0               ;107
+ dc.b 0,0               ;108
+ dc.b 0,0               ;109
+; static objects... (110+)
+bath equ 110
+ dc.b 0,17              ;110 bath
+ dc.b 0,113             ;111 beacon
+ dc.b 0,0              ;112 bell
+ dc.b obv,241             ;113 boat
+ dc.b pluralsome,56     ;114 briars
+ dc.b pluralsome,115    ;115 bushes
+ dc.b 0,39               ;116 cage
+ dc.b PushedBy,Carter	;117 cart
+ dc.b on,trapdoor       ;118 chest
+ dc.b 0,5               ;119 crossbow
+fire equ 120
+ dc.b 0,64              ;120 fire
+ dc.b 0,39              ;121 lever
+ dc.b on,tomb	        ;122 lid
+ dc.b 0,14              ;123 keyhole
+ dc.b 0,20              ;124 panel
+ dc.b pluralSome,7	;125 loose planks
+ dc.b 0,0		;126 loose planks
+ dc.b 0,0		;127 loose planks
+ dc.b 0,111             ;128 portcullis
+ dc.b 0,7               ;129 secret panel
+ dc.b PluralSome,64		; 130 ships
+ dc.b PluralSome,54	; 131 shutters
+tomb equ 132
+ dc.b 0,0		; 132 tomb
+ dc.b itan,106		; 133 elm
+ dc.b itan,70		; 134 inscription
+ dc.b 0,13		; 135 sails
+PerilousBed equ 136
+ dc.b obv,20		; 136 bed
+ dc.b 0,101		; 137 siege army
+trapdoor equ 138
+ dc.b obv,35		; 138 trapdoor
+
+;----------------------------
+; ADD INVISIBLE OBJECTS HERE (NOT RELEVANT TO GAMEPLAY): 139-149
+ dc.b 0,0		; 139 
+ dc.b 0,0		; 140 
+ dc.b 0,0		; 141 
+ dc.b 0,0		; 142 
+ dc.b 0,0		; 143 
+ dc.b 0,0		; 144 
+ dc.b 0,0		; 145 
+ dc.b 0,0		; 146 
+ dc.b 0,0		; 147 
+ dc.b 0,0		; 148 
+ dc.b 0,0		; 149
+;-----------------------------------
+;
+; fixed objects for part 1...
+ dc.b pluralsome+PrepIn,window	; 150 bars
+ dc.b 0,156		; 151 bed
+ dc.b 0,149		; 152 bed
+ dc.b 0,148		; 153 bed
+ dc.b 0,140		; 154 bed
+ dc.b 0,158		; 155 bed
+ dc.b 0,144		; 156 bed of straw
+ dc.b 0,0		; 157 blood stain - appears in boudoir
+ dc.b pluralsome,142	; 158 books
+ dc.b PushedBy,P1Carter	; 159 cart
+chest equ 160
+ dc.b 0,158		; 160 chest
+ dc.b 0,167		; 161 pot
+ dc.b obv,0		; 162 pyre
+ dc.b pluralsome,147	; 163 seiges
+ dc.b 0,147		; 164 table round
+window equ 165
+ dc.b 0,178		; 165 window
+ dc.b 0,0		; 166
+ dc.b 0,0               ;167 
+ dc.b 0,0               ;168
+ dc.b 0,0               ;169
+HawkDroppings equ 170
+ dc.b 0,0               ;170 hawk droppings
+ dc.b 0,179             ;171 drawbridge
+ dc.b 0,0               ;172
+ dc.b 0,0               ;173
+ dc.b 0,0               ;174
+ dc.b 0,0               ;175
+ dc.b 0,0               ;176
+ dc.b 0,0               ;177
+ dc.b 0,0               ;178
+ dc.b 0,0               ;179
+;-------------------------
+;
+; Brief location objects (479+N). See 779+ for examine messages and 
+; 1199+ for their verbose equivalents..
+ dc.b 0,241		; 180 servage short object
+ dc.b 0,244		; 181 servage shore object
+ dc.b 0,236		; 182 corbin shore object
+ dc.b 0,222		; 183 west way object
+ dc.b 0,226		; 184 mews entrance object
+ dc.b 0,227		; 185 inside King's gate 
+ dc.b 0,223		; 186 Market square
+ dc.b 0,221		; 187 South Way
+
+; 
+;
+
+
+;---
+ even
+ENDOBJECTS
+terraintable
+LIST4
+; picture table
+ dc.b  0, 6, 6,12, 6, 6, 6, 6, 7, 6 ; 0,9
+ dc.b  7, 7, 7, 7,16, 7, 16,26,14,14 ; 10-19
+ dc.b 10, 2,10,19,14,17,19,19,19, 2 ; 20-29
+ dc.b 16, 16,16, 16,16, 16, 16, 16, 7,12 ; 30-39
+ dc.b  7, 7, 7, 7, 7, 2, 2,17, 2, 2 ; 40-49
+ dc.b 17, 2, 2, 2, 2,14, 2, 2, 2, 2 ; 50-59
+ dc.b  2,15, 2, 2,15, 2, 2, 2, 2,16 ; 60-69
+ dc.b  16,14, 2, 2, 2, 2, 2, 2, 2, 2 ; 70-79
+ dc.b  2, 2, 2, 2, 2, 2,14, 2, 2, 2 ; 80-89
+ dc.b  2, 2, 2, 2, 2, 2, 2, 2, 2, 2 ; 90-99
+ dc.b  2,14, 2, 2, 2, 2,14, 2, 2, 2 ; 100-109
+ dc.b  2,16, 16, 2, 2, 2, 2, 2, 2,14 ; 110-119
+
+
+; table giving scenery types on grassy plain grid
+m equ 112 ; minsynthroom
+; <<< not used in Lancelot3 >>>
+; dc.b m+1,m+1,m+1,m+1,m+1
+; dc.b m+1,m+1,m+1,m+1,m+1
+; dc.b m+1,m+1,m+1,m+1,m+1
+; dc.b m+1,m+1,m+1,m+1,m+1
+ even
+;---------
+list8
+; table for remarks made by 'PET' - Damosel Maledisant (Galahad in L3)...
+ dc.b 6,0 ; tried soup
+; ?,1
+ dc.b 26,3 ; bet you drop it!
+ dc.b 28,4 ; told you so
+ dc.b 29,5 ; "no key"
+ dc.b 70,6 ; walk on water
+ dc.b 82,7 ; that was very careless
+ dc.b 100,8 ; no where near good enough to help elaine
+ dc.b 102,9 ; weakling
+ dc.b 149,9 ; weakling
+ dc.b 103,10 ; now you've done it
+ dc.b 105,11 ; you horny little devil
+ dc.b 111,12 ; watch it - she's only after your title
+ dc.b 122,13 ; I hope you enjoyed that
+ dc.b 140,14 ; don't wake nabon!
+ dc.b 147,15 ; cowardly
+ dc.b 160,16 ; need hedge trimmer?
+ dc.b 185,17 ; can't refuse a challenge
+ dc.b 188,18 ; he wasn't a worthy opponent
+ dc.b 191,19 ; should have seen that coming
+ dc.b 201,20 ; that should have been you, L
+; dc.b 216,21 ; cocked that up!
+ dc.b 234,22 ; cowardly trick!
+ dc.b 243,23 ; didn't you rescue the hawk?
+ dc.b 245,24 ; not worthy to wear armour anyway
+ dc.b 255,250 ; add on 250 to numbers...
+
+ dc.b 12,25 ; ha ha!
+ dc.b 13,26 ; how cruel
+ dc.b 27,27 ; I think that was a mistake
+ dc.b 30,28 ; I think he saw you
+ dc.b 47,29 ; you didn't really expect treasure?
+ dc.b 0,0
+
+
+;
+;
+;---------
+ even
+NPCINITIAL
+list5
+; first we have a dummy entry for npc 0
+; this is used as some pointers to the *other*
+; things which are used in this list
+; (the equivalent of this area in list6 is used for temp workspace)
+;
+ dc.w floorpointers-npcinitial
+ dc.w racetracks-npcinitial
+ dc.w reversaltable-npcinitial
+ dc.w 0 ; spare
+;
+; For greed agression, timidity, obediance, there
+; is a special case - if one of the values is 255, then
+; the npc will always choose that one, if it is possible
+; This is particularly useful for slaves etc.
+; Note that npcs will still respond to attacks etc. - 
+; anything which sets the 'attention flag'
+
+FRIENDLY EQU 0
+dodge equ 0
+damage equ 0
+; now the npc tables themselves...
+defaultmale equ 3410
+defaultfemale equ 3420
+defaultanimal equ 3400
+; npc 0 has dummy entry used as pointers above
+
+; dc.b enemy, dodge, attack, hit points, obedience, patience, gold-sing
+; if bit 7 of the "enemy" byte is set, the npc will be inactive
+; until it meets Lancelot
+inactive equ $80
+disabled equ $40 ; set for npc's in part 2
+
+ dc.b FRIENDLY,dodge,35,100,3,0           ; 1 USER
+ dc.w defaultmale ; standard singing
+
+ dc.b inactive+disabled+friendly,dodge,10,100,255,1 ; 2 tristram
+ dc.w 3700
+
+ dc.b inactive+disabled+friendly,dodge,30,100,255,1 ; 3 galahad
+ dc.w 3700
+ dc.b inactive+disabled+friendly,dodge,30,100,255,1 ; 4 bors
+ dc.w 3700
+ dc.b inactive+disabled+friendly,dodge,30,100,255,1 ; 5 meliagaunt
+ dc.w 3700
+ dc.b inactive+disabled+friendly,dodge,30,100,255,1 ; 6 gawain
+ dc.w 3700
+ dc.b inactive+disabled+friendly,dodge,20,100,255,1 ; 7 red knight
+ dc.w 3700
+ dc.b inactive+disabled+friendly,dodge,2,10,255,1 ; 8 meliot
+ dc.w 3990 ; groaned etc.
+ dc.b inactive+disabled+friendly,dodge,30,100,255,1 ; 9 lamorak
+ dc.w 3700
+ dc.b inactive+disabled+friendly,dodge,30,100,255,1 ; 10 ector
+ dc.w 3700
+ dc.b inactive+disabled+friendly,dodge,30,100,255,1 ; 11 agravain
+ dc.w 3700
+ dc.b inactive+disabled+friendly,dodge,30,100,255,1 ; 12 aliduke
+ dc.w 3700
+ dc.b inactive+disabled+friendly,dodge,30,100,255,1 ; 13 brandiles
+ dc.w 3700
+ dc.b inactive+disabled+friendly,dodge,30,100,255,1 ; 14 brian
+ dc.w 3700
+ dc.b inactive+disabled+friendly,dodge,30,100,255,1 ; 15 geheris
+ dc.w 3700
+ dc.b inactive+disabled+friendly,dodge,30,100,255,1 ; 16 gareth
+ dc.w 3700
+ dc.b inactive+disabled+friendly,dodge,30,100,255,1 ; 17 lionel
+ dc.w 3700
+ dc.b inactive+disabled+friendly,dodge,30,100,255,1 ; 18 marhaus
+ dc.w 3700
+ dc.b friendly+disabled,dodge,10,60,255,1 ; 19 Breunis
+ dc.w 3710
+ dc.b inactive+friendly+disabled,dodge,20,60,255,1 ; 20 garlon
+ dc.w 3720
+ dc.b friendly+disabled,dodge,10,100,255,1 ; 21  (unused)
+ dc.w 0
+ dc.b inactive+disabled+friendly,dodge,20,100,255,1 ; 22 magic knight
+ dc.w 0
+ dc.b friendly+disabled,dodge,25,100,255,1 ; 23 Turquin
+ dc.w 3710 ; VERY rarely used - shares with another.
+ dc.b inactive+disabled+friendly,dodge,60,220,255,1 ; 24 pedivere
+ dc.w 0
+ dc.b inactive+disabled+friendly,dodge,20,100,255,1 ; 25 black knight
+ dc.w 3740
+ dc.b inactive+disabled+friendly,dodge,20,100,255,1 ; 26 green knight
+ dc.w 3740
+ dc.b inactive+disabled+friendly,dodge,20,100,255,1 ; 27 
+ dc.w 3740
+ dc.b inactive+disabled+friendly,dodge,10,100,255,1 ; 28 Hellawes
+ dc.w 3750
+ dc.b inactive+disabled+friendly,dodge,10,100,255,1 ; 29 Queen
+ dc.w 3760
+ dc.b inactive+disabled+friendly,dodge,10,100,255,1 ; 30 Queen
+ dc.w 3760
+ dc.b inactive+disabled+friendly,dodge,10,100,255,1 ; 31 Queen
+ dc.w 3760
+ dc.b inactive+disabled+friendly,dodge,10,100,255,1 ; 32 Queen
+ dc.w 3760
+ dc.b friendly+disabled+friendly,dodge,10,100,255,1 ; 33 Damosel Maledisant
+ dc.w 3770
+ dc.b disabled+friendly,dodge,10,100,255,1 ; 34 Damosel in castle Chariot
+ dc.w 0
+ dc.b inactive+disabled+friendly,dodge,10,100,255,1 ; 35 Damosel standing over body
+ dc.w 3780
+ dc.b inactive+disabled+friendly,dodge,10,100,255,1 ; 36 Lady with hawk
+ dc.w 3790
+ dc.b inactive+disabled+friendly,dodge,60,100,255,1 ; 37 giant Nabon
+ dc.w 0
+ dc.b friendly,dodge,10,100,200,1 ; 38 (Beggar)
+ dc.w 3850
+ dc.b friendly,dodge,10,100,100,1 ; 39 (Town Crier)
+ dc.w 3860
+ dc.b inactive+disabled+friendly,dodge,100,200,255,1 ; 40 army
+ dc.w 0
+ dc.b friendly+disabled,dodge,10,100,255,1 ; 41 carter
+ dc.w 0
+ dc.b inactive+disabled+friendly,dodge,10,100,255,1 ; 42 elaine
+ dc.w 0
+ dc.b inactive+disabled+friendly,dodge,10,100,255,1 ; 43 mermaid
+ dc.w 0
+ dc.b inactive+disabled+friendly,dodge,10,100,255,1 ; 44 old man
+ dc.w 0
+ dc.b inactive+disabled+friendly,dodge,50,200,255,1 ; 45 residents
+ dc.w 0
+ dc.b inactive+disabled+friendly,dodge,100,200,255,1 ; 46 sentries
+ dc.w 0
+ dc.b inactive+disabled+friendly,dodge,100,200,255,1 ; 47 30 knights
+ dc.w 3800
+ dc.b disabled+friendly,dodge,40,100,255,1 ; 48 guard
+ dc.w 3810
+ dc.b inactive+disabled+friendly,dodge,10,100,255,1 ; 49 dragon
+ dc.w 0
+ dc.b inactive+disabled+friendly,dodge,10,100,255,1 ; 50 hawk
+ dc.w 3820
+ dc.b inactive+disabled+friendly,dodge,10,100,255,1 ; 51 brachet
+ dc.w 3830
+
+
+; people in part 1...
+
+ dc.b inactive+friendly,dodge,60,200,255,1 ; 52 peasants
+ dc.w 3820
+ dc.b inactive+friendly,dodge,60,250,255,1 ; 53 crowd
+ dc.w 3830
+ dc.b inactive+friendly,dodge,10,100,255,1 ; 54 hawks
+ dc.w 3710
+
+
+ dc.b inactive+friendly,dodge,40,200,255,1 ; 55 Queen's knights
+ dc.w 3720
+ dc.b inactive+friendly,dodge,20,150,255,1 ; 56 black knight
+ dc.w 3730
+ dc.b inactive+friendly,dodge,10,100,255,1 ; 57 Guenever
+ dc.w 3740
+ dc.b inactive+friendly,dodge,20,100,200,1 ; 58 Sir Kay
+ dc.w 3750
+ dc.b inactive+friendly,dodge,30,100,255,1 ; 59 Sir Meliagaunt
+ dc.w 3760
+ dc.b inactive+friendly,dodge,40,200,255,1 ; 60 Arthur
+ dc.w 3770
+ dc.b friendly,dodge,10,100,255,1 ; 61 Sir Colgreavaunce
+ dc.w 3780
+ dc.b inactive+friendly,dodge,90,200,255,1 ; 62 Merlin
+ dc.w 3790
+ dc.b inactive+friendly,dodge,10,100,255,1 ; 63 Carter
+ dc.w 3800
+ dc.b inactive+friendly,dodge,10,100,255,1 ; 64 Damosel
+ dc.w 3810
+
+;---
+
+floorpointers
+; part of list5
+; now 'floor pointers'
+; there is one bye pair for each static room - the
+; first byte gives the direction to go inwards
+; and the second byte gives direction for going outwards
+; (i.e. towards the synthesised grid)
+;
+; ** BIG WARNING **
+; all shapes must be simply connected. i.e. given a pair of rooms,
+; you must be able to trace a path between them using only the
+; OUT paths of one OR the other.
+; This is because of the way the follow and GO code works.
+north equ 1
+ne equ 2
+east equ 3
+se equ 5
+south equ 4
+sw equ 6
+west equ 7
+nw equ 8
+up equ 9
+down equ 10
+verbin equ 11
+out equ 12
+cross equ 13
+climb equ 14
+jump equ 15
+
+ dc.b 0 ; room 0 (not used)
+ dc.b 0 ; room 1 (not used)
+ dc.b 0 ; 2 - 
+ dc.b west ; 3 -
+ dc.b south ; 4 - 
+ dc.b se ; 5 -
+ dc.b south ; 6
+ dc.b out ; 7 - 
+ dc.b south ; 8 - 
+ dc.b south ; 9 - 
+ dc.b west ; 10 - 
+ dc.b 0 ; 11
+ dc.b south ; 12 - 
+ dc.b south ; 13 - 
+ dc.b south ; 14 - 
+ dc.b west ; 15 - 
+ dc.b north ; 16 - 
+ dc.b down ; 17 - 
+ dc.b north ; 18 - 
+ dc.b north ; 19 - 
+ dc.b north ; 20 - 
+ dc.b down ; 21 - 
+ dc.b west ; 22 - 
+ dc.b west ; 23 - 
+ dc.b south ; 24
+ dc.b south ; 25 - 
+ dc.b north ; 26
+ dc.b out ; 27
+ dc.b out ; 28
+ dc.b down ; 29
+ dc.b down ; 30
+ dc.b west ; 31
+ dc.b east ; 32
+ dc.b out ; 33
+ dc.b up ; 34
+ dc.b west ; 35
+ dc.b up ; 36
+ dc.b west ; 37
+ dc.b east ; 38
+ dc.b south ; 39
+ dc.b 0 ; 40
+ dc.b 0 ; 41
+ dc.b 0 ; 42
+ dc.b 0 ; 43
+ dc.b 0 ; 44
+ dc.b north ; 45
+ dc.b west ; 46
+ dc.b west ; 47
+ dc.b north ; 48
+ dc.b north ; 49
+ dc.b south ; 50
+ dc.b south ; 51
+ dc.b east ; 52
+ dc.b east ; 53
+ dc.b north ; 54
+ dc.b east ; 55
+ dc.b east ; 56
+ dc.b east ; 57
+ dc.b south ; 58
+ dc.b north ; 59
+ dc.b east ; 60
+ dc.b se ; 61
+ dc.b down ; 62
+ dc.b sw ; 63
+ dc.b sw ; 64
+ dc.b 0 ; 65
+ dc.b east ;66
+ dc.b east ; 67
+ dc.b east ; 68
+ dc.b down ; 69
+ dc.b west ; 70
+ dc.b west ; 71
+ dc.b south ; 72
+ dc.b south ; 73
+ dc.b south ; 74
+ dc.b south ; 75
+ dc.b south ; 76
+
+ dc.b south ; 77
+ dc.b south ; 78
+ dc.b south ; 79
+ dc.b south ; 80
+ dc.b south ; 81
+
+ dc.b south ; 82
+ dc.b south ; 83
+ dc.b south ; 84
+ dc.b south ; 85
+ dc.b south ; 86
+
+ dc.b south ; 87
+ dc.b south ; 88
+ dc.b south ; 89
+ dc.b south ; 90
+ dc.b south ; 91
+
+ dc.b east ; 92
+ dc.b south ; 93
+ dc.b west ; 94
+ dc.b west ; 95
+ dc.b west ; 96
+
+ dc.b east ; 97
+ dc.b south ; 98
+ dc.b south ; 99
+ dc.b east ; 100
+ dc.b south ; 101
+ dc.b south ; 102
+ dc.b south ; 103
+ dc.b south ; 104
+ dc.b south ; 105
+ dc.b south ; 106
+ dc.b south ; 107
+ dc.b south ; 108
+ dc.b west ; 109
+ dc.b west ; 110
+ dc.b east ; 111
+ dc.b north ; 112
+ dc.b down ; 113
+ dc.b down ; 114
+ dc.b south ; 115
+ dc.b south ; 116
+ dc.b south ; 117
+ dc.b south ; 118
+ dc.b south ; 119
+ dc.b 0 ; 120
+ dc.b 0 ; 121
+ dc.b 0 ; 122
+ dc.b 0 ; 123
+ dc.b 0 ; 124
+ dc.b 0 ; 125
+ dc.b 0 ; 126
+ dc.b 0 ; 127
+ dc.b 0 ; 128
+ dc.b 0 ; 129
+ dc.b 0 ; 130
+ dc.b 0 ; 131
+ dc.b 0 ; 132
+ dc.b 0 ; 133
+ dc.b 0 ; 134
+ dc.b down ; 135
+ dc.b 0 ; 136
+ dc.b 0 ; 137
+ dc.b 0 ; 138
+ dc.b 0 ; 139
+ dc.b south ; 140
+ dc.b south ; 141
+ dc.b west ; 142
+ dc.b south ; 143
+ dc.b south ; 144
+ dc.b south ; 145
+ dc.b south ; 146
+ dc.b south ; 147
+ dc.b east ; 148
+ dc.b west ; 149
+ dc.b down ; 150
+ dc.b south ; 151
+ dc.b east ; 152
+ dc.b north ; 153
+ dc.b west ; 154
+ dc.b north ; 155
+ dc.b south ; 156
+ dc.b south ; 157
+ dc.b east ; 158
+ dc.b down ; 159
+ dc.b out ; 160
+ dc.b north ; 161
+ dc.b 0 ; 162
+ dc.b 0 ; 163
+ dc.b east ; 164
+ dc.b east ; 165
+ dc.b east ; 166
+ dc.b east ; 167
+ dc.b east ; 168
+ dc.b east ; 169
+ dc.b east ; 170
+ dc.b east ; 171
+ dc.b west ; 172
+ dc.b west ; 173
+ dc.b north ; 174
+ dc.b north ; 175
+ dc.b north ; 176
+ dc.b north ; 177
+ dc.b east ; 178
+ dc.b north ; 179
+
+;---
+ even
+racetracks
+; sequences of commands which actors obey
+; each is referred to by a 16-bit offset from the start of list5
+; the initial sequences are contained in this table at the start..
+ dc.w 0 ; 0
+ dc.w 0 ; 1 - 
+ dc.w 0 ; 2 - 
+ dc.w 0 ; 3 - 
+ dc.w 0 ; 4 - 
+ dc.w 0 ; 5 - 
+ dc.w 0 ; 6 - 
+ dc.w 0 ; 7 - 
+ dc.w 0 ; 8 - galahad
+ dc.w 0 ; 9
+ dc.w 0 ; 10
+ dc.w 0 ; 11
+ dc.w 0 ; 12
+ dc.w 0 ; 13
+ dc.w 0 ; 14 - penniless cleric
+ dc.w 0 ; 15
+ dc.w 0 ; 16
+ dc.w 0 ; 17
+ dc.w 0 ; 18
+ dc.w BreunisRt-list5 ; 19 Breunis Sans Pite
+ dc.w 0 ; 20
+ dc.w 0 ; 21
+ dc.w 0 ; 22
+ dc.w TurquinRt-list5 ; 23 turquin
+ dc.w 0 ; 24
+ dc.w 0 ; 25
+ dc.w 0 ; 26
+ dc.w 0 ; 27
+ dc.w 0 ; 28
+
+ dc.w MorganRt-List5 ; 29 Queen Morgan Le Fey
+ dc.w 0 ; 30
+ dc.w 0 ; 31
+ dc.w 0 ; 32
+ dc.w MaledisantRt-list5 ; 33 - damosel Maledisant
+ dc.w damoselRt-list5 ; 34 damosel in castle chariot
+ dc.w 0 ; 35
+ dc.w 0 ; 36
+ dc.w 0 ; 37
+ dc.w BeggarRt-List5 ; 38
+ dc.w TownCrierRt-List5 ; 39
+ dc.w 0 ; 40
+ dc.w carterRT-list5 ; 41 carter
+ dc.w 0 ; 42
+ dc.w 0 ; 43
+ dc.w 0 ; 44
+ dc.w 0 ; 45
+ dc.w 0 ; 46
+ dc.w 0 ; 47
+ dc.w 0 ; 48
+ dc.w 0 ; 49
+ dc.w 0 ; 50
+ dc.w brachetRt-list5 ; 51 brachet
+ dc.w PeasantsRt-List5 ; 52 - peasants
+ dc.w ExamineBeaconRt-list5 ; 53 - rt to look at rt
+ dc.w 0 ; 54
+ dc.w 0 ; 55
+ dc.w P1BlackKnightRt-list5 ; 56 black knight (Arthur)
+ dc.w 0 ; 57
+ dc.w KayRt-list5 ; 58 ; Sir Kay
+ dc.w MeliagauntNormalRt-list5 ; 59 Sir Meliagaunt at home
+ dc.w ArthurRt-list5 ; 60 real Arthur
+ dc.w 0 ; 61
+ dc.w MerlinRt-list5 ; 62
+ dc.w P1CarterRt-list5 ; 63
+ dc.w P1DamoselRt-list5 ; 64 damosel in Meliagaunt's castle
+ dc.w 0 ; 65
+ dc.w 0 ; 66
+ dc.w KayCritiqueRt-list5 ; 67
+ dc.w MeliagauntRt-list5 ; 68
+ dc.w P1KnightRt-list5 ; 69
+ dc.w RescuedKnightRt-list5 ; 70
+ dc.w GuenBackToArthurRt-list5 ; 71
+
+StartRt
+; each of the race track entries has a 4-byte entry:
+; VERB PREP NOUN1 NOUN2
+ipin equ 7
+ipwith equ 16
+
+drop equ 107
+attack equ 40
+ifollow equ 113
+open equ 114 ;64
+go equ 96 ; go to room noun1 (=setupgo)
+close equ 140 ; 90
+wait equ 92
+examine equ 100
+take equ 105
+give equ 111
+eat equ 123
+find equ 139
+kill equ 93
+waitforperson equ 89
+waituntiltime equ 90
+waitforperiod equ 91
+put equ 108
+returnobject equ 136
+gdfind equ 139
+
+Conditional equ 247
+
+ActorVaryMessage equ 248 ; goes straight on in same turn to next step in rt
+WRtActorVaryMessage equ ActorVaryMessage*256
+
+ActorSingleMessage equ 249 ; this completes actor's turn. Like ActorM1Dot
+WActorSingleMessage equ ActorSingleMessage*256
+
+;; racetrackActorM1Dot equ 250
+racetrackmessage equ 251
+WRtMessage equ racetrackMessage*256
+
+racetrackgosub equ 253
+WRtGosub equ racetrackGosub*256
+
+racetrackgoto equ 254
+WRtGoto equ racetrackGoto*256
+
+racetrackreturn equ 255
+light equ 165 ; 115
+ride equ  185 ; 135
+
+stand equ 46
+lie equ 47
+drink equ 60
+wear equ 106
+remove equ 109
+
+; nouns...
+people equ 237
+everything equ 234
+nullobject equ 255
+
+water equ 241 ; noun
+
+; prepositions...
+to equ 202
+; note that:
+;
+; NOUN1 will always be searched for if not accessible
+; to the verb (using the usual accessability rules)
+;
+; NOUN2 will normally be searched for using the same rules.
+; There are situations where this is awkward - so if the
+; preposition is WITH, then NOUN2 must be carried (or it will
+; be searched for by the npc).
+;
+;---
+GuenBackToArthurRt
+ dc.w WActorSingleMessage,2678 ; thanks L.
+ dc.b go,0,151,nullobject ; back to castle
+ dc.w WActorSingleMessage,2679 ; hi hubby!
+ dc.b racetrackReturn,0,nullobject,nullobject
+;---
+RescuedKnightRt
+; dc.w WActorSingleMessage,2603 ; bowed low and promised further service
+RKRt
+ dc.b go,0,154,nullobject
+ dc.w WActorSingleMessage,2700 ; knelt at altar
+ dc.w WActorSingleMessage,2701 ; prayed
+ dc.b gdfind,0,merlin,nullobject
+ dc.w WActorSingleMessage,2702 ; greeted Merlin
+ dc.w WActorSingleMessage,2703 ; discussed Logris
+ dc.b go,0,176,nullobject
+ dc.w WActorSingleMessage,2704 ; lay down in grass
+ dc.w WActorSingleMessage,2705 ; slept
+ dc.w WActorSingleMessage,2706 ; slept
+ dc.w WActorSingleMessage,2707 ; slept
+ dc.w WRtGoto,RKRt-list5
+;---
+ArthurRt
+ dc.b WaitForPerson,0,user,nullobject
+ dc.w WActorSingleMessage,2490 ; greetings
+ dc.w WActorSingleMessage,2491 ; greetings
+ dc.w WActorSingleMessage,2492 ; knighted
+ dc.w WActorSingleMessage,2493 ; goodbye
+; and continue saying goodbye until L goes
+ByeLLoop
+  dc.b Conditional,0,user,nullobject
+   dc.w WRtGoto,ByeL-list5
+; terminate Rt when L has gone.
+ dc.b RacetrackReturn,0,nullobject,nullobject
+
+ByeL
+ dc.w WActorSingleMessage,2494 ; goodbye
+ dc.w WRtGoto,ByeLLoop-list5
+;---
+BreunisRt
+ dc.b go,0,91,nullobject
+  dc.b conditional,0,user,nullobject
+   dc.w WRtGoto,BreunisAttackRt-list5
+ dc.b go,0,90,nullobject
+  dc.b conditional,0,user,nullobject
+   dc.w WRtGoto,BreunisAttackRt-list5
+ dc.b go,0,95,nullobject
+  dc.b conditional,0,user,nullobject
+   dc.w WRtGoto,BreunisAttackRt-list5
+ dc.b go,0,94,nullobject
+  dc.b conditional,0,user,nullobject
+   dc.w WRtGoto,BreunisAttackRt-list5
+ dc.b go,0,93,nullobject
+  dc.b conditional,0,user,nullobject
+   dc.w WRtGoto,BreunisAttackRt-list5
+ dc.b go,0,97,nullobject
+  dc.b conditional,0,user,nullobject
+   dc.w WRtGoto,BreunisAttackRt-list5
+ dc.w WRtGoto,BreunisRt-list5
+
+BreunisAttackRt
+ dc.b attack,0,user,nullobject
+ dc.b attack,0,user,nullobject
+ dc.b attack,0,user,nullobject
+ dc.b attack,0,user,nullobject
+ dc.b attack,0,user,nullobject
+ dc.b go,0,86,nullobject
+ dc.w WRtGoto,BreunisRt-list5
+
+;---
+
+P1KnightRt
+; racetrack started when L+G are together at end
+ dc.w WRtMessage,2681 ; knock at door
+ dc.b waitForPeriod,0,1,nullobject
+ dc.w WRtMessage,2682 ; knock at door 2
+ dc.b waitForPeriod,0,1,nullobject
+ dc.w WRtMessage,2683 ; knock at door 3
+ dc.b waitForPeriod,0,1,nullobject
+ dc.w WRtMessage,2684 ; knock at door 4
+ dc.b waitForPeriod,0,1,nullobject
+ dc.w WRtMessage,2685 ; knock at door 5
+ dc.b waitForPeriod,0,1,nullobject
+ dc.w WRtMessage,2686 ; knock at door 6 - kills L
+ dc.b racetrackReturn,0,nullobject,nullobject
+;---
+P1DamoselRt
+ dc.b WaitForPeriod,0,0,nullobject
+ dc.w WRtGosub,P1DamoselRtSub-list5
+ dc.w WRtGosub,P1DamoselRtSub-list5
+ dc.w WActorSingleMessage,2670 ; promise freedom if L kisses her
+ dc.b waitForPeriod,0,2,nullobject
+ dc.b RacetrackMessage,0
+  dc.w 2672 ; left, G dies etc.etc.etc.
+ dc.b go,0,161 ; go out
+ dc.w WRtMessage,2669 ; a night and a day passed
+ dc.b waitForPeriod,0,0,nullobject
+P1DamoselLoop
+ dc.w WRtGosub,P1DamoselRtSub-list5
+ dc.w WRtGoto,P1DamoselLoop-list5
+;---
+P1DamoselRtSub
+ dc.w WActorSingleMessage,2666 ; promise freedom if L marries her
+ dc.b waitForPeriod,0,0,nullobject
+ dc.b RacetrackMessage,0
+  dc.w 2668 ; sighed and left
+ dc.b go,0,161,nullobject ; go out
+ dc.w WRtMessage,2669 ; a night and a day passed
+ dc.b waitForPeriod,0,0,nullobject
+ dc.b go,0,160,nullobject ; back into prison
+ dc.b racetrackReturn,0,nullobject,nullobject
+
+;---
+P1CarterRt
+ dc.w WActorSingleMessage,2720 ; collected stuff from meadows
+ dc.b go,0,223,nullobject
+ dc.w WActorSingleMessage,2721 ; deliveries
+ dc.w WActorSingleMessage,2722 ; deliveries
+ dc.b go,0,179,nullobject
+ dc.w WActorSingleMessage,2723 ; deliveries
+ dc.b go,0,176,nullobject ; to meadows
+ dc.w WRtGoto,P1CarterRt-list5
+;---
+MeliagauntNormalRt
+;inactive at start. dc.b waitForPerson,0,user,nullobject
+ dc.w WActorSingleMessage,2649 ; sore afraid
+ dc.b go,0,156,nullobject
+ dc.b waitForPerson,0,user,nullobject
+ dc.w WActorSingleMessage,2655 ; knelt to Guenever
+ dc.b go,0,135,nullobject ; go out of way
+ dc.b racetrackReturn,0,nullobject,nullobject
+;---
+MeliagauntRt
+ dc.b go,0,157,nullobject
+  dc.b conditional,0,user,nullobject
+   dc.w WRtGoto,MeliagauntSawLancelot-list5
+
+ dc.w WActorSingleMessage,2634 ; footsteps louder
+  dc.b conditional,0,user,nullobject
+   dc.w WRtGoto,MeliagauntSawLancelot-list5
+
+ dc.w WActorSingleMessage,2635 ; knock on door
+  dc.b conditional,0,user,nullobject
+   dc.w WRtGoto,MeliagauntSawLancelot-list5
+
+ dc.b go,0,156,nullobject ; go inside
+
+; now criticize the queen
+  dc.b conditional,0,user,nullobject
+   dc.w WRtGoto,MeliagauntSawLancelot-list5
+
+ dc.w WActorSingleMessage,2660 ; shout 1
+  dc.b conditional,0,user,nullobject
+   dc.w WRtGoto,MeliagauntChallengeLancelot-list5
+
+ dc.w WActorSingleMessage,2661 ; shout 2
+  dc.b conditional,0,user,nullobject
+   dc.w WRtGoto,MeliagauntChallengeLancelot-list5
+
+;>>mike 31/8/88 dc.b WaitForPeriod,0,2,nullobject
+ dc.b WaitForPeriod,0,0,nullobject
+  dc.b conditional,0,user,nullobject
+   dc.w WRtGoto,MeliagauntChallengeLancelot-list5
+
+ dc.b WaitForPeriod,0,0,nullobject
+  dc.b conditional,0,user,nullobject
+   dc.w WRtGoto,MeliagauntChallengeLancelot-list5
+
+ dc.w WActorSingleMessage,2662 ; shout 3
+  dc.b conditional,0,user,nullobject
+   dc.w WRtGoto,MeliagauntChallengeLancelot-list5
+
+ dc.w WActorSingleMessage,2663 ; shout 4
+  dc.b conditional,0,user,nullobject
+   dc.w WRtGoto,MeliagauntChallengeLancelot-list5
+
+;>>mike 31/8/88 dc.b WaitForPeriod,0,2,nullobject
+ dc.b WaitForPeriod,0,0,nullobject
+  dc.b conditional,0,user,nullobject
+   dc.w WRtGoto,MeliagauntChallengeLancelot-list5
+
+ dc.b WaitForPeriod,0,0,nullobject
+  dc.b conditional,0,user,nullobject
+   dc.w WRtGoto,MeliagauntChallengeLancelot-list5
+
+ dc.w WActorSingleMessage,2664 ; shout 5 - queen is dead
+  dc.b conditional,0,user,nullobject
+   dc.w WRtGoto,MeliagauntChallengeLancelot-list5
+
+
+MeliagauntSawLancelot
+  dc.b Conditional,0,user,nullobject
+   dc.w WActorSingleMessage,2636 ; Meliagaunt saw L, unhappy
+ dc.b RacetrackReturn,0,nullobject,nullobject
+;---
+MeliagauntChallengeLancelot
+ dc.w WActorSingleMessage,2659 ; challenge, M goes.
+; moved to pyre
+ dc.b WaitForPerson,0,user,nullobject
+ dc.w WActorSingleMessage,3760 ; stoking fire etc.
+ dc.w WActorSingleMessage,3761 ; stoking fire etc.
+ dc.w WActorSingleMessage,3762 ; stoking fire etc.
+ dc.b WaitForPeriod,0,2,nullobject
+ dc.w WActorSingleMessage,3763 ; stoking fire etc.
+ dc.w WActorSingleMessage,3764 ; stoking fire etc.
+
+ dc.b WaitForPeriod,0,2,nullobject
+ dc.w RacetrackMessage,2693 ; burn guen
+ dc.b RacetrackReturn,0,nullobject,nullobject
+;---
+MerlinRt
+; inactive until L appears
+  dc.b Conditional,0,HawkDroppings,nullobject
+   dc.w WRTGoto,MerlinSmellyRt-list5
+ dc.w WActorSingleMessage,2585 ; I suppose you need a room
+ dc.w WrtGoto,MerlinAfterSleepRt-list5
+
+MerlinSmellyRt
+ dc.w WActorSingleMessage,2586 ; what a smell!
+
+MerlinAfterSleepRt
+ dc.b go,0,140,nullobject
+ dc.w WActorSingleMessage,2590
+ dc.b go,0,142,nullobject
+ dc.w WActorSingleMessage,2591
+ dc.b go,0,169,nullobject
+ dc.w WActorSingleMessage,2592
+ dc.b go,0,143,nullobject
+ dc.w WActorSingleMessage,2593
+ dc.w WRtGoto,MerlinAfterSleepRt-list5
+;---
+WaitForLancelot
+; try to wait for L to arrive
+ dc.b conditional,0,user,nullobject
+  dc.w WRTGoto,WFLOk-List5 ; Lancelot has arrived
+ dc.b WaitForPeriod,0,0,nullobject
+
+ dc.b conditional,0,user,nullobject
+  dc.w WRTGoto,WFLOk-List5 ; Lancelot has arrived
+ dc.b WaitForPeriod,0,0,nullobject
+
+ dc.b conditional,0,user,nullobject
+  dc.w WRTGoto,WFLOk-List5 ; Lancelot has arrived
+ dc.b WaitForPeriod,0,0,nullobject
+
+ dc.b conditional,0,user,nullobject
+  dc.w WRTGoto,WFLOk-List5 ; Lancelot has arrived
+ dc.b WaitForPeriod,0,0,nullobject
+
+; L still not here - let's go about our business
+WFLOk
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+PeasantsRt
+ dc.b conditional,0,beggar,nullobject
+  dc.w WActorSingleMessage,3900
+
+ dc.w WrtGosub,WaitForLancelot-list5
+ dc.w WActorSingleMessage,3901 ; went swimming
+ dc.w WActorSingleMessage,3902
+
+ dc.b conditional,0,beggar,nullobject
+  dc.w WActorSingleMessage,3900
+
+ dc.w WActorSingleMessage,3903
+ dc.w WActorSingleMessage,3904
+
+ dc.b conditional,0,beggar,nullobject
+  dc.w WActorSingleMessage,3900
+
+ dc.w WActorSingleMessage,3905
+ dc.w WActorSingleMessage,3906
+ dc.w WRTGoto,PeasantsRt-list5
+
+BeggarRt
+ dc.b go,0,167,nullobject ; go to peasant's village
+ dc.w WActorSingleMessage,3918 ; drank some water
+ dc.b WaitForPeriod,0,4,nullobject ; wait for some food
+ dc.b gdfind,0,TownCrier,Nullobject ; go see him
+ dc.b WaitForPeriod,0,3,nullobject ; wait for some insults
+ dc.b go,0,154,nullobject ; go to altar
+ dc.w WActorSingleMessage,3916 ; made a donation
+ dc.w WActorSingleMessage,3917 ; prayed silently
+ dc.w WRTGoto,BeggarRt-list5
+
+
+TownCrierRt
+ dc.b go,0,222,nullobject ; west way
+ dc.w WRTGosub,TCSubRt-list5
+ dc.b go,0,223,nullobject ; market square
+ dc.w WRTGosub,TCSubRt-list5
+ dc.b go,0,173,nullobject ; to cloisters
+ dc.w WRTGosub,TCSubRt-list5
+ dc.b go,0,225 ; north way
+ dc.w WRTGosub,TCSubRt-list5
+ dc.b go,0,171 ; stables near mews
+ dc.w WRTGosub,TCSubRt-list5
+ dc.w WRtGoto,TownCrierRt-list5
+
+TCSubRt
+ dc.b conditional,0,beggar,nullobject
+  dc.w WActorSingleMessage,3919 ; vagrants should be hung
+
+ dc.b conditional,0,SirKay,nullobject
+  dc.w WRTGoto,TCSirKAyRt-list5
+ dc.b racetrackReturn,0,nullobject,nullobject
+;----
+
+TCSirKayRt
+  dc.w WActorSingleMessage,3920 ; kay voted knight of the year
+  dc.w WActorSingleMessage,3921 ; etc.
+
+ dc.b conditional,0,SirKay,nullobject
+  dc.w WRtGoto,TCSirKayRt-list5
+ dc.w WActorSingleMessage,3922 ; Kay should be hung
+ dc.w WRtGoto,TownCrierRt-list5
+
+
+KayRt
+; inactive until L appears
+; just wander around Camelot at random
+ dc.b go,0,152,nullobject ; to serf's gate
+ dc.w WRTGosub,WaitForLancelot-list5
+ dc.w WActorSingleMessage,3908 ; criticised gate guards
+
+ dc.b go,0,167,nullobject ; to peasant's village
+ dc.w WRTGosub,WaitForLancelot-list5
+ dc.w WActorSingleMessage,3907 ; kicked a peasant
+
+ dc.b go,0,155,nullobject ; to bishop's gate
+ dc.w WRTGosub,WaitForLancelot-list5
+ dc.w WActorSingleMessage,3908 ; criticised gate guards
+
+ dc.b go,0,154,nullobject ; to altar
+ dc.w WRTGosub,WaitForLancelot-list5
+ dc.w WActorSingleMessage,3909 ; start of slapstick church scene
+ dc.w WActorSingleMessage,3910 ; 
+ dc.w WActorSingleMessage,3911 ; 
+ dc.w WActorSingleMessage,3912 ; 
+ dc.w WActorSingleMessage,3913 ; 
+ dc.w WActorSingleMessage,3914 ; 
+ dc.b conditional,0,beggar,nullobject
+  dc.w WActorSingleMessage,3915 ; kicked beggar
+
+ dc.b go,0,151,nullobject ; go see king arthur
+ dc.w WActorSingleMessage,3923 ; bowed to the king
+ dc.b conditional,0,Guenever,nullobject
+  dc.w WActorSingleMessage,3924 ; bowed to guenever
+ dc.w WActorSingleMessage,3925 ; fawned to king
+
+ dc.w WRtGoto,KayRt-list5
+
+
+KayCritiqueRt
+; this racetrack is activated when L sleeps in the mews
+ dc.b gdfind,0,user,nullobject
+  dc.b Conditional,0,HawkDroppings,nullobject
+   dc.w WRtGoto,KayCritiqueRt2-list5
+; rats - he's cleaned himself up!
+ dc.w WRtGoto,KayRt-list5
+
+KayCritiqueRt2
+ dc.w WActorSingleMessage,2526 ; hilarity
+ dc.b gdfind,0,user,nullobject ; track user down
+ dc.w WActorSingleMessage,2527 ; more hilarity
+ dc.b gdfind,0,user,nullobject ; track him!
+ dc.w WActorSingleMessage,2528 ; explains about mews etc.
+ dc.w WRtGoto,KayRt-list5 ; back to default Rt
+
+;---
+
+P1BlackKnightRt
+; inactive until L appears.
+ dc.b WaitForPeriod,0,2,Nullobject
+ dc.w WActorSingleMessage,2505 ; come on!
+ dc.b WaitForPeriod,0,2,Nullobject
+ dc.w WActorSingleMessage,2506 ; well, then I will strike you
+ dc.b kill,0,user,nullobject
+ dc.b racetrackReturn,0,nullobject,nullobject
+
+MaledisantRt
+; background actions - gives responses to particular objects/people
+ dc.b gdfind,0,user,nullobject
+; dc.b WaitForPeriod,0,0,nullobject
+  dc.b conditional,0,army,nullobject
+   dc.w WRtGoto,goHill-list5
+  dc.b Conditional,0,QueenMorgan,nullobject
+   dc.w WRtGoto,goBriars-list5
+  dc.b Conditional,0,Elaine,nullobject
+   dc.w WRtGoto,LeaveCorbin-list5
+ dc.w WRtGoto,MaledisantRt-list5
+
+LeaveCorbin
+; sulk outside until L has finished
+ dc.w WActorSingleMessage,2842 ; if you're fooling with Elaine, I'm off...
+ dc.b go,0,71,nullobject
+ dc.w WRtGoto,SulkRt-list5
+
+goBriars
+; sulk near briars until L has finished with Queens etc.
+ dc.w WRtMessage,2841 ; if you're getting married, I'm off...
+ dc.b go,0,56,nullobject
+ dc.w WRtGoto,SulkRt-list5
+
+goHill
+; sulk near hill until L appears
+ dc.w WActorSingleMessage,2840 ; if you're fighting an army, I'm off...
+ dc.b go,0,66,nullobject
+SulkRt
+ dc.b WaitForPerson,0,user,nullobject
+ dc.w WActorSingleMessage,2843 ; where have you been?
+ dc.w WRtGoto,MaledisantRt-list5
+;---
+ExamineBeaconRt
+ dc.b go,0,113,nullobject
+ dc.w WActorSingleMessage,2788 ; the guard put out the beacon
+ dc.b go,0,111,nullobject
+ dc.b racetrackReturn,0,nullobject,nullobject
+
+BrachetRt
+ dc.b go,0,25,nullobject
+ dc.b Conditional,0,Meliot,nullobject
+  dc.w WRtGoto,BrachetLicksMeliot-list5
+
+BrachetRt2
+ dc.b go,0,108,nullobject
+ dc.b racetrackGoto,0
+  dc.w BrachetRt-list5
+
+BrachetLicksMeliot
+ dc.w WActorSingleMessage,2810
+ dc.w WActorSingleMessage,2811
+ dc.w WActorSingleMessage,2812
+ dc.w WRTGoto,brachetRt2-list5
+
+
+TurquinRt
+ dc.b go,0,50,nullobject
+ dc.b racetrackMessage
+  dc.w 2685 ; chalenge to Lancelot
+ dc.b WaitForPeriod,0,3,NullObject
+  dc.b Conditional,0,user,nullobject
+   dc.W WRtGoto,TurquinAttackUser-list5
+TurquinBackInside
+ dc.b RaceTrackMessage,0
+  dc.w 2686 ; Turquin knocked on door, manor door opened
+ dc.b go,0,7,NullObject
+ dc.b WaitForPeriod,0,3,NullObject
+ dc.b RaceTrackGoto,0
+  dc.w TurquinRT-list5
+
+TurquinAttackUser
+; attack user ONLY whilst he's present
+ dc.b attack,0,user,nullobject
+  dc.b Conditional,0,user,nullobject
+   dc.w WRtGoto,TurquinAttackUser-list5
+ dc.w WRtGoto,TurquinBackInside-list5
+;--- 
+CarterRT
+ dc.b go,0,64,nullobject
+ dc.b go,0,62,nullobject
+ dc.b racetrackgoto,0
+  dc.w CarterRT-list5
+
+
+DamoselRt
+ dc.b go,0,10,nullobject
+ dc.b racetrackMessage,0
+  dc.w 2676 ; offered food to lancelot
+ dc.b waitForPeriod,0,2,NullObject ; allow L to take it
+;; dc.b drop,0,food,nullobject
+ dc.b go,0,8,nullobject
+ dc.b WaitForPeriod,0,2,NullObject ; give queen time to leave
+ dc.b WaitForPerson,0,QueenMorgan,Nullobject
+ dc.b racetrackGoto,0
+  dc.w DamoselRt-list5
+
+MorganRT
+ dc.b go,0,8,nullobject
+ dc.b waitForPerson,0,Damosel,Nullobject
+ dc.b RaceTrackMessage,0
+  dc.w 2679 ; another day and night passed
+ dc.b go,0,10,Nullobject
+ dc.b RaceTrackMessage,0
+  dc.w 2670 ; offered wine
+ dc.b WaitForPeriod,0,1,NullObject
+; dc.b drop,0,Wine,nullobject
+ dc.b RaceTrackMessage,0
+  dc.w 2671 ; have you changed your mind
+ dc.b RaceTrackGoto,0
+  dc.w MorganRT-List5
+
+
+;GalahadRT
+; dc.b go,0,33,nullobject ; go see nacien
+; dc.b go,0,38,nullobject ; go to white abbey
+; dc.b go,0,123,nullobject ; go to shore
+; dc.b go,0,10,nullobject ; go to vagon castle
+; dc.b racetrackgoto,0
+;  dc.w GalahadRT-list5
+;
+;ClericRT
+; dc.b go,0,38,nullobject ; go abbey
+; dc.b go,0,52,nullobject ; go to church
+; dc.b racetrackGoto,0
+;  dc.w ClericRT-list5
+
+;---
+ even
+reversaltable
+; part of list5
+; gives reverse directions for directions
+ dc.b 0,4,6,7,1,8,2,3,5 ; compass directions
+ dc.b 10,9,12,11,13,14,15
+;-----------
+
+; dc.b 23,97,145,26,14,5,88,13,52 ; ONLY ASSEMBLED ON VERSION
+;; GIVEN TO DELTA 4 - 14/5/88 13:52
+
+ even
+
+ENDTABLE
+;---------
+ END
+

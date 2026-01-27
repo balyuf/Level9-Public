@@ -1,0 +1,979 @@
+; MENUDATA.TXT
+;
+; included from table.txt in all parts of game.
+;
+; Mike Austin August 1990.
+;
+; Copyright (C) 1990 Level 9 Computing Ltd.
+;
+;
+MenuStructures
+; menu data for game. Each entry contains two words:
+;   .w Message number of appear on menu, relative to MM (0 if 
+;       end of this menu)
+;   .w (1) MDoIt + return code.
+;      (2)    MMenu + Offset of menu to go to if item selected. 0 to
+;                  quit menus
+;      (3) MPrintM1 + Message number to print in response, relative to MM
+;                  A further click returns to the previous menu
+;      (4) MActorM1 + Message number. As MResp, but puts
+;                   (Billy/Pat) at start of message.
+;      (5) MPrintDOM1 + Message number to print in response, relative to MM
+;                  the offset from MM is then return as a return code.
+;      (6) MActorDOM1 + Message number. As MResp, but puts
+;                   (Billy/Pat) at start of message.
+;                  the offset from MM is then return as a return code.
+
+LoseRepMessage equ 907 ; message checked for to reduce player's
+; reputation by a bit (When no specific message is printed)
+
+MDoIt equ $0000
+MPrintM1 equ $1000
+MActorM1 equ $2000
+MMenu equ $3000
+MPrintDOM1 equ $4000
+MActorDOM1 equ $5000
+MSpecial equ $6000 * used for e.g. die. Bottom bits are parameter:
+Die equ 1
+FFF equ $0fff
+
+MM equ 600 ; first message number used in menu data
+ dc.w Menu0-IntroTables ; click on town main menu
+ dc.w Menu2-IntroTables ; click on town sub-menu (debug)
+ dc.w Menu4-IntroTables ; click on town sub-menu (debug)
+ DC.W Menu6-IntroTables ; click on train
+ DC.W Menu8-IntroTables ; click on wagon train
+ DC.W Menu10-IntroTables ; click on apache
+ dc.w Menu12-IntroTables ; click at bar
+ dc.w Menu14-IntroTables ; click at call girl
+ dc.w Menu16-IntroTables ; player meets someone
+ dc.w Menu18-IntroTables ; general yes/no question. Returns 0 if no
+ dc.w Menu20-IntroTables ; debugging menu for Billy
+ dc.w Menu22-IntroTables ; debugging menu for Pat
+ dc.w Menu24-IntroTables ; 
+ dc.w Menu26-IntroTables ; rob bank menu for Billy
+ dc.w Menu28-IntroTables ; Hello stranger (Billy)
+ dc.w Menu30-IntroTables ; Hello stranger (Pat)
+ dc.w Menu32-IntroTables ; "we've been robbed"
+ dc.w Menu34-IntroTables ; "we've been robbed by someone not Billy"
+ dc.w Menu36-IntroTables ; Hello again
+ dc.w 0 ;Menu38-IntroTables ; 
+ dc.w 0 ;Menu40-IntroTables ; 
+ dc.w 0 ;Menu42-IntroTables ; 
+ dc.w 0 ;Menu44-IntroTables ; 
+ dc.w 0 ;Menu46-IntroTables ; 
+ dc.w 0 ;Menu48-IntroTables ; 
+ dc.w Menu50-IntroTables ; 
+ dc.w Menu52-IntroTables ; 
+ dc.w Menu54-IntroTables ; 
+ dc.w Menu56-IntroTables ; 
+ dc.w Menu58-IntroTables ; 
+ dc.w Menu60-IntroTables ; 
+ dc.w Menu62-IntroTables ; 
+ dc.w Menu64-IntroTables ; 
+ dc.w Menu66-IntroTables ; 
+ dc.w Menu68-IntroTables ; 
+ dc.w Menu70-IntroTables ; 
+ dc.w Menu72-IntroTables ; 
+ dc.w Menu74-IntroTables ; 
+ dc.w Menu76-IntroTables ; 
+ dc.w Menu78-IntroTables ; 
+ dc.w Menu80-IntroTables ; 
+ dc.w Menu82-IntroTables ; 
+ dc.w Menu84-IntroTables ; 
+ dc.w Menu86-IntroTables ; 
+ dc.w Menu88-IntroTables ; 
+ dc.w Menu90-IntroTables ; 
+ dc.w Menu92-IntroTables ; 
+ dc.w Menu94-IntroTables ; 
+ dc.w Menu96-IntroTables ; 
+ dc.w Menu98-IntroTables ; 
+ dc.w Menu100-IntroTables ; 
+ dc.w Menu102-IntroTables ; 
+ dc.w Menu104-IntroTables ; 
+ dc.w Menu106-IntroTables ; 
+ dc.w Menu108-IntroTables ; 
+ dc.w Menu110-IntroTables ; 
+ dc.w Menu112-IntroTables ; 
+ dc.w Menu114-IntroTables ; 
+ dc.w Menu116-IntroTables ; 
+ dc.w Menu118-IntroTables ; 
+ dc.w Menu120-IntroTables ; 
+ dc.w Menu122-IntroTables ; 
+ dc.w Menu124-IntroTables ; 
+ dc.w Menu126-IntroTables ; 
+ dc.w Menu128-IntroTables ; 
+ dc.w Menu130-IntroTables ; 
+ dc.w Menu132-IntroTables ; 
+ dc.w Menu134-IntroTables ; 
+ dc.w Menu136-IntroTables ; 
+ dc.w Menu138-IntroTables ; 
+ dc.w Menu140-IntroTables ; 
+ dc.w Menu142-IntroTables ; 
+ dc.w Menu144-IntroTables ; 
+ dc.w Menu146-IntroTables ; 
+ dc.w Menu148-IntroTables ; 
+ dc.w Menu150-IntroTables ; 
+ dc.w Menu152-IntroTables ; 
+ dc.w Menu154-IntroTables ; 
+ dc.w Menu156-IntroTables ; 
+ dc.w Menu158-IntroTables ; 
+ dc.w Menu160-IntroTables ; 
+ dc.w Menu162-IntroTables ; 
+ dc.w Menu164-IntroTables ; 
+ dc.w Menu166-IntroTables ; 
+ dc.w Menu168-IntroTables ; 
+ dc.w Menu170-IntroTables ; 
+ dc.w Menu172-IntroTables ; 
+ dc.w Menu174-IntroTables ; 
+ dc.w Menu176-IntroTables ; 
+ dc.w Menu178-IntroTables ; 
+ dc.w Menu180-IntroTables ; 
+ dc.w Menu182-IntroTables ; 
+ dc.w Menu184-IntroTables ;
+ dc.w Menu186-IntroTables ;
+ dc.w Menu188-IntroTables ;
+ dc.w Menu190-IntroTables ;
+ dc.w Menu192-IntroTables ;
+ dc.w Menu194-IntroTables ;
+ dc.w Menu196-IntroTables ;
+ dc.w Menu198-IntroTables ;
+ dc.w Menu200-IntroTables ;
+ dc.w Menu202-IntroTables ;
+ dc.w Menu204-IntroTables ;
+ dc.w Menu206-IntroTables ;
+ dc.w Menu208-IntroTables ;
+ dc.w Menu210-IntroTables ;
+ dc.w Menu212-IntroTables ;
+ dc.w Menu214-IntroTables ;
+ dc.w Menu216-IntroTables ;
+ dc.w Menu218-IntroTables ;
+ dc.w Menu220-IntroTables ;
+ dc.w Menu222-IntroTables ;
+ dc.w Menu224-IntroTables ;
+ dc.w Menu226-IntroTables ;
+ dc.w Menu228-IntroTables ;
+ dc.w Menu230-IntroTables ;
+ dc.w Menu232-IntroTables ;
+ dc.w Menu234-IntroTables ;
+ dc.w Menu236-IntroTables ;
+ dc.w Menu238-IntroTables ;
+ dc.w Menu240-IntroTables ;
+ dc.w Menu242-IntroTables ;
+ dc.w Menu244-IntroTables ;
+ dc.w Menu246-IntroTables ;
+ dc.w Menu248-IntroTables ;
+ dc.w Menu250-IntroTables ;
+ dc.w Menu252-IntroTables ;
+ dc.w Menu254-IntroTables ;
+ dc.w Menu256-IntroTables ;
+ dc.w Menu258-IntroTables ;
+ dc.w Menu260-IntroTables ;
+ dc.w Menu262-IntroTables ;
+ dc.w Menu264-IntroTables ;
+ dc.w Menu266-IntroTables ;
+ dc.w Menu268-IntroTables ;
+ dc.w Menu270-IntroTables ;
+ dc.w Menu272-IntroTables ;
+ dc.w Menu274-IntroTables ; system menu
+ dc.w Menu276-IntroTables ; player selection for two-player game.
+
+
+; general message ranges:
+;  MM+1..MM+49: involve spending money
+; MM+50..MM+99: are the menu options themselves
+; MM+100..MM+149: involve chaining to a new overlay
+
+; if a person gets to menu 0..8, this becomes their default menu
+
+Menu0
+ dc.w 51,MDoIt+0 * do nothing
+ dc.w 50,MDoIt+1 * back to map
+ dc.w 0 * end of table
+
+Menu2
+; normal 'second time meeting' menu. Same as first time meeting,
+; but get "Oh, it's you again" type message at the start.
+ dc.w 957-MM,MMenu+16 * drop into normal conversation
+;[957:Oh, it's you again. ] ; ||| meet someone again that you
+; haven't been introduced to.
+ dc.w 0
+
+Menu4
+ClearOffMenu equ 4
+ dc.w 958-MM,MDoIt+0 * back to walkabout/map
+;[958:Clear off buster, I don't associate with your kind. ] ;|||
+; meet someone again who we didn't get on with last time!
+ dc.w 0
+
+Menu6
+;[671:English `] ; menu option
+;[672:Deutsch `] ; menu option
+;[673:Fran‡ais `] ; menu option
+ dc.w 671-MM,MDoIt+1
+ dc.w 672-MM,MDoIt+2
+ dc.w 673-MM,MDoIt+3
+ dc.w 0
+
+Menu8
+
+Menu10
+* used when player is talking to someone, and has bribed them already
+* then we get this menu.
+* See also Menu16, 24
+ dc.w 62,MDoIt+0 * move on
+ dc.w 60,MDoIt+60 ; talk
+ dc.w 61,MDoIt+61 ; threaten
+ dc.w 0
+
+Menu12
+* used when click at bar
+ dc.w 62,MDoIt+0 * move on
+ dc.w 50,MDoIt+1 * back to map
+;; dc.w 6,MDoIt+0 * beer
+ dc.w 656-MM,657-MM ; [656:RAISE HELL. `], [657:Yeehaa... ]
+ dc.w 1,MActorDoM1+253 * buy round of drinks
+ dc.w 0
+
+Menu14
+* used when click at call girl
+ dc.w 62,MDoIt+0 * move on
+ dc.w 2,MActorDoM1+254 * go upstairs with the girl
+ dc.w 0
+
+Menu16
+* used when player meets someone for the first time. A greeting message,
+* probably chosen from 951 to 957 is printed,
+* then we get this menu.
+* See also Menu24
+ dc.w 62,MDoIt+0 * move on
+ dc.w 59,MDoIt+59 ; hello
+ dc.w 60,MDoIt+60 ; talk
+ dc.w 61,MDoIt+61 ; threaten
+ dc.w 3,MActorDoM1+255 * offer bribe
+ dc.w 0
+
+Menu18
+* General yes/no: used e.g. when
+* someone has offered Billy a part in some sort of robbery.
+ dc.w 54,MDoIt+54 * yes
+ dc.w 55,MDoIt+0 * no: return 0
+ dc.w 0
+
+Menu20
+
+Menu22
+* menu when challenged to a duel.
+ dc.w 63,MPrintDOM1+904-MM * accept
+ dc.w 64,MPrintDoM1+905-MM * climb down
+ dc.w 0
+
+Menu24
+* used when player meets someone again. A greeting message,
+* probably chosen from 920 to 960 is printed,
+* then we get this menu.
+* See also Menu16
+ dc.w 62,MDoIt+0 * move on
+ dc.w 60,MDoIt+60 ; talk
+ dc.w 61,MDoIt+61 ; threaten
+ dc.w 3,MActorDoM1+255 * offer bribe
+ dc.w 0
+
+Menu26
+* used when Billy goes into a bank.
+* 
+ dc.w 62,MDoIt+0 * move on
+ dc.w 59,MDoIt+59 ; hello
+ dc.w 60,MDoIt+60 ; talk
+ dc.w 65,MDoIt+257 ; MPrintDoM1+257 ; Rob the Bank
+ dc.w 0
+
+
+Menu28
+* hello stranger (Billy)
+ dc.w 920-MM,MMenu+16 * intro message (modified by code depending
+* on alignment of person)
+ dc.w 0
+
+Menu30
+* hello stranger (Pat)
+ dc.w 920-MM,MMenu+16 * intro message (modified by code depending
+* on alignment of person)
+ dc.w 0
+
+Menu32
+* We've been robbed (by Billy)
+ dc.w 870-MM,MMenu+26 * intro message (modified by code depending
+* on alignment of person)
+ dc.w 0
+
+Menu34
+* We've been robbed (by another gang, not involving Billy)
+ dc.w 871-MM,MMenu+26 * intro message (modified by code depending
+* on alignment of person)
+ dc.w 0
+
+Menu36
+* hello again (actual message printed is changed by code
+* in SpecialPrintMenu)
+ dc.w 920-MM,MMenu+24 * intro message (modified by code)
+ dc.w 0
+
+Menu50
+* first sub-plot menu: Mexican peasant being run off his
+* land by Anglo ranchers...
+ dc.w 1500-MM,MMenu+52 * help!
+ dc.w 0
+
+Menu52
+* options: yes/no
+ dc.w 54,MPrintDoM1+1540-MM * start gunfight: message number
+* group: intro/win/lose
+ dc.w 55,MPrintDoM1+1501-MM * a thousand curses!
+ dc.w 0
+
+Menu54
+* lady in saloon being pestered by gunslinger...
+ dc.w 1503-MM,MMenu+56 * help!
+ dc.w 0
+
+Menu56
+* Will you challenge him? (From 54)
+ dc.w 54,MPrintDoM1+1570-MM * start duel: message number
+* group: intro/win/lose
+ dc.w 55,MPrintDoM1+1504-MM * a thousand curses!
+ dc.w 0
+
+Menu58
+* mexican picked on by cowboys...
+ dc.w 1506-MM,MMenu+60 * help!
+ dc.w 0
+
+Menu60
+* options: yes/no
+ dc.w 54,MPrintDoM1+1508-MM * we'll get you for this...
+ dc.w 55,MPrintDoM1+1507-MM * disappointed
+ dc.w 0
+
+Menu62
+* sick man in desert...
+ dc.w 1509-MM,MMenu+64 * help!
+ dc.w 0
+
+Menu64
+ * options: yes/no
+ dc.w 54,MPrintDoM1+1700-MM * man got on (take to santa fe for bonus)
+ dc.w 55,MPrintDoM1+1510-MM * man collapsed again
+ dc.w 0
+
+
+
+
+Menu66
+* soldier at Fort Sumner - army are being cheated on meat contract
+ dc.w 1512-MM,MMenu+68 * army are being cheated.
+ dc.w 0
+
+Menu68
+* we need proof (stays in this state until get proof)
+ dc.w 1517-MM,MDoIt+1517-MM
+ dc.w 0
+
+
+Menu70
+; Pat is about to defeat a gang in a shootout,
+; their leader calls a truce and barters their escape
+ dc.w 1520-MM,MMenu+72 * gang leader calles out:
+ dc.w 0
+
+Menu72
+;[1521:"Pat - let us go and we'll tell you if Billy leads
+;us on a robbery". ]
+;[1522:"Pat - let us go and we'll leave the territory". ]
+;[1523:"Pat - let us go and we'll tell you where there is a stash of
+;buried gold". ]
+ dc.w 1521-MM,MMenu+74 * offer (modified by code)
+ dc.w 0
+
+Menu74
+* options: yes/no
+; and responses to 1521..1523 if Pat accepts the offer...
+;[1524:"thanks Pat - we'll be in touch". They rode off. ]
+;[1525:"buenos dias Senor - we'll head for Mexico". ]
+;[1526:"It's on the east side of the Pecos, at a deserted prospector's
+;site". They rode off. ]
+ dc.w 54,MPrintDoM1+1524 * yes - response (choice of 3)
+ dc.w 55,MPrintDoM1+1501-MM * no
+ dc.w 0
+
+Menu76
+; Pat meets Texan possee in desert. Player can choose to
+; lie that Billy has stolen Texan cattle.
+;[1529:Pat met a Texan possee looking for cattle thieves. What did
+;he tell them about Billy? ] ; intro message
+ dc.w 1529-MM,MMenu+78
+ dc.w 0
+
+Menu78
+;[1530:Billy steals Texan Cattle. `]
+;[1531:Billy is an outlaw. ] ; menu options - keep short.
+;[1532:the possee offered their services as deputies - at least
+;for a while. ] ; Pat lies about Billy stealing Texan cattle
+;[1533:the possee offered Pat good fortune, but unfortunately
+;they could not help. ] ; Pat says Billy is an outlaw only.
+ dc.w 1531-MM,MPrintDoM1+1533-MM * Billy is an outlaw
+ dc.w 1530-MM,MPrintDoM1+1532-MM * Billy steals
+ dc.w 0
+
+;[1534:"that Texan Possee got a telegram and had to leave in 
+;a hurry". ] ; comment from deputy at sheriff's office.
+
+Menu80
+; Barney Mason reports the escape of an outlaw
+; from Santa Fe - Pat can track him unaided for a reward.
+;[1535:Barney Mason rode up. "Pat - an outlaw has just escaped from Santa
+;Fe. Come with me now, and I'll put you on his trail. "]
+;[1536:Barney rode off. ] ; no to 1535
+;[1537:Barney lead Pat at high speed to the head of a winding
+;valley, then left him to track the escapee on his own. ] ; yes to 1535
+ dc.w 1535-MM,MMenu+82
+ dc.w 0
+
+Menu82
+ dc.w 54,MPrintDoM1+1537-MM * yes
+ dc.w 55,MPrintDoM1+1536-MM * no
+ dc.w 0
+;[1538:Pat took in the outlaw and claimed the $100 reward. ] ; get
+; the outlaw.
+
+; Mayor accosts Pat...
+Menu84
+ dc.w 1600-MM,MMenu+86
+ dc.w 0
+
+Menu86
+ dc.w 54,MPrintDoM1+1601-MM * yes
+ dc.w 55,MPrintDoM1+1602-MM * no
+ dc.w 0
+
+; Mayor accosts Pat...
+Menu88
+ dc.w 1605-MM,MMenu+90
+ dc.w 0
+
+Menu90
+ dc.w 54,MPrintDoM1+1606-MM * yes
+ dc.w 55,MPrintDoM1+1607-MM * no
+ dc.w 0
+
+
+; BILLY ONLY ENCOUNTERS
+; meet Indian - where's the beef?
+Menu92
+ dc.w 1610-MM,MDoIt+1610-MM
+ dc.w 0
+
+Menu94
+ dc.w 1612-MM,MMenu+96 *thanks Billy - we'll fake an uprising for you
+ dc.w 0
+
+Menu96
+ dc.w 50,MDoIt+1 * back to map
+ dc.w 1613-MM,MPrintDoM1+1614-MM * yes Billy - we fake uprising
+ dc.w 0
+
+; normal menu for Indian
+Menu98
+ dc.w 50,MDoIt+1 * back to map
+ dc.w 0
+
+
+
+; Meet WIdow Woman
+Menu100
+WidowWomanMenu equ 100
+ dc.w 1620-MM,MMenu+102 * I want all your money, and I want it now
+ dc.w 0
+
+Menu102
+ dc.w 54,MPrintDoM1+1622-MM * yes
+ dc.w 55,MPrintDoM1+1623-MM * no
+ dc.w 0
+
+; peasant meets Billy and asks him to nurse family
+Menu104
+ dc.w 1630-MM,MMenu+106 * help me!
+ dc.w 0
+
+Menu106
+ dc.w 54,MMenu+108 * yes
+ dc.w 55,MPrintDoM1+1632-MM * no
+ dc.w 0
+
+Menu108
+ dc.w 1631-MM,MPrintDoM1+1701-MM * Billy rode off with peasant, helped.
+ dc.w 0
+
+; Cooper offers Billy counterfeit money as his share in a robbery
+Menu110
+ dc.w 1650,MMenu+112 *want money?
+ dc.w 0
+
+Menu112
+ dc.w 54,MMenu+114 * yes
+ dc.w 55,MPrintDoM1+1654-MM * no
+ dc.w 0
+
+Menu114
+ dc.w 1651-MM,MMenu+116 * how to spend the money?
+ dc.w 0
+
+Menu116
+ dc.w 1653-MM,MDoIt+1653-MM * spend it normally
+ dc.w 1652-MM,MDoIt+1652-MM * buy cattle with it -> rustling game
+ dc.w 0
+
+; in saloon, hear some conversation about Brady going
+; to murder McSween
+Menu118
+ dc.w 1660-MM,MMenu+120 ; overhears conversation
+ dc.w 0
+
+Menu120
+ dc.w 1661-MM,MMenu+122 ; what to do?
+ dc.w 0
+
+Menu122
+ dc.w 1662-MM,MDoIt+1662-MM ; nothing
+ dc.w 1663-MM,MPrintDoM1+1664-MM ; stop Brady
+ dc.w 0
+
+; Jose interrupts player looking at Map
+Menu124
+ dc.w 1670-MM,MMenu+126 ; hi - will you help McSween
+ dc.w 0
+
+Menu126 ; McSween-specific
+ dc.w 1662-MM,MDoIt+1662-MM ; nothing
+ dc.w 1671-MM,MPrintDoM1+1672-MM * go there
+ dc.w 0
+
+; meet Joe Grant, Drunk, in a saloon.
+Menu128
+ dc.w 1674-MM,MMenu+152 ; examine this pistol, Billy
+ dc.w 0
+
+Menu130
+ dc.w 1662-MM,MDoIt+0 ; nothing
+ dc.w 1676-MM,MPrintDoM1+1677-MM * turned barrel to empty chamber
+ dc.w 0
+
+; meet hostile soldier (changed by SpecialPrintMenu for Pat)
+Menu132
+ dc.w 1680-MM,MDoIt+0 * buzz off
+ dc.w 0
+
+Menu134
+; meet Mrs McSween
+ dc.w 1681-MM,MPrintDoM1+1682-MM ; hello Billy/gotta rush
+ dc.w 0
+ 
+Menu136
+; meet prospector
+ dc.w 1683-MM,MMenu+16 * why have you stopped me panning?
+ dc.w 0
+
+Menu138
+; do you want to take cows to Indians?
+ dc.w 1611-MM,MMenu+140
+ dc.w 0
+
+Menu140
+ dc.w 666-MM,MPrintDoM1+760-MM ; steal cows
+ dc.w 667-MM,MActorDoM1+764-MM ; take cows to Apaches
+ dc.w 0
+
+Menu142
+ dc.w 802-MM,MDoIt+0  ; in bordello
+ dc.w 0
+
+;[1855:Hey Billy, come share some coffee with us... ] ;||| then 1856
+;[1856:Billy sat down with gang and talked of daring deeds
+;and famous crimes. Then he asked the crucial question...
+;"I've got a real sweet job planned. You want in?". The gang
+;looked at Billy. Should they trust this young hotblood? ] ;|||
+;; 1856, gang leader's name, 1857 |||
+;[1857:spoke "Sure, but we'll want a good big cut. Now get out of
+;here before I change my mind". ] ;|||
+;; gang names to go between 1856 and 1847
+;[1858:Cooper ] ; 41 Santa Fe ||||
+;[1859:The Regulators' leader ] ; 42 White Oaks ||||
+;[1860:The Seven Rivers Gang leader ] ; 43 Lincoln City ||||
+;[1861:Dona Ana ] ; 44 Mesilla |||
+;[1862:Jesse Evans ] ; 45 Roswell |||
+;[1863:The fugitives' leader ] ; 46 El Paso |||
+
+Menu144
+ dc.w 1855-MM,MMenu+146  ; meet gang
+ dc.w 0
+
+Menu146
+ dc.w 1856-MM,MMenu+148
+ dc.w 0
+
+Menu148
+ dc.w 1857-MM,MDoIt+1857-MM * sure, but we'll want a big cut.
+ dc.w 0
+
+Menu150
+; visit gang again message: prints message 1858, quits
+ dc.w 1858-MM,MDoIt+0 * hello again billy
+ dc.w 0
+
+
+; meet Joe Grant, Drunk, in a saloon. CONTINUED
+Menu152
+ dc.w 1675-MM,MMenu+130 ; examine this pistol, Billy
+ dc.w 0
+
+
+;Menus for Ash Upton at store in Roswell.
+AshUptonMenu equ 154
+Menu154
+ dc.w 1511-MM,MMenu+24 ; Hi, drop into normal menu
+ dc.w 0
+
+;[1511:Howdoo pardner. I'm Ash Upton. How can I be of service? ] ;||| Store
+;; in Mesilla
+
+Menu156
+ dc.w 1519-MM,MMenu+158 * the store was deserted...
+ dc.w 0
+
+Menu158
+; when Murphy-Dolans are away the mice can play...
+ dc.w 62,MDoIt+0 * move on
+ dc.w 1518-MM,MPrintDoM1+1515-MM * get books
+ dc.w 0
+
+; menus used when Billy gets seen by a deputy in a lawful town...
+;[1859:down the street, a deputy called out "Billy The Kid - hold it
+;right there. You gonna come quietly?" ] ;|||
+;[1860:run away.` ] ; ||| menu option
+;[1861:ignore him.` ] ; ||| menu option
+;[1862:Billy fled the town. ] ; run away |||
+;[1863:"go for your gun, outlaw." ] ;|||
+Menu160
+ dc.w 1859-MM,MMenu+162
+ dc.w 0
+
+Menu162
+ dc.w 1860-MM,MPrintDoM1+1862-MM ; run away
+ dc.w 1861-MM,MPrintDoM1+1863-MM ; ignore him
+ dc.w 0
+
+Menu164
+; menu at start of game: Which person:  Billy or Pat?
+;[954:who do you want to play? ] ; |||opening question.
+ dc.w 954-MM,MMenu+166
+ dc.w 0
+
+
+Menu166
+;[952:Pat ] ; copy of message 1|||
+;[953:Billy ] ; copy of message 2|||
+
+;[955:Pat, you must track all the outlaw gangs to
+;their hideouts. Talk to people to get information. ] ;|||
+;[956:Billy, rob banks and steal cows from the Murphy-Dolans. ] ;|||
+;[974:2-PLAYER GAME ] ;œœœ
+;[975:Trying serial connection (press FIRE to abandon) ]
+ dc.w 953-MM,MPrintDoM1+956-MM * Billy
+ dc.w 952-MM,MPrintDoM1+955-MM * Pat
+ dc.w 974-MM,MDoIt+975-MM * two-player
+ dc.w 0
+
+
+Menu168
+;; person 68 soldier at Fort Sumner
+;[1516:showed the books to Colonel Baxter. He was livid and vowed to
+;prosecute the Murphy-Dolan's with the full force of the law. ]
+;; go to Fort Sumner with books.
+ dc.w 1516-MM,MMenu+24 * back to default menu
+ dc.w 0
+
+Menu170
+CardGameMenu equ 170
+;[900:we're playing Monte. D'you want to sit in? ]
+;[901:some other time, pard. ] ; refuse to play monte.
+ dc.w 900-MM,MMenu+172
+ dc.w 0
+
+Menu172
+ dc.w 54,MDoIt+900-MM * yes
+ dc.w 55,MPrintDoM1+901-MM * no: return 0
+ dc.w 0
+
+
+
+; MENUS FOR PAT IN SHERIFF'S OFFICE
+; text for Pat to control deputies etc.
+;[450:WHERE ARE DEPUTIES `] ;|||menu option
+;[451:HIRE DEPUTY `] ; |||menu option
+;[452:FIRE DEPUTY `] ; |||menu option
+;[453:deputy ] ; for reporting number
+;[454:deputies ]
+;[455:people are ] ; followed by happiness: 456..464
+;[456:rebelling. `]
+;[457:furious. `]
+;[458:angry. `]
+;[459:displeased. `]
+;[460:restless. `]
+;[461:content. `]
+;[462:happy. `]
+;[463:ecstatic. `]
+;[464:funds remaining: $]
+;[510:Santa Fe ] ; dc.w 3345 ; Santa Fe 10
+;[511:White Oaks ] ; dc.w 3346 ; Albe'que 11
+;[512:Lincoln City ] ; dc.w 3347 ; Lincoln City 12
+;[513:Mesilla ] ; dc.w 588 ; Las Cruces 13
+;[514:Roswell ] ; dc.w 589 ; Roswell 14
+;[515:El Paso ] ; dc.w 0  ; spare town 15
+;[516:Frontier Town ] ; dc.w 0 ; spare town 16
+Menu174
+; used when walk into Sheriff's office (As Pat)
+ dc.w 62,MDoIt+0 * move on
+ dc.w 450-MM,MDoIt+450-MM ; where are deputies?
+ dc.w 451-MM,MDoIt+451-MM ; hire deputy
+ dc.w 452-MM,MDoIt+452-MM ; fire deputy
+ dc.w 0
+
+
+Menu176
+; ask "Where from" question for Hire Deputy/Fire Deputy options...
+ dc.w 470-MM,10
+ dc.w 471-MM,11
+ dc.w 472-MM,12
+ dc.w 473-MM,13
+ dc.w 474-MM,14
+ dc.w 475-MM,15
+ dc.w 0
+
+Menu178
+; meet Barney Mason when budget has run out
+ dc.w 1813-MM,MDoIt+0
+ dc.w 0
+
+Menu180
+; meet Barney Mason when a town has started to revolt
+ dc.w 1814-MM,MDoIt+0
+ dc.w 0
+
+Menu182
+; Barney Mason tells Pat he's fired
+ dc.w 1815-MM,MDoIt+1815-MM
+ dc.w 0
+
+
+Menu184
+; every fourth member of Texan possee who drifts off
+; gives this message...
+ dc.w 1534-MM,MDoIt+0
+ dc.w 0
+; [1534:Barney Mason rode up and said "Pat, another man from that Texan
+; Possee had to high-tail it outa town. You'd better get into
+; town and check the budget". ] ; |||now mentions Barney Mason, budget
+
+; Menus 186 to 256 reserved for extra people menus (in case
+; we need to radically expand the differences between people
+; in different places)
+
+Menu186
+LauraPicketMenu equ 186
+ dc.w 330-MM,MMenu+188
+ dc.w 0
+
+Menu188
+ dc.w 54,MDoIt+1330-MM * yes
+ dc.w 55,MDoIt+LoseRepMessage * no: return 0
+ dc.w 0
+
+
+Menu190
+WilmaKatzMenu equ 190
+LonelyFarmhouseMenu equ 190
+ dc.w 331-MM,MMenu+192
+ dc.w 0
+
+Menu192
+* wanna fight shootout? Used by prospector etc.
+ dc.w 54,MPrintDoM1+1540-MM * 1331-MM * yes
+ dc.w 55,MDoIt+LoseRepMessage * no
+ dc.w 0
+
+Menu194
+RickRiderMenu equ 194
+ dc.w 332-MM,MMenu+22 * go to challenge to duel menu
+ dc.w 0
+
+Menu196
+ProspectorMenu equ 196
+ dc.w 333-MM,MMenu+192 * wanna help me fight shootout?
+ dc.w 0
+
+Menu198
+NedParkinMenu equ 198 * spill drink menu for Ned Parkin only
+SpillDrinkMenu equ 198 * general spill drink menu for unnnamed people
+ dc.w 302-MM,MMenu+BuyBeerOrElseMenu * jogged elbow
+ dc.w 0
+
+Menu200
+JackShoeMenu equ 200
+ dc.w 303-MM,MMenu+BuyBeerOrElseMenu * jogged elbow
+ dc.w 0
+
+Menu202
+BenDavisMenu equ 202
+ dc.w 304-MM,MMenu+BuyBeerOrElseMenu * jogged elbow
+ dc.w 0
+
+Menu204
+LaviniaStrumpetMenu equ 204
+ dc.w 305-MM,MPrintDoM1+((300-MM)&fff)
+ dc.w 0
+
+Menu206
+GirlFriendMenu equ 206
+ dc.w 334-MM,MDoIt+0
+ dc.w 0
+
+Menu208
+BuyBeerOrElseMenu equ 208
+* buy person a beer?
+ dc.w 6,MDoIt+6 * beer
+ dc.w 55,MPrintDoM1+((300-MM)&FFF) * no: go into bar room brawl
+ dc.w 0
+
+Menu210
+SomeoneNeedsHelpMenu equ 210
+ dc.w 342-MM,MDoIt+0
+ dc.w 0
+
+Menu212
+SomeoneWasLookingMenu equ 212
+ dc.w 362-MM,MDoIt+0
+ dc.w 0
+
+
+;-----
+; section to do with final duel
+;[1865:Suddenly, Pat Garrett burst in. ] ;&&&
+;[1866:"Billy, you know I can't
+;take you in. They'd hang ya like a dog, and I can't stand by and let that
+;happen. We'll have to settle this now, gun-to-gun. Draw,
+;outlaw". ] ;&&&
+;[1867:Billy and Pat approached other and exchanged glances.
+;Both knew that they were sworn enemies, but also old friends.
+;Was this to be the end for one of them? ] ;&&&
+;[1868:CHALLENGE TO DUEL. `] ; menu option &&&
+;[1869:AVOID CONFLICT. `] ; menu option &&&
+Menu214 dc.w 1865-MM,MPrintDoM1+1866-MM,0 ; Pat Garret Burst in, ...
+Menu216 dc.w 1867-MM,MMenu+218,0 ; approached each other, gonna fight?
+Menu218
+ dc.w 1868-MM,MDoIt+1868-MM * challenge
+ dc.w 1869-MM,MDoIt+1869-MM * avoid conflict
+ dc.w 0 
+
+Menu220
+Menu222
+Menu224
+Menu226
+Menu228
+Menu230
+Menu232
+Menu234
+Menu236
+Menu238
+Menu240
+Menu242
+Menu244
+Menu246
+Menu248
+Menu250
+Menu252
+Menu254
+Menu256
+
+
+; usable for normal menus
+
+Menu258
+; UNUSED
+
+
+; MENUS WHICH DISPLAY TOM O'Foliard
+
+Menu260
+;; messages Billy gets when gangs go out of business
+;[1890:Tom O'Foliard rode up and said "Billy, ] ;|||
+;[1891:the Cooper Gang have been raided". ] ;|||
+;[1892:the Socorro Varueros gang has been raided". ]
+;[1893:the Seven Rivers Gang gang has been raided". ]
+;[1894:the Dona Ana Bunch gang has been raided". ]
+;[1895:the Jesse Evans gang has been raided". ]
+;[1896:the fugitives' gang has been raided". ]
+;[1897:the regulators' gang has been raided". ]
+ dc.w 1891-MM,MDoIt+0
+ dc.w 0
+
+Menu262
+ dc.w 1892-MM,MDoIt+0
+ dc.w 0
+
+Menu264
+ dc.w 1893-MM,MDoIt+0
+ dc.w 0
+
+Menu266
+ dc.w 1894-MM,MDoIt+0
+ dc.w 0
+
+Menu268
+ dc.w 1895-MM,MDoIt+0
+ dc.w 0
+
+Menu270
+ dc.w 1896-MM,MDoIt+0
+ dc.w 0
+
+Menu272
+ dc.w 1897-MM,MDoIt+0
+ dc.w 0
+
+Menu274
+; system menu
+ dc.w 651-MM,MDoIt+0 ; do nothing
+ dc.w 668-MM,MDoIt+668-MM * save game
+ dc.w 669-MM,MDoIt+669-MM * restore
+ dc.w 670-MM,MDoIt+670-MM * restart
+ dc.w 0
+;[651:DO NOTHING. `] ; menu option
+;[662:MOVE ON. `]
+;[668:SAVE GAME `] ;|||
+;[669:RESTORE `] ;|||
+;[670:RESTART `] ;|||
+
+Menu276
+; menu to select which player you're going to be in 
+; a two-player game
+;[952:Pat ] ; copy of message 1|||
+;[953:Billy ] ; copy of message 2|||
+
+;[955:Pat, you must track all the outlaw gangs to
+;their hideouts. Talk to people to get information. ] ;|||
+;[956:Billy, rob banks and steal cows from the Murphy-Dolans. ] ;|||
+;[974:2-PLAYER GAME ] ;œœœ
+;[975:Trying serial connection (press FIRE to abandon) ]
+ dc.w 953-MM,MPrintDoM1+956-MM * Billy
+ dc.w 952-MM,MPrintDoM1+955-MM * Pat
+ dc.w 0

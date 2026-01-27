@@ -1,0 +1,216 @@
+;'RAM' and 'OOPS' for Converted Trilogies
+
+;Copyright (C) 1986 Level 9 Computing
+
+;B:OOPS.TXT
+
+;-----
+
+VAR
+ SAVEL90
+ SAVEL91
+ SAVEL92
+ SAVEL93
+
+BEGIN
+
+;'RAM SAVE  or 'RAM LOAD'
+
+.RAMCOMMAND
+ VALUE=I2
+ IF VALUE=IRESTORE THEN RAMLOAD
+
+;Otherwise it's a RAM SAVE:
+
+ PARSEX2=C0 ; first position
+ GOSUB @RAMWRITE
+.RAMSAVEEND
+ IF RESULT<>C0 THEN NOTAVBLE;>>>=C0 THEN @ENDCOMMAND ;>>> ANDY 26/6/86
+ MESSAGE OK       ;>>> ANDY 26/6/86
+ GOTO @ENDCOMMAND ;>>> ANDY 26/6/86
+.NOTAVBLE         ;>>> ANDY 26/6/86
+ MESSAGE 2300 ;Not available
+ GOTO @CANCELINPUT
+
+;'RAM' keyword followed by LOAD/RESTORE
+
+.RAMLOAD
+ PARSEX2=C0 ; first position
+ GOSUB @RAMREAD
+ IF RESULT<>C0 THEN NOTAVBLE1 ;>>>=C0 THEN @AFTERRESTORE;>>>ANDY 26/6/86
+ MESSAGE OK         ;>>> ANDY 26/6/86
+ MESSAGE CR         ;>>> ANDY 26/6/86
+ GOTO @AFTERRESTORE ;>>> ANDY 26/6/86
+.NOTAVBLE1          ;>>> ANDY 26/6/86
+ MESSAGE 2300 ;Not available
+ GOTO @CANCELINPUT
+
+;-----
+
+.INITOOPS
+; count number of oops positions available
+ LASTOOPSROOM=C0
+ OOPSPOSEND=C0
+ OOPSPOS=C0
+ NEXTOOPSPOS=C0
+ NEXTOOPSEND=C0
+
+ PARSEX2=C1
+ GOSUB @RAMWRITE
+ IF RESULT=C0 THEN INITOOPS1
+
+ PARSEX2=C0
+ GOSUB @RAMWRITE
+ IF RESULT<>C0 THEN INITOOPSRET ;No RAM SAVE
+ MESSAGE 2301 ;Only RAM SAVE available
+ GOTO INITOOPS2
+
+.INITOOPS1
+ OOPSPOS=C1
+ NEXTOOPSPOS=C1
+ MESSAGE 2302 ; ram and oops available
+
+; now go through and write 'certified garbage' to all positions
+.INITOOPS2
+ C2=65000 ; show that positions are invalid
+.INITOOPS3
+ GOSUB @RAMWRITE
+ ADD PARSEX2,C1
+ IF RESULT=C0 THEN INITOOPS3
+ C2=2 ; restore C2
+.INITOOPSRET
+ RETURN
+
+;-----
+
+.OOPS
+ GOSUB TRYOOPS
+ IF RESULT=TRUE THEN @AFTERRESTORE
+ GOTO @ENDCOMMAND
+
+.TRYOOPS
+; OOPSPOS points to next free position in ram save area
+; go back some positions if they are available
+ IF OOPSPOS<>C0 THEN OOPS1
+ MESSAGE 2300 ;Not available
+ RESULT=FALSE
+ RETURN
+
+.OOPS1
+ IF OOPSPOS<>C1 THEN OOPS3
+; have gone to position 0, so need to wrap round to end of ram area
+ IF OOPSPOSEND<>C0 THEN OOPS2
+
+ MESSAGE 2304 ;No OOPS position found
+ RESULT=FALSE
+ RETURN
+
+.OOPS2
+ OOPSPOS=OOPSPOSEND ; first invalid position
+
+.OOPS3
+ OOPSFL=1      ; >> ANDY 26/6/86
+ SUB OOPSPOS,C1
+ PARSEX2=OOPSPOS
+ GOSUB RAMREAD
+ NOMOREINPUT=TRUE
+ RESULT=TRUE
+ RETURN
+
+;-----
+
+.SAVEOOPS
+; OOPSPOS points to the next free position in ram save area
+; this routine called on EVERY movement
+; try writing to current position
+
+ IF OOPSPOS=C0 THEN SAVEOOPSRET ;OOPS not available
+
+ LASTOOPSROOM=R1
+ NEXTOOPSPOS=OOPSPOS
+ NEXTOOPSEND=OOPSPOSEND
+
+.SAVEOOPS1
+ PARSEX2=NEXTOOPSPOS
+ GOSUB RAMWRITE
+ IF RESULT=C0 THEN SAVEOOPSOK ; fine, inc pointer and finish
+; something went wrong.
+; if we are in the first position, tell the user
+; that it is not available here
+ IF NEXTOOPSPOS<2 THEN SAVEOOPSRET ; keep quiet, ignore the error
+; ok, so have some saved positions. Rotate round cyclically
+ NEXTOOPSEND=NEXTOOPSPOS ; save first invalid position
+ NEXTOOPSPOS=C1
+ GOTO SAVEOOPS1
+
+.SAVEOOPSOK
+ ADD NEXTOOPSPOS,C1
+.SAVEOOPSRET
+ RETURN
+
+;-----
+
+.OOPSCHECK
+ IF R1=LASTOOPSROOM THEN SAMEROOM
+ OOPSPOS=NEXTOOPSPOS
+ OOPSPOSEND=NEXTOOPSEND
+ LASTOOPSROOM=R1
+.SAMEROOM
+ RETURN
+
+;-----
+
+.RAMREAD
+ PARSEX1=23 ; code for ramload
+ GOSUB RAMOPERATION
+ IF C2<>2 THEN RAMERROR ;Do not use C2. Check for corrupted variables
+ RETURN
+
+.RAMERROR
+ IF OOPSFL<>1 THEN RAMERROR1
+ MESSAGE 2304    ; >> Can't Oops back any further:  ANDY 26/6/86
+ OOPSFL=0        ; >> ANDY 26/6/86
+ GOTO @ABORTGAME ; >> ANDY 26/6/86
+.RAMERROR1       ; >> ANDY 26/6/86
+ MESSAGE 2303 ; Must RAM SAVE first
+ GOTO @ABORTGAME
+
+;-----
+
+.RAMWRITE
+ PARSEX1=22 ; code for ramsave
+; drop through to RAMOPERATION
+
+.RAMOPERATION
+; write to position PARSEX2, return RESULT=0 if OK
+ SAVEL90=LINPUT(C0) ;>>
+ SAVEL91=LINPUT(C1) ;>>
+ SAVEL92=LINPUT(C2) ;>>
+ SAVEL93=LINPUT(C3) ;>>
+
+ LINPUT(C0)=PARSEX1
+ LINPUT(C1)=PARSEX2 ; position number
+ LINPUT(C2)=C0
+ DRIVER
+ C0=0 ;In case variables are corrupted.
+ RESULT=LINPUT(C0)
+
+;Now restore LIST 9. However variables may have been corrupted.
+ LINPUT(0)=SAVEL90 ;>>
+; C1=1 ;>>
+; ADD C0,C1 ;>>
+ LINPUT(1)=SAVEL91 ;>> (C0=1)
+; ADD C0,C1 ;>>
+ LINPUT(2)=SAVEL92 ;>> (C0=2)
+; ADD C0,C1 ;>>
+ LINPUT(3)=SAVEL93 ;>> (C0=3)
+; C0=0 ;>>
+ RETURN
+;
+.NOTAVAILABLE
+ MESSAGE 2300 ;Feature not implemented
+ RETURN
+
+;-----
+;-------------------------------------
+;---------------

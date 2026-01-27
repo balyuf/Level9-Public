@@ -1,0 +1,293 @@
+; Standard adventure source, copyright (C) 1988 Level 9 Computing.
+;
+; SCONST, game-specific constants. You will probably need to change 
+; most of the values of these. 
+;
+; A standard labelling convention for constants is that constants 
+; preceded by I (e.g ILOOK) are relative to their appropriate offset 
+; (e.g verboffset).
+;
+CONST
+;; StandardAdventure=1405 ; unique game identifier value
+ Scapeghost=1930
+;
+ AllowBoat=0 ; set to 1 if you want boat/vehicle code
+;
+; STARTsynthSHORTdescs=1199 ; shortroomdescs+minsynthroom
+ SHORTroomDESCS=800
+ LONGroomDESCS=1100
+;
+ MAXMOVEABLE=109 ; MAX OBJECT WHICH MAY BE TAKEN, THROWN ETC.
+;; MAXMOVEAPLUS1=110; >> Pete 14/9/89 
+;
+ xmax=0 ; co-ords go 0..xmax - remember to change room 1 exits.
+ xmaxplus1=1
+ ymax=0
+; 
+;; minsynthroomminus2=38 ; >> Pete 14/9/89 
+ minsynthroomminus1=39
+;; minsynthroom=40 ; the first room on the grid (bottom left hand corner) ; >> Pete 14/9/89 
+;; maxsynthroom=40 ; >> Pete 14/9/89 
+;
+ minecholoc=25
+ maxecholoc=33
+ maxecholocplus1=34
+;
+ minsceneryobj=180
+ minsceneryobjminus1=179
+ maxsceneryobj=190
+;; maxsceneryobjplus1=191 ; >> Pete 14/9/89 
+ minsceneryobjt2m1=359
+ maxsceneryobjtimes2plus2=382
+;; numsceneryobjplus1=11 ; >> Pete 14/9/89 
+;
+;; minweaponminus1=39 ; >> Pete 14/9/89 
+;; minweapon=40 ; >> Pete 14/9/89 
+ maxweapon=40
+;; maxweaponplus1=41 ; >> Pete 14/9/89 
+;
+ minclothes=255
+ maxclothes=255
+;
+;; minfood=255 ; >> Pete 14/9/89 
+;; maxfood=255 ; >> Pete 14/9/89 
+;; maxfoodplus1=256 ; >> Pete 14/9/89 
+;
+ mintreasure=80
+ maxtreasure=84
+ maxtreasureplus1=85 ; used for evidence in scapeghost.2
+;; maxlightobject=89; >> Pete 14/9/89 
+ maxlightobjectplus1=90
+;
+ minallobject=40
+ maxallobject=109
+;
+ MAXOBJECTVISIBLE=149
+ MAXOBJECT=189 ; includes scenery objects.
+; goes wrong for maxobject>190 (dunno why!)
+; - inventory gets a funny value for hisearchpos (24)
+ MAXOBJECTPLUS1=190
+; 
+ MINOMNI=190 ; 158 ; all real objects above this are omni-present
+;; MINOMNIMINUS1=189 ; 159; >> Pete 14/9/89 
+ MAXOMNI=260 ; must include ieverything, except, it
+;
+; Preposition values (all relative to prepoffset)
+;
+ FASTENEDTO=14
+ through=209
+;
+; VERBS...
+;; iburn=115 ; >> Pete 14/9/89 
+;; ikiss=129 ; >> Pete 14/9/89 
+;; ipast=162 ; >> Pete 14/9/89 
+;; iwalk=164 ; >> Pete 14/9/89 
+;; icatch=165 ; >> Pete 14/9/89 
+;=====
+ iCONCENTRATE=63
+;=====
+;
+; Offsets into SCORETABLE.. ( table 7 ) (starts at 32...)
+;; scBase=32 ; >> Pete 14/9/89 
+;; scmax=75 ; >> Pete 14/9/89 
+ scmaxplus1=76
+;
+ VisitTableStart=76 ; 34
+ VisitTableEnd=226 ; 255 ; 213 ; VisitTableStart + (150=num of "Real" rooms)
+;
+;; MeetingTable=226 ; 255 ; 213 ; >> Pete 14/9/89 
+;; MeetingTableEnd=290 ; 319 ; 277 ; meetingTable+MaxNpc ; >> Pete 14/9/89 
+;
+ minpeople=1 ; = creaturebase
+ maxpeople=4
+;; maxpeopleplus1=5 ; >> Pete 14/9/89 
+;
+;; creaturebase=1 ; including people, user etc. ; >> Pete 14/9/89 
+;; creaturebaseminus1=0 ; including people, user etc. ; >> Pete 14/9/89 
+ MINNPC=2 ; all except user
+;; MINNPCMINUS1=1 ; all except user ; >> Pete 14/9/89 
+ MAXNPC=4
+ MAXNPCPLUS1=5
+ maxtalkingnpc=5
+;=====
+ maxghost=3
+;=====
+;; MAXTALKINGNPCPLUS1=6; >> Pete 14/9/89 
+;
+; npc status in list 6..
+ NPCTABLESIZE=40 ; MAXNPCPLUS1*NpcEntrySize
+;; NPCTABLESIZEPLUS8=48 ; >> Pete 14/9/89 
+;; NPCCURRENTOFFSET=0 ; >> Pete 14/9/89 
+;
+;; NPCENTRYSIZE=8; >> Pete 14/9/89 
+; npc command queues follow the above in list 6..
+ npcstackbase=40 ; immediately after npc table
+;; npcstackbaseplus5=45 ; >> Pete 14/9/89 
+ maxnpcentries=52 ; 5 bytes per queued-command entry on stack
+;
+ npcstackentrysize=5 ; each entry is 5 bytes (hence the 5's above)
+;
+ npctablesizetozero=1535 ; now fixed. was 785
+;
+; offsets within each npc table entry in list 6..
+;; enemyoffset=0; >> Pete 14/9/89 
+ followoffset=1 ; person to follow normally
+ masteroffset=2 ; the person or creature who subdued this npc
+;; hitpointoffset=3; >> Pete 14/9/89 
+;; hatredoffset=4 ; the amount which this npc hates its enemy; >> Pete 14/9/89 
+ npcptroffset=5
+;; boredomoffset=6 ; >> Pete 14/9/89 
+; attentionoffset=7
+; and offsets within each corresponding entry in npcinitial, list 5..
+;; attackoffset=2 ; >> Pete 14/9/89 
+; hitpoint offset=3
+ obedienceoffset=4
+;; patienceoffset=5 ; >> Pete 14/9/89 
+ goldsingingoffset=6 ; in static data - word (hi byte first)
+;
+TABLE
+;; list6=6; >> Pete 14/9/89 
+;
+CONST
+;
+;objects
+;
+ User=1
+;
+;=====
+ Joe=2
+ Luke=3
+ Firemen=4
+;
+; ordinary objects (80 onwards)
+;
+; light objects in order...
+ card=80
+ paper=81
+ map=82
+ bookmark=83
+;; briefcase=84; >> Pete 14/9/89 
+ defaultbulb=85
+ clearbulb=85
+ pearlbulb=86
+ foil=87
+ plug=88
+ socket=89
+;
+; heavy objects...
+ directory=95
+ body=96
+;; jeans=97
+;; pocket=98
+ clock=99
+ closedpanel=100
+ openpanel=101
+ ice=102
+ branch=103
+ ditchwater=104
+ whisky=105
+ telephone=106
+; 
+; static objects (110 onwards) 
+ lid=110
+ tank=111
+ chimney=112
+ fireplace=113
+ brickeddoor=114
+ ivy=115
+ curtains=116
+;; dispenser=117 ; >> Pete 14/9/89 
+ mirror=118
+ alcove=119
+ socketh=120
+ socketk=121
+ switchh=122
+ switchk=123
+;; tube=124 ; >> Pete 14/9/89 
+ pool=125
+ brokenglass=126
+ ditch=127
+;
+; invisible objects (150 onwards)
+ vapour=150
+ herbs=159
+ flames=161
+;
+; used as position shadows (omni present in certain groups of rooms)
+ headstones=151
+ graves=152
+ grass=153
+ garden=154
+ house=157
+ road=160
+;
+ minlightminus1=174 ; start of light sources...
+;; minlight=175 ; >> Pete 14/9/89 
+ headlights=175
+ halllight=176
+ kitchenlight=177
+ landinglight=178
+ maxlight=178 ; ...end of light sources
+;
+ hand=240 ; for Push Hand Through Chimney etc.
+;=====
+; 
+;; ithing=246 ; >> Pete 14/9/89 
+ iroom=243
+ iwall=244
+;
+; game-specific constants...
+;
+;=====
+ ifreeze=122 ; "freeze" verb
+ minVISION=4700 ; start of VISION nouns
+ maxVISION=4799 ; end of VISION nouns
+ BuryCardMess=5011 ; message for burying card
+ JoeIntroMess=5100 ; triggers joe to follow user
+;=====
+;
+; game-specific variables...
+;
+VAR
+ TotalMoves
+ ProblemObject 
+;; ProblemVerb ; >> Pete 14/9/89 
+ gdCurrentSave gdHiSave
+ GalahadComment
+ ALREADYDONEPROTECT
+ startpicturetable
+ examinemarked
+;
+ GeneralScoreAddition
+ t1 t2 t3 ; temps for preserving x1,x2,x3 in printm1
+ outofreach
+;
+;=====
+ playerobject ; number of object carried
+ hallswitchon ; set when hall/landing switch is on
+ kitchenswitchon ; set when kitchen switch is on
+ cartimer ; timer for cars passing by village green
+ vapourburning ; countdown while vapour burns
+ curtainsburning ; countdown while curtains burn
+ npcdistressed ; set in specialactivate when npc is distressed by 
+; light and can only obey movement verbs
+ concentrating ; set when user is concentrating
+ astralcount ; incremented while concentrating
+ chimneyposknown ; set when pos of chimney is known on outside wall
+ dislodgedpaper ; set when paper has been dislodged
+ pullingbookmark ; number of ghosts pulling bookmark
+ cardfound ; set to 1 when card is known to be buried, and then 
+; set to 2 when card is found, to prevent it being re-found
+ fuseblown ; set when main house fuse is blown
+ oldplugsocketroom ; contains old room of plug or socket
+ evidencefound ; total of evidence items discovered
+ joeconcentrated ; prevents joe's concentrating hint being repeated
+ carstriggered ; prevents cars from passing until user is near green. 
+; this prevents him being startled as soon as he sets foot there!
+ takenmap ; prevents joe re-congratulating user on taking map
+ destroyevidence ; when true, .countevidence will also remove evidence 
+; in hall from the game
+ gonethroughdoor ; prevents "I passed through the door" being repeated
+ NullVisions ; table pointer for "nothing happened" type visions
+;=====
+;

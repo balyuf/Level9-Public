@@ -1,0 +1,1953 @@
+; GNOME 2.2 source, copyright (C) 1988 Level 9 Computing.
+;
+; ASPECIAL.TXT, special case handlers for the game. (In practice, 
+; this means most of the code to handle puzzles etc.)
+;
+; Known bugs:
+; The compiler is happier if all DATA statements are followed by 
+; comments, otherwise line numbers for errors go wrong.
+;
+;
+BEGIN
+; now print any messages to be printed after certain movements
+.AFTERMOVE
+ if actor=user then amUser
+; is ACTOR carrying USER?
+ x1=hicurrentpos(user)
+ if x1=0 then amUser
+ x1=currentpos(user)
+ if x1<>actor then amUser
+; yes - so do description of the room we've arrived in.
+ wanttoPrintAnd=0 ; bug fix
+ actor=user ; force printing of desc etc.
+ gosub @setuproom ; force first few words to be printed
+ message cr
+ gosub @PrintRoom
+ actor=currentpos(user) ; reset it
+;
+.amUser
+; handle ECHO LOCATIONS
+ if room<125 then amNotEcho
+ if room>150 then amNotEcho
+;
+; Force ACTOR back to previous room.
+; Use this for ECHO type rooms WHENEVER IT IS POSSIBLE THAT ACTOR IS IN
+; A VEHICLE.
+.backmove
+ hidest=0
+ dest=lastroom
+ x1=dir
+ add x1,startreversaltable
+ dir=list5(x1)
+ verb=dir
+ x8=descriptionmode
+ descriptionmode=ibrief
+ if actor<>user then describebackmove ;*
+ descriptionmode=inone ;*
+.describebackmove ;*
+ m1=cr
+ gosub @printm1
+ gosub @absnewlocation
+ descriptionmode=x8
+; aftermoves has been executed in absnewlocation, hence the return here:
+ return
+.amNotEcho
+;
+;-------------------------------------------------------------------------
+; MISCELLANEOUS AFTERMOVES
+;-------------------------------------------------------------------------
+; ambul chasing & white rabbit "hint"
+ if trollchasing<>actor then notrollchasing
+ if descriptionmode=inone then nochasemess
+ m1=cr
+ gosub @printm1
+ gosub @printactor ; <actor>
+ m1=2660 ; chased ingrid
+ gosub @printm1dot
+; rabbit "hints" the way
+.nochasemess
+ if actor<>ambul then notrollchasing
+ if room<>35 then notrollchasing
+ x1=currentpos(rabbit)
+ if x1=c0 then notrollchasing
+ currentpos(rabbit)=c0
+ m1=2663
+ gosub @printm1dot
+.notrollchasing
+;---
+; npc's ignore ingrid if she is in turnips
+ if actor=user then noignore ; ingrid can't ignore ingrid
+ if actor=flopsy then noignore ; flopsy helps ingrid
+ x1=currentpos(user)
+ if x1<>turnips then noignore
+ x1=hicurrentpos(user)
+ if x1=0 then noignore ; user not in turnips
+ if room<>currentuserroom then noignore ; not near user
+ x1=hicurrentpos(actor)
+ if x1<>0 then noignore ; just in case actor is in turnips as well
+ gosub @printactor
+ m1=2540
+ if actor<20 then ignoreingrid ; "friendly" actor
+ m1=2550 ; "enemy" actor
+.ignoreingrid
+ gosub @varymessagedot
+.noignore
+;-------------------------------------------------------------------------
+; TROLL-ONLY AFTERMOVES
+;-------------------------------------------------------------------------
+ if actor<ambul then amnottroll
+ if actor>gormley then amnottroll
+;---
+; bantams chase trolls away
+;; if room<>12 then notbantams
+;; x1=currentpos(bantams)
+;; if x1=0 then notbantams ; no bantams here!
+;; gosub @scoreiftroll
+;; currentpos(actor)=c0
+;; currentpos(bantams)=c0
+;; gosub @printactor
+;; m1=2800
+;; gosub @printm1dot
+;; .notbantams
+;---
+; troll moves into room containing pigs.
+ object=guineapigs
+ gosub @checkifpresent
+ if result=false then notmolested
+ gosub @printactor
+ m1=2802 ; pigs molest troll.
+ gosub @printm1dot
+; troll moves back
+ if room<>8 then @backmove
+ if lastroom<9 then @backmove
+ if lastroom>11 then @backmove
+; score if troll forced back from sty to pens
+ gosub @scoreiftroll
+ gosub @backmove
+ goto @stop ; don't keep coming back!
+.notmolested
+;---
+.amnottroll
+;-------------------------------------------------------------------------
+; USER AFTERMOVES
+;-------------------------------------------------------------------------
+ if actor<>user then amnotuser
+;---
+; bane is overcome if ingrid wears perfume & lipstick
+ gosub @testovercome
+;---
+; rescue anyone buried in turnips and re-stack them in bedroom
+; when Ingrid "isn't looking".
+ if room<25 then notrestack
+ if room>210 then notrestack
+ x1=currentpos(turnips)
+ if x1=4 then notrestack
+; Turnips are NOT STACKED. Ingrid is OUTSIDE, and NOT ON THE GRID.
+; Hence, she is away from farm.
+ gosub @emptyturnips ; empty all contents onto stairs
+ currentpos(turnips)=c4
+.notrestack
+;---
+; start steamroller racetrack when ingrid reaches track
+ if room<>227 then amrollerret
+ if rollerstarted<>false then amrollerret
+ message 1577 ; "hear" roller (can't use first time text for grid rooms)
+ lastwordprinted=0
+ object=silas
+ x6=41
+ gosub @newracetrackforobject
+ rollerstarted=1 ; first roller racetrack
+ seamuswarning=1 ; ready for seamus to teleport in. see timedependant
+; Ingrid's family hear noise and follow steamroller
+ object=flopsy
+ x8=steamroller
+ gosub followx8
+.amrollerret
+;---
+.amnotuser
+;-------------------------------------------------------------------------
+; SILAS AFTERMOVES
+;-------------------------------------------------------------------------
+ if actor<>silas then notsteamroller
+;-------------------------------------------------------------------------
+; SILAS & STEAMROLLER AFTERMOVES
+;-------------------------------------------------------------------------
+ x1=hicurrentpos(silas)
+ if x1=0 then notsteamroller
+ x1=currentpos(silas)
+ if x1<>steamroller then notsteamroller ; silas not driving steamroller
+;---
+; steamroller detours around flooded field
+ object=bog
+ gosub @checkifpresent
+ if result=false then nodetour
+ m1=2609
+ gosub @printm1dot ; detour around flood
+.nodetour
+;---
+; steamroller reaches & demolishes farm
+ if room<>227 then nodemolish
+ m1=2650 ; watching steamroller
+ if room=currentuserroom then demolished
+ m1=2651 ; inside farm
+ if currentuserroom=22 then demolished
+ if currentuserroom<6 then demolished
+ m1=2652 ; hear from distance
+.demolished
+ forceprinting=true
+ gosub @printm1dot
+ forceprinting=false
+ message blankline
+ gosub @score
+ gosub @restartorrestore
+ goto @startgame ; just in case didn't chain
+.nodemolish
+;---
+.notsteamroller
+;---
+.amret
+ RETURN
+;---
+.seamusarrives
+ message 2560
+ message dot
+ currentpos(seamus)=currentuserroom ; seamus appears
+ hicurrentpos(seamus)=c0
+ return
+;---
+.seamusgoes
+ message 2561
+ message dot
+ currentpos(seamus)=c0 ; seamus dissapears
+ hicurrentpos(seamus)=c0
+ seamuswarning=false ; reset to speed up timedependant code
+ return
+;---
+; make OBJECT (npc) follow object X8
+.followx8
+ gosub @setx4toobjectattributes
+ x1=followoffset
+ add x1,x4
+ x2=steamroller
+ npccurrent(x1)=x8
+ return
+;---
+;.PRAY
+; m1=2510 ; said a devout prayer
+; goto ActorM1dot
+;---
+.SPECIALMOVES
+;
+; Given ROOM, HIDEST, DEST, ACTOR is to move that way
+; and exit has been validated as possible (and hence described)
+; in SPECIALEXITS. The purpose of code here is when something
+; happens on moving. If exit is to be blocked, code here should
+; print the appropriate message and set RESULT=FALSE.
+;
+ if hidest<>0 then @smOk
+;-------------------------------------------------------------------------
+; MISCELLANEOUS SPECIALMOVES
+;-------------------------------------------------------------------------
+; can't go down from mill top, although exits is used because of f/ptrs
+ m1=2114
+ if room=40 then @smpreventm1dot
+;
+; can't leave silas when being escorted
+ x1=hicurrentpos(actor)
+ if x1=0 then notleavesilas
+ x1=currentpos(actor)
+ m1=2811
+ if x1=silas then @smpreventm1dot
+.notleavesilas
+;
+; can't leave well
+ m1=2675
+ if room=7 then @smpreventm1dot
+;---
+; only go down cellar if trapdoor open.
+; restricted to user-only area because all other actors have to wait 
+; in cellar 4 moves after being pushed in. this prevents them waiting 
+; if they follow in.
+ x8=currentpos(ctrapdoor) ; trapdoor flag. 0 = open, NOT 0 = closed
+ if dest<>6 then notgocellar
+ if actor<>user then @smprevent
+ m1=2770
+ if x8<>0 then @smpreventm1dot ; trapdoor closed
+.notgocellar
+;---
+; actor trapped in cellar?
+ if room<>6 then notincellar
+ if dest<>226 then notincellar
+ if x8=0 then escapecellar ; trap door is open, ok to get back out
+ gosub @istrapdoorblocked
+ if result=false then lifttrapdoor ; trap door not weighted down
+ m1=2772
+ if actor=user then @smpreventm1dot ; can't be lifted
+ gosub @scoreiftroll ; SCORE POINTS IF ACTOR IS TROLL
+ if currentuserroom<>226 then @smprevent
+; npc's print messages if trying to get out
+ m1=2780
+ forceprinting=true
+ gosub @varymessagedot
+ forceprinting=false
+ goto @smprevent
+;
+; lift trapdoor
+.lifttrapdoor
+;
+ if actor<>actorincellar then nottrapped
+ if movesincellar<4 then @smprevent ; trapped NPCs have to wait
+.nottrapped
+;
+ x8=dest ;*
+ gosub @removeweights ;*bug fix 13/9/88*
+ currentpos(ctrapdoor)=c0
+ currentpos(otrapdoor)=dest
+ m1=2771
+ gosub @printm1dot
+; escape cellar
+.escapecellar
+;
+ if actor<>actorincellar then nottrapped0
+ if movesincellar<4 then @smprevent ; trapped NPCs have to wait
+;
+ actorincellar=false
+ movesincellar=0
+.nottrapped0
+ gosub @loseiftroll ; LOSE POINTS IF ACTOR IS TROLL
+.notincellar
+;---
+; can't go in collapsed barn
+ if room<>222 then notenterbarn
+ if dest<>13 then notenterbarn
+ m1=2723
+ if brickcount>4 then @smpreventm1dot
+;
+; barn "locked" if family inside
+ m1=2722
+ x1=currentpos(ashes) ; if ashes present, family must be locked in barn
+ if x1<>0 then @smpreventm1dot
+.notenterbarn
+;---
+; bane prevents entering farmhouse
+ if actor<20 then actornotbad
+ if actor<35 then notenterfarm ; bane only stops good guys
+.actornotbad
+ if room<>227 then notenterfarm
+ if dest<>5 then notenterfarm
+ object=bane
+ gosub @checkifpresent
+ if result=false then notenterfarm ; bane isn't here
+ m1=2680
+ if actor<>user then @smpreventm1dot
+ m1=2681
+ goto @smpreventm1dot
+.notenterfarm
+;---
+; ingrid is chased by ambul towards the warren
+ if trollchasing<>ambul then smnoambul
+ if actor<>user then smnoambul
+ m1=2662
+ if room<>37 then not37
+ if dest<>34 then @smpreventm1dot
+ goto smnoambul
+.not37
+ if room<>34 then not34
+ if dest<>35 then @smpreventm1dot
+ goto smnoambul
+.not34
+ if room<>35 then smnoambul
+ if dest<>15 then @smpreventm1dot
+.smnoambul
+;---
+; lower warren blocked if root broken
+ x1=currentpos(root)
+ if x1<>0 then rootok
+ m1=2666
+ if dest=19 then @smpreventm1dot
+ if room=19 then @smpreventm1dot
+.rootok
+;---
+; get buried in turnips if go in Ingrid's room
+ if dest<>4 then notburied ; not going in Ingrid's room
+ x1=currentpos(turnips)
+ if x1=room then notburied ; turnips already collapsed on someone
+ gosub @buried ; turnips collapse
+ goto @smprevent
+.notburied
+;-------------------------------------------------------------------------
+; SILAS SPECIALMOVES
+;-------------------------------------------------------------------------
+ if actor<>silas then @smnotsteamroller
+;-------------------------------------------------------------------------
+; SILAS & STEAMROLLER SPECIALMOVES
+;-------------------------------------------------------------------------
+ x1=hicurrentpos(silas)
+ if x1=0 then @smnotsteamroller
+ x1=currentpos(silas)
+ if x1<>steamroller then @smnotsteamroller
+;---
+; handle npc's lying down infront of steamroller
+; move any existing npc's that recieved a bollocking last move
+ if actortobemoved=false then amsilasplayshell
+ x1=startliedowntable
+ add x1,actortobemoved
+ x2=list7(x1)
+ if x2=0 then amsilasplayshell ; npc has already got up
+ if actortobemoved<>Gnoah then liftnpc
+;
+; gnoah is too heavy for trolls to lift.
+.doreverse
+ list7(x1)=c0 ; gnoah gets up
+ actortobemoved=false ;*
+; start gnoah & flopsy's rts
+ object=gnoah
+ x6=49
+ gosub @newracetrackforobject
+ object=flopsy
+ x8=user
+ gosub @followx8
+; reverse the steamroller's direction
+ rollerstarted=2
+ x6=42
+ object=silas
+ gosub @newracetrackforobject
+ x1=lastrollerdir
+ add x1,startreversaltable
+ dir=list5(x1) ; reverse direction
+ verb=dir
+ dest=lastrollerroom
+ x1=51
+ gosub @addscore20
+ m1=2604
+ goto smokm1dot
+;
+; move npc out of the way
+.liftnpc
+ list7(x1)=c0
+ m1=2602
+ gosub @printm1 ; trolls got off roller and carried
+ x1=actortobemoved
+ lastwordprinted=0
+ gosub @printtheobjectx1 ; <npc>
+ m1=2603
+ gosub @printm1dot ; out of the way
+ actortobemoved=false ; ready for someome else to be moved
+;
+; silas plays hell with anyone lying down infront of roller
+.amsilasplayshell
+ gosub checkiflyingdown
+ if value=false then amnotsilas
+ if rollerstarted<2 then personblocking
+; silas detours around anybody on "wider road" when going anticlockwise 
+; via mill track
+ m1=2605
+ gosub @printm1 ; silas drove around
+ gosub @printtheobject ; <actor>
+ m1=0
+ goto smokm1dot
+;
+.personblocking
+ actortobemoved=value
+ m1=2610 ; "you can't stay there indefinately", silas shouted at
+ gosub @varymessage
+ gosub @printtheobject ; <actor>
+ m1=0
+ goto smpreventm1dot ; .
+.amnotsilas
+;---
+; steamroller detours around flooded field
+ object=bog
+ gosub @checkifpresent
+ if result=false then smnodetour
+ m1=2609
+ goto smokm1dot ; detour around flood
+.smnodetour
+;---
+.smnotsteamroller
+;---
+.smok
+ RESULT=TRUE
+ RETURN
+;
+.smPreventActorM1Dot
+ gosub @ActorM1Dot
+ goto smPrevent
+
+.smpreventm1dot
+ gosub @printm1dot
+.smprevent
+; gosub @stop ;****
+ FatalError=True
+ result=FALSE
+ commandfinished=TRUE
+ if room<>currentuserroom then garet ;&&
+ fatalerror=2 ;&&
+.garet
+ return
+
+.smokm1dot
+ gosub @printM1dot
+ goto @smok
+;---
+; VALUE=actor lying down or FALSE if nobody lying down
+.checkiflyingdown
+ value=false
+ x8=startliedowntable
+ object=0
+.cild
+ gosub @checkifpresent
+ if result=false then nextcild ; npc not here
+ x2=list7(x8)
+ if x2=0 then nextcild ; npc not lying down
+ value=object
+ return ; return FIRST npc in "lying down" list
+.nextcild
+ add object,c1
+ add x8,c1
+ if x8<endliedowntable then cild 
+ return
+;---
+; bury actor in turnips
+.buried
+ currentpos(turnips)=room ; turnips collapse
+ x1=turnips
+ currentpos(actor)=x1
+ x1=in
+ hicurrentpos(actor)=x1 ; actor in turnips
+ gosub @printactor
+ m1=2510
+ gosub @printm1dot
+; now arrange a rescue
+ object=flopsy
+ if actor=user then startrescue
+; All other npc's are rescued automatically when ingrid "isn't looking".
+; This is a very sneaky way of doing it, but I don't really give a toss.
+; (See AFTERMOVES)
+ return
+;---
+.startrescue
+ x6=40
+ goto @newracetrackforobject
+;---
+.specialtakes
+; is POS to be allowed to gain OBJECT?
+; return result=FALSE to prevent action
+
+; no object manipulation for npcs if at mill top
+ if room=40 then @stprevent ; no message (npcs only)
+
+; only flopsy can take plans from silas
+ if object<>plans then nottakeplans
+ x1=currentpos(plans)
+ if x1<>silas then nottakeplans
+ x1=hicurrentpos(plans)
+ if x1=0 then nottakeplans ; plans not carried by silas
+ m1=2590
+ if pos=flopsy then stokm1dot ; flopsy takes plans
+ m1=2591
+ goto stpreventm1dot ; silas keeps hold of plans
+.nottakeplans
+
+; can't remove lipstick or perfume
+ if object=lipstick then testremovelp
+ if object<>perfume then notremovelp
+.testremovelp
+ x1=hicurrentpos(object)
+ m1=2683
+ if x1=worn then stpreventm1dot
+.notremovelp
+
+; collapse barn by removing loose brick
+ if object<>brick then nottakebrick
+ m1=2720 ; won't come loose
+ if actor<>user then stpreventm1dot ; only ingrid can remove brick
+ x1=currentpos(ashes)
+ if x1=0 then stpreventm1dot ; roller not destroyed - family not in barn
+ add brickcount,c1
+ if brickcount<5 then notcollapse
+ x1=43
+ gosub @addscore10
+ currentpos(brick)=c0 ; discard the brick
+ if currentuserroom=222 then seecollapse
+ if currentuserroom<>36 then stprevent
+.seecollapse
+ message 2721 ; collapse!
+ message dot
+ x1=5
+ gosub @drawpicturex1 ; show piccy of collapsed barn
+ x1=currentpos(ergot)
+ if x1<>222 then stprevent ; ergot wasn't there!
+ x1=ergot
+ gosub @addscore20
+ currentpos(ergot)=c0 ; ergot is flattened!
+ message 2724
+ message dot
+ goto stprevent
+.notcollapse
+ m1=2729 ; base-1 remove brick messages
+ add m1,brickcount
+ goto stpreventm1dot ; removed brick. another one appears
+.nottakebrick
+
+.stok
+ result=TRUE ; allow actor to take object
+.stret
+ return
+
+.stokm1dot
+ result=true ; allow actor to take object
+ goto @printm1dot
+
+.stprevent
+ result=false
+ goto stret
+
+.StPreventActorM1Dot
+ gosub @printactor
+
+.stpreventm1dot
+ result=FALSE ; prevent taking
+ goto @printM1dot
+;---
+.sign
+ goto @noverb
+;---
+.specialaftermoveobj
+; OBJECT has just been moved from HIFROM, FROM to POS, HIPOS
+; do anything you want, then return
+; no values to return
+;
+; test if bane overcome. also used in aftermove
+.testovercome
+ x8=object
+ object=bane
+ gosub @checkifpresent
+ object=x8
+ if result=false then notovercome ; bane not here
+ x1=currentpos(lipstick)
+ if x1<>user then notovercome
+ x1=hicurrentpos(lipstick)
+ if x1<>worn then notovercome
+ x1=currentpos(perfume)
+ if x1<>user then notovercome
+ x1=hicurrentpos(perfume)
+ if x1<>worn then notovercome
+ x1=bane
+ gosub @addscore20
+ currentpos(bane)=c0
+ m1=2682
+ gosub @printm1dot
+.notovercome
+;
+; don't put anything here, since the above routine is also used as
+; a subroutine & must be followed by return.
+;
+ return
+;---
+.specialaftergive
+; NOUN1 has just been given to the npc NOUN2
+;
+ if noun2<>chugg then notgivechugg
+ if noun1<>cask then notgivechugg
+ x1=chugg
+ gosub @addscore20
+ currentpos(chugg)=c0
+ m1=2690
+ goto @printm1dot
+.notgivechugg
+;
+.saythankyou
+ object=noun2
+ gosub @printTheobject
+ m1=2204 ; said "thankyou"
+ goto @printM1Dot
+;---
+.TIMEDEPENDENTCODE
+; called for every minute that goes past
+ actor=user ; just in case there is any doubt!
+;
+ gosub testend
+ gosub @seamuswarn
+ gosub @drainwater
+; gosub recoverplans
+ gosub @scenerysinging
+ gosub readplans
+ gosub autounhook
+ gosub trollcatches
+;
+ return
+;---
+; after 30 moves of chasing ingrid, the troll will capture her
+.trollcatches
+ if trollchasing=false then nochasemoves ; no troll chasing. set count=0
+ add chasemoves,c1 ; add to moves chased
+ if chasemoves<capturemove then trollcatchesret
+ object=trollchasing
+ gosub @checkifpresent
+ if result=false then trollcatchesret ; he's lagging behind
+ message blankline
+ x1=trollchasing
+ gosub @printtheobjectx1 ; same as @printactor, but for trollchasing
+ m1=2844 ; too late! troll captures Ingrid
+ gosub @printm1dot
+ goto @userdeath
+.nochasemoves
+ chasemoves=0
+.trollcatchesret
+ return
+;---
+; actor automatically gets off hook either by moving in a direction, or 
+; by falling off in ingrid's case.
+.autounhook
+ if actorhooked=false then auhret
+ x1=hicurrentpos(actorhooked)
+ if x1=0 then doautohook ; hipos=0, must have got off hook
+ x1=currentpos(actorhooked)
+ if x1=hook then auhret ; still on hook
+.doautohook
+ actorhooked=false
+.auhret
+ return
+;---
+; ingrid reads plans & then eats them as soon as she sees them out of 
+; silas's hands.
+.readplans
+ object=plans
+ gosub @checkifpresent
+ if result=false then readpret ; plans not around here
+ pos=silas
+ hipos=nonspecific
+ gosub @checkobjectpos
+ if result=true then readpret ; silas still has the plans
+ message 2843 ; ingrid examines & then eats plans
+ currentpos(plans)=c0 ; ingrid eats them
+ x1=50
+ goto @addscore20 ; score 50
+.readpret
+ return
+;---
+; test if all trolls captured
+.testend
+ if alltrollscaptured<>true then teret
+; all trolls captured!
+ alltrollscaptured=2 ; don't repeat this routine
+ x1=22
+ currentpos(silas)=x1 ; silas at top of stairs
+ hicurrentpos(silas)=c0
+ object=silas
+ x6=50
+ gosub @newracetrackforobject
+ x1=5
+ currentpos(user)=x1 ; ingrid enters house
+ hicurrentpos(user)=c0
+ gosub @emptyturnips ; empty turnip contents onto stairs
+ currentpos(turnips)=c4 ; restack turnips.
+ gosub @setuproom
+ m1=2810
+ goto @printm1dot
+.teret
+ return
+;---
+.seamuswarn
+ if seamuswarning=false then noseamuswarn
+ add seamuswarning,c1
+ if seamuswarning=3 then @seamusarrives
+ if seamuswarning=4 then @seamusgoes
+.noseamuswarn
+ return
+;---
+; do any scenery noises etc. here
+.scenerysinging
+;
+ gosub movevains
+;
+; muffled cries in barn
+ if brickcount<5 then nobarnsinging
+ if currentuserroom=222 then okbarnsinging
+ if currentuserroom<>36 then nobarnsinging
+.okbarnsinging
+ m1=2740
+ gosub @varymessagedot
+.nobarnsinging
+;
+ return
+;---
+; see/hear vanes moving
+.movevains
+ if vanesturning=false then vainsret
+ m1=2704
+ if room=21 then @printm1dot
+ m1=2705
+ if room=33 then @printm1dot
+.vainsret
+ return
+;---
+.drainwater
+ if draincount=false then drainret
+ if draincount>20 then drainret
+ x1=currentpos(bog)
+ if x1=c0 then drainret
+ if x1<>currentuserroom then drain0 ; user not watching
+;
+; print appropriate drain message
+ x1=draincount
+ x2=2
+ gosub @x1divx2
+ add x2,x3
+ if x2<>0 then drain0 ; don't print message if remainder
+ m1=2629 ; drain base-1
+ add m1,x1
+ gosub @printm1dot
+;
+.drain0
+ add draincount,c1
+ if draincount<21 then drainret
+ currentpos(bog)=c0 ; fully drained away
+.drainret
+ return
+;---
+;; NOT USED NOW, SINCE PLANS ARE DESTROYED WHEN 
+;; INGRID "VISITS" THEM (PROVIDED SILAS DOESN'T HAVE THEM).
+;; silas steals plans back from anyone except floopsy
+;.recoverplans
+; x4=plans
+; gosub gopx4
+; if x2=c0 then rpret ; plans been destroyed
+; x8=x2
+; x4=silas
+; gosub gopx4
+; if x2<>x8 then rpret ; silas not near plans
+; random x1
+; if x1>170 then rpret ; 1:3 chance of recovering plans
+; x1=hicurrentpos(plans)
+; if x1=0 then okrecover ; silas takes plans from floor
+; x1=currentpos(plans)
+; if x1=silas then rpret ; silas can't steal them from himself!
+; if x1<>flopsy then okrecover
+;; flopsy dodges
+; m1=2592
+; gosub @printm1dot
+; goto rpret
+;; plans are stolen
+;.okrecover
+; x1=silas
+; currentpos(plans)=x1
+; x1=carried
+; hicurrentpos(plans)=x1
+; m1=2593
+; gosub @printm1dot
+;.rpret
+; return
+;---
+.OBJECTTRIGGER
+; Trigger on OBJECT
+; set PROCESSED=TRUE if the command is completed
+; by this routine (usually by the printing of an
+; error message, or some other general response)
+
+ processed=FALSE
+ if object=nullobject then otok
+ if verb=iexamine then otExamine
+ gosub @checkifpresent
+ if result=FALSE then otret ; not here, so do nothing
+ OTPOS=CURRENTPOS(OBJECT) ; remain set throughout this routine
+ OTHIPOS=HICURRENTPOS(OBJECT)
+ processed=TRUE ; prevent processing unless cleared at end of routine
+; special cases...
+
+.otExamine
+.OTOK
+ processed=FALSE ; PROCESSING MAY CONTINUE
+.otret
+ RETURN
+
+.otpreventm1dot
+ gosub @printM1dot
+.otprevent
+ processed=TRUE
+ return
+
+.FUNNIES
+; Value of word entered is in 'OBJECT' (relative to NOUNOFFSET)
+; Also have 'VERB' and may have 'PREP' if one has been entered
+; before this noun on the input line.
+; Return processed=TRUE if a special message is printed in this routine
+; which should prevent the printing of other messages
+ if object=nullobject then funniesok
+ processed=true ; prevent action unless drop through to end
+; if verb<>iexamine then fnotexamine
+; gosub isroomvandalised
+; if result=false then fnotvandalised
+; message 2213 ; vandals seem to have been at work here
+; message dot
+; if noun1<255 then fnotvandalised ; normal object, so also
+;; print normal description
+; return
+;
+;.fnotvandalised
+; if object<600 then nothingspecial ;*needed?
+; if object>699 then funniesok ;nothingspecial
+;; examining tree/terrain
+; verb=iam
+; gosub @printOBJECTverb
+; x1=object
+; x2=340
+; add x1,x2
+; message x1 ; examine message for tree/terrain
+; message dot
+; return
+;
+.nothingspecial
+
+; message 2112 ; it looks exactly as you would expect
+; return
+
+.fnotexamine
+ if object<240 then notvandal
+; if verb=iattack then vandal
+
+.notvandal
+.examnotscenery
+.funniesok
+ processed=FALSE
+ RETURN
+;---
+;.vandal
+;; vandalising scenery in ROOM
+;; has it already been vandalised?
+; if noun1<minsceneryobj then notvandal
+; gosub isroomvandalised
+; if result=true then alreadyvandalised
+; if x2=vandalmax then cantaddentry ; off end of table
+;
+;; add entry
+; message 2210 ; vandal!
+; message dot
+; vandaltable(x2)=room
+; add vandalptr,c1
+; return
+;
+;.cantaddentry
+;; can't add any more vandalised locations, so be rude to player..
+; message 2212 ; get knotted!
+; message dot
+; return
+;
+;.alreadyvandalised
+; message 2211 ; don't bother.. you made a good job last time
+; message dot
+; return
+;---
+;.isroomvandalised
+;; has room already been vandalised?
+;; return result=true or false accordingly
+; result=false
+; x2=vandalbase ; pointer into table
+;.vandal1
+; x1=vandaltable(x2)
+; if x2=vandalptr then irvret ; return false
+; if x1=room then @returntrue
+; add x2,c1
+; if x2<vandalmax then vandal1
+;.irvret
+; return
+;
+;---
+.SPECIALEXAMINE
+; print any special examine messages which follow
+; the basic message but are before any contents are printed
+; set processed=TRUE if the contents should not be printed
+;
+ if object<>gap then notexaminegap
+ x1=currentpos(turnips)
+ m1=2513
+ if x1=4 then @printm1dot ; see turnips
+.notexaminegap
+;
+; examine ingrid
+ if object=flopsy then ExamineFlopsy ;>>mike 20/9/88
+ if object<>user then notexamineuser
+.ExamineFlopsy
+ x1=24
+ gosub @DrawPictureX1 ; draw ingrid & flopsy piccy (same as village hall!)
+.notexamineuser
+;
+ RETURN
+;
+;---
+.SPECIALPREEXAMINE
+; before printing examine message / contents, check if
+; anything should prevent this. Return TRUE if details should
+; NOT be printed
+; if object>MaxNpc then SPENotPerson
+; gosub ReportHealth
+; if x1=0 then returnTrue ; dead!
+;
+;.SPENotPerson
+;
+; can't read plans if silas has them
+ if object<>plans then notreadplans
+ pos=silas
+ hipos=nonspecific
+ gosub @checkobjectpos
+ m1=2591
+ if result=true then returntruem1dot ; silas keeps hold of plans
+ return
+.notreadplans
+;
+ RESULT=FALSE ; proceed normally
+.speok
+ RETURN
+
+.returnTrueM1Dot
+ result=true
+ goto @printm1Dot
+;---
+.CANTSEETHAT
+ M1=2019 ; can't see that
+ GOTO @errorm1
+;---
+.mighthurtyourself
+ m1=2401 ; you might hurt yourself
+ goto @errorm1dot
+;----
+;---
+.StopObject
+ actorsave=actor
+ actor=object
+ gosub @stop
+ actor=actorsave
+ goto resetactor
+;---
+.resetactor
+ gosub @setACTORATTRIBUTES
+ goto @initfifo
+;---
+;---
+.MAKEENEMIES
+; make TARGET and ACTOR be enemies
+ OBJECT=TARGET
+ GOSUB @setX4toOBJECTATTRIBUTES
+;;; and set up attacker and target to be enemies...
+ NPCCURRENT(X4)=ACTOR
+ NPCCURRENT(ACTORATTRIBUTES)=TARGET
+ return
+;---
+; Routines to return pointer to character 'OBJECT' data. Note that they 
+; rely on npcentrysize=16, so beware if you change this.
+.setACTORATTRIBUTES
+ ACTORATTRIBUTES=ACTOR
+ ADD ACTORATTRIBUTES,ACTORATTRIBUTES
+ ADD ACTORATTRIBUTES,ACTORATTRIBUTES
+ ADD ACTORATTRIBUTES,ACTORATTRIBUTES
+; ADD ACTORATTRIBUTES,ACTORATTRIBUTES
+ RETURN
+;
+.setX4toOBJECTATTRIBUTES
+; return pointer in X4. (Modify .notifynpc if you change this routine)
+ X4=0
+ if object>maxNpc then sxtnnotalive
+ X4=OBJECT
+ ADD X4,X4
+ ADD X4,X4
+ ADD X4,X4
+; ADD X4,X4
+.sxtnnotalive
+ return
+;---
+.SILLY
+; prs "[actor who is being silly is: "
+; x1=actor
+; gosub @printTHEobjectx1
+; prs "]"
+; message cr
+ gosub @AbsCancelInput
+ M1=3100
+ GOTO @VARYERRORM1DOT
+;---
+;-------------------
+.SPECIALDESC
+; come here after all objects and exits printed
+; no return necessary
+.sdret
+ RETURN
+;---
+.SPECIALEXITS
+; Given 'FROM' 'DIR' 'DEST'
+; Modify if an exit is blocked for some reason
+ HIDEST=0 ; normally can't move onto a container through an exit
+ X1=HICURRENTPOS(ACTOR)
+ IF X1=0 THEN SEORDINARY
+; ACTOR is on something - so exits may be different
+; Standing on something, but can take as being an
+; ordinary exit from the room in which the container is ('ROOM')
+.SEORDINARY
+; now check any other modified exits
+; if dest<minsynthroomminus1 then senotsynth
+; x1=dest
+; gosub @GetTerrainType
+; if x1<minsynthroomminus1 then seprevent ; should be going to a fixed room
+; if x1=112 then seprevent ; unavailable room
+;
+; If you want to prevent movement onto a particular class
+; of terrain, add the line:
+;
+; IF x1<116 (say) then seprevent
+;
+; then terrain types MINSYNTHROOM to 115 will be impossible to move onto.
+; (You may need to remove the range check on DEST above, as well)
+.senotsynth
+; if from<>116 then seNotBridge
+; if dir<>4 then seNotBridge
+; dest=28
+;
+;.seNotBridge
+.specialexitsok
+ RETURN
+
+.seprevent
+.SEFALSE
+; Exit is not present
+ DEST=0
+ EXITVISIBLE=FALSE
+ RETURN
+;---
+.SPECIALDROPS
+; trying to drop 'OBJECT' to position HIPOS, POS
+; Print appropriate message if desired
+; and return RESULT=FALSE if ACTOR is to be prevented from dropping it
+; if hipos=0 then sdnotputonobject
+;.sdnotputonobject ; not going to a container
+ RESULT=TRUE ; allow it to be dropped
+ RETURN
+;---
+.SPECIALACTOR
+; print ACTOR
+
+ cif AllowBoat
+  x1=hicurrentpos(actor)
+  if x1=0 then specialActor0
+  x1=currentpos(actor)
+;  if x1=boat then sa1
+  if x1=steamroller then sa1
+  if x1=turnips then sa1
+  if x1=bushes then sa1
+  if x1=silas then sa2
+.specialactor0
+  x1=startliedowntable
+  add x1,actor
+  x2=list7(x1)
+  if x2<>0 then sa0
+  goto specialActor1
+.sa0
+; print "<actor> was lying on the floor..."
+  gosub @printactor
+  m1=2601
+  goto @printm1
+.sa1
+; print "the container was..."
+  object=x1
+  verb=iam
+  goto @printObjectVerb
+.sa2
+; print "silas was escorting ingrid..."
+  m1=2813
+  goto @printm1
+
+.specialActor1
+ cend
+
+ lastwordprinted=actor ; force it to print the article - 'you'
+ verb=iam
+; prs "[ specialactor:" ;*
+; print actor ;*
+; prs " ]" ;*
+ goto @printACTORverb
+;---
+; CHECK IF ACCESSIBLE BEFORE CHECKING OBVIOUS THINGS LIKE OBJECT IS
+; OMNI PRESENT, OR OWNED BY SOMEONE ELSE.
+;
+.specialcheckifaccessible
+; if no special code is needed, LEAVE RESULT UNCHANGED
+; otherwise return RESULT=TRUE if OBJECT is accessible to VERB
+; or RESULT=FALSE if not accessible.
+; *graham* this is necessary when using two objects for a wardrobe etc.
+; (i.e. a wardrobe which is open, and one which is closed)
+ if processingsay=TRUE then conditionaltrue ;*graham* bug fix. sciatrue
+.sciaNotAutomatic
+ if verb=ifollow then conditionaltrue ;*graham* bug fix
+ if verb=isetupgo then conditionaltrue ; sciatrue
+ if verb=igdgo then conditionaltrue ; sciatrue
+ if verb=isetupfind then conditionaltrue ; sciatrue
+ if verb=igdfind then conditionaltrue ; sciatrue
+ if verb=igetme then sciatrue
+ if verb=iwaitforperson then conditionaltrue ; sciatrue ; wait for ...
+ if verb=iwaitforperiod then conditionaltrue ; sciatrue ; wait for ...
+ if verb=iwaituntiltime then conditionaltrue ; sciatrue ; wait until ...
+ if object<>generaldoor then scianotdoor
+ gosub @setupdoor
+ if door=TRUE then sciatrue
+ goto @returnfalse
+;
+.scianotdoor
+ return
+;---
+.conditionaltrue
+; only true if OBJECT exists in the game
+ x1=currentpos(object)
+ if x1=0 then @returnfalse
+.sciatrue
+ result=TRUE
+ return
+;---
+.isobjectalive
+; return result=TRUE if it is
+; if object=steamroller then @returntrue ;*graham*
+ if object>maxnpc then @returnfalse
+ gosub @SetX4ToObjectAttributes
+ x1=hitpointOffset
+ add x1,x4
+ x1=npcCurrent(x1)
+ if x1>0 then sciatrue
+ result=FALSE
+.ioaret
+ return
+;---
+;
+.specialdescbeforeexits
+; printed immediately after short+long room descs.
+; no return needed
+
+.printdistantfeatures ;*
+; what is the height of the current location?
+; what is the special feature at the current location?
+;
+ return
+;---
+.calcheight
+; return x1 = height of ROOM with scenery object x4
+; x4=1..25 corresponding to room if special feature
+ return
+;---
+.CalcTerrainAndTree
+; return x1=tree type and x2+x3=terrain type
+; for ROOM.
+ return
+;---
+.GetXY
+; return X=x co-ordinate on grid
+; Y=y co-ordinate on grid
+ if room>minsynthroomminus1 then getxysynth
+; fixed room
+ x=0
+ y=0
+ return
+
+.getxysynth
+ x1=room
+.getxyx1
+ x2=minsynthroomminus1
+ sub x1,x2
+ sub x1,c1
+ x2=xmaxplus1
+ gosub @x1divx2
+ y=x1 ; y:=room div xmax = y co-ordinate
+ add x2,x3
+ x=x2 ; x:=room mod xmax = x co-ordinate
+ return
+;---
+.convertroom
+; return x1 as the room number for the description
+; printed by a room object being here.
+; descriptions are in table with offsets 240..255
+; exits are stored in table from room 10..30
+ x1=minsceneryobjt2m1 ; double to give index into initial pos
+.cr1
+ x2=objectstart(x1)
+ if x2=room then crfound
+ add x1,c2
+ if x1<maxsceneryobjtimes2plus2 then cr1
+ x1=0
+ return
+.crfound
+; objects have numbers minsceneryobj..maxsceneryobj
+; we want offset in objects 1..25
+;; so subtract minsceneryobjminus1
+ x2=2
+ gosub @x1divx2 ; get object number
+ x2=minsceneryobjminus1
+ sub x1,x2
+ return
+;---
+.GetUserHitPoints
+ object=user
+ gosub @SetX4toObjectAttributes
+ x1=hitpointoffset
+ add x1,x4
+ x1=npccurrent(x1)
+ return
+;---
+.specialactivatenpc
+; We are activating npc ACTOR
+; Put special code handlers for them HERE.
+; Set processed=TRUE if they have already done
+; everything they are going to this turn.
+; return verb<>0 to do that action
+;
+; THIS IS USED QUITE A LOT IN GNOME2.2 BECAUSE TRAPS MUST BE EXECUTED 
+; FOR ANY OF THE 7 TROLLS.
+;
+; THIS IS LIKE A KIND OF TIMEDEPENDANT FOR NPCs.
+;
+;-------------------------------------------------------------------------
+; HIGH PRIORITY INTERCEPTS
+;-------------------------------------------------------------------------
+; actor tries to teleport back if just been teleported somewhere. 
+ if actor<>actorteleported then sannotteleportback
+ if movesteleported=1 then oktb
+ movesteleported=1 ; teleport back after 1 move
+ goto sannotteleportback
+;
+; is there a lily here?
+.oktb
+ object=bluetelelily
+ gosub @checkifpresent
+ x8=greentelelily
+ if result=true then santeleportback
+.sannotblue
+ object=greentelelily
+ gosub @checkifpresent
+ if result=false then sannotteleportback
+ x8=bluetelelily
+;
+; there is a lilly here, so teleport back
+.santeleportback
+ x9=object ; save object
+ object=x8
+ gosub @checkifpresent
+ object=x9
+ if result=true then sannotteleportback ; both here, no point teleporting!
+ gosub @oktoteleportback
+ goto @sanok
+.sannotteleportback
+;-------------------------------------------------------------------------
+; TROLL-ONLY ACTIVATIONS
+;-------------------------------------------------------------------------
+ if actor<ambul then notactivatetroll
+ if actor>gormley then notactivatetroll
+;---
+; trigger patrolling trolls to follow ingrid
+ if trollchasing<>false then dontchase ; already being chased
+ if actor=doldrum then testchase
+ if actor=fugg then testchase
+ if actor<>gormley then dontchase
+; trigger chase if in same room as ingrid
+.testchase
+ if room<>currentuserroom then dontchase
+ trollchasing=actor
+
+ cif allowcheat
+ if cheatmode=false then froop
+ message cr ;*
+ prs "[ trollchasing: " ;*
+ gosub @printactor ;*
+ prs " ] " ;*
+.froop
+ cend
+
+ object=actor
+ x6=48
+ goto @newracetrackforobject
+.dontchase
+;---
+; trolls in sty escape when pigs released
+ if room<>8 then notescape ; not in sty
+ object=guineapigs
+ gosub @checkifpresent
+ if result=false then @sanok ; pigs not here
+ verb=1 ; escape north (out of sty)
+ goto @sanok
+.notescape
+;---
+; trolls teeter on edge of trapdoor
+ object=otrapdoor
+ gosub @checkifpresent
+ if result=false then notteeter
+ gosub @printactor
+ m1=2790
+ goto @varymessagedot
+.notteeter
+;
+.notactivatetroll
+;-------------------------------------------------------------------------
+; MISCELLANEOUS ACTIVATIONS
+;-------------------------------------------------------------------------
+; unhook actors
+.unhook
+ if actor<>actorhooked then notunhook ; not hooked
+ if abouttobeunhooked=false then nextmoveunhook ; unhook him next move
+ m1=2750 ; let me down!
+ x8=33
+ if room=40 then sanokforcevary ; don't unhook if at mill top
+ currentpos(actor)=room
+ hicurrentpos(actor)=c0
+ actorhooked=false
+ abouttobeunhooked=false
+ gosub @printactor ; <actor>
+ m1=2715 ; got of the hook
+ gosub @printm1dot
+ gosub loseiftroll ; LOSE POINTS IF ACTOR IS TROLL
+ goto sanok
+.nextmoveunhook
+ abouttobeunhooked=true
+ goto sanok
+.notunhook
+;---
+; actor in cellar?
+ if room<>6 then sannotincellar
+ if actorincellar=false then nobodyelseincellar
+ if actorincellar<>actor then getoutofcellar ; someone else here
+.nobodyelseincellar
+ actorincellar=actor
+ add movesincellar,c1
+ if movesincellar<4 then sanok
+; get out of cellar on 4th move
+.getoutofcellar
+ verb=9 ; up
+ goto sanok
+; lose score when escaped is handled in aftermoves AND teleport back 
+; code (see above) since both methods may be used to capture a troll.
+.sannotincellar
+;---
+; actor trapped down well?
+ if room<>7 then sanok
+ m1=2760
+ x8=224
+ goto sanokforcevary
+;---
+; "actor trapped" varymessage if user in room x8.
+.sanokforcevary
+ if actor=flopsy then sanok ;* flopsy doesn't shout for help!
+ if currentuserroom<>x8 then sanok
+ random x1
+ if x1>128 then notrappedmess
+ forceprinting=true
+ gosub @varymessagedot
+ forceprinting=false
+.notrappedmess
+ gosub scoreiftroll ; SCORE POINTS IF ACTOR IS TROLL
+;
+.sanOK
+ processed=false ; no special code - so allow npc to activate
+.sanRet
+ return
+
+.saPreventActorM1Dot
+ gosub @printactor
+
+.setProcessedM1Dot
+.saPreventM1Dot
+; print m1, do nothing else this turn
+ gosub @printm1Dot
+
+.saPrevent
+ processed=true
+ return
+;---
+; troll teleports back. this is used by specialactivate one move 
+; after being teleported, and by "put lily on troll" to ensure that 
+; only one troll can be teleported to each trap.
+; it sometimes helps to test if both lilys are present, since if they 
+; were, it would be pointless to call this routine.
+.oktoteleportback
+ gosub @teleok
+ actorteleported=false
+; lose points gained in case troll has escaped a trap.
+; score will be triggered again if entered a new trap such as well.
+ gosub loseiftroll
+.notteleportback
+ return
+;---
+; score points if actor (usually in a trap) is a troll
+.scoreiftroll
+ if actor<ambul then sitret
+ if actor>gormley then sitret
+ x1=actor
+ gosub @addscore20
+; cancel "chasing flag" if troll captured was the one chasing ingrid
+ if trollchasing<>actor then sitret
+ trollchasing=false
+ chasemoves=0 ;*
+.sitret
+ return
+;---
+; lose points if actor (usually escaped a trap) is a troll
+.loseiftroll
+ if actor<ambul then litret
+ if actor>gormley then litret
+ x1=actor
+ gosub @clearscore
+.litret
+ return
+;---
+.isobjectalert
+; return result=TRUE if OBJECT is awake
+ gosub @isobjectalive
+;; if result=FALSE then ioalertret
+.ioalertret
+ return
+;---
+.canactormove
+; return result=FALSE if ACTOR is prevented from moving
+ result=TRUE
+.camret
+ return
+;---
+.canactorrandommove
+; return result=TRUE if actor can make random moves
+ x1=hicurrentpos(actor)
+ if x1<>0 then carmfalse
+ result=true
+ if actor=flopsy then carmret
+.carmfalse
+ result=false ; no-one moves at random in this part. TRUE
+.carmret
+ return
+;---
+.handleinterruption
+; ACTOR has been interrupted in the middle of something
+; Do whatever you see fit, then return
+; No values need be returned
+ return
+;---
+.specialrtmessage
+; actor is just about to print M1 as part of a racetrack
+; instruction. Use this hook to intercept particular things
+; which may happen in the message which cannot be easily
+; coded elsewhere.
+;
+; dam is repaired
+ if m1<>5037 then notrepairdam
+ currentpos(brokendam)=c0
+ x1=39
+ currentpos(dam)=x1 ; dam repaired
+.notrepairdam
+;
+; silas escorts ingrid from stairs
+ if m1<>5000 then notescort
+ x1=silas
+ currentpos(user)=x1
+ x1=15 ; escorted
+ hicurrentpos(user)=x1 ; silas "escorts" ingrid
+ currentpos(silas)=c3 ; start in grandma's bedroom
+ x1=user
+ currentpos(deeds)=x1
+ x1=carried
+ hicurrentpos(deeds)=x1 ; ingrid carries deeds
+ gosub @setuproom
+ currentuserroom=room
+.notescort
+;
+; silas reaches farmyard with deeds
+ if m1=5003 then @userdeath
+;
+ return
+;---
+.newracetrackforobject
+; start racetrack x6 for actor OBJECT
+ actorsave=actor
+ actor=object ; replace its racetrack with a new one...
+ gosub @setACTORATTRIBUTES
+ gosub @stop ; kill existing racetrack
+ x1=x6 ; race track number to execute
+ gosub @initracetrackx1
+ actor=actorsave
+ goto @resetactor ; from actorsave
+;---
+.checknullaction
+; ACTOR has no stack actions to do, so we may want to start up a new 
+; one. This is used for people such as the valkyrie in Knight Orc, 
+; for whom it is VITAL that they should not become 'unhooked'. Set 
+; ORDERWAITING to the first command to  execute, if you want ACTOR 
+; to obey it immediately.
+; if actor=* then RestartRacetrack
+ return
+
+.RestartRacetrack
+; restart the original racetrack
+ x6=actor
+ object=actor
+ goto @NewRaceTrackForObject
+;---
+.specialcheckifpresent
+; have just checked if object is present
+; Add special modifiers here.
+; return RESULT=TRUE if object here.
+ return
+;---
+.specialinitnpcs
+ return
+;---
+.destroyobject
+; object gets destroyed, and replaced in a location as appropriate
+ currentpos(object)=c0
+ hicurrentpos(object)=c0
+ return
+;---
+.createobject ;** used now?
+; OBJECT gets created in current room
+ currentpos(object)=room
+ hicurrentpos(object)=c0
+ return
+;---
+.createobjectpos ;** used now?
+; create OBJECT at position HIPOS, POS
+ currentpos(object)=pos
+ hicurrentpos(object)=hipos
+ return
+;---
+.TRIGGERWORDS
+; check current word to see if it is a trigger word
+; ACTOR is the target of conversation
+;; SEARCHTYPE=NOUNTYPE
+;; GOSUB @CHECKTYPE
+;;; see if there is any action to take on VALUE
+;; if value=nullvalue then tgret
+;;; gosub @checknoun
+;; if processed=TRUE then tgret
+;;
+;;; OBJECT is a word spoken TO actor
+;; if twNoun<>0 then tw2 ; verb seems to be cleared before subsequent words.
+;; if verb<>itell then tgret
+;;.tw2
+;; if object<>user then tellNotUser
+;; if twNoun=object then TellNotUser ; "tell me about me"
+;; twNoun=object ; "tell me about.. "
+ return
+
+;;.tellNotUser
+;; result=false
+;; gosub doquestion
+;; if result=true then @realsayend ; clear stack, terminates if processed
+;;.TGRET
+;; return
+
+
+;;; if verb=itell then tgret ; process as parsed sentence
+;;;; OBJECT is a word spoken TO actor
+;;; result=false
+;;; gosub doquestion
+;;; if result=true then @realsayend ; clear stack, terminates if processed
+;;;.TGRET
+;;; RETURN
+;---
+.tell
+ goto @noverb
+;;; tell me about NOUN2
+;; if actor=user then @ask
+;; result=false
+;; object=noun1
+;; if object<>nullobject then tell1
+;; object=noun2
+;;.tell1
+;; gosub doquestion
+;; if result=false then @startorders
+;; return
+;---
+;;.doquestion
+;;; rainbird prints examine messages for item OBJECT
+;;; set result=true if processed
+;; if verb=itell then doquestion2
+;;; if verb=iask then doquestion2
+;;; if verb=isay then doquestion2
+;; if verb=0 then doquestion2
+;; return ; result=false, so not processed
+;;
+;;.doquestion2
+;; if object=nullobject then rainbirdret
+;; gosub @PrintActor
+;; m1=3612 ; clears its throat and says "
+;; gosub @Printm1
+;; m1=3611 ; ..you, dummy!
+;; if object=user then twprint
+;; m1=3610 ; me!
+;; if object=actor then twprint
+;; if object=iyou then twprint
+;;;
+;;; objects which the rainbird won't describe because
+;;; their examine messages contain spell names...
+;; m1=2112 ; nothing special
+;; if object>maxobject then twprint
+;;
+;; gosub @printTheObject
+;;; do "it is/they are" in PRESENT TENSE
+;; x1=object
+;; gosub @conjugatex1
+;; m1=135 ; are (present tense)
+;; if result=pluralsome then dor1
+;; m1=136 ; is (present tense)
+;;.dor1
+;; gosub @printm1
+;;
+;;;; verb=iam
+;;;; gosub @printobjectverb ; that is..
+;; m1=examinemessages ; base of examine messages
+;; add m1,object
+;;.twprint
+;; gosub @printm1 ;dot
+;; m1=dotquote
+;; gosub @printm1
+;;
+;; result=true ; processed
+;;.rainbirdret
+;; return
+;---
+;---
+.isactorflying
+; return RESULT=TRUE if ACTOR is flying
+ result=FALSE
+.iafret
+ return
+;----------------
+.specialconversation
+; USER is saying 'verb prep noun1 noun2' to ACTOR
+; make any intercepts you fancy.
+; If the command is not to be stored, set PROCESSED=TRUE
+; and SAYRESPONSE=TRUE
+;
+; see also TRIGGERWORDS
+ if verb=ihello then npchello
+
+;; if verb=itell then @tell
+;;
+;;; m1=3270 ; won't give anything away
+;;; if verb=igive then scprint
+;; if verb<211 then scnonotquestion
+;; m1=3250 ; won't answer that
+;; if verb<217 then scprint
+;;.scnonotquestion
+ m1=3620 ; seemed very offended
+ if verb=217 then scprint
+;; m1=3640 ; won't help
+;; m1=2038 ; said "that was a rhetorical question"
+;; if verb=200 then scPreventActorM1Dot
+;; if verb=201 then scPreventActorM1Dot
+;; if verb=207 then scprint
+ m1=3660 ; echo verb - can't do it etc.
+ if verb>199 then scprint
+ if verb<20 then scNotSystem
+ if verb<32 then scPrint ; system verbs - SAVE, RESTORE etc.
+.scNotSystem
+ return ; nothing unusual - probably an order, so pass back
+; for normal handling code to cope with it.
+
+.scprint
+ goto scpreventVaryM1Dot
+
+;---
+.scPreventActorM1Dot
+ gosub @ActorM1Dot
+ goto scPrevent
+;
+.NPCHELLO
+; ACTOR is the person the user is trying to talk to, who is here
+ m1=3170 ; hello
+
+.scPreventVaryM1Dot
+ LASTWORDPRINTED=0 ; prevent use of IT
+ gosub @varysaym1dot
+.scprevent
+ SAYRESPONSE=TRUE
+ processed=TRUE
+.NPCHELLOret
+.scNoPrint
+ RETURN
+;
+.scpreventm1dot
+ gosub @printm1dot
+ goto scprevent
+;---
+.empty ;** remove verbs?
+.pour
+ goto @silly
+;---
+.knock
+ m1=2545
+ gosub @printm1dot ; rat-a-tat-tat
+ return
+;---
+.WaterSomething
+.checkForWater
+ goto @noverb
+;---
+.hold ;** remove verb?
+ goto @take
+;----
+.win
+ x1=44
+ x2=40
+ gosub @addscorex2
+ message blankline
+ message 2840
+ message dot
+ message blankline
+ gosub @score
+; gosub @restartorrestore
+; goto @startgame ; just in case didn't chain
+ message blankline
+;cif NotDiskVersion
+; gosub @OfferSave ;>>mike19/10/88
+;cend
+ gosub @calcscore ;*****
+ valuesave=x4 ;carry score to next part (hopefully!)*****
+ thispart=0 ;*****2
+ parttochain=3
+ goto @chainparttochain
+;---
+.SpecialConjugate
+; return x1 as type for noun x2 (if different to that in the table)
+ if x2=gnora then scProperFemale
+ if x2=grandma then scProperFemale
+ if x2=flopsy then scProperFemale
+.scNotPF
+ return
+.scProperFemale
+ x1=ProperFemale
+ return
+;---
+.SpecialEchoVerb
+; trap any unusual responses, then set result=true to prevent
+; printing the standard reply
+ result=false ; do standard reply
+ return
+;---
+.specialEssentialInit
+; DEFINE disabled as npc's which are temporarily inactive - 
+; i.e. npc's which are in a different part to the user.
+; disable/re-enable npcs as appropriate - just
+; swap over bit 6 of the "enemy" flag
+ return
+;---
+;.SwapDisabledFlags
+; object=2
+;.seiLoop1
+; gosub SwapDisabledFlag
+; add object,c1
+; if object<maxNpc then seiLoop1
+;; and do MaxNpc by dropping through...
+;;
+;.SwapDisabledFlag
+; gosub SetX4ToObjectAttributes
+; x1=npccurrent(x4)
+; x2=64
+; if x1>191 then seiEnable
+; if x1>127 then seiDisable
+; if x1>63 then seiEnable
+;.seiDisable
+; add x1,x2
+; goto seiLoop2
+;
+;.seiEnable
+; sub x1,x2
+;
+;.seiLoop2
+; npcCurrent(x4)=x1
+; return
+;---
+; SPECIALNPCGOLDSINGING ( Graham 17/12/87 Bits of 8ish )
+; For special cases such as when ACTOR is p*ssed off or whatever.
+; E.g. when waiting for something, "I'm getting p*ssed off.",
+; "I'm getting bored sh*tless.", "B*llocks to this.", etc.
+;
+.SPECIALNPCGOLDSINGING
+;
+ if descriptionmode=ibrief then nogoldatall ;*no singing if brief mode*
+ x1=startliedowntable
+ add x1,actor
+ x2=list7(x1)
+ if x2<>0 then nogoldatall ; don't sing if lying down
+ random x1
+ if x1>96 then nospecialgold
+ if actor=flopsy then specialflopsysinging
+ if actor=gnoah then specialgnoahsinging
+.nospecialgold
+ if x1>220 then @npcgoldsinging ;*see change in npc.txt*
+.nogoldatall
+ return
+;
+; gnoah shouts at silas in steamroller
+.specialgnoahsinging
+ object=silas
+ gosub @checkifpresent
+ if result=false then nospecialgold
+ object=steamroller
+ gosub @checkifpresent
+ if result=false then nospecialgold
+ lastwordprinted=0
+ m1=2620
+ goto @varymessagedot
+;
+; since flopsy follows Ingrid on a permanent basis, she doesn't get
+; chance to do any normal goldsinging.
+.specialflopsysinging
+ object=silas
+ gosub @checkifpresent
+ if result=true then bitesilas ; flopsy dodges attacks & bites silas
+ gosub @printactor
+ m1=3370
+ goto @varymessagedot
+;
+.bitesilas
+ lastwordprinted=0
+ m1=2580
+ goto @varymessagedot
+;
+; CHECKIFGATE. Result=true if door in ROOM is to be treated as a gate.
+;
+.checkifgate
+ if room<8 then isnotgate
+ if room<13 then isgate ; rooms 8 - 12 inner sty/coop gates
+ if room=220 then isgate ; 220 outer coop gate
+ if room=221 then isgate ; 221 outer sty gate
+.isnotgate
+ result=false
+ return
+;
+.isgate
+ result=true
+ return
+;
+; SPECIALPREACTION called after every user or npc input, but before the 
+; actions are processed. Make interceptions here.
+;
+.SPECIALPREACTION
+ processed=false ; true if command is to be ignored
+;
+; can't do much when buried in trunips
+ x1=currentpos(actor)
+ if x1<>turnips then notinturnips
+ x1=hicurrentpos(actor)
+ if x1=0 then notinturnips
+ if verb=iquit then spok ; ok to process quit
+ if verb=ilook then spok ; ok to process look
+ if verb=ishout then cryhelp ; shout, yell etc.
+ if processingsay=true then cryhelp ; ask npc for help
+ m1=2520
+ goto sppreventvarym1dot ; can't move etc.
+.notinturnips
+;
+.spok
+ processed=false
+ return
+;
+.cryhelp
+ m1=2530 ; fall through...
+;
+.sppreventvarym1dot
+ if actor<>user then spprevent ; messages only apply for ingrid
+ gosub @varymessagedot
+.spprevent
+ processed=true
+ return
+;

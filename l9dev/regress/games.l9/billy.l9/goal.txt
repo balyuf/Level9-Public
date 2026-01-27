@@ -1,0 +1,186 @@
+; Goal.TXT Copyright (C) 1989 Level 9 Computing.
+;
+; for Floor Map Editor.
+;
+; N.W.Austin 28/6/89
+;
+;-----
+;The FLOOR.DAT floor map is compressed; obstacles are marked
+;as 1 bit on a fine grid 4-pixels apart; Info for corrective
+;action (avoidance pointer) is stored as 4 bits on a 'coarse
+;grid 8 pixels apart. Height of the 'floor' (e.g. depth of a
+;river) is 4 bits on a coarse grid 8 pixels apart.
+
+;Thus there are 4 points on the fine grid for every point on
+;the coarse grid (the four points are a square, NOT linear)
+
+;'Blocked' points do not need a height; 'Unblockd' do not need
+;an avoidance pointer. To compress, where not all of each group
+;of 4 points (on the fine grid) are 'blocked' the height is
+;assumed to that of surrounding squares; thus only 8 bits stores
+;the height, avoidance and blocked info for each coarse point.
+
+;The header (NOT IMPLEMENTED) stores the ObjectNumber, Margin
+;X/Z, Width and Height so that walls need not be stored.
+;Typically for each room about 446 bytes are stored (100 rooms
+;44K bytes)
+
+;-----
+ begin
+
+.GDpointOnMap
+cif BadRoomOK
+ if CurrentRoom=0 then GPM1 ;for editor, must INIT room first
+cend
+ if CurrentRoom=0 then GPM2 ;for games, room is walkable
+ if CursorX<MarginX then GPM1 ;*
+ v1=MarginX
+ add v1,FSizeX
+ if CursorX>v1 then GPM1
+ if CursorX=v1 then GPM1 ;*
+ if CursorZ<MarginZ then GPM1
+ v1=MarginZ
+ add v1,FSizeZ
+ if CursorZ<v1 then GPM2
+.GPM1
+ ReturnCode=0
+ return
+
+.GPM2
+ ReturnCode=1
+ return
+
+;-----
+
+.GDquadMask
+;Calculate mask for current quadrant
+ v2=CursorZ
+ and v2,c4 ;0=top row 1=bottom row
+ v3=CursorX
+ and v3,c4 ;0=left, 1=right
+
+ if v2<>0 then GQM1
+ v1=1 ;0001
+ if v3=0 then GQM2
+ v1=2 ;0010
+ goto GQM2
+.GQM1
+ v1=4 ;0100
+ if v3=0 then GQM2
+ v1=8 ;1000
+.GQM2
+ return
+
+;-----
+
+.GDreadSquare
+ if CurrentRoom=0 then NoData ;*
+ gosub GDsquareAddr
+ CurrentSquare=FloorMap(v1)
+ return
+.NoData ;*
+ CurrentSquare=48 ;00110000 height=0
+ return
+
+.GDsquareAddr
+ v3=CursorZ
+ sub v3,MarginZ
+ asr v3 ;each byte represents an 8x8 area
+ asr v3
+ asr v3
+; (320-32)/4=72
+ v2=FSizeX
+ asr v2
+ asr v2
+ asr v2
+ v1=0
+.gds1
+ if v2=0 then gds2
+ add v1,v3
+ sub v2,c1
+ if v2>0 then gds1
+
+.gds2
+ v2=CursorX
+ sub v2,MarginX
+ asr v2
+ asr v2
+ asr v2
+ add v1,v2
+ add v1,CurrentRoom
+ return
+;----------
+.CheckCollision
+; CursorX=PlayerX
+; CursorZ=PlayerY
+; x1=PlayerHeight
+; add CursorZ,x1
+ gosub @GDpointOnMap
+ CurrentSquare=48 ;00110000 height=0
+ if ReturnCode=0 then GTL1
+ gosub @GDreadSquare ;current square=collision byte
+ gosub @GDquadMask ;v1=mask
+.GTL1
+ and v1,CurrentSquare
+ if v1=0 then GTL3
+.GTL2
+ ReturnCode=0 ;blocked
+ return
+.GTL3
+ ReturnCode=1 ; not blocked
+ return
+;---------
+;; Check map square at dv2+dx2,dv3+dx3
+;; V1=0 if square is vacant...
+;.CheckMap
+; push CursorX
+; push CursorZ
+; CursorX=dv2
+; CursorZ=dv3
+; add CursorX,dx2
+; add CursorZ,dx3
+; gosub @GDpointOnMapVec
+; CurrentSquare=48
+; PointOnMap=false
+; if ReturnCode=0 then FVPMap
+; PointOnMap=true
+; gosub @GDreadSquareVec ;current square=collision byte
+; gosub @GDquadMaskVec ;v1=mask
+;.FVPMap
+; pop CursorZ
+; pop CursorX
+; and v1,CurrentSquare
+; return
+;;---
+; Adjust person's height to that of the terrain...
+; on entry: CurrentSquare=value of walkable square
+; on exit: x1=height adjustment x2=peopleheight+x1
+.AdjustPersonHeight
+ x2=15
+ and x2,currentsquare
+ if x2<>0 then DefaultPersonH ; not walkable!
+ x1=240
+ and x1,CurrentSquare ; x1=height*16
+ asr x1
+ asr x1
+ asr x1		;/16 then *2 (for words)
+ x2=65534 ; remove bottom bit +++Mike 17Oct90
+ and x1,x2 ;+++Mike 17Oct90
+; limit height range that can be chosen
+ if x1>24 then DefaultPersonH ; some error or other +++Mike 17Oct90 was >12
+ &x2=List4(36)	;HeightTable
+ add x1,x2
+ &x1=List4(x1)
+
+ x2=PlayerHeight
+ add x2,x1
+ result=true ; ok
+ return
+
+.DefaultPersonH
+ result=false ; height information faulty/not available
+; x1=0
+; x2=PlayerHeight
+; add x2,x1
+ return
+;---

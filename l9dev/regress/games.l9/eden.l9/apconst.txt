@@ -1,0 +1,185 @@
+
+;Parser constants, variables and lists for Converted Trilogies
+
+;Copyright (C) 1986 Level 9 Computing
+
+;B:APCONST.TXT
+
+;-----
+
+; Most constants are game-specific.
+
+CONST
+
+;-----
+ ibutton=164
+
+ MINSTATUS=1
+ MAXSTATUS=2
+ GAMECODE=5 ;Unique game number
+ previousgamecode=4
+ GAMECOMPLETE=133 ;GAMECODE+128
+ PREVIOUSGAMECOMPLETE=132 ;Only required for second/final part
+
+ FIRSTPART=0 ;If non-zero prevents RESTORE from chaining
+ FINALPART=0 ;If non-zero at end of game does not SAVE
+
+ justplaying=0
+ endposition=1
+ solving=2
+;---
+
+ MINNOUNADJUST=80  ;Lowest 'INV' object message
+ MAXNOUNADJUST=234 ;>> MIKE 30/7/86 - was 149 ;Highest
+ ADJUSTOFFSET=0    ;>>NOUNOFFSET-MINNOUNOFFSET
+
+;-----
+
+; NOW CONSTANTS FOR COMMON MESSAGES
+ SPACE=3011
+ COMMA=3000
+ CR=3003
+ AND=3010
+ DOTCR=3004
+ DOT=3001
+ COLON=3002
+ QUOTE=3008
+ OK=2006
+
+ NONSPECIFIC=31 ; USE IN POSITION SEARCH WHERE TYPE UNKNOWN
+
+; Bases for text blocks
+ OBJECTDESCBASE=0 ;>> 1000
+ SHORTROOMDESCS=64936 ;>>MIKE 29/7/86 - 64694 ;>> 65461 ;>> 400
+
+ MAXOBJECTVISIBLE=148 ;>> ANDY 23/7/86
+ MINOBJECT=79 ;>> 69 ; actually MINOBJECT-1
+ MAXOBJECT=233 ;>>197
+
+; Now verb definitions
+
+ ISAVE=28
+ INORTH=1
+ ICROSS=11 ;>> Highest direction for EXIT command.
+ IAGAIN=20
+ IQUIT=26
+ IRESTORE=27
+ IYES=30
+ INO=31
+ IEXAMINE=35
+; ILOOK=37
+ IEXITS=39
+; ITAKE=40
+ IDROP=41
+ ITHROW=43
+ ipush=53
+ isay=65
+ IOOPS=13 ;>> 68
+ IRAM=14  ;>>69
+ IEVERYTHING=250
+ IEXCEPT=251
+ IIT=252
+ ITHEN=253
+
+; SAYINGS (RELATIVE TO NOUNOFFSET)
+
+ IGARBAGE=2999
+
+ NULLOBJECT=255
+
+; WORD TYPE VALUES
+
+ ASCITYPE=0
+ VERBTYPE=2  ; V
+ CONJTYPE=4  ; J
+ PREPTYPE=6  ; P
+ NOUNTYPE=8  ; N
+ ADJETYPE=10 ; A
+ MATCHTYPE=12 ; C - used for matching with particular words -
+              ;     e.g. was a reference to scenery the word 'panel'
+ NUMBTYPE=14
+
+ ASCIOFFSET=0
+ VERBOFFSET=1000
+ CONJOFFSET=1000 ; ???
+ PREPOFFSET=3900
+ NOUNOFFSET=1000
+ ADJEOFFSET=0 ; ???
+ MATCHOFFSET=4300 ; used for matching with particular words
+ NUMBEROFFSET=240 ; offset within NOUNOFFSET
+ HINUMBEROFFSET=249 ; highest number offset
+
+; ASCII VALUES
+ ICOMMA=44
+ IDOT=46
+
+;-----
+
+ FALSE=0
+ TRUE=1
+
+; Constants for Objecttable assignments
+
+ NOUNCARRIED=1
+ NOUNONGROUND=2
+ NOUNSPECIFIED=128
+ NOUNFORBIDDEN=192
+
+ NEGATIVE=50000
+
+;-----
+
+VAR
+ PARSEX1 PARSEX2 PARSEX3 PARSEX4 PARSEX5 PARSEX6
+ VERB PREP NOUN1 NOUN2
+ VALUE
+ INDEX
+ FROM DEST STATUS ROOM DIR NUMEXITS
+ NUMDIRECTIONS
+ EXITVISIBLE
+ CURRENTOBJECT OBJECT ;>>** HIPOS POS SEARCHPOS ;*****
+ HISEARCHPOS
+ LASTWORDPRINTED
+ OUTPUTWORD
+ RESULT
+ WORD1 WORD2 WORD3 WORD4
+ PARSEM1
+ LASTPICTURE
+
+ SEARCHTYPE WORDTYPE EXCEPT
+
+ WORDNOTPROCESSED EOL SEPARATOR EVERYTHING NOMOREINPUT
+ PROCESSED SUPRESSCHECKING
+ ITWORD
+ AGAINVERB
+ VERBSTOCALL HAVECALLEDVERB SOMETHINGPROCESSED LASTVERBVALID
+
+ CURRENTMESSAGE
+ DOOR
+ LASTOOPSROOM
+ OOPSPOSEND
+ NEXTOOPSPOS NEXTOOPSEND
+;-----
+
+TABLE
+ OUTPUTBUFFER=7
+ OBJECTTABLE=8 ; USED FOR EVERYTHING AND SIMILAR WORDS
+ LINPUT=9
+
+;-----
+CONST ;>> All these MIKE 30/7/86
+ ILOOK=37
+ IGET=40
+ ITAKE=40
+ IWEAR=42
+ IPON=12
+ IPOFF=7
+ IPUT=66
+ UP=9
+ DOWN=10
+;--------------------------------------------------------
+;------------------------------------------------------------
+;------------------------------------------------------------
+;--------------------------------------------------------
+;---------------------------------------------------------------------
+;----------------------------------------------------------------------

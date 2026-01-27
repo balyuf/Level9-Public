@@ -1,0 +1,750 @@
+;  "RETURN TO EDEN" - EXIT TABLE  - AUG 18TH 1984
+; Copyright (C) 1984 Level 9 Computing.
+;
+; 9 - up
+; 10 - down
+; 11 - in
+; 12 - out
+;
+; format is LDIT
+;
+;Room number 1
+0001 1 3
+0001 3 4
+0001 4 5
+1001 7 2
+;Room number 2
+0000 1 3
+0000 4 5
+1000 7 2
+;Room number 3
+0000 1 3
+0000 3 6
+1000 7 2
+;Room number 4
+0000 1 3
+0001 3 6
+0000 4 5
+1001 10 13
+;Room number 5
+0000 3 6
+0000 4 5
+1001 7 2
+;Room number 6
+0000 1 3
+0000 3 6
+1000 4 5
+;Room number 7
+0001 1 9
+0001 3 10
+0001 4 11
+1001 7 8
+;Room number 8
+0000 1 9
+0000 4 11
+1000 7 8
+;Room number 9
+0000 1 9
+0000 3 10
+1000 7 8
+;Room number 10
+0000 1 9
+0001 3 12
+1000 4 11
+;Room number 11
+0000 3 10
+0000 4 11
+1000 7 8
+;Room number 12
+0000 1 9
+1000 4 11
+;Room number 13
+1001 10 14
+;Room number 14
+1001 10 15
+;Room number 15
+0001 3 17
+0000 4 15
+1000 7 15
+;Room number 16
+1001 4 17
+;Room number 17
+1001 3 19
+;Room number 18
+1001 1 17
+;Room number 19
+1001 9 21
+;Room number 20
+1001 7 19
+;Room number 21
+1001 9 7
+;Room number 22
+1001 7 21
+;Room number 23
+0010 1 23
+0010 3 24
+0010 4 64
+1010 7 23
+;Room number 24
+0010 1 24
+0010 3 23
+0010 4 64
+1010 7 25
+;Room number 25
+0010 1 24
+0010 3 25
+0010 4 26
+1010 7 23
+;Room number 26
+0010 1 25
+0010 3 26
+0010 4 65
+1010 7 25
+;Room number 27
+1000 14 255
+;Room number 28
+1001 12 59
+;Room number 29
+1000 12 57
+;Room number 30
+0001 3 31
+1001 7 42
+;Room number 31
+1001 6 32
+;Room number 32
+1001 4 35
+;Room number 33
+1001 1 31
+;Room number 34
+1001 1 43
+;Room number 35
+1001 7 34
+;Room number 36
+1001 1 33
+;Room number 37
+1001 7 45
+;Room number 38
+1001 1 45
+;Room number 39
+1000 1 40        ;This is a dummy
+;Room number 40
+0001 1 66
+0001 3 46
+1001 4 41
+;Room number 41
+1001 3 48
+;Room number 42
+1001 4 43
+;Room number 43
+1001 3 32
+;Room number 44
+1001 4 45
+;Room number 45
+1001 1 44 
+;Room number 46
+1001 4 48
+;Room number 47
+1001 7 46
+;Room number 48
+1001 3 49
+;Room number 49
+1001 3 99
+;Room number 50
+1001 1 41
+;Room number 51
+0001 1 48
+1001 9 35
+;Room number 52
+0001 1 49
+1001 3 100
+;Room number 53
+1001 4 54
+;Room number 54
+1001 3 59
+;Room number 55
+0001 1 62
+0001 4 53
+1001 7 12
+;Room number 56
+1001 7 55
+;Room number 57
+1001 1 56
+;Room number 58
+1001 7 56
+;Room number 59
+0001 1 58
+0001 8 57
+0011 9 28
+1010 10 41
+;Room number 60
+0001 1 75
+1001 6 56
+;Room number 61
+1000 10 66
+;Room number 62
+0001 1 71
+1001 3 63
+;Room number 63
+0001 1 73
+1001 3 60
+;Room number 64
+0000 1 23
+0001 3 65
+1001 4 72
+;Room number 65
+1001 4 74
+;Room number 66
+1001 3 67
+;Room number 67
+1001 4 46
+;Room number 68
+1001 7 67
+;Room number 69
+1000 1 66      ;This is a dummy
+;Room number 70
+0000 3 72
+0000 4 73
+1000 7 70
+;Room number 71
+0000 1 72
+0000 3 73
+1000 7 71
+;Room number 72
+0000 3 74
+0000 4 75
+1000 7 72
+;Room number 73
+0000 1 74
+0000 3 75
+1000 7 73
+;Room number 74
+0000 3 61
+0000 4 61
+1000 7 74
+;Room number 75
+0000 1 61
+0000 3 61
+1000 7 75
+;Room number 76
+1001 3 77
+;Room number 77
+1001 3 78
+;Room number 78
+1001 3 79
+;Room number 79
+1001 3 80
+;Room number 80
+1001 3 81
+;Room number 81
+1001 3 82
+;Room number 82
+1001 9 131
+;Room number 83
+1000 1 84       ;This is a dummy
+;Room number 84
+0001 2 91
+1001 3 85
+;Room number 85
+0001 1 91
+1001 3 86
+;Room number 86
+0001 1 90
+1001 3 87
+;Room number 87
+1001 1 88
+;Room number 88
+1001 7 90
+;Room number 89
+0001 1 76
+1001 3 92
+;Room number 90
+0001 1 92
+1001 7 91
+;Room number 91
+1001 1 89
+;Room number 92
+1001 3 93
+;Room number 93
+1001 4 88
+;Room number 94
+0000 7 93
+1100 11 109
+;Room number 95
+1001 4 96
+;Room number 96
+1001 4 84
+;Room number 97
+0001 3 95
+1001 4 98
+;Room number 98
+1001 3 96
+;Room number 99
+0001 3 97
+1001 4 100
+;Room number 100
+1001 3 98
+;Room number 101
+1000 1 105       ;This is a dummy
+;Room number 102
+1000 1 105       ;This is a dummy
+;Room number 103
+1000 1 105       ;This is a dummy
+;Room number 104
+1000 1 105       ;This is a dummy
+;Room number 105
+1001 10 106
+;Room number 106
+0001 1 107
+0000 4 106
+1001 10 110
+;Room number 107
+0000 1 107
+0000 9 105
+1001 10 126
+;Room number 108
+1001 12 109
+;Room number 109
+0001 1 110
+1001 3 113
+;Room number 110
+0001 1 126
+1001 3 114
+;Room number 111
+0001 1 113
+1011 10 112
+;Room number 112
+1001 12 111
+;Room number 113
+0001 1 114
+1001 3 120
+;Room number 114
+1001 3 115
+;Room number 115
+1001 4 120
+;Room number 116
+1001 7 115
+;Room number 117
+1001 7 116
+;Room number 118
+1001 7 117
+;Room number 119
+1001 4 118
+;Room number 120
+1001 3 121
+;Room number 121
+0001 1 116
+0001 3 123
+1000 4 171
+;Room number 122
+1001 4 117
+;Room number 123
+1001 1 117
+;Room number 124
+1001 11 125
+;Room number 125
+1001 12 126
+;Room number 126
+1001 3 127
+;Room number 127
+1001 4 114
+;Room number 128
+0000 3 129
+0000 4 115
+1000 7 127
+;Room number 129
+1001 4 116
+;Room number 130
+1000 1 129      ;This is a dummy
+;Room number 131
+1001 4 137
+;Room number 132
+1001 7 131
+;Room number 133
+1001 3 134
+;Room number 134
+1000 10 141
+;Room number 135
+1001 10 134 
+;Room number 136
+1001 7 135
+;Room number 137
+1001 4 138
+;Room number 138
+1001 4 139
+;Room number 139
+1001 4 140
+;Room number 140
+1001 4 141
+;Room number 141
+0000 3 134
+1001 4 142
+;Room number 142
+0001 5 144
+1001 6 143
+;Room number 143
+1011 3 154
+;Room number 144
+1011 7 154
+;Room number 145
+0011 1 154
+0001 2 144
+1001 8 143
+;Room number 146
+1001 7 142
+;Room number 147
+1001 7 146
+;Room number 148
+1001 4 147
+;Room number 149
+1001 1 147
+;Room number 150
+0001 7 147
+1001 9 129
+;Room number 151
+0001 9 147
+1001 12 171
+;Room number 152
+1001 3 141
+;Room number 153
+1001 3 142
+;Room number 154
+1011 1 142
+;Room number 155
+1000 1 154      ;Dummy
+;Room number 156
+1000 1 154      ;Dummy
+;Room number 157
+1000 1 154      ;Dummy
+;Room number 158
+1000 1 154      ;Dummy
+;Room number 159
+1000 1 154      ;Dummy
+;Room number 160
+1000 1 154      ;Dummy
+;Room number 161
+1000 1 154      ;Dummy
+;Room number 162
+1000 1 154      ;Dummy
+;Room number 163
+1000 1 154      ;Dummy
+;Room number 164
+1000 1 154      ;Dummy
+;Room number 165
+1001 3 166   
+;Room number 166
+1001 3 167   
+;Room number 167
+1001 3 168     
+;Room number 168
+1001 3 169    
+;Room number 169
+1001 3 165     
+;Room number 170
+0001 4 169
+0011 11 169 ; in to track (a kludge)
+1001 10 169
+;Room number 171
+1001 4 170
+;Room number 172
+0011 12 170 ; out to platform
+1001 1 170
+;Room number 173
+1000 1 171       ;Dummy
+;Room number 174
+1100 1 171       ;Dummy
+;Room number 175
+0111 12 176
+1101 4 176
+;Room number 176
+1001 4 171
+;Room number 177
+1001 1 176
+;Room number 178
+1001 1 176
+;Room number 179
+1001 1 176
+;Room number 180
+1001 1 176
+;Room number 181
+1001 1 176
+;Room number 182
+1000 9 141
+;Room number 183
+1001 1 176
+;Room number 184
+1001 1 176
+;Room number 185
+1001 1 176
+;Room number 186
+1001 1 176
+;Room number 187
+1001 1 176
+;Room number 188
+1001 1 176
+;Room number 189
+1001 1 176
+;Room number 190
+1001 1 176
+;Room number 191
+1001 1 187
+;Room number 192
+1001 7 188
+;Room number 193
+1000 7 192
+;Room number 194
+1001 1 189
+;Room number 195
+1001 1 190
+;Room number 196
+1001 7 189
+;Room number 197
+1001 7 190
+;Room number 198
+1001 7 196
+;Room number 199
+1001 7 197
+;Room number 200
+1001 10 135
+;Room number 201
+1001 4 171
+;Room number 202
+0001 1 205
+1001 4 201
+;Room number 203
+1001 3 202
+;Room number 204
+1001 7 202
+;Room number 205
+0010 1 205
+0010 3 205
+0011 4 202
+1011 7 206
+;Room number 206
+0010 4 206
+1010 7 206
+;Room number 207
+0010 1 207
+0010 3 208
+0011 4 206
+1010 7 207
+;Room number 208
+ 1000 4 207
+;Room number 209
+1001 4 208
+;Room number 210
+1001 4 209
+;Room number 211
+1001 9 210
+;Room number 212
+1000 1 171      ;Dummy
+;Room number 213
+1001 1 171      ;Dummy
+;Room number 214
+1001 3 215
+;Room number 215
+1001 4 171
+;Room number 216
+1001 7 215
+;Room number 217
+1001 7 216
+;Room number 218
+1001 4 216
+;Room number 219
+1001 4 215
+;Room number 220
+0000 1 245       
+1001 4 219
+;Room number 221
+1001 3 222
+;Room number 222
+1101 1 223
+;Room number 223
+1101 1 229
+;Room number 224
+1001 3 225
+;Room number 225
+1001 1 228
+;Room number 226
+1101 7 225
+;Room number 227
+1001 3 228
+;Room number 228
+0001 1 225
+1001 3 229
+;Room number 229
+1001 3 230
+;Room number 230
+0110 3 231
+1100 11 231
+;Room number 231
+1001 3 232
+;Room number 232
+1101 3 233
+;Room number 233
+1100 7 232
+;Room number 234
+0001 10 230
+1010 12 230
+;Room number 235
+1001 3 236
+;Room number 236
+0001 1 237
+1001 4 237
+;Room number 237
+1001 3 238
+;Room number 238
+1001 10 239
+;Room number 239
+1001 10 240
+;Room number 240
+1001 7 241
+;Room number 241
+0000 1 240
+0000 4 240
+0000 7 240
+1000 10 241
+;Room number 242
+1001 1 243
+;Room number 243
+0011 10 1
+1001 12 1
+;Room number 244
+0011 7 243
+1001 12 243
+;Room number 245
+1000 12 221
+;Room number 246
+1001 9 245
+;Room number 247
+1001 12 222
+;End-of-table markers:
+0000 0 0
+;----------------------------------------------------
+;-------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+?

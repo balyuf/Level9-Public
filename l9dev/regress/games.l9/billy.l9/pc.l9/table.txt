@@ -1,0 +1,2150 @@
+;;;LaviniaStrumpetMenu equ 204
+
+; Billy The Kid source, copyright (C) 1990 Level 9 Computing.
+;
+; TABLE.TXT, assembler format data for tables, a.k.a lists/arrays. 
+; (Save the assembled data as TABLE.DAT). 
+;
+; You must start all DEFWs on EVEN boundaries, else subsequent code 
+; seems to be padded to make it even (according to the GENST listing, 
+; anyway). The EVEN directive inserts a padding byte if appropriate.
+;
+ ORG 0
+starttables
+ dc.l ObjectTable-starttables ; object positions etc.
+ dc.l $FFFF ; HiresTable() Set up in AllocateWorkspaceLists
+ dc.l $FFFF ;
+ dc.l LIST4-starttables
+ dc.l NPCINITIAL-starttables ; npc initial and 'floor pointers'
+ dc.l TownFixedData-startTables ; 
+ dc.l $FFFF ; 7: TownVarData: variable town stuff (AllocateWorkspaceLists)
+ dc.l list8-starttables ; 8 - assorted fixed system tables
+ dc.l IntroTables-startTables ; 9 - input table,object table
+ dc.l ENDTABLE-starttables
+;---
+;
+;---
+ObjectTable
+; list giving the graphics objects which are important
+; to the game. This is divided up by section: i.e.
+; the map is separate from the various Sierra-style rooms,
+; this separation being handled by the table at the start.
+ dc.w MapObjects-ObjectTable
+ dc.w 0
+ dc.w 0
+ dc.w 0
+ dc.w 0
+ dc.w MapToNewScreen-ObjectTable ; 10
+
+; now the object tables themselves. These objects can
+; be either xzh or rasters, and their order is critically
+; important to the program. If you want to add new objects,
+; just add them on the end. If you need to delete an object,
+; replace it with a 0 or some new number. DON'T DELETE IT.
+; The table ends with -1
+
+MapObjects
+ dc.w 0 ; 0
+ dc.w 340 ; 1 cows
+ dc.w 341 ; 2 cows
+ dc.w 342 ; 3 cows
+ dc.w 343 ; 4 cows
+ dc.w 344 ; 5 cows
+ dc.w 0 ; 6
+ dc.w 0 ; 7
+ dc.w 0 ; 8 
+ dc.w 0 ; 9
+ dc.w 3345 ; Santa Fe 10
+ dc.w 3346 ; White Oaks 11
+ dc.w 592 ; Lincoln City 12 was 3347
+ dc.w 588 ; Mesilla 13
+ dc.w 589 ; Roswell 14
+ dc.w 591 ; 3349  ; El Paso 15
+ dc.w 0 ; spare town 16
+ dc.w 0 ; spare town 17
+ dc.w 0 ; spare town 18
+ dc.w 3351 ; Fort Stanton 19
+ dc.w 3352 ; Fot Sumner 20
+ dc.w 0 ; spare fort 21
+ dc.w 0 ; spare fort 22
+ dc.w 0 ; spare fort 23
+ dc.w 581 ; Unknown ranch near Bitter Lake 24
+ dc.w 582 ; Fritz Ranch 25
+ dc.w 583 ; Chisum Ranch 26
+ dc.w 584 ; Dedrick Ranch 27
+ dc.w 585 ; Beckwith Ranch 28
+ dc.w 586 ; Reed ranch 29
+ dc.w 587 ; unknown ranch 30
+ dc.w 576 ; Katz farmhouse 31
+ dc.w 577 ; Dunn farmhouse 32
+ dc.w 578 ; Rose farmhouse 33
+ dc.w 0 ; farmhouse 34
+ dc.w 330 ; Mescalero Apache settlement 35
+ dc.w 0 ; spare indians 36 (3356 might work)
+ dc.w 0 ; spare indians 37
+ dc.w 0 ; spare indians 38
+ dc.w 3304 ; train 39
+ dc.w 2730 ; wagon train 40
+ dc.w 331; outlaw hideout 41
+ dc.w 332 ; outlaw hideout  42
+ dc.w 333 ; outlaw hideout  43
+ dc.w 334 ; outlaw hideout  44
+ dc.w 335 ; outlaw hideout 45
+ dc.w 336 ; outlaw hideout  46
+ dc.w 0 ; outlaw hideout  47
+ dc.w 337 ; prospector's camp  48
+ dc.w 329 ; system
+ dc.w -1 ; end of table
+
+
+
+
+MapToNewScreen
+; for each object picked up in map, this table
+; gives the corresponding screen number that it will
+; invoke, or 0 if none.
+
+
+; First byte: overlay letter to call.
+; Second byte: screen number within that overlay.
+; (for map, addition to 400, unsigned)
+; (for scrolling games, = map number)
+MO equ 69 * 'E' map overlay
+SO equ 50 * '2' scrolling overlay
+AO equ 51 * '3' arcade overlay, train
+IO equ 52 * '4' intermission overlay - separate structure file,
+* at least.
+
+; values for Game variable...
+EscapeGame equ 21
+PositionPeopleGame equ 25
+PatWalkGame equ 30 ; drop into pat walking around shooting section.
+MinTrackingGame equ 127 ; lowest number a game using the
+; tracking maps/cd tables can have
+TrackingGame equ 128
+RustlingGame equ 140
+
+ dc.b MO,0 ; 0
+ dc.b SO+0,RustlingGame ; 1 - cows
+ dc.b SO+0,RustlingGame ; 2
+ dc.b SO+0,RustlingGame ; 3
+ dc.b SO+0,RustlingGame ; 4
+ dc.b SO+0,RustlingGame ; 5
+ dc.b SO+0,RustlingGame ; 6
+ dc.b MO,0 ; 7
+ dc.b MO,0 ; 8
+ dc.b MO,0 ; 9
+ dc.b MO,430-400 ; Santa Fe 10
+ dc.b MO,540-400 ; White Oaks 11
+ dc.b MO,500-400 ; Lincoln City 12
+ dc.b MO,521-400 ;  Mesilla 13
+ dc.b MO,470-400 ; Roswell 14
+ dc.b MO,450-400  ; El Paso 15
+ dc.b MO,0 ; spare town 16
+ dc.b MO,0 ; spare town 17
+ dc.b MO,0 ; spare town 18
+ dc.b IO+0,6 ; Fort Stanton 19
+ dc.b IO+0,6 ; Fot Sumner 20
+ dc.b IO+0,6 ; spare fort 21
+ dc.b IO+0,6 ; spare fort 22
+ dc.b IO+0,6 ; spare fort 23
+ dc.b AO+0,1 ; Unknown ranch near Bitter Lake 24
+ dc.b AO+0,1 ; Fritz Ranch25
+ dc.b AO+0,1 ; Chisum Ranch 26
+ dc.b AO+0,1 ; Dedrick Ranch 27
+ dc.b AO+0,1 ; Beckwith Ranch 28
+ dc.b AO+0,1 ; Reed ranch 29
+ dc.b AO+0,1 ; unknown ranch 30
+ dc.b AO+0,1 ; spare ranch 31
+ dc.b AO+0,1 ; spare ranch 32
+ dc.b AO+0,1 ; spare ranch 33
+ dc.b AO+0,1 ; spare ranch 34
+ dc.b IO+0,15 ; Mescalero Apache settlement 35
+ dc.b IO+0,15 ; spare indians 36
+ dc.b IO+0,15 ; spare indians 37
+ dc.b IO+0,15 ; spare indians 38
+ dc.b AO+0,21 ; train 39
+ dc.b IO+0,5 ; wagon train 40
+ dc.b SO+0,TrackingGame ; gang hideout: near santa fe 41
+ dc.b SO+0,TrackingGame ; gang hideout: nr White Oaks 42
+ dc.b SO+0,TrackingGame ; gang hideout: nr Lincoln Cit#y 43
+ dc.b SO+0,TrackingGame ; gang hideout: nr Mesilla 44
+ dc.b SO+0,TrackingGame ; gang hideout: nr Roswell 45
+ dc.b SO+0,TrackingGame ; gang hideout: nr El Paso 46
+ dc.b 0,0 ; 47
+ dc.b IO+0,3 ; Prospector 48
+ dc.b MO+0,0 ; 48
+ dc.b MO+0,0 ; 49
+
+
+
+
+;---
+ even
+ENDOBJECTS
+;terraintable
+list8
+;
+;---------
+ even
+NPCINITIAL
+list5
+LIST4
+; new stuff added for AA
+
+; Menu text, etc.
+; First, ptrs for all uses...
+ dc.w 0 ;MenuText-List4 0 
+ dc.w 0 ;MenuData-list4 2
+ dc.w 0 ;HiresCoords-list4 4
+ dc.w 0 ;ExitOffsets-list4 6
+ dc.w 0 ;ObjectGraphics-list4 8
+ dc.w 0 ;IntroText-list4 10
+ dc.w 0 ;NounVerbTable-list4 12
+ dc.w PCpalette-list4 14
+ dc.w STpalette-list4 16
+ dc.w 0 ;kerri-list4 18
+ dc.w CGA2Palettes-list4 20
+ dc.w CGA4Palettes-list4 ;  22
+ dc.w 0 ;  24
+ dc.w 0 ;  26
+ dc.w 0 ;  28
+ dc.w 0 ;  30
+ dc.w 0 ;  32
+ dc.w 0 ;  34
+ dc.w HeightTable-list4  ;  36
+
+CGA2Palettes
+ dc.b $0,$f,$2,$3,$4,$5,$6,$0,$8,$9,$a,$b,$c,$d,$e,$a ; 2 colour text printing
+
+; All these palettes have had to be modified because
+; colour 6 is used for the highlight bar, so cannot be black.
+; dc.b $0,$F,$F,$F,$F,$F,$0,$0,$F,$0,$9,$F,$F,$F,$0,$F ; 2 color map
+  dc.b $0,$F,$F,$F,$F,$F,$3,$0,$F,$0,$9,$F,$F,$F,$0,$F ; 2 color map
+
+; dc.b $0,$F,$F,$1,$F,$F,$1,$1,$7,$0,$F,$0,$F,$F,$9,$0 ; 2 Pat, Billy & Barbrawl
+  dc.b $0,$F,$F,$1,$F,$F,$1,$1,$7,$0,$F,$0,$F,$F,$9,$0 ; 2 Pat, Billy & Barbrawl
+
+; dc.b $0,$F,$7,$1,$F,$9,$1,$0,$7,$0,$F,$F,$F,$F,$A,$F ; 2 Outside Buildings
+  dc.b $0,$F,$7,$1,$F,$9,$1,$0,$7,$0,$F,$F,$F,$F,$A,$F ; 2 Outside Buildings
+
+  dc.b $0,$F,$9,$0,$0,$0,$F,$0,$A,$A,$F,$F,$F,$F,$7,$F ; 2 Saloons
+
+
+CGA4Palettes
+ dc.b $0,$F,$2,$3,$4,$5,$7,$0,$8,$9,$a,$b,$c,$d,$e,$a ; 4 colour text printing
+ dc.b $0,$F,$0,$F,$A,$5,$2,$0,$F,$5,$7,$0,$A,$F,$A,$A ; 4 color map
+ dc.b $0,$F,$F,$0,$F,$0,$0,$0,$A,$0,$5,$0,$F,$F,$5,$0 ; 4 Pat, Billy & Barbrawl
+ dc.b $0,$F,$A,$1,$A,$0,$F,$0,$A,$5,$5,$F,$F,$F,$A,$D ; 4 Outside Buildings
+ dc.b $0,$D,$A,$0,$A,$1,$F,$0,$A,$5,$5,$0,$F,$F,$D,$7 ; 4 Saloons
+
+
+HeightTable
+; used in walkabout code to go from the floor map "height adjust"
+; packed byte to a value in pixels: kindof an exponential table.
+ dc.w -12	;0
+ dc.w -8
+ dc.w -4
+ dc.w 0
+ dc.w 4		;4
+ dc.w 8
+ dc.w 12
+ dc.w 16
+ dc.w 20	;8
+ dc.w 24
+ dc.w 28
+ dc.w 32
+ dc.w 36	;12
+ dc.w 40
+ dc.w 44
+ dc.w 48
+
+
+
+
+
+
+; dc.b 0,$f,$e,$7,$f,$0,$7,$0,$8,$0,$f,$f,$f,$a,$8,$f ; town
+; dc.b 0,$f,$f,$f,$0,$0,$a,$0,$8,$a,$8,$0,$0,$9,$0,$f ; people
+; dc.b 0,$f,$0,$f,$0,$0,$7,$0,$a,$8,$f,$0,$e,$f,$7,$7 ; train
+
+
+STpalette;      also used for VGA
+;commonm colours...
+transparent	equ $0000 ; ok
+white		equ $666F ; ok
+flesh		equ $6339 ;light red
+Cyan		equ $0346 ; ok
+Violet		equ $203a ; ok
+Iblue		equ $0263 ;light blue ok
+black		equ $0000 ;ok
+Red		equ $2008 ;dark brown ok
+Blue		equ $0042 ;dark blue ok
+Brown		equ $320C ;light brown ok
+yellow		equ $762D ;ok
+Lgrey		equ $444e; 
+Dgrey		equ $2221 ;ok
+Green		equ $0304 ;dark green ok
+Lgreen	 	equ $1735;  
+pink		equ $526c;orange 520C ;770a
+Lcyan           equ $0677; Pete 11/9/90 
+
+
+;additional colours, for 'variable colours' only...
+
+PaleBlue1	equ $2254
+Vyellow		equ $770a
+;These colours must have IBM equivalents...
+BlueGrey	equ $223d ;(Mgrey?)
+PaleBlue2	equ $3454
+PaleWhite	equ $5671
+
+
+
+PcPalette
+
+ dc.w transparent,white,flesh,cyan
+ dc.w lgreen
+ dc.w Dgrey ; is Purple in other games.
+ dc.w iblue,black,Red,Blue,Brown
+ dc.w lcyan ; >> Pete 11/9/90 
+ dc.w yellow,Lgrey,Dgrey,Green
+
+
+
+
+
+IntroTables
+; filenames for music, and other random stuff. Not necessarily
+; just to do with the intro, but called that for compatability
+; with the Grange intro sequence
+ dc.w SystemPalette-IntroTables ; 0 MapMusic-IntroTables ; 0
+ dc.w SaveFilename-IntroTables ; 2
+ dc.w 0 ; GunfightMusic-IntroTables ; 4
+ dc.w 0  ; TrainMusic-IntroTables ; 6
+ dc.w 0 ; MapMusic-IntroTables ; 8
+ dc.w 0 ; 10
+ dc.w StructureFilename-IntroTables ; 12
+ dc.w 0 ; 14
+ dc.w 0 ; 16
+ dc.w AdlibFilename-IntroTables ; 18
+ dc.w ExponentTableName-IntroTables ; 20
+ dc.w 0 ; 22
+ dc.w 0 ; 24
+ dc.w 0 ; 26
+ dc.w FontFilename-IntroTables ; 28 Font filename
+ dc.w 0 ; 30
+ dc.w MenuStructures-IntroTables ; 32
+ dc.w TownSpritesFilename-IntroTables ; map/town sprites filename 34
+ dc.w 0 ; ScrollingSpritesFilename-IntroTables ; offset 36
+ dc.w ArcadeSpritesFilename-IntroTables ; arcade games sprites filename offset 38
+ dc.w 0 ; reserved for fourth sprites filename  offset 40
+ dc.w 0 ; MenuStructures-IntroTables ; offset 42
+ dc.w ArcadeStructureFIlename-IntroTables ; 44
+ dc.w 0 ; 46
+ dc.w 0 ; 48
+ dc.w 0 ; 50
+ dc.w 0 ; 52
+ dc.w 0 ; 54
+ dc.w 0 ; 56
+ dc.w 0 ; 58
+ dc.w 0 ; 60
+ dc.w 0 ; 62
+ dc.w 0 ; 64
+ dc.w 0 ; 66
+ dc.w 0 ; 68
+ dc.w LinkingSprites-IntroTables ; offset 70
+ dc.w LinkingStructures-IntroTables ; offset 72
+ dc.w IntroSprites-IntroTables ; offset 74
+ dc.w IntroStructures-IntroTables ; offset 76
+ dc.w 0 ; IdentikitSprites-IntroTables ; offset 78
+ dc.w IdentikitStructures-IntroTables ; offset 80
+ dc.w 0 ; 82
+ dc.w 0 ; 84
+ dc.w 0
+ dc.w 0
+ dc.w ScreenInfo-IntroTables ; offset 90
+ dc.w 0 ; 92
+ dc.w 0 ; 94
+ dc.w 0 ; 96
+ dc.w 0 ; 98
+ dc.w ambushMusic-IntroTables ; 100
+ dc.w BankJobMusic-IntroTables ; 102
+ dc.w BarBrawlMusic-IntroTables ; 104 
+ dc.w CardMusic-IntroTables ; 106
+ dc.w ChaseMusic-IntroTables ; 108 
+ dc.w DuelMusic-IntroTables ; 110 
+ dc.w Generic1Music-IntroTables ; 112
+ dc.w Generic2Music-IntroTables ; 114
+ dc.w Generic3Music-IntroTables ; 116
+ dc.w Generic4Music-IntroTables ; 118
+ dc.w Generic5Music-IntroTables ; 120
+ dc.w GetawayMusic-IntroTables ; 122
+ dc.w HoeDown1Music-IntroTables ; 124
+ dc.w HoeDown2Music-IntroTables ; 126
+ dc.w 0 ; HonkyMusic-IntroTables ; 128
+ dc.w 0 ; Rag3Music-IntroTables ; 130
+ dc.w RagTimeMusic-IntroTables ; 132
+ dc.w ShockMusic-IntroTables ; 134
+ dc.w ShootOutMusic-IntroTables ; 136
+ dc.w ThemeMusic-IntroTables ; 138
+ dc.w TrainMusic-IntroTables ; 140
+ dc.w ShootOut2Music-IntroTables ; 142
+ dc.w ShootOut3Music-IntroTables ; 144
+ dc.w 0 ; 146
+ dc.w 0 ; 148
+UghSampleNum equ 150
+ dc.w UghSample-IntroTables ; 150
+Colt45SampleNum equ 152
+ dc.w Colt45Sample-IntroTables ; 152
+ dc.w 0 ; 154
+ dc.w 0 ; 156
+ dc.w 0 ; 158
+ dc.w 0 ; 160
+ dc.w 0 ; 162
+ dc.w 0 ; 164
+ dc.w 0 ; 166
+ dc.w 0 ; 168
+ dc.w 0 ; 170
+ dc.w 0 ; 172
+ dc.w 0 ; 174
+ dc.w 0 ; 176
+ dc.w 0 ; 178
+ dc.w ShootoutSamples-IntroTables ; 180
+ dc.w DuelSamples-IntroTables ; 182
+ dc.w RustlingSamples-IntroTables ; 184
+ dc.w TrackingSamples-IntroTables ; 186
+ dc.w EscapeSamples-IntroTables ; 188
+ dc.w BankJobSamples-IntroTables ; 190
+ dc.w CardSamples-IntroTables ; 192
+ dc.w BrawlSamples-IntroTables ; 194
+ dc.w IntroSamples-IntroTables ; 196
+
+ExponentTableName
+ dc.b 'exponent.025',0
+ even
+
+
+IntroSamples
+ dc.b Colt45SampleNum/2
+ dc.b 0
+
+ShootOutSamples
+; list of sample pointers needed for shootout
+ dc.b Colt45SampleNum/2
+ dc.b 0
+
+DuelSamples
+ dc.b Colt45SampleNum/2
+ dc.b 0 * 182
+RustlingSamples
+ dc.b 0 *184
+TrackingSamples
+ dc.b 0 ; 186
+EscapeSamples
+ dc.b Colt45SampleNum/2
+ dc.b 0 ; 188
+BankJobSamples
+ dc.b 0 ; 190
+CardSamples
+ dc.b 0 ; 192
+BrawlSamples
+ dc.b UghSampleNum/2
+ dc.b 0 ; 180
+
+Colt45Sample dc.b 'colt45.spl',0
+ even
+UghSample dc.b 'ugh.spl',0
+ even
+
+
+SaveFilename dc.b 'billy.sav',0
+ even
+
+ambushMusic dc.b 'ambushv2.mid',0
+ even
+BarBrawlMusic dc.b 'barbrawl.mid',0
+ even
+CardMusic dc.b 'cardv2.mid',0
+ even
+ChaseMusic dc.b 'Chasev2.mid',0
+ even
+DuelMusic dc.b 'duel.mid',0
+ even
+Generic1Music dc.b 'generic.mid',0
+ even
+Generic2Music dc.b 'gen2v3.mid',0
+ even
+Generic3Music dc.b 'generic3.mid',0
+ even
+Generic4Music dc.b 'generic4.mid',0
+ even
+Generic5Music dc.b 'generic5.mid',0
+ even
+HoeDown1Music dc.b 'hoedown1.mid',0
+ even
+HoeDown2Music dc.b 'hoedown2.mid',0
+ even
+;;HonkyMusic dc.b 'honky1v2.mid',0
+ even
+;Rag3Music dc.b 'rag3.mid',0
+; even
+RagTimeMusic dc.b 'ragtime.mid',0
+ even
+ShockMusic dc.b 'shockv2.mid',0
+ even
+ShootOutMusic dc.b 'shootout.mid',0
+ even
+ShootOut2Music dc.b 'shootut2.mid',0
+ even
+ShootOut3Music dc.b 'shootut3.mid',0
+ even
+ThemeMusic dc.b 'map.mid',0
+ even
+GetawayMusic dc.b 'Getwayv3.mid',0
+ even
+BankJobMusic dc.b 'BankJbV2.mid',0
+ even
+TrainMusic dc.b 'train.mid',0
+ even
+
+
+
+ArcadeSpritesFilename
+ dc.b 'arcades1.cmp',0
+ even
+
+ArcadeStructureFilename
+ dc.b 's3.dat',0 * 'desert7.fnt',0
+ even
+
+
+
+IntroSprites
+ dc.b 'introsp1.cmp',0
+ even
+IntroStructures
+ dc.b 'intros.dat',0
+ even
+
+NoDelay equ 2
+LongTime equ 3000
+DefaultX equ 32
+DefaultY equ 32
+LowY equ 112
+dInsert equ 0
+dInsertR equ 2
+dRemove equ -1
+ScreenInfo
+; for intro sequence: contains which picture to display,
+; and for how many frames.
+; parameters are:
+; pic num, frames, soundtrack, repeat count for music
+ dc.w 99,100,HoeDown2Music-IntroTables,0 * title picture
+ dc.w 100,  230, RagTimeMusic-IntroTables, 0 ; street scene outside dance hall
+ dc.w 101,   50, music1, 0 ; blacksmith
+ dc.w 2001, NoDelay, DefaultX,DefaultY,dInsert
+ dc.w 102,  200, ChaseMusic-IntroTables, 0 ; street scene, scrolls after half time
+ dc.w 103,  210, music1, 0 ; possee in valley
+
+ dc.w 104,  110, HoeDown1Music-IntroTables, 0 ; hoe down scene, dancers
+ dc.w 2002, NoDelay, DefaultX,DefaultY,dInsert
+
+ dc.w 105,  300, 0, 0 ; talk 1 (inside)
+ dc.w 2003, NoDelay, DefaultX+16,LowY,dInsert
+ dc.w 2003, 79, DefaultX+16,LowY,dRemove
+ dc.w 2004, 100, DefaultX-16,LowY,dInsertR
+ dc.w 2004, 190, DefaultX-16,LowY,dRemove
+ dc.w 2005, 220, DefaultX+16,LowY,dInsertR
+
+ dc.w 106,  95, HoeDown2Music-IntroTables, 0 ; talk outside
+ dc.w 2006, NoDelay, DefaultX+48,LowY+32,dInsert
+
+ dc.w 107,  150, 0, 0 ; buggy from distance, scrolls.
+ dc.w 2007, 90, DefaultX,DefaultY,dInsertR
+ dc.w 2007, 100,DefaultX,DefaultY,dRemove
+
+ dc.w 108,  70, ShootOutMusic-IntroTables, 0 ; buggy, bandit in F/G
+
+ dc.w 109,  250, 0, 0 ; Tunstall propped on wheel
+ dc.w 2008, NoDelay, DefaultX,LowY,dInsert
+ dc.w 2008, 80, DefaultX,LowY,dRemove
+ dc.w 2009, 100, DefaultX,LowY,dInsertR
+
+; dc.w 2300, 50, RagTimeMusic-IntroTables,0 ; town scene walkabout in front of bank
+; dc.w 2010, NoDelay, DefaultX,DefaultY,dInsert ; Generic text
+; dc.w 2304, 50, RagTimeMusic-IntroTables,0 ; dancers
+; dc.w 2011, NoDelay, DefaultX,DefaultY+16,dInsert ; Billy text
+;
+; dc.w 2303, 50, RagTimeMusic-IntroTables,0 ; shootout1
+; dc.w 2012, NoDelay, DefaultX,DefaultY,dInsert ; Billy Text 2
+;
+; dc.w 2301, 50, RagTimeMusic-IntroTables,0 ; shop
+; dc.w 2013, NoDelay, DefaultX,DefaultY,dInsert ; Pat Text 1
+; dc.w 2302, 50, RagTimeMusic-IntroTables,0 ; shootout2
+; dc.w 2014, NoDelay, DefaultX,DefaultY,dInsert ; Pat Text 2
+ dc.w -1,-1,-1
+
+music1 equ 0 * no music at present
+
+
+IdentikitStructures
+ dc.b 'identiks.dat',0
+ even
+
+LinkingSprites
+ dc.b 'linking1.cmp',0
+ even
+
+LinkingStructures
+ dc.b 'linkings.dat',0
+ even
+
+
+SystemPalette
+; palette for returning to system on ST ONLY
+; to the ega colors.
+ dc.w $777f ; 0000 ; transparent/black
+ dc.w $0000 ; 777f ; white
+ dc.w $3330 ;
+ dc.w $0000 ; 777f ;
+ dc.w $0004 ;
+ dc.w $777a ;
+ dc.w $3333 ;
+ dc.w $7770 ;
+ dc.w $0008 ;
+ dc.w $7772 ;
+ dc.w $333c ;
+ dc.w $7776 ;
+ dc.w $000d ; yellow
+ dc.w $777e ; lgrey
+ dc.w $3331 ; dgrey
+ dc.w $7774 ; green
+
+;-----------------------------------------
+
+AdlibFilename
+ dc.b 'all.adl',0
+ even
+
+TownSpritesFilename
+ dc.b 'sprites1.cmp',0
+ even
+
+FontFilename
+ dc.b 'western.fnt',0
+ even
+
+StructureFilename
+ dc.b 's.dat',0
+ even
+
+
+ include 'MENUDATA.TXT',0
+
+
+;------------------
+TownFixedData ; a list on its own
+ dc.w TownPeopleData-TownFixedData ; 0
+ dc.w TownData-TownFixedData ; 2
+ dc.w SubPlotData-TownFixedData ; 4
+ dc.w IdentikitPrototypes-TownFixedData ; 6
+
+
+IdentikitPrototypes
+; For each person type we have a list of entries of the following
+; form:
+;  .b First XZH (0 terminates person)
+;  .b Number of XZHs possible (1 upwards)
+;  .b First RasterOffset
+;  .b Number of Raster Offsets to choose from (0 upwards)
+ dc.w BlankPerson-TownFixedData * type 0 person
+ dc.w Type1Person-TownFixedData * tough cowboy
+ dc.w Type2Person-TownFixedData * mexican
+ dc.w Type3Person-TownFixedData
+ dc.w Type4Person-TownFixedData
+ dc.w Type5Person-TownFixedData
+ dc.w Type6Person-TownFixedData
+ dc.w Type7Person-TownFixedData
+ dc.w Type8Person-TownFixedData
+ dc.w Type9Person-TownFixedData
+ dc.w Type10Person-TownFixedData
+ dc.w Type11Person-TownFixedData
+ dc.w Type12Person-TownFixedData
+ dc.w Type13Person-TownFixedData
+ dc.w Type14Person-TownFixedData
+ dc.w Type15Person-TownFixedData
+ dc.w Type16Person-TownFixedData
+ dc.w Type17Person-TownFixedData
+ dc.w Type18Person-TownFixedData ; sick man etc.
+ dc.w Type19Person-TownFixedData ; mex peasant.
+ dc.w Type20Person-TownFixedData ; soldier
+ dc.w Type21Person-TownFixedData ; Clint, with cape.
+
+BlankPerson
+* used for people like Indian chief, prospector who
+* are already shown in the picture, so don't need to be
+* shown separately
+ dc.b 0,0,0,0
+
+Type1Person
+* Cowboy, jerkin, black hat, moustache
+* As used in room 430 (Santa Fe)
+ dc.b 24,1,0,1 ; neck: closed, for string tie
+ dc.b 1,1,0,18 ; face
+ dc.b 20,1,0,4 ; top of head
+ dc.b 21,1,0,8 ; hair: not greying
+; no sideburns
+; no waistcoat
+ dc.b 27,1,3,1 ; trouser: blue jeans
+ dc.b 29,1,0,1 ; gunbelt
+
+ dc.b 25,1,0,1 ; shirt
+
+ dc.b 33,1,0,0 ; string tie
+; dealer's armbands not used.
+ dc.b 35,1,0,1 ; jacket
+ dc.b 38,1,0,1 ; hands
+ dc.b 42,1,1,1 ; hat: always the same.
+ dc.b 0,0,0,0
+
+Type2Person
+* Mexican cross-breed, as used in 431 (Santa Fe)
+ dc.b 23,1,0,1 ; neck - open
+ dc.b 19,1,0,1 ; mexican neck overlay
+ dc.b 1,1,0,18 ; face
+ dc.b 20,1,4,1 ; top of head
+ dc.b 21,1,0,4 ; hair
+;; dc.b 22,1,0,2 ; sideburn
+ dc.b 27,1,2,1 ; trousers: brown
+ dc.b 28,2,0,1 ; belt/gunbelt
+ dc.b 25,1,0,1 ; shirt
+; no tie
+; dealer's armbands not used.
+ dc.b 47,1,0,1 ; bandolero
+;; dc.b 35,2,0,1 ; jacket
+ dc.b 45,1,0,1 ; Mexican hands
+ dc.b 42,1,1,2 ; hat, one of two brown ones.
+ dc.b 0,0,0,0
+
+Type3Person
+* Old male American, as used in 433 Santa Fe.
+ dc.b 23,1,0,1 ; neck - open collar
+ dc.b 1,1,0,18 ; face
+ dc.b 20,1,0,4 ; top of head
+ dc.b 21,1,9,1 ; hair - white beard
+; no sideburn
+ dc.b 27,1,2,1 ; trouser
+; no belt
+ dc.b 25,1,0,1 ; shirt
+; no braces
+ dc.b 26,1,0,1 ; brown waistcoat
+; no tie
+; no jacket
+ dc.b 38,1,0,1 ; hands
+ dc.b 42,1,2,1 ; hat: brown felt
+ dc.b 0,0,0,0
+
+Type4Person
+* Old male in dungarees
+ dc.b 23,1,0,1 ; neck - open
+ dc.b 1,1,0,18 ; face
+ dc.b 20,1,0,4 ; top of head
+ dc.b 21,1,8,8 ; hair - greying
+ dc.b 25,1,0,1 ; shirt
+ dc.b 31,1,0,1 ;  Dungarees
+ dc.b 38,1,0,1 ; hands
+; no hat
+ dc.b 0,0,0,0
+
+Type5Person
+* General tough guy - used for cowboys around town, where
+* I haven't put in a specific prototype for them.
+ dc.b 23,1,0,1 ; neck - open
+ dc.b 1,1,0,18 ; face
+ dc.b 20,1,0,4 ; top of head
+ dc.b 21,1,0,8 ; hair: any not greying.
+ dc.b 22,1,0,2 ; sideburn
+ dc.b 27,1,0,4 ; trousers: any
+ dc.b 28,2,0,1 ; belt/gunbelt
+ dc.b 25,1,0,1 ; shirt
+; no tie
+; dealer's armbands not used.
+ dc.b 35,3,0,1 ; jacket: brown or grey.
+ dc.b 38,1,0,1 ; hands
+ dc.b 42,1,0,3 ; hat, any.
+ dc.b 0,0,0,0
+
+Type6Person
+* tough guy for 434 Santa Fe
+ dc.b 23,1,0,1 ; neck - open
+ dc.b 1,1,0,18 ; face
+ dc.b 20,1,0,4 ; top of head
+ dc.b 21,1,0,8 ; hair: any not greying.
+; no sideburns
+ dc.b 27,1,0,4 ; trousers: any
+ dc.b 28,2,0,1 ; belt/gunbelt
+ dc.b 25,1,0,1 ; shirt
+; no tie
+; dealer's armbands not used.
+ dc.b 37,1,0,1 ; jacket: grey.
+ dc.b 38,1,0,1 ; hands
+ dc.b 42,1,2,1 ; hat: brown felt
+ dc.b 0,0,0,0
+
+Type7Person
+; hostess for santa fe
+ dc.b 52,1,1,1 * body - yellow
+ dc.b 2,1,0,3 * face - reduced from choice of 7 to ensure youth!
+;; dc.b 53,1,0,1 * skirt
+; dc.b 54,1,0,1 * belt
+ dc.b 61,1,0,1 * hand with tray.
+ dc.b 51,1,0,1 * hair - yellow
+ dc.b 0,0,0,0
+
+Type8Person
+; older woman
+; dc.b 57,1,0,2 * blouse
+ dc.b 52,1,0,1 * body - blue
+ dc.b 2,1,0,7 * face
+; dc.b 56,1,0,1 * skirt
+; dc.b 54,1,0,1 * belt
+ dc.b 63,1,0,1 * both hands - for 57 blouse
+ dc.b 51,1,2,1 * hair - greying
+ dc.b 0,0,0,0
+
+Type9Person
+; woman in green
+ dc.b 52,0,2,1 * body
+; dc.b 58,1,0,1 * blouse - fits over body
+ dc.b 2,1,0,3 * face * reduced from 7 to reduce age
+;; dc.b 59,1,0,1 * skirt
+ dc.b 60,1,0,1 * both hands
+ dc.b 51,1,0,4 * hair - any
+ dc.b 0,0,0,0
+
+Type10Person
+; Mexican with big Sombrero
+ dc.b 24,1,0,1 ; neck - buttoned (so can't see pink skin underneath)
+;; dc.b 23,1,0,1 ; neck - open
+ dc.b 19,1,0,1 ; mexican neck overlay
+ dc.b 1,1,180,1 ; face - Mexican
+ dc.b 20,1,4,1 ; top of head
+ dc.b 21,1,0,8 ; hair: any not greying.
+; dc.b 22,1,0,2 ; sideburn
+ dc.b 27,1,0,4 ; trousers: any
+ dc.b 28,2,0,1 ; belt/gunbelt
+
+ dc.b 25,1,0,1 ; shirt
+; no tie
+; dealer's armbands not used.
+ dc.b 46,1,0,1 ; Neckerchief or similar. 1 only, else can see
+; the pink skin underneath!
+ dc.b 35,3,0,1 ; jacket: brown or grey.
+ dc.b 45,1,0,1 ; Mexican hands
+ dc.b 41,1,0,1 ; big Sombrero
+ dc.b 0,0,0,0
+
+Type11Person
+; Shop man, soberly dressed.
+ dc.b 24,1,0,1 ; neck - buttoned
+ dc.b 1,1,0,18 ; face
+ dc.b 20,1,0,4 ; top of head
+ dc.b 21,1,0,16 ; hair: any
+ dc.b 22,1,0,2 ; sideburn
+ dc.b 27,1,0,2 ; trousers: grey/dark
+ dc.b 28,1,0,1 ; belt
+ dc.b 25,1,0,1 ; shirt
+ dc.b 32,1,0,2 ; tie
+; dealer's armbands not used.
+ dc.b 37,1,0,1 ; jacket: suit
+ dc.b 38,1,0,1 ; hands
+; no hat
+ dc.b 0,0,0,0
+
+Type12Person
+; shop man, randomly dressed.
+ dc.b 24,1,0,1 ; neck - buttoned
+ dc.b 1,1,0,18 ; face
+ dc.b 20,1,0,4 ; top of head
+ dc.b 21,1,0,16 ; hair: any
+ dc.b 22,1,0,2 ; sideburn
+ dc.b 27,1,0,2 ; trousers: grey/dark
+ dc.b 28,1,0,1 ; belt
+ dc.b 25,1,0,1 ; shirt
+ dc.b 32,2,0,2 ; tie
+ dc.b 26,1,0,2 ; waistcoat
+
+; dealer's armbands not used.
+ dc.b 38,1,0,1 ; hands
+; no hat
+ dc.b 0,0,0,0
+
+Type13Person
+; clerk with visor, for wire/bank
+ dc.b 24,1,0,1 ; neck - buttoned
+ dc.b 1,1,0,18 ; face
+ dc.b 20,1,0,4 ; top of head
+ dc.b 21,1,0,16 ; hair: any
+ dc.b 22,1,0,2 ; sideburn
+ dc.b 27,1,0,2 ; trousers: grey/dark
+ dc.b 28,1,0,1 ; belt
+ dc.b 25,1,0,1 ; shirt
+ dc.b 32,1,0,2 ; tie
+ dc.b 26,1,0,2 ; waistcoat
+; dealer's armbands not used.
+ dc.b 38,1,0,1 ; hands
+ dc.b 40,1,0,1 ; visor
+; no hat
+ dc.b 0,0,0,0
+
+Type14Person
+; lady in green skirt, as walking all over the place.
+ dc.b 52,1,2,1 * body
+; dc.b 58,1,0,1 * green blouse - fits over body
+ dc.b 2,1,0,7 * face
+;; dc.b 59,1,0,1 * skirt
+ dc.b 60,1,0,1 * both hands
+ dc.b 51,1,0,4 * hair - any
+ dc.b 0,0,0,0
+
+Type15Person
+; lady in blue skirt, as walking all over the place.
+ dc.b 52,1,0,1 * body
+ dc.b 58,1,0,1 * blouse - fits over body
+ dc.b 2,1,0,7 * face
+;; dc.b 59,1,0,1 * skirt
+ dc.b 60,1,0,1 * both hands
+ dc.b 51,1,0,4 * hair - any
+ dc.b 0,0,0,0
+
+Type16Person
+; barman (e.g. Santa Fe)
+ dc.b 24,1,0,1 ; neck - buttoned
+ dc.b 1,1,0,18 ; face
+ dc.b 20,1,0,4 ; top of head
+ dc.b 21,1,0,8 ; hair: any non-greying
+ dc.b 22,1,0,2 ; sideburn
+ dc.b 27,1,0,2 ; trousers: grey/dark
+ dc.b 25,1,0,1 ; shirt
+ dc.b 30,1,0,1 ; braces
+ dc.b 32,2,0,2 ; tie
+ dc.b 34,1,0,1 ; dealer's armbands (around elbow). Must be before waistcoat
+ dc.b 26,1,0,1 ; waistcoat: brown
+ dc.b 38,1,0,1 ; hands
+; no hat
+ dc.b 0,0,0,0
+
+
+Type17Person
+* tough guy in saloon for 560 Santa Fe
+ dc.b 23,1,0,1 ; neck - open
+ dc.b 1,1,0,18 ; face
+ dc.b 20,1,0,4 ; top of head
+ dc.b 21,1,0,8 ; hair: any not greying.
+; no sideburns
+ dc.b 27,1,0,4 ; trousers: any
+ dc.b 28,2,0,1 ; belt/gunbelt
+ dc.b 25,1,0,1 ; shirt
+; no tie
+; dealer's armbands not used.
+ dc.b 37,1,0,1 ; jacket: grey.
+ dc.b 38,1,0,1 ; hands
+; no hat
+ dc.b 0,0,0,0
+
+Type18Person
+* sick man or poor peasant - e.g. in desert
+ dc.b 23,1,0,1 ; neck - open
+ dc.b 1,1,0,18 ; face
+ dc.b 20,1,0,4 ; top of head
+ dc.b 21,1,8,7 ; hair: any greying.
+ dc.b 22,1,0,2 ; sideburn
+ dc.b 27,1,2,2 ; trousers: brown/blue
+ dc.b 25,1,0,1 ; shirt
+; no tie
+; dealer's armbands not used.
+ dc.b 35,1,0,1 ; jacket: jerkin
+ dc.b 38,1,0,1 ; hands
+; no hat
+ dc.b 0,0,0,0
+
+Type19Person
+* mexican peasant - e.g. in desert.
+ dc.b 24,1,0,1 ; neck - buttoned (so can't see pink skin underneath)
+ dc.b 19,1,0,1 ; mexican neck overlay
+ dc.b 1,1,180,1 ; face
+ dc.b 20,1,4,1 ; top of head
+ dc.b 21,1,0,7 ; hair: any not greying.
+; no sideburns
+ dc.b 27,1,2,2 ; trousers: brown/blue
+ dc.b 25,1,0,1 ; shirt
+ dc.b 45,1,0,1 ; Mexican's hands
+ dc.b 46,1,0,1 ; Neckerchief or similar. 1 only, else can see
+; the pink skin underneath!
+; dealer's armbands not used.
+ dc.b 35,1,0,1 ; jacket: jerkin
+ dc.b 45,1,0,1 ; Mexican hands
+ dc.b 41,1,0,1 ; big Sombrero
+ dc.b 0,0,0,0
+
+Type20Person
+; Soldier for forts
+ dc.b 44,1,0,1 ; complete corporal except face
+ dc.b 1,1,0,18 ; face
+ dc.b 0,0,0,0
+
+Type21Person
+* Clint Eastwood look alike - with cape. e.g. 436 Santa Fe.
+ dc.b 23,1,0,1 ; neck - open
+ dc.b 1,1,0,18 ; face
+ dc.b 20,1,0,4 ; top of head
+ dc.b 21,1,0,8 ; hair: any not greying.
+; no sideburns
+ dc.b 27,1,0,4 ; trousers: any
+ dc.b 28,2,0,1 ; belt/gunbelt
+ dc.b 25,1,0,1 ; shirt
+ dc.b 49,1,0,1 ; cape
+ dc.b 38,1,0,1 ; hands
+ dc.b 42,1,2,1 ; hat: brown felt
+ dc.b 0,0,0,0
+
+
+
+; 
+ dc.b 0,0,0,0
+
+
+; people type is only currently used to give people
+; a name of the right sex.
+
+YAM equ 0 ; young american male
+OAM equ 1 ; old american male
+YAF equ 2 ; young american female
+OAF equ 3 ; old american female
+
+YMM equ 4 ; young Mexican male
+OMM equ 5 ; old Mexican male
+YMF equ 6 ; young Mexican female
+OMF equ 7 ; old Mexican female
+
+YIM equ 8 ; young Indian male
+OIM equ 9 ; old Indian male
+YIF equ 10 ; young Indian female
+OIF equ 11 ; old Indian female
+
+TownPeopleData
+; 8 bytes per person: initial data for all people.
+; Because people who have small versions need to go
+; into Hires() at run-time: it is important to fit
+; all these people into the first 50-or-so objects.
+; Otherwise the amount of memory required for ObjectTable() is going
+; to increase.
+
+ML equ 200
+; Room number is either:
+; - room number in walkabout section - e.g. 30..50 for Santa Fe
+; - or for map locations: ML+"LOCATION". These are mutually exclusive
+
+
+PB equ 620 * base for people's xzh objects
+DefaultMenu equ 0 * menu number divided by 2
+Default2ndMenu equ 0 * menu number divided by 2: this is
+* the menu it goes to if we get back to the default menu
+NoPerson equ 254 ; room number for a person which doesn't exist
+
+; Names - at message 1000+number specified
+WhiskeyPete equ 160
+JoeDunn equ 161
+NedParkin equ 162
+KarlBekkert equ 163
+JackShoe equ 164
+BenDavis equ 165
+WarrenOaks equ 166
+WayneRodgers equ 167
+AshUpton equ 168
+ChiefHow equ 169
+RickSands equ 170
+RickRider equ 171
+
+LauraPicket equ 210
+WilmaKatz equ  211
+MissRosy equ 212
+LaviniaStrumpet equ 213 ;**** not present.
+MrsMcSween equ 214
+girlfriend equ 215
+
+NoName equ 0
+
+; person 0 (not used...)
+ dc.b NoPerson ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations / 2
+ dc.b 1 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 1 430 Santa Fe: Jerkin guy leaning S.
+ dc.b 30 ; room number in which person appears =255 for end of this table.
+ dc.b 620-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations / 2
+ dc.b 1 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 2 431 Santa Fe: Waistcoat guy sitting S
+ dc.b 31 ; room number in which person appears =255 for end of this table.
+ dc.b 621-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b SomeoneNeedsHelpMenu/2 ; Current menu to use in conversations
+ dc.b 2 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 3 433 Santa Fe: Old guy Waistcoat, sitting S.
+ dc.b 33 ; room number in which person appears =255 for end of this table.
+ dc.b 622-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 3 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 4 434 Santa Fe Guy Leaning S, flipping coin.
+ dc.b 34 ; room number in which person appears =255 for end of this table.
+ dc.b 623-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b SomeoneNeedsHelpMenu/2 ; Current menu to use in conversations
+ dc.b 6 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 5 - 435 Santa Fe: Mexican sitting S
+ dc.b 35 ; room number in which person appears =255 for end of this table.
+ dc.b 628-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b SomeoneWasLookingMenu/2 ; Current menu to use in conversations
+ dc.b 10 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 6 436 Santa Fe: Clint, leaning E
+ dc.b 36 ; room number in which person appears =255 for end of this table.
+ dc.b 623-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b SomeoneWasLookingMenu/2  ; Current menu to use in conversations
+ dc.b 21 ; identikit type prototype to use - caped!
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 7 437 Santa Fe: Guy sitting E.
+ dc.b 37 ; room number in which person appears =255 for end of this table.
+ dc.b 622-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b SomeoneWasLookingMenu/2  ; Current menu to use in conversations
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 8: 432 Santa Fe: lady green skirt
+ dc.b 32 ; room number in which person appears =255 for end of this table.
+ dc.b 640-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b SomeoneNeedsHelpMenu/2  ; Current menu to use in conversations
+ dc.b 14 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAF
+
+; person 9: 450 El Paso: Lady standing S.
+ dc.b 50 ; room number in which person appears =255 for end of this table.
+ dc.b 638-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b SomeoneNeedsHelpMenu/2  ; Current menu to use in conversations
+ dc.b 8 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,OAF
+
+; person 10: 451 El Paso: Rocker
+ dc.b 51 ; room number in which person appears =255 for end of this table.
+ dc.b 635-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 4 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,OAM
+
+; person 11: 453 El Paso: Mexican Sitting S
+ dc.b 53 ; room number in which person appears =255 for end of this table.
+ dc.b 628-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b SomeoneWasLookingMenu/2  ; Current menu to use in conversations
+ dc.b 10 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 12: 455 El Paso: Mexican Sitting S
+ dc.b 55 ; room number in which person appears =255 for end of this table.
+ dc.b 628-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b SomeoneWasLookingMenu/2  ; Current menu to use in conversations
+ dc.b 10 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 13: 470 Roswell: Guy sitting E
+ dc.b 70 ; room number in which person appears =255 for end of this table.
+ dc.b 632-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 14: 472 Roswell: Lady green Skirt.
+ dc.b 72 ; room number in which person appears =255 for end of this table.
+ dc.b 640-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b SomeoneNeedsHelpMenu/2  ; Current menu to use in conversations
+ dc.b 14 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAF
+
+; person 15: 473 Roswell: Lady standing S.
+ dc.b 73 ; room number in which person appears =255 for end of this table.
+ dc.b 638-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b SomeoneNeedsHelpMenu/2  ; Current menu to use in conversations
+ dc.b 8 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,OAF
+
+; person 16: 501 Lincoln City: Lady standing S.
+ dc.b 101 ; room number in which person appears =255 for end of this table.
+ dc.b 638-PB ; xzh number used to represent person (0 if none, or any
+; xzh 
+ dc.b SomeoneNeedsHelpMenu/2  ; Current menu to use in conversations
+ dc.b 8 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,OAF
+
+; person 17: 502 Lincoln City: Rocker
+ dc.b 102 ; room number in which person appears =255 for end of this table.
+ dc.b 15 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 4 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,OAM
+
+; person 18: 504 Lincoln City: Lady Blue Skirt
+ dc.b 104 ; room number in which person appears =255 for end of this table.
+ dc.b 641-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b WidowWomanMenu/2 ; Current menu to use in conversations
+ dc.b 15 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAF
+
+; person 19: 504 Lincoln City: rocker
+ dc.b 104 ; room number in which person appears =255 for end of this table.
+ dc.b 636-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 4 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,OAM
+
+; person 20: 522 Mesilla: Lady Green Skirt
+ dc.b 122 ; room number in which person appears =255 for end of this table.
+ dc.b 640-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b WidowWomanMenu/2 ; Current menu to use in conversations
+ dc.b 14 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAF
+
+; person 21: 523 Mesilla: Guy leaning S, flipping a coin.
+ dc.b 4 ; room number in which person appears =255 for end of this table.
+ dc.b 624-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b SomeoneWasLookingMenu/2  ; Current menu to use in conversations
+ dc.b 6 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 22: 540 White Oaks: Rocker
+ dc.b 140 ; room number in which person appears =255 for end of this table.
+ dc.b 635-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 3 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,OAM
+
+; person 23: Undertaker Santa Fe
+ dc.b 1 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 11 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 24: Undertaker El Paso
+ dc.b 2 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 11 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 25: Undertaker Roswell
+ dc.b 3 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 12 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 26: Wire office man Santa Fe
+ dc.b 5 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 13 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 27: Wire Office man El Paso
+ dc.b 6 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 13 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 28: News office man Santa Fe
+ dc.b 8 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 12 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 29: News office man El Paso
+ dc.b 9 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 12 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 30: News office man White oaks
+ dc.b 10 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 12 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 31: bank Santa Fe
+ dc.b 12 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 26/2 ; Current menu to use in conversations
+ dc.b 13 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 32: bank El Paso
+ dc.b 13 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 13 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 33: bank Roswll
+ dc.b 14 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 26/2 ; Current menu to use in conversations
+ dc.b 13 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 34: bank Lincoln City
+ dc.b 15 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 26/2 ; Current menu to use in conversations
+ dc.b 13 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 35: bank Mesilla
+ dc.b 16 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 26/2 ; Current menu to use in conversations
+ dc.b 13 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 36: bank White Oaks
+ dc.b 17 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 26/2 ; Current menu to use in conversations
+ dc.b 13 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 37: Livery person Santa Fe
+ dc.b 19 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b SomeoneWasLookingMenu/2 ; Current menu to use in conversations
+ dc.b 4 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 38: Livery person El Paso
+ dc.b 20 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 4 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 39: Livery person Licoln City
+ dc.b 21 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 4 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 40: Livery person White Oaks
+ dc.b 22 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b SomeoneWasLookingMenu/2 ; Current menu to use in conversations
+ dc.b 4 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 41: Doctors El Paso
+ dc.b 24 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 11 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 42: Doctors Mesilla
+ dc.b 25 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 11 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 43: Store man El Paso
+ dc.b 60 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 12 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 44: Murphy Dolan Man in Lincoln
+ dc.b 62 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 156/2 ; Current menu to use in conversations
+ dc.b 12 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 45: Store Man Roswell - Ash Upton
+ dc.b 61 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b AshUptonMenu/2 ; Current menu to use in conversations
+ dc.b 12 ; identikit type prototype to use
+ dc.b Default2ndMenu,AshUpton,0,YAM
+
+; person 46: Store man White Oaks
+ dc.b 63 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 12 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 47: unused
+ dc.b NoPerson ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 12 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 48: Laura Picket at Hotel in El Paso
+ dc.b 66 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b LauraPicketMenu/2 ; Current menu to use in conversations
+ dc.b 9 ; identikit type prototype to use
+ dc.b Default2ndMenu,LauraPicket,0,YAM
+
+; person 49: girl in house/Lincoln City
+ dc.b 69 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b GirlFriendMenu/2 ; Current menu to use in conversations
+ dc.b 9 ; identikit type prototype to use
+ dc.b Default2ndMenu,Girlfriend,0,YAF
+
+; person 50: hostess in Santa Fe Saloon (560)
+ dc.b 160 ; room number in which person appears =255 for end of this table.
+ dc.b 639-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 14/2 ; Current menu to use in conversations
+ dc.b 7 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAF
+
+
+; person 51: Store man Santa Fe
+ dc.b 64 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations
+ dc.b 12 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+
+; person 52: barman in Santa Fe.
+ dc.b NoPerson ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 12/2 ; Current menu to use in conversations
+ dc.b 16 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+
+
+
+
+; people to meet at random in desert have room numbers 190..197
+
+
+
+
+; people that either Pat or Billy can meet...
+; person 53: person to meet at random in desert by Anglo farmers.
+; peasant being run off land
+ dc.b  190 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 50/2 ; Current menu to use in conversations
+ dc.b 19 ; identikit type prototype to use (Mexican peasant)
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 54: person to meet at random in desert.
+; mexican being picked on.
+ dc.b 191 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 58/2 ; Current menu to use in conversations
+ dc.b 19 ; identikit type prototype to use (peasant)
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 55: person to meet at random in desert.
+; sick man
+ dc.b 192 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 58/2 ; Current menu to use in conversations
+ dc.b 19 ; identikit type prototype to use (Mexican)
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 56: person to meet at random in desert.
+ dc.b 193 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 62/2 ; Current menu to use in conversations
+ dc.b 18 ; identikit type prototype to use (sick man)
+ dc.b Default2ndMenu,NoName,0,YAM
+
+
+
+
+
+; people that only Billy can meet...
+; person 57: person to meet at random in desert.
+; peasant wants help nursing his family
+ dc.b 194 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 104/2 ; Current menu to use in conversations 
+ dc.b 19 ; identikit type prototype to use (peasant with sick family)
+ dc.b Default2ndMenu,NoName,0,YAM
+
+
+
+; person 58: person to meet at random in desert. +++UNUSED+++
+ dc.b NoPerson ; 195 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 0 ; Current menu to use in conversations
+ dc.b 0 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; people that only Pat can meet...
+; person 59: person to meet at random in desert.
+; Texan possee
+ dc.b 196 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 76/2 ; Current menu to use in conversations
+ dc.b 6 ; identikit type prototype to use (Possee representative)
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 60: person to meet at random in desert.
+; Barney Mason
+ dc.b 197 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 80/2 ; Current menu to use in conversations
+ dc.b 5 ; identikit type prototype to use (Barney Mason)
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 61: person to meet at random in desert. +++UNUSED+++
+ dc.b NoPerson ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 0 ; Current menu to use in conversations
+ dc.b 0 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 62: person to meet at random in desert. +++UNUSED+++
+ dc.b NoPerson ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 0	; Current menu to use in conversations
+ dc.b 0 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 63: woman being bothered by a gunslinger in saloon. El Paso 2
+ dc.b 168 ; room number in which person appears =255 for end of this table.
+ dc.b 637-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 54/2 ; Current menu to use in conversations
+ dc.b 9 ; identikit type prototype to use (young Woman Green Skirt)
+ dc.b Default2ndMenu,NoName,0,YAF
+
+; person 64 560 Santa Fe (Saloon): guy drinking at bar. Shirt/brown trousers
+; Ned Parkin
+ dc.b 160 ; room number in which person appears =255 for end of this table.
+ dc.b 630-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b NedParkinMenu/2 ; Current menu to use in conversations / 2
+ dc.b 1 ; identikit type prototype to use
+ dc.b Default2ndMenu,NedParkin,0,YAM
+
+; person 65 560 Santa Fe (Saloon): guy at table. Grey jack/jeans
+ dc.b 160 ; room number in which person appears =255 for end of this table.
+ dc.b 629-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b BenDavisMenu/2 ; Current menu to use in conversations / 2
+ dc.b 17 ; identikit type prototype to use
+ dc.b Default2ndMenu,BenDavis,0,YAM
+
+; person 66 562 Santa Fe (Saloon): guy at table. Grey jack/brown trousers
+ dc.b 160 ; room number in which person appears =255 for end of this table.
+ dc.b 627-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b CardGameMenu/2 ; Current menu to use in conversations / 2
+ dc.b 17 ; identikit type prototype to use
+ dc.b Default2ndMenu,KarlBekkert,0,YAM
+
+; person 67 soldier at Fort Stanton
+ dc.b ML+19 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 132/2 ; Current menu to use in conversations: get lost
+ dc.b 20 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 68 soldier at Fort Sumner
+ dc.b ML+20 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 66/2 ; Current menu to use in conversations: army being cheated
+ dc.b 20 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 69 - at Bitter lake ranch
+ dc.b ML+24 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 132/2 ; Current menu to use in conversations: get lost
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 70 - at Fritz Ranch
+ dc.b ML+25 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 132/2 ; Current menu to use in conversations: get lost
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 71 - at Chisum Ranch
+ dc.b ML+26 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 132/2 ; Current menu to use in conversations: get lost
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 72 - Dedrick Ranch
+ dc.b ML+27 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b DefaultMenu ; Current menu to use in conversations - Indians not getting beef
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 73 - at Beckwith Ranch
+ dc.b ML+28 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 132/2 ; Current menu to use in conversations: get lost
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 74 - Mrs McSween - at Tunstall Ranch
+ dc.b ML+29 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 134/2 ; Current menu to use in conversations - Indians not getting beef
+ dc.b 15 ; identikit type prototype to use
+ dc.b Default2ndMenu,MrsMcSween,0,OAF
+
+
+; person 75 - at Reed Ranch
+ dc.b ML+30 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 132/2 ; Current menu to use in conversations: get lost
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+
+; person 76 - Indian chief at Mescalero
+ dc.b ML+35 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 92/2 ; Current menu to use in conversations - Indians not getting beef
+ dc.b 0 ; identikit type prototype to use
+ dc.b Default2ndMenu,ChiefHow,0,OIM
+
+
+; person  77 - prospector
+ dc.b ML+48 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b ProspectorMenu/2 ; Current menu to use in conversations - prospector
+ dc.b 0 ; identikit type prototype to use
+ dc.b 136/2,WhiskeyPete,0,YAM
+
+; person  78 - Joe Grant.
+; appears in saloon in Santa Fe (triggered by WALKABOUT.TXT)
+ dc.b NoPerson ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 128/2 ; Current menu to use in conversations - Indians not getting beef
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; A few special objects which you can select in town - e.g.
+; the wanted posters.
+; person  - 79 - wanted poster. Not Very talkative!
+ dc.b 0 ; room number in which person appears =255 for end of this table.
+ dc.b 642-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 0 ; Current menu to use in conversations - Indians not getting beef
+ dc.b 0 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,0
+
+; person  - 80 - object
+ dc.b NoPerson ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 0 ; Current menu to use in conversations - Indians not getting beef
+ dc.b 0 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,0
+
+; person  - 81 - object
+ dc.b NoPerson ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 0 ; Current menu to use in conversations - Indians not getting beef
+ dc.b 0 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,0
+
+; person  - 82 - object
+ dc.b NoPerson ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 0 ; Current menu to use in conversations - Indians not getting beef
+ dc.b 0 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,0
+
+; person  - 83 - object
+ dc.b NoPerson ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 0 ; Current menu to use in conversations - Indians not getting beef
+ dc.b 0 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,0
+
+; person 84 - gambler
+ dc.b NoPerson ; room number in which person appears =255 for end of this table.
+ dc.b 1 ; object number used to represent person (should be 2658)
+ dc.b CardGameMenu/2  ; Current menu to use in conversations
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,0,0,OAF
+
+
+
+; person  85 - Jose Miguel thingy
+; interrupts player looking at map
+ dc.b NoPerson ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 0 ; default menu to use in conversations
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person  86 - guy at bar in Santa Fe 2 (LHS):
+; grey jacket, blue jeans, brown hat, blue neckerchief
+ dc.b 170 ; room number in which person appears =255 for end of this table.
+ dc.b 631-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b SpillDrinkMenu/2 ; Current menu to use in conversations / 2
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person  87 - guy at bar in Santa Fe 2 (LHS):
+; Grey jacket, brown waistcoat, grey jacket. Cigarette in mouth
+;' grey hat
+ dc.b 170 ; room number in which person appears =255 for end of this table.
+ dc.b 633-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 0 ; default menu to use in conversations
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+
+; person  88 - guy at bar in El Paso 1 (LHS):
+; Grey jacket, blue jeans, blue neckerchief, brown hat
+ dc.b 166 ; room number in which person appears =255 for end of this table.
+ dc.b 631-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b JackShoeMenu/2 ; default menu to use in conversations
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,JackShoe,0,YAM
+
+
+; person  89 - guy at bar in El Paso 1 (LHS):
+; Grey jacket, brown waistcoat, grey jacket. Cigarette in mouth
+;' grey hat
+ dc.b 166 ; room number in which person appears =255 for end of this table.
+ dc.b 633-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b CardGameMenu/2 ; Current menu to use in conversations / 2
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+
+; person 90 566 El Paso (Saloon): guy at table. Grey jack/blue trousers
+ dc.b 166 ; room number in which person appears =255 for end of this table.
+ dc.b 629-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b SpillDrinkMenu/2 ; Current menu to use in conversations / 2
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 91 568 El Paso (Saloon 2): guy at table. Grey jack/brown trousers
+ dc.b 168 ; room number in which person appears =255 for end of this table.
+ dc.b 627-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 0 ; Current menu to use in conversations / 2
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,RickSands,0,YAM
+
+
+; person 92 574 Roswell (Saloon): guy at bar. Brown jacket, grey
+; trousers, white neckerchief, brown hat.
+ dc.b 174 ; room number in which person appears =255 for end of this table.
+ dc.b 630-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b BenDavisMenu/2 ; Current menu to use in conversations / 2
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 93 574 Roswell (Saloon): guy at table
+; trousers, white neckerchief, brown hat.
+ dc.b 174 ; room number in which person appears =255 for end of this table.
+ dc.b 627-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b CardGameMenu/2 ; Current menu to use in conversations / 2
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 94 573 Roswell (Saloon): guy at table
+; tbrown trousers, grey jacket, blue neckerchief, brown hat
+ dc.b 173 ; room number in which person appears =255 for end of this table.
+ dc.b 627-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b RickRiderMenu/2 ; Current menu to use in conversations / 2
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,RickRider,0,YAM
+
+; person 95 573 Roswell (Saloon): guy at table
+; grey trousers, grey jacket, brown waistcoat, grey hat
+ dc.b 173 ; room number in which person appears =255 for end of this table.
+ dc.b 633-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 0 ; Current menu to use in conversations / 2
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 95 565 Lincoln city (Saloon): guy at table
+; blue trousers, grey jacket, grey hat
+ dc.b 165 ; room number in which person appears =255 for end of this table.
+ dc.b 629-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b CardGameMenu/2 ; Current menu to use in conversations / 2
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 96 565 Lincoln city (Saloon): guy at table
+; grey trousers, grey jacket, brown waistcoat, grey hat
+ dc.b 165 ; room number in which person appears =255 for end of this table.
+ dc.b 633-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 0 ; Current menu to use in conversations / 2
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+; person 97 565 Lincoln city (Saloon): guy at bar
+; grey trousers, brown jacket, brown hat
+ dc.b 165 ; room number in which person appears =255 for end of this table.
+ dc.b 630-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b SpillDrinkMenu/2 ; Current menu to use in conversations / 2
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+
+; person 98 569 Mesilla (Saloon): guy at table
+; blue trousers, grey jacket, grey hat
+ dc.b 169 ; room number in which person appears =255 for end of this table.
+ dc.b 629-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b CardGameMenu/2 ; Current menu to use in conversations / 2
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,WarrenOaks,0,YAM
+
+
+; person 99 572 White Oaks (Saloon): guy at table
+; grey trousers, brown jacket, brown hat
+; Slightly Mexican appearance, with big black moustache
+ dc.b 172 ; room number in which person appears =255 for end of this table.
+ dc.b 634-PB ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 0 ; Current menu to use in conversations / 2
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,WayneRodgers,0,YAM
+
+
+; person 100 Tom O'Foliard
+; grey trousers, grey jacket, brown waistcoat, grey hat
+ dc.b NoPerson ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b 0 ; Current menu to use in conversations / 2
+ dc.b 5 ; identikit type prototype to use
+ dc.b Default2ndMenu,NoName,0,YAM
+
+
+
+; person 101 - Wilma Katz - at Katz farmhouse (31)
+ dc.b ML+31 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b WilmaKatzMenu/2 ; Current menu to use in conversations
+ dc.b 15 ; identikit type prototype to use
+ dc.b Default2ndMenu,WilmaKatz,0,OAF
+
+; person 102 - at Dunn Farmhouse (32)
+ dc.b ML+32 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b LonelyFarmhouseMenu/2 ; Current menu to use in conversations
+ dc.b 15 ; identikit type prototype to use
+ dc.b Default2ndMenu,MrsMcSween,0,OAF
+
+; person 103 - at Rose Farmhosue (33)
+ dc.b ML+33 ; room number in which person appears =255 for end of this table.
+ dc.b 0 ; xzh number used to represent person (0 if none, or any
+; xzh within range 620..650)
+ dc.b LonelyFarmhouseMenu/2  ; Current menu to use in conversations
+ dc.b 15 ; identikit type prototype to use
+ dc.b Default2ndMenu,MissRosy,0,OAF
+
+
+ dc.b 255 ; end of table.
+
+
+
+TownData
+; 16 bytes per town
+; town 10: Santa Fe
+ dc.w 10 ; increase in gold per time unit.
+ dc.w 200 ; maximum level of gold in the bank.
+ dc.w 0
+ dc.w 0
+ dc.w 0
+ dc.w 0
+ dc.w 0
+ dc.w 0
+
+; town 11: White Oaks
+ dc.w 3 ; increase in gold per time unit.
+ dc.w 50 ; maximum level of gold in the bank.
+ dc.w 0
+ dc.w 0
+ dc.w 0
+ dc.w 0
+ dc.w 0
+ dc.w 0
+
+; town 12: Lincoln City
+ dc.w 3 ; increase in gold per time unit.
+ dc.w 50 ; maximum level of gold in the bank.
+ dc.w 0
+ dc.w 0
+ dc.w 0
+ dc.w 0
+ dc.w 0
+ dc.w 0
+
+; town 13: Mesilla
+ dc.w 3 ; increase in gold per time unit.
+ dc.w 50 ; maximum level of gold in the bank.
+ dc.w 0
+ dc.w 0
+ dc.w 0
+ dc.w 0
+ dc.w 0
+ dc.w 0
+
+; town 14: Roswll
+ dc.w 3 ; increase in gold per time unit.
+ dc.w 50 ; maximum level of gold in the bank.
+ dc.w 0
+ dc.w 0
+ dc.w 0
+ dc.w 0
+ dc.w 0
+ dc.w 0
+
+; town 15: El Paso
+ dc.w 8 ; increase in gold per time unit.
+ dc.w 150 ; maximum level of gold in the bank.
+ dc.w 0
+ dc.w 0
+ dc.w 0
+ dc.w 0
+ dc.w 0
+ dc.w 0
+
+
+SubPlotData
+; There is a table containing all the bits of information
+; people may want to know about: in TownVarData.
+; This is initialised from a table of identical format
+; in TownFixedData (except that offsets are relative to the
+; start of this little table, wheras in TownVarData they
+; are relative to TownVarData). The copy routine makes the
+; appropriate conversion.
+;
+; 10 pointers at start...
+ dc.w EndSubPlotData-SubPlotData
+ dc.w SPMoney-SubPlotData ; .w Offset of "Money Location" information.
+ dc.w SPDeputies-SubPlotData ; .w Offset of "Deputies Location" information.
+ dc.w SPGangs-SubPlotData ; .w Offset of "Gang Location" information
+ dc.w SPRobbery-SubPlotData ; .w Offset of "Recent robbery" information
+ dc.w SPSubPlots-SubPlotData ; .w Offset of sub-plot table.
+ dc.w SPHidden-SubPlotData ; .w Offset of "Hidden things" table for map
+ dc.w CommsInfo-SubPlotData ; .w offset of "things the other computer wants
+; to know about.
+ dc.w 0
+ dc.w 0
+ dc.w 0
+
+CommsInfo
+ dc.b 0 * not used
+ dc.b 0 * LOCATION of pat
+ dc.b 0 * LOCATION of Billy
+
+ even
+
+SPHidden
+; table for map containing one byte for every object on map.
+; If zero, it will be displayed (unless overridden elsewhere)
+; If one, it will be hidden. This is used for making e.g.
+; farmhouses disappear after we've used their subplots
+ dc.b 0,0,0,0,0,0,0,0 ; 0..7
+ dc.b 0,0,0,0,0,0,0,0 ; 8..15
+ dc.b 0,0,0,0,0,0,0,0 ; 16..23
+ dc.b 0,0,0,0,0,0,0,0 ; 24..31
+ dc.b 0,0,0,0,0,0,0,0 ; 32..39
+ dc.b 0,0,0,0,0,0,0,0 ; 40..47
+ dc.b 0,0,0,0,0,0,0,0 ; 48..55
+
+
+; First word in every entry is 0 if nothing to know.
+; 255. if hidden (doesn't appear on map) but can be told to player,
+; 254. if hidden (doesn't appear on map) and cannot be told to player.
+; non-zero if there is some piece
+; of information that may be required.
+; Second word is a numerical parameter for several of the
+;  items. These are coded specially.
+; Third and fourth words unused presently.
+; fourth to seventh words are four message numbers to print,
+;  in order. If =FFFF print the numeric parameter.
+;  If <10, print the appropriate paramter, numbered from
+;  2 in steps of 2. - it will be a location name, to choose the message
+;  from 1000...
+
+SPMoney
+ dc.w 1,1000,0,0,966,1010,0,0 ; .w,.w Gold in Bank at town 0
+ dc.w 1,400,0,0,966,1011,0,0  ; .w,.w Gold in Bank at town 1
+ dc.w 1,400,0,0,966,1012,0,0  ; .w,.w Gold in Bank at town 2
+ dc.w 1,400,0,0,966,1013,0,0  ; .w,.w Gold in Bank at town 3
+ dc.w 1,400,0,0,966,1014,0,0  ; .w,.w Gold in Bank at town 4
+ dc.w 1,400,0,0,966,1015,0,0  ; .w,.w Gold in Bank at town 5
+ dc.w -1,-1
+
+SPDeputies
+ dc.w 1,2,0,0,972,$ffff,973,1010 ; .w,.w Number of deputies in town 0
+ dc.w 1,0,0,0,972,$ffff,973,1011 ; .w,.w Number of deputies in town 1
+ dc.w 1,0,0,0,972,$ffff,973,1012 ; .w,.w Number of deputies in town 2
+ dc.w 1,0,0,0,972,$ffff,973,1013 ; .w,.w Number of deputies in town 3
+ dc.w 1,0,0,0,972,$ffff,973,1014 ; .w,.w Number of deputies in town 4
+ dc.w 1,0,0,0,972,$ffff,973,1015 ; .w,.w Number of deputies in town 5
+ dc.w -1,-1
+
+SPGangs
+ dc.w 1,0,0,0,962,1041,965,1010 ; .w,.w Gang location 0
+ dc.w 255,1,0,0,962,1042,965,1011 ; .w,.w Gang location 1
+ dc.w 255,2,0,0,962,1043,965,1012 ; .w,.w Gang location 2
+ dc.w 255,3,0,0,962,1044,965,1013 ; .w,.w Gang location 3
+ dc.w 255,4,0,0,962,1045,965,1014 ; .w,.w Gang location 4
+ dc.w 255,5,0,0,962,1046,965,1015 ; .w,.w Gang location 5
+ dc.w -1,-1
+
+SPRobbery
+ dc.w 41,10,0,0,962,2,963,4 ; default - cooper gang/Santa Fe.
+ dc.w -1,-1
+
+SPSubPlots
+; .w,.w Sub-plot?
+ dc.w 0,0,0,0,0,0,0,0
+ dc.w -1,-1
+
+
+EndSubPlotData
+
+;-----------------
+
+ENDTABLE
+;---------
+ END
+
