@@ -1,0 +1,1183 @@
+; Gnome Two Part 2 source, copyright (C) 1987 Level 9 Computing.
+;
+; TABLE.TXT, assembler format data for tables, a.k.a lists/arrays. 
+; (Save the assembled data as TABLE.DAT). 
+;
+; You must start all DEFWs on EVEN boundaries, else subsequent code 
+; seems to be padded to make it even (according to the GENST listing, 
+; anyway). The EVEN directive inserts a padding byte if appropriate.
+;
+ ORG 0
+starttables
+ dc.l LIST1-starttables ; MOVEABLE OBJECT START
+ dc.l $8000 ; OBJECT CURRENT
+ dc.l $8000+MaxObject ; HI OBJECT CURRENT
+ dc.l LIST4-starttables ; scenery table
+ dc.l NPCINITIAL-starttables ; npc initial and 'floor pointers'
+ dc.l $8000+LIST23SIZE ; 6 - NPC current attributes, stack
+ dc.l $8000+LIST236SIZE ; 7 - output buffer,scoretable
+ dc.l list8-starttables ; 8 - assorted fixed system tables
+ dc.l $8000+LIST2367SIZE ; 9 - input table,object table
+ dc.l ENDTABLE-starttables
+;---
+; CONTAINER POSITONS
+ON EQU 1
+UNDER EQU 2
+BEHIND EQU 3
+CARRIED EQU 4
+WORN EQU 5
+PREPIN EQU 7
+HANGINGFROM EQU 8 ; E.G. TREE
+pushedby equ 11
+LIEON EQU 12
+SITON EQU 13
+fastenedto equ 14
+lyingon equ 15
+;
+; additions to high initial position
+OBV EQU $80
+ita equ 0
+itan equ $10 ; starts with a vowel
+singularsome equ $20 ; "some cheese is tasy"
+he equ $30
+she equ $40
+pluralsome equ $50 ; "some ropes are strong"
+you equ $60
+properMale equ $70
+ProperFemale equ $70
+; ProperFemale is handled by SpecialConjugate
+;
+MaxObject EQU 189 ; should be two bigger than it really needs to be
+NUMHIOBJ EQU MaxObject ; NO. OF OBJECTS WITH A HIGH POSITION
+minnpc equ 1
+maxnpc equ 64
+npctablesize EQU (MaxNpc+1)*8
+npcstacksize equ 260 ; 300
+
+OUTPUTBUFFER EQU 32
+SCORETABLE EQU 40 ;length of score table
+OBJTABLE EQU 16 ; number of objects which can be specified on one line
+liedown equ 50 ; npc's lying down
+;
+;
+LIST23SIZE EQU MaxObject+NUMHIOBJ
+LIST236SIZE EQU LIST23SIZE+npctablesize+npcstacksize
+LIST2367SIZE EQU LIST236SIZE+OUTPUTBUFFER+SCORETABLE+150+maxnpc+liedown
+; 150 is num rooms
+;;LIST23678SIZE equ LIST2367SIZE ; >>Mike 8/8/87 - reduced from ST version
+;>>mike 8/8/87 LIST23678SIZE EQU LIST2367SIZE+OBJTABLE
+;
+;---
+LIST1
+ dc.b 0,0               ; OBJECT 0
+;
+; people
+USER EQU 1
+ dc.b 0+you,22		; 1 USER (ingrid)
+; give racetracks to ingrid's family:
+ dc.b properfemale,5	; 2 gnora
+ dc.b propermale,5	; 3 gnoah
+ dc.b propermale,15	; 4 bumpy
+ dc.b propermale,220	; 5 dimple
+ dc.b propermale,221	; 6 gnoggin
+ dc.b propermale,13	; 7 arback
+ dc.b 0,0		; 8 
+ dc.b 0,0		; 9 
+ dc.b 0,0		; 10 
+ dc.b 0,0		; 11 
+ dc.b properfemale,3	; 12 grandma
+flopsy equ 13
+ dc.b propermale,25	; 13 flopsy
+ dc.b 0,0		; 14 
+ dc.b 0,0		; 15 
+ dc.b 0,0		; 16 
+ dc.b 0,0		; 17 
+ dc.b 0,0		; 18 
+ dc.b propermale,0	; 19 seamus (teleports with warning)
+;
+; people 20-23 never appear, but are included 
+; for parsing, "go object" etc.
+ dc.b 0,0		; 20 
+ dc.b 0,0		; 21 
+ dc.b propermale,0	; 22 jasper
+;
+ dc.b 0,0		; 23
+ dc.b pluralsome+prepin,steamroller	; 24 trolls
+silas equ 25
+ dc.b obv+propermale+prepin,steamroller	; 25 silas
+ dc.b propermale,0	; 26 ambul
+ dc.b propermale,0	; 27 bane (fancied Ingrid)
+troll3 equ 28
+ dc.b obv+propermale,0	; 28 chugg (drunk)
+ dc.b propermale,0	; 29 doldrum
+ dc.b propermale,0	; 30 ergot (guards barn); trolls=24
+ dc.b propermale,0	; 31 fugg
+ dc.b propermale,0	; 32 gormley
+ dc.b 0,0		; 33
+ dc.b 0,0		; 34
+;
+; animals
+ dc.b 0,0		; 35
+ dc.b pluralsome,0 	; 36 bantams. >> Removed by Pete 29/9/88 
+ dc.b pluralsome,9	; 37 pigs
+;
+ dc.b 0,0		; 38 white rabbit ; never appears (see 20-22)
+ dc.b 0,0		; 39
+ dc.b 0,0		; 40
+ dc.b 0,0		; 41
+ dc.b 0,0		; 42
+ dc.b 0,0		; 43
+ dc.b 0,0		; 44
+ dc.b 0,0		; 45
+ dc.b 0,0		; 46
+ dc.b 0,0		; 47
+ dc.b 0,0		; 48
+ dc.b 0,0		; 49
+ dc.b 0,0		; 50
+ dc.b 0,0		; 51
+ dc.b 0,0		; 52
+ dc.b 0,0		; 53
+ dc.b 0,0		; 54
+ dc.b 0,0		; 55
+ dc.b 0,0		; 56
+ dc.b 0,0		; 57
+ dc.b 0,0		; 58
+ dc.b 0,0		; 59
+ dc.b singularsome+prepin,handbag	; 60 lipstick
+ dc.b singularsome+prepin,handbag	; 61 perfume
+handbag equ 62
+ dc.b 0,7		; 62 handbag
+ dc.b 0,0		; 63
+ dc.b 0,0		; 64
+ dc.b 0,0		; 65
+ dc.b 0,0		; 66
+ dc.b 0,0		; 67
+ dc.b 0,0		; 68 
+ dc.b 0,0		; 69 
+ dc.b 0,0		; 70
+ dc.b 0,0		; 71
+ dc.b 0,0		; 72
+ dc.b 0,0               ; 73
+ dc.b 0,0               ; 74
+ dc.b 0,0               ; 75
+ dc.b 0,0               ; 76
+ dc.b 0,0               ; 77
+ dc.b 0,0               ; 78
+ dc.b 0,0               ; 79
+;
+; now some ordinary objects (80 onwards)..
+ dc.b 0,36		; 80 loose brick
+bottle equ 81
+ dc.b carried,troll3	; 81 bottle
+ dc.b 0,21		; 82 cider cask
+ dc.b pluralsome,0	; 83 deeds appear at end
+ dc.b 0,0		; 84
+ dc.b on,table		; 85 loaf
+ dc.b pluralsome+carried,silas	; 86 plans
+ dc.b 0,21		; 87 sack of flour
+ dc.b 0,25		; 88 mill stone
+ dc.b obv,0		; 89 blue lily
+ dc.b obv,0		; 90 green lily
+ dc.b 0,0		; 91
+ dc.b 0,0		; 92
+ dc.b 0,0		; 93
+ dc.b 0,0		; 94
+ dc.b 0,0		; 95
+ dc.b 0,0		; 96
+ dc.b 0,0		; 97
+ dc.b 0,0		; 98
+ dc.b 0,0		; 99
+ dc.b 0,0               ;100 
+ dc.b 0,0               ;101 
+ dc.b 0,0               ;102 
+ dc.b 0,0		;103 
+ dc.b 0,0               ;104
+ dc.b 0,0               ;105
+ dc.b 0,0               ;106
+ dc.b 0,0               ;107
+ dc.b 0,0               ;108
+ dc.b 0,0               ;109
+;
+; static objects... (110+)
+ dc.b 0,21		;110 brake
+ dc.b obv,33		;111 bush
+dam equ 112
+ dc.b 0,39		;112 dam
+ dc.b 0,22		;113 gap
+ dc.b obv,40		;114 hook
+ dc.b 0,21		;115 lever
+turnips equ 116
+ dc.b obv,4		;116 pile of turnips
+root equ 117
+ dc.b 0,15		;117 root
+ dc.b 0,32		;118 notice
+table equ 119
+ dc.b 0,5		;119 table
+otrap equ 120
+ dc.b 0,0		;120 open trapdoor
+ctrap equ 121
+ dc.b obv,226		;121 closed trapdoor
+ dc.b 0,224		;122 well
+ dc.b on,steamroller	;123 chimney
+ dc.b singularsome,0	;124 floodwater
+ dc.b 0,0		;125 broken dam
+ dc.b 0,0		;126
+ dc.b 0,0		;127
+ dc.b 0,0		;128
+ dc.b 0,0		;129
+ dc.b 0,0		;130
+ dc.b 0,0		;131
+ dc.b 0,0		;132
+ dc.b 0,0		;133
+ dc.b 0,0		;134
+ dc.b 0,0		;135
+ dc.b 0,0		;136
+ dc.b 0,0		;137
+ dc.b 0,0		;138
+ dc.b 0,0		; 139
+;
+; vehicles 
+steamroller equ 140
+ dc.b obv,29		; 140 steamroller uses silas's rt
+ dc.b obv+pluralsome,0	; 141 ashes of steamroller
+ dc.b 0,0		; 142
+ dc.b 0,0		; 143
+ dc.b 0,0		; 144
+ dc.b 0,0		; 145
+ dc.b 0,0		; 146 
+ dc.b 0,0		; 147 
+ dc.b 0,0		; 148 
+ dc.b 0,0		; 149
+;
+; invisible objects
+ dc.b pluralsome,8	; 150 pens
+ dc.b pluralsome,9	; 151 pens
+ dc.b pluralsome,10	; 152 pens
+ dc.b pluralsome,11	; 153 pens
+ dc.b 0,33		; 154 halfyard's mill
+ dc.b 0,38		; 155 ditch
+ dc.b 0,39		; 156 river
+ dc.b 0,21		; 157 window
+ dc.b 0,0		; 158
+ dc.b pluralsome,8	; 159 hurdles
+ dc.b pluralsome,9	; 160 hurdles
+ dc.b pluralsome,10	; 161 hurdles
+ dc.b pluralsome,11	; 162 hurdles
+ dc.b pluralsome,33	; 163 vanes
+ dc.b 0,0		; 164
+ dc.b 0,0		; 165
+ dc.b 0,0		; 166
+ dc.b 0,0               ; 167
+ dc.b 0,0               ; 168
+ dc.b 0,0               ; 169
+ dc.b 0,0               ; 170
+ dc.b 0,0               ;171
+ dc.b 0,0               ;172
+ dc.b 0,0               ;173
+ dc.b 0,0               ;174
+ dc.b 0,0               ;175
+ dc.b 0,0               ;176
+ dc.b 0,0               ;177
+ dc.b 0,0               ;178
+ dc.b 0,0               ;179
+;-------------------------
+;
+; Brief location objects (479+N). See 779+ for examine messages and 
+; 1199+ for their verbose equivalents..
+ dc.b 0,220		; 180 sty
+ dc.b 0,221		; 181 coop
+ dc.b 0,222		; 182 barn
+ dc.b 0,223		; 183 track
+ dc.b 0,224		; 184 (link to well bottom, if ever needed)
+ dc.b 0,225		; 185 ruins
+ dc.b 0,226		; 186 (link to cellar)
+ dc.b 0,227		; 187 entrance
+;---
+ even
+ENDOBJECTS
+terraintable
+LIST4
+; table giving scenery types on grassy plain grid
+m equ 220 ; minsynthroom
+ dc.b m,m,m
+ dc.b m,m,m
+ dc.b m,m,m
+ even
+;---------
+list8
+; table for remarks made by 'PET' - Damosel Maledisant (Galahad in L3)...
+ dc.b 10,33
+ dc.b 11,34
+ dc.b 13,0
+ dc.b 60,35
+ dc.b 61,36
+ dc.b 91,1
+ dc.b 93,37
+ dc.b 104,38
+ dc.b 106,39
+ dc.b 107,2
+ dc.b 108,3
+ dc.b 109,4
+ dc.b 131,49
+ dc.b 132,5
+ dc.b 133,6
+ dc.b 134,7
+ dc.b 135,8
+ dc.b 136,45
+ dc.b 137,46
+ dc.b 138,47
+ dc.b 139,48
+ dc.b 140,9
+ dc.b 141,10
+ dc.b 151,11
+ dc.b 163,12
+ dc.b 164,40
+ dc.b 165,13
+ dc.b 174,41
+ dc.b 181,14
+ dc.b 182,42
+ dc.b 183,15
+ dc.b 190,16
+ dc.b 200,44
+ dc.b 201,17
+ dc.b 203,18
+ dc.b 207,43
+ dc.b 212,19
+ dc.b 220,20
+ dc.b 222,22
+ dc.b 224,21
+ dc.b 230,23
+ dc.b 231,24
+ dc.b 232,25
+ dc.b 233,26
+ dc.b 255,250 ; add 250 to first message byte
+ dc.b 20,27
+ dc.b 22,28
+ dc.b 23,28
+ dc.b 25,29
+ dc.b 50,30
+ dc.b 51,31
+ dc.b 62,32
+ dc.b 0,0
+;
+;---------
+ even
+NPCINITIAL
+list5
+; first we have a dummy entry for npc 0
+; this is used as some pointers to the *other*
+; things which are used in this list
+; (the equivalent of this area in list6 is used for temp workspace)
+;
+ dc.w floorpointers-npcinitial
+ dc.w racetracks-npcinitial
+ dc.w reversaltable-npcinitial
+ dc.w roompictures-list5
+;
+; For greed agression, timidity, obediance, there
+; is a special case - if one of the values is 255, then
+; the npc will always choose that one, if it is possible
+; This is particularly useful for slaves etc.
+; Note that npcs will still respond to attacks etc. - 
+; anything which sets the 'attention flag'
+
+FRIENDLY EQU 0
+dodge equ 0
+damage equ 0
+; now the npc tables themselves...
+; npc 0 has dummy entry used as pointers above
+
+; dc.b enemy, dodge, attack, hit points, obedience, patience, gold-sing
+; if bit 7 of the "enemy" byte is set, the npc will be inactive
+; until it meets Lancelot
+
+ dc.b friendly,dodge,35,100,3,0   ; 1 USER
+ dc.w 3410 ; standard singing
+ dc.b friendly,dodge,10,100,255,1 ; 2 gnora
+ dc.w 3410
+ dc.b friendly,dodge,10,100,255,1 ; 3 gnoah
+ dc.w 3400
+ dc.b friendly,dodge,10,100,255,1 ; 4 bumpy
+ dc.w 3380
+ dc.b friendly,dodge,10,100,200,1 ; 5 dimple
+ dc.w 3400
+ dc.b friendly,dodge,10,100,200,2 ; 6 gnoggin
+ dc.w 3400
+ dc.b friendly,dodge,10,100,200,3 ; 7 arback
+ dc.w 3360
+ dc.b friendly,dodge,10,100,100,2 ; 8
+ dc.w 0
+ dc.b friendly,dodge,10,100,100,3 ; 9
+ dc.w 0
+ dc.b friendly,dodge,10,100,100,4 ; 10
+ dc.w 0
+ dc.b friendly,dodge,10,100,100,2 ; 11
+ dc.w 0
+ dc.b friendly,dodge,10,100,255,1 ; 12 grandma
+ dc.w 3410
+ dc.b friendly,dodge,10,100,255,1 ; 13 flopsy
+ dc.w 3370
+ dc.b friendly,dodge,10,100,100,2 ; 14
+ dc.w 0
+ dc.b friendly,dodge,10,100,100,3 ; 15
+ dc.w 0
+ dc.b friendly,dodge,10,100,100,2 ; 16
+ dc.w 0
+ dc.b friendly,dodge,10,100,100,3 ; 17
+ dc.w 0
+ dc.b friendly,dodge,10,100,100,2 ; 18
+ dc.w 0
+ dc.b friendly,dodge,10,100,255,1 ; 19 seamus
+ dc.w 3390
+ dc.b friendly,dodge,10,100,255,1 ; 20
+ dc.w 0
+ dc.b friendly,dodge,10,100,255,1 ; 21
+ dc.w 0
+ dc.b friendly,dodge,10,100,255,1 ; 22 (jasper)
+ dc.w 0
+ dc.b friendly,dodge,10,100,255,1 ; 23
+ dc.w 0
+ dc.b friendly,dodge,10,100,255,1 ; 24 trolls
+ dc.w 3440
+ dc.b friendly,dodge,10,100,255,1 ; 25 silas
+ dc.w 3460
+ dc.b friendly,dodge,10,100,255,1 ; 26 ambul
+ dc.w 3430 ; default troll
+ dc.b friendly,dodge,10,100,255,1 ; 27 bane
+ dc.w 3470
+ dc.b friendly,dodge,10,100,255,1 ; 28 chugg
+ dc.w 3480
+ dc.b friendly,dodge,10,100,255,1 ; 29 doldrum
+ dc.w 3430
+ dc.b friendly,dodge,10,100,255,1 ; 30 ergot
+ dc.w 3430
+ dc.b friendly,dodge,10,100,255,1 ; 31 fugg
+ dc.w 3430
+ dc.b friendly,dodge,10,100,255,1 ; 32 gormley
+ dc.w 3430
+ dc.b friendly,dodge,10,100,100,4 ; 33
+ dc.w 0
+ dc.b friendly,dodge,10,100,100,2 ; 34
+ dc.w 0
+ dc.b friendly,dodge,10,100,100,2 ; 35
+ dc.w 0
+ dc.b friendly,dodge,10,100,255,1 ; 36 bantams
+ dc.w 3490
+ dc.b friendly,dodge,10,100,255,1 ; 37 pigs
+ dc.w 3500
+;---
+
+floorpointers
+; part of list5
+; now 'floor pointers'
+; there is one bye pair for each static room - the
+; first byte gives the direction to go inwards
+; and the second byte gives direction for going outwards
+; (i.e. towards the synthesised grid)
+;
+; ** BIG WARNING **
+; all shapes must be simply connected. i.e. given a pair of rooms,
+; you must be able to trace a path between them using only the
+; OUT paths of one OR the other.
+; This is because of the way the follow and GO code works.
+north equ 1
+ne equ 2
+east equ 3
+se equ 5
+south equ 4
+sw equ 6
+west equ 7
+nw equ 8
+up equ 9
+down equ 10
+verbin equ 11
+out equ 12
+cross equ 13
+climb equ 14
+jump equ 15
+
+ dc.b 0 ; room 0 (not used)
+ dc.b 0 ; room 1 (not used)
+ dc.b 0 ; 2
+ dc.b east ; 3
+ dc.b nw ; 4
+ dc.b out ; 5
+ dc.b up ; 6
+ dc.b up ; 7
+ dc.b north ; 8
+ dc.b east ; 9
+ dc.b east ; 10
+ dc.b nw ; 11
+ dc.b north ; 12
+ dc.b out ; 13
+ dc.b north ; 14
+ dc.b up ; 15
+ dc.b east ; 16 
+ dc.b north ; 17
+ dc.b north ; 18
+ dc.b up ; 19
+ dc.b out ; 20
+ dc.b down ; 21 
+ dc.b down ; 22
+ dc.b 0 ; 23 
+ dc.b 0 ; 24
+ dc.b west ; 25 
+ dc.b east ; 26
+ dc.b east ; 27
+ dc.b east ; 28
+ dc.b east ; 29
+ dc.b nw ; 30
+ dc.b nw ; 31
+ dc.b west ; 32
+ dc.b west ; 33
+ dc.b east ; 34
+ dc.b south ; 35
+ dc.b south ; 36
+ dc.b nw ; 37
+ dc.b south ; 38
+ dc.b south ; 39
+ dc.b down ; 40
+ dc.b 0 ; 41
+ dc.b 0 ; 42
+ dc.b 0 ; 43
+ dc.b 0 ; 44
+ dc.b 0 ; 45
+ dc.b 0 ; 46
+ dc.b 0 ; 47
+ dc.b 0 ; 48
+ dc.b 0 ; 49
+ dc.b 0 ; 50
+ dc.b 0 ; 51
+ dc.b 0 ; 51
+ dc.b 0 ; 52
+ dc.b 0 ; 54
+ dc.b 0 ; 55
+ dc.b 0 ; 56
+ dc.b 0 ; 57
+ dc.b 0 ; 58
+ dc.b 0 ; 59
+ dc.b 0 ; 60
+ dc.b 0 ; 61
+ dc.b 0 ; 62
+ dc.b 0 ; 63
+ dc.b 0 ; 64
+ dc.b 0 ; 65
+ dc.b 0 ; 66
+ dc.b 0 ; 67
+ dc.b 0 ; 68
+ dc.b 0 ; 69
+ dc.b 0 ; 70
+ dc.b 0 ; 71
+ dc.b 0 ; 72
+ dc.b 0 ; 73
+ dc.b 0 ; 74
+ dc.b 0 ; 75
+ dc.b 0 ; 76
+ dc.b 0 ; 77
+ dc.b 0 ; 78
+ dc.b 0 ; 79
+ dc.b 0 ; 80
+ dc.b 0 ; 81
+ dc.b 0 ; 82
+ dc.b 0 ; 83
+ dc.b 0 ; 84
+ dc.b 0 ; 85
+ dc.b 0 ; 86
+ dc.b 0 ; 87
+ dc.b 0 ; 88
+ dc.b 0 ; 89
+ dc.b 0 ; 90
+ dc.b 0 ; 91
+ dc.b 0 ; 92
+ dc.b 0 ; 93
+ dc.b 0 ; 94
+ dc.b 0 ; 95
+ dc.b 0 ; 96
+ dc.b 0 ; 97
+ dc.b 0 ; 98
+ dc.b 0 ; 99
+ dc.b 0 ; 100
+ dc.b 0 ; 101
+ dc.b 0 ; 102
+ dc.b 0 ; 103
+ dc.b 0 ; 104
+ dc.b 0 ; 105
+ dc.b 0 ; 106
+ dc.b 0 ; 107
+ dc.b 0 ; 108
+ dc.b 0 ; 109
+ dc.b 0 ; 110
+ dc.b 0 ; 111
+ dc.b 0 ; 112
+ dc.b 0 ; 113
+ dc.b 0 ; 114
+ dc.b 0 ; 115
+ dc.b 0 ; 116
+ dc.b 0 ; 117
+ dc.b 0 ; 118
+ dc.b 0 ; 119
+ dc.b 0 ; 120
+ dc.b 0 ; 121
+ dc.b 0 ; 122
+ dc.b 0 ; 123
+ dc.b 0 ; 124
+ dc.b west ; 125
+ dc.b south ; 126
+ dc.b 0 ; 127
+ dc.b 0 ; 128
+ dc.b 0 ; 129
+ dc.b 0 ; 130
+ dc.b 0 ; 131
+ dc.b 0 ; 132
+ dc.b 0 ; 133
+ dc.b 0 ; 134
+ dc.b 0 ; 135
+ dc.b 0 ; 136
+ dc.b 0 ; 137
+ dc.b 0 ; 138
+ dc.b 0 ; 139
+ dc.b se ; 140
+ dc.b nw ; 141
+;---
+ even
+racetracks
+; sequences of commands which actors obey
+; each is referred to by a 16-bit offset from the start of list5
+; the initial sequences are contained in this table at the start..
+ dc.w 0 ; 0
+ dc.w 0	; 1
+ dc.w gnorart-list5	; 2 gnora
+ dc.w gnoahrt-list5	; 3 gnoah
+ dc.w bumpyrt-list5	; 4 bumpy
+ dc.w wf0-list5		; 5 dimple
+ dc.w wf0-list5		; 6 gnoggin
+ dc.w wf0-list5		; 7 arback
+ dc.w 0 ; 8
+ dc.w 0 ; 9
+ dc.w 0 ; 10
+ dc.w 0 ; 11
+ dc.w grandmart-list5	; 12 grandma
+ dc.w 0			; 13 flopsy
+ dc.w 0 ; 14
+ dc.w 0 ; 15
+ dc.w 0 ; 16
+ dc.w 0 ; 17
+ dc.w 0 ; 18
+ dc.w 0 ; 19
+ dc.w 0 ; 20
+ dc.w 0 ; 21
+ dc.w 0 ; 22
+ dc.w 0 ; 23
+ dc.w trollsrt-list5	; 24 trolls
+ dc.w 0			; 25 silas
+ dc.w 0			; 26 ambul
+ dc.w banert-list5	; 27 bane
+ dc.w chuggrt-list5	; 28 chugg
+ dc.w patrollrt-list5	; 29 doldrum
+ dc.w ergotrt-list5	; 30 ergot
+ dc.w pt1-list5		; 31 fugg
+ dc.w pt2-list5		; 32 gormley
+ dc.w 0 ; 33
+ dc.w 0 ; 34
+ dc.w 0 ; 35
+ dc.w bantamsrt-list5	; 36 bantams
+ dc.w pigsrt-list5	; 37 guineapigs
+ dc.w 0			; 38 (rabbit)
+ dc.w 0 ; 39
+;
+ dc.w digturnipsrt-list5	; 40 dig turnips
+ dc.w rollerrt1-list5		; 41 steamroller initial approach
+ dc.w rollerrt2-list5		; 42 anticlockwise approach
+ dc.w 0 ;rollerrt3-list5		; 43 second clockwise approach
+ dc.w 0 ;trollsgetinrollerrt-list5	; 44
+ dc.w 0 ;silasgetsinrollerrt-list5	; 45
+ dc.w trollsrepairdamrt-list5	; 46 trolls repair dam
+ dc.w silasrepairsdamrt-list5	; 47 silas supervises dam's repair
+ dc.w slowchasert-list5		; 48 patrolling troll chases ingrid
+ dc.w wf0-list5			; 49 gnoah wanders farm
+ dc.w silasdeedsrt-list5	; 50 silas escorts ingrid
+
+StartRt
+; each of the race track entries has a 4-byte entry:
+; VERB PREP NOUN1 NOUN2
+;
+drop equ 107
+attack equ 40
+dig equ 43
+ifollow equ 113
+open equ 114 ;64
+go equ 96 ; go to room noun1 (=setupgo)
+close equ 140 ; 90
+wait equ 92
+examine equ 100
+take equ 105
+give equ 111
+eat equ 123
+find equ 139
+kill equ 93
+waitforperson equ 89
+waituntiltime equ 90
+waitforperiod equ 91
+put equ 108
+returnobject equ 136
+gdfind equ 139
+;
+Conditional equ 247
+;
+ActorVaryMessage equ 248 ; goes straight on in same turn to next step in rt
+WRtActorVaryMessage equ ActorVaryMessage*256
+ActorSingleMessage equ 249 ; this completes actor's turn. Like ActorM1Dot
+WActorSingleMessage equ ActorSingleMessage*256
+racetrackmessage equ 251
+WRtMessage equ racetrackMessage*256
+racetrackvarymessage equ 252
+WRtVaryMessage equ racetrackvarymessage*256
+racetrackgosub equ 253
+WRtGosub equ racetrackGosub*256
+racetrackgoto equ 254
+WRtGoto equ racetrackGoto*256
+racetrackreturn equ 255
+;
+light equ 165 ; 115
+ride equ  185 ; 135
+stand equ 46
+lie equ 47
+drink equ 60
+wear equ 106
+remove equ 109
+;
+; nouns...
+people equ 237
+everything equ 234
+nullobject equ 255
+water equ 241 ; noun
+;
+; prepositions...
+to equ 202
+ipin equ 7
+ipout equ 204
+ipwith equ 16
+;
+; note that:
+;
+; NOUN1 will always be searched for if not accessible
+; to the verb (using the usual accessability rules)
+;
+; NOUN2 will normally be searched for using the same rules.
+; There are situations where this is awkward - so if the
+; preposition is WITH, then NOUN2 must be carried (or it will
+; be searched for by the npc).
+;
+rtmess equ 5000
+;---
+; when the trolls first see ingrid, one of them comments on ingrid's 
+; beauty. use a few lines for this message, and reveal that the troll's 
+; name is bane
+trollsrt
+ dc.b waitforperson,0,1,nullobject
+ dc.w WRtMessage,rtmess+190
+ dc.b racetrackreturn,0,nullobject,nullobject ; that's it!
+;---
+; bane guards farmhouse entrance. when ingrid arrives, he starts 
+; a series of introductory messages and then continues with goldsinging.
+banert
+ dc.b find,0,187,nullobject ; stay at post
+; can't use "wait for ingrid" as this hangs up the "find" loop
+ dc.b conditional,0,1,nullobject
+ dc.w WRtGoto,banecomment-list5 ; if ingrid is here, chat her up
+ dc.w WRtGoto,banert-list5 ; otherwise, wait for her at post
+; ingrid meets bane
+banecomment
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+140 ; well, hello there! pick weeds
+ dc.b waitforperiod,0,1,nullobject
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+141 ; offer to ingrid. flopsy eats them!
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtMessage,rtmess+142 ; kneel down & take deep breath
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtMessage,rtmess+143 ; gesture with arms. recite romeo & juliet
+; goldsinging takes over after the introduction
+baneloop
+ dc.b find,0,187,nullobject ; stay at post
+ dc.w WRtGoto,baneloop-list5
+;---
+; chugg begins a series of introductory messages when ingrid arrives. 
+; after then, he continues with goldsinging.
+; it helps if he waits for ingrid before each progressive message, 
+; in case ingrid leaves temporarily. unfortunately, ingrid cannot be 
+; waited for with ergot & bane, since their racetrack must continually 
+; loop.
+chuggrt
+ dc.b waitforperson,0,1,nullobject
+ dc.w WRtMessage,rtmess+150 ; drunken greening
+ dc.b waitforperiod,0,1,nullobject
+ dc.b waitforperson,0,1,nullobject
+ dc.b conditional,0,table,nullobject ; if in kitchen...
+ dc.w WRtMessage,rtmess+151 ; take glass from cupboard
+ dc.b waitforperiod,0,1,nullobject
+ dc.b waitforperson,0,1,nullobject
+ dc.b conditional,0,table,nullobject
+ dc.w WRtMessage,rtmess+152 ; pour last drink & down it in one
+ dc.b waitforperiod,0,1,nullobject
+ dc.b waitforperson,0,1,nullobject
+ dc.w WRtMessage,rtmess+153 ; my bottle's empty!
+ dc.b racetrackreturn,0,nullobject,nullobject ; give way to goldsinging.
+;---
+; ergot guards barn and uses series of guarding messages, with varied 
+; messages describing flopsy attacking him.
+ergotrt
+ dc.b find,0,182,nullobject ; stay at post
+; can't use "wait for ingrid" as this hangs up the "find" loop
+ dc.b conditional,0,1,nullobject
+ dc.w WRtGoto,ergotcomment-list5 ; if ingrid is here, start the messages
+ dc.w WRtGoto,ergotrt-list5 ; otherwise, wait for her at post
+; ingrid meets ergot
+ergotcomment
+ dc.b conditional,0,182,nullobject
+ dc.w WRtMessage,rtmess+160 ; get away from this barn. locks door
+ dc.b waitforperiod,0,1,nullobject
+; varied message loop used because standard goldsinging has to be 
+; used for ergot, since he may wander from his post.
+ergotloop
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtVaryMessage,rtmess+170 ; flopsy attacks
+ dc.b conditional,0,182,nullobject
+ dc.w WRtVaryMessage,rtmess+180 ; shout at family/ family shout back
+ dc.b find,0,182,nullobject ; just in case we've been moved!
+ dc.w WRtGoto,ergotloop-list5
+;---
+; bantams. series of messages, pecking at grain etc.
+; it helps if he waits for ingrid before each progressive message, 
+; in case ingrid leaves temporarily.
+bantamsrt
+ dc.b waitforperson,0,1,nullobject
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+100 ; flopsy playfully chases bantams
+ dc.b waitforperiod,0,1,nullobject
+ dc.b waitforperson,0,1,nullobject
+ dc.w WRtMessage,rtmess+101 ; bantams peck ingrids feet
+ dc.b waitforperiod,0,1,nullobject
+ dc.b waitforperson,0,1,nullobject
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+102 ; bantams try to lay egg on flopsy & fail
+ dc.b racetrackreturn,0,nullobject,nullobject ; goldsinging takes over
+;---
+; pigs. series of messages, rather like bantams.
+; it helps if he waits for ingrid before each progressive message, 
+; in case ingrid leaves temporarily.
+pigsrt
+ dc.b waitforperson,0,1,nullobject
+ dc.w WRtMessage,rtmess+120 ; happy to see ingrid!
+ dc.b waitforperiod,0,1,nullobject
+ dc.b waitforperson,0,1,nullobject
+ dc.b conditional,0,flopsy,nullobject
+ dc.w WRtMessage,rtmess+121 ; play fully jump on flopsy & smother her
+ dc.b waitforperiod,0,1,nullobject
+ dc.b waitforperson,0,1,nullobject
+ dc.w WRtMessage,rtmess+122 ; play amongst themselves
+ dc.b racetrackreturn,0,nullobject,nullobject ; goldsinging takes over
+;---
+; bumpy waits for user in warren and then climbs down root as a hint.
+; when ingrid arrives, he immediately climbs back up again and then 
+; wanders around the warren.
+bumpyrt
+ dc.b waitforperson,0,1,nullobject
+ dc.b conditional,0,root,nullobject
+ dc.w WRtGosub,roothint-list5 ; hint only if root exists
+; now wander around warren
+bumpywander
+ dc.b go,0,35,nullobject ; go to field
+ dc.b waitforperson,0,1,nullobject
+ dc.w WRtVaryMessage,rtmess+70 ; eat carrot from field etc.
+ dc.b go,0,17,nullobject ; wander warren
+ dc.b go,0,18,nullobject
+ dc.w WRtGoto,bumpywander-list5
+; bumpy climbs down root etc.
+roothint
+ dc.w WRtMessage,rtmess+60 ; hint about root.
+ dc.b go,0,19,nullobject ; go down
+ dc.b waitforperson,0,1,nullobject
+ dc.w WRtMessage,rtmess+61 ; can't hang around here all day!
+ dc.b go,0,15,nullobject ; wander warren
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; grandma wanders around farmhouse looking for gnorsegnomes.
+; she passes the stairs frequently in case ingrid is buried in the 
+; turnips. if so, she inspects the turnips for gnorsegnomes, but 
+; ignores ingrid.
+grandmart
+ dc.b go,0,22,nullobject ; go stairs
+; if turnips present, examine them and look for gnorsegnomes
+ dc.b conditional,0,turnips,nullobject
+ dc.b examine,0,turnips,nullobject
+ dc.b conditional,0,turnips,nullobject
+ dc.w WRtMessage,rtmess+80 ; nothing in here!
+grandmaloop
+ dc.b go,0,5,nullobject ; go kitchen
+ dc.w WRtVaryMessage,rtmess+90 ; look for gnorsegnomes in kitchen
+ dc.b waitforperiod,0,2,nullobject
+ dc.b go,0,3,nullobject
+ dc.w WRtGoto,grandmaloop-list5 ; repeat loop
+;---
+; end game silas racetrack. silas escorts ingrid (with deeds) from 
+; grandma's bedroom to farmyard, using a series of messages.
+silasdeedsrt
+ dc.b waitforperson,0,1,nullobject ; wait on stairs for ingrid
+ dc.w WRtMessage,rtmess+0 ; escort to bedroom. ingrid retrieves deeds
+ dc.b waitforperiod,0,1,nullobject
+ dc.b go,0,22,nullobject ; go stairs
+ dc.w WRtMessage,rtmess+1 ; escorting message #1
+ dc.b waitforperiod,0,1,nullobject
+ dc.b go,0,5,nullobject ; go kitchen
+ dc.w WRtMessage,rtmess+2 ; escorting message #2
+ dc.b go,0,227,nullobject ; go farmyard
+ dc.w WRtMessage,rtmess+3 ; when reached farmyard, ingrid loses
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; doldrum, fugg & gormley patroll farm.
+; if met by ingrid (and providing ingrid is not currently being 
+; chased) they will switch to a "chase" racetrack until trapped.
+; it is for this reason that racetrack messages are ommitted, since 
+; the player will not have chance to read them before the troll starts 
+; to chase ingrid.
+patrollrt
+ dc.b go,0,224,nullobject		; well
+ dc.b waitforperiod,0,2,nullobject	;
+ dc.b go,0,226,nullobject		; trapdoor
+ dc.b waitforperiod,0,2,nullobject	;
+ dc.b go,0,220,nullobject		; outside sty
+ dc.b waitforperiod,0,2,nullobject	;
+ dc.b go,0,221,nullobject		; outside coop
+ dc.b waitforperiod,0,2,nullobject	;
+pt1
+ dc.b go,0,25,nullobject		; mill ruins
+ dc.b waitforperiod,0,2,nullobject	;
+ dc.b go,0,39,nullobject		; river
+ dc.b waitforperiod,0,2,nullobject	;
+pt2
+ dc.b go,0,37,nullobject		; soggy field
+ dc.b waitforperiod,0,2,nullobject	;
+ dc.b west,0,nullobject,nullobject	;
+ dc.b west,0,nullobject,nullobject	; go mill (cross break in grid)
+ dc.b waitforperiod,0,2,nullobject	;
+ dc.w WRtGoto,patrollrt-list5		; back to farm via p.g.lane
+;---
+; patrolling troll chases ingrid. if ingrid stops running, a varied 
+; message is displayed to "scare" ingrid.
+slowchasert
+ dc.b find,0,1,nullobject
+ dc.w WRtActorVaryMessage,rtmess+10 ; found you!
+ dc.w WRtGoto,slowchasert-list5
+;---
+; flopsy digs turnips and rescues user
+digturnipsrt
+ dc.b find,0,turnips,nullobject
+ dc.w WRtMessage,rtmess+50 ; funny remark etc.
+ dc.b dig,0,nullobject,nullobject
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; steamroller approachs farm SLOWLY along track starting from room 29 
+; using a series of messages. (stage 1)
+rollerrt1
+ dc.b waitforperiod,0,1,nullobject
+ dc.b go,0,28,nullobject
+ dc.b waitforperiod,0,1,nullobject
+ dc.b go,0,27,nullobject
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtMessage,rtmess+20 ; roller message #1
+ dc.b go,0,26,nullobject
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtMessage,rtmess+21 ; roller message #2
+ dc.b go,0,223,nullobject
+; The following bodge prevents the racetrack coming to an end 
+; before the steamroller actually reaches the farmhouse.
+; This usually occured when SMPrevent was used while on a 
+; grid location.
+DemolishLoop ;&*&*&*&*&
+ dc.b waitforperiod,0,2,nullobject
+ dc.w WRtMessage,rtmess+22 ; roller message #3
+ dc.b go,0,227,nullobject ; got there!
+ dc.w WRtGoto,DemolishLoop-list5 ;&*&*&*&*&
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; gnoah blocks the steamroller's path.
+; reverse along track and return via soggybottom field (stage 2).
+; use series of messages while crossing soggy field (dam hints etc).
+rollerrt2
+ dc.b go,0,33,nullobject ; go mill
+ dc.b east,0,nullobject,nullobject ; go field (cross break in grid)
+ dc.b waitforperiod,0,8,nullobject
+ dc.b east,0,nullobject,nullobject ; go soggy field
+;; dc.b waitforperiod,0,1,nullobject
+ dc.w WRtMessage,rtmess+40
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtMessage,rtmess+41
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtMessage,rtmess+42
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtMessage,rtmess+43
+ dc.b waitforperiod,0,7,nullobject
+; also used when flooded steamroller dries out...
+fastgofarm
+ dc.b go,0,227,nullobject ; go farmhouse
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+;; gnoah blocks the steamroller's path yet again on it's anticlockwise 
+;; approach. return again via track, but much faster this time.
+;; this is very rarely used, hence no racetrack messages.
+;rollerrt3
+;; reverse along soggybottom field and return via track again (stage 3)
+; dc.b go,0,37,nullobject ; return to soggy field
+; dc.b waitforperiod,0,10,nullobject
+; dc.b west,0,nullobject,nullobject ; go field
+; dc.b west,0,nullobject,nullobject ; go mill (cross break in grid)
+; dc.b go,0,227,nullobject ; go farmhouse
+; dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; trolls go to broken dam. series of messages used for trolls repairing 
+; dam under silas's supervision.
+trollsrepairdamrt
+ dc.b stand,ipout,nullobject,steamroller
+ dc.b go,0,39,nullobject
+ dc.w WRtMessage,rtmess+30
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtMessage,rtmess+31
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtMessage,rtmess+32
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtMessage,rtmess+33
+ dc.b waitforperiod,0,2,nullobject
+ dc.w WRtMessage,rtmess+34
+ dc.b waitforperiod,0,2,nullobject
+ dc.w WRtMessage,rtmess+35
+ dc.b waitforperiod,0,2,nullobject
+ dc.w WRtMessage,rtmess+36
+ dc.b waitforperiod,0,2,nullobject
+ dc.w WRtMessage,rtmess+37 ; dam repaired using specialrtmessage
+; dam is repaired. trolls get back in steamroller and wait there until 
+; silas arrives to drive it.
+trollsgetinrollerrt
+ dc.b find,0,steamroller,nullobject
+ dc.b stand,ipin,nullobject,steamroller
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; silas goes to dam to supervise its repair.
+silasrepairsdamrt
+ dc.b stand,ipout,nullobject,steamroller
+ dc.b go,0,39,nullobject
+; silas supervises until dam is fully repaired and then heads off to 
+; steamroller with the trolls. (trolls' racetrack displays series of 
+; "repairing" messages).
+silassupervise
+ dc.b conditional,0,dam,nullobject
+ dc.w WRtGoto,silasgetsinrollerrt-list5 ; conditional jump when dam repaired.
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtGoto,silassupervise-list5
+silasgetsinrollerrt
+ dc.w WRtGosub,trollsgetinrollerrt-list5
+ dc.w WRtGoto,fastgofarm-list5 ; head for farm
+;---
+; wait in kitchen for ingrid. eat breakfast with gnora (first time text).
+; hear steamroller and go to investigate.
+gnoahrt
+ dc.b waitforperson,0,1,nullobject
+gnoahfollowroller
+ dc.b find,0,steamroller,nullobject
+ dc.w WRtGoto,gnoahfollowroller-list5
+;---
+; wait in kitchen for ingrid. eat breakfast with gnoah (first time text).
+; continue with "kitchen" section of standard racetrack.
+gnorart
+ dc.b waitforperson,0,1,nullobject
+ dc.w WRtGoto,wf3-list5
+;---
+; wander farm racetrack. used by most of ingrid's family.
+; a standard racetrack is used as an alternative to seperate racetracks 
+; since the player gets little chance to watch ingrid's family wandering
+; around before they are locked up in the barn.
+wf0
+ dc.b go,0,8,nullobject ; sty
+ dc.w WActorSingleMessage,rtmess+200 ; feed pigs
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WActorSingleMessage,rtmess+200 ; feed pigs
+wf1
+ dc.b go,0,12,nullobject ; coop
+ dc.w WActorSingleMessage,rtmess+201 ; feed chickens
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WActorSingleMessage,rtmess+201 ; feed chickens
+wf2
+ dc.b go,0,221,nullobject ; centre yard
+ dc.b examine,0,everything,nullobject ; examine well
+ dc.b go,0,226,nullobject ; nw yard
+ dc.b examine,0,everything,nullobject ; examine trapdoor
+ dc.b conditional,0,ctrap,nullobject
+ dc.b open,0,ctrap,nullobject ; open it
+ dc.b conditional,0,otrap,nullobject
+ dc.b close,0,otrap,nullobject ; close it
+wf3
+ dc.b go,0,5,nullobject ; kitchen
+ dc.w WActorSingleMessage,rtmess+202 ; sit down & eat 
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WActorSingleMessage,rtmess+203 ; make cup of tea & drink it
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WActorSingleMessage,rtmess+204 ; wash dishes
+ dc.b go,0,3,nullobject ; go past turnips in case anybody in then
+ dc.w WRtGoto,Wf0-list5
+;---
+ even
+reversaltable
+; part of list5
+; gives reverse directions for directions
+ dc.b 0,4,6,7,1,8,2,3,5 ; compass directions
+ dc.b 10,9,12,11,13,14,15
+;-----------
+;*****
+ even
+roompictures
+; part of list 5
+; gives pictures associated with various rooms.
+; the bytes are arranged in ROOM,PIC pairs rather than a table of 
+; pictures for each room. this is because some rooms begin from 
+; number 220, hence the table would be rather big.
+ dc.b 3,2	; grandma's bedroom
+ dc.b 4,2	; ingrid's room
+ dc.b 5,2	; kitchen
+ dc.b 8,2	; sty
+ dc.b 9,2	; pen
+ dc.b 10,2	; pen
+ dc.b 11,2	; pen
+ dc.b 12,2	; coop
+ dc.b 13,4	; barn
+ dc.b 14,4	; back barn
+ dc.b 20,6	; mill steps
+ dc.b 21,6	; mill room
+ dc.b 22,2	; stairs
+ dc.b 29,15	; ploughgnomelane (top)
+ dc.b 30,15	; ploughgnomelane (top)
+ dc.b 31,15	; ploughgnomelane (bottom)
+ dc.b 32,6	; mill track
+ dc.b 33,6	; mill yard
+ dc.b 34,16	; quarter acre field
+ dc.b 35,16	; sandybottom field
+ dc.b 36,4	; behind barn (SPECIAL CASE)
+ dc.b 37,16	; soggybottom field
+ dc.b 38,16	; soggybottom field
+ dc.b 40,6	; mill top
+ dc.b 220,2	; farmyard
+ dc.b 221,2	; farmyard
+ dc.b 222,4	; barn (SPECIAL CASE)
+ dc.b 223,2	; farmyard
+ dc.b 224,3	; farmyard well
+ dc.b 225,2	; farmyard
+ dc.b 226,2	; farmyard
+ dc.b 227,2	; farmyard
+ dc.b 228,2	; farmyard
+ dc.b 0,0
+;*****
+ even
+
+ENDTABLE
+;---------
+ END
+

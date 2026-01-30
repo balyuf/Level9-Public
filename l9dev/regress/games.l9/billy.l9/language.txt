@@ -1,0 +1,6 @@
+const
+; english=0
+; german=1
+; french=0
+; TranslateExtraChars=1 ; set to 1 to permit funny characters
+; like accents etc.

@@ -1,0 +1,249 @@
+
+; Code for book protection system
+;
+; Copyright (C) 1986 Level 9 Computing
+;
+; For Quest
+;
+; 2/9/86
+;
+; table of comparison words start at 4300 (MATCHOFFSET)
+
+CONST
+ MaxChapter=49
+ MaxParagraph=20
+ MaxWord=8
+ MaxAttemptsPerWord=3
+ TotalWords=100
+
+VAR
+ CHAPTER
+ PARAGRAPH
+; LINE
+ WORD
+ RANDOMSEED
+ COUNT TESTCOUNT SAVECOUNT
+ ATTEMPTS
+
+BEGIN
+;.LENSLOK
+;.TRYALLWORDS
+; TESTCOUNT=1
+;.TAW1
+; COUNT=TESTCOUNT
+; GOSUB @GETWORDCOUNT
+; IF CHAPTER=0 THEN TAW2
+; COUNT=TESTCOUNT
+; GOSUB @DISPLAYWORD
+; COUNT=TESTCOUNT
+; GOSUB COMPAREPROTECTIONWORD
+; IF VALUE=0 THEN TAW1
+;.TAW2
+; ADD TESTCOUNT,C1
+; GOTO TAW1
+;---
+.COMPAREPROTECTIONWORD
+; return VALUE=word entered, or zero if failed
+.CPWGETWORD
+ NOMOREINPUT=FALSE
+ WORDNOTPROCESSED=FALSE
+ SUPRESSCHECKING=TRUE
+ GOSUB @GETNEXTWORD
+ INDEX=0
+ GOSUB @READINPUTLIST
+ IF VALUE=0 THEN CPWGETWORD
+.CPW1
+ SEARCHTYPE=MATCHTYPE
+ GOSUB @CHECKTYPEMORE
+ IF VALUE=0 THEN CPWFAIL
+ IF VALUE=COUNT THEN CPWOK
+ GOTO CPW1
+.CPWFAIL
+ VALUE=0
+ SUPRESSCHECKING=FALSE
+ RETURN
+.CPWOK
+ SUPRESSCHECKING=FALSE
+ RETURN
+;---
+;.TEST
+; C1=1
+; TESTCOUNT=1
+;.TEST1
+; COUNT=TESTCOUNT
+; GOSUB GETWORDCOUNT
+; IF CHAPTER=0 THEN TEST2 ; some problem, so skip over it
+; GOSUB @DISPLAYWORD
+;.TEST2
+; ADD TESTCOUNT,C1
+; IF TESTCOUNT<TOTALWORDS THEN TEST1
+;.ILOOP 
+; GOTO ILOOP
+;---
+.LENSLOK
+.TESTUSER
+ IF TESTCOUNT<>0 THEN TESTUSER1
+ GOSUB GETRANDOMWORD ; only pick a new word on startup, or on success
+ TESTCOUNT=COUNT
+
+.TESTUSER1
+ ATTEMPTS=0
+; GOSUB GETRANDOMWORD
+; TESTCOUNT=COUNT
+ MESSAGE 4200 ; whatsit appears
+.TESTUSER2
+ MESSAGE 4207 ; tell me the...
+ GOSUB @DISPLAYWORD
+ COUNT=TESTCOUNT
+ GOSUB @COMPAREPROTECTIONWORD
+ IF VALUE<>0 THEN TESTUSEROK
+ ADD ATTEMPTS,C1
+ IF ATTEMPTS<MAXATTEMPTSPERWORD THEN TESTUSERAGAIN
+ MESSAGE 4208 ; whatsit kills yer
+ GOTO @l49000 ;>>@DIE
+
+.TESTUSERAGAIN
+ MESSAGE 4205 ; wrong. Try again
+ GOTO TESTUSER2
+
+.TESTUSEROK
+ MESSAGE 4206 ; correct
+ GOSUB GETRANDOMWORD ; set up a new word for subsequent attempts
+ TESTCOUNT=COUNT
+ RESULT=TRUE ; tell caller all was well
+ RETURN
+;---
+.GETRANDOMWORD
+ RANDOM X1
+ X2=TotalWords
+ GOSUB @X1MODX2
+ COUNT=X1
+ IF COUNT<5 THEN GETRANDOMWORD ; try another - avoid first bit of sequence
+ SAVECOUNT=COUNT
+ GOSUB GETWORDCOUNT
+ COUNT=SAVECOUNT
+ IF CHAPTER=0 THEN GETRANDOMWORD
+ RETURN
+;---
+.DISPLAYWORD
+ X1=4210 ; number table
+ ADD X1,WORD
+ MESSAGE X1 ; nth
+ MESSAGE 4201 ; word from the
+ X1=4210 ; number table
+ ADD X1,PARAGRAPH
+
+ MESSAGE X1 ; nth
+ MESSAGE 4203 ; paragraph of chapter
+ PRINT CHAPTER
+ MESSAGE 4204 ; ."
+ RETURN
+;---
+.RANDOM
+; return X1=random number
+ X1=RANDOMSEED
+ ADD X1,X1
+ ADD X1,X1
+ ADD X1,X1
+ ADD X1,X1
+ ADD X1,X1
+ ADD X1,X1
+ ADD X1,X1
+ ADD X1,X1
+
+; now replace low-order byte with 10.
+ X2=10
+ ADD X1,X2
+
+ SUB X1,RANDOMSEED
+ ADD X1,X1
+ ADD X1,X1
+ ADD X1,RANDOMSEED
+ X2=1
+ ADD X1,X2
+ RANDOMSEED=X1
+; and return low-order of seed as a random number
+ X2=31
+ LIST9(X2)=X1
+ X1=LIST9(X2)
+ RETURN
+;---
+.X1MODX2
+ IF X1<X2 THEN X1MODX2RET
+ SUB X1,X2
+ GOTO X1MODX2
+.X1MODX2RET
+ RETURN
+;---
+.LENSLOKAPPOLOGY
+ RETURN ; not needed for book protection
+;---
+.CHECKFAIL
+ CHAPTER=0
+ PARAGRAPH=0
+ WORD=0
+ RETURN
+;----
+.GETWORDCOUNT
+; get the COUNTth word in the sequence
+ if count=3 then checkfail
+ if count=9 then checkfail
+ if count=12 then checkfail
+ if count=26 then checkfail
+ if count=28 then checkfail
+ if count=29 then checkfail
+ if count=30 then checkfail
+ if count=39 then checkfail
+ if count=44 then checkfail
+ if count=45 then checkfail
+ if count=47 then checkfail
+ if count=51 then checkfail
+ if count=52 then checkfail
+ if count=54 then checkfail
+ if count=58 then checkfail
+ if count=63 then checkfail
+ if count=82 then checkfail
+ if count=87 then checkfail
+ if count=89 then checkfail 
+ if count=97 then checkfail
+ if count=102 then checkfail
+ RANDOMSEED=10293
+.GWC1
+ GOSUB @RANDOM
+ SUB COUNT,C1
+ IF COUNT<>0 THEN GWC1
+; now get chapter number
+.GETCHAPTERNUMBER
+ GOSUB @RANDOM
+ X2=MAXCHAPTER
+ GOSUB @X1MODX2
+ CHAPTER=X1
+ IF CHAPTER<>0 THEN GCN1
+ CHAPTER=1
+.GCN1
+
+ GOSUB @RANDOM
+ X2=MAXPARAGRAPH
+ GOSUB @X1MODX2
+ PARAGRAPH=X1
+
+ GOSUB @RANDOM
+ X2=MAXWORD
+ GOSUB @X1MODX2
+ WORD=X1
+; ok, now check for validity - SPECIAL to different books
+ IF CHAPTER<>2 THEN NCHAP2
+ IF PARAGRAPH>8 THEN @CHECKFAIL
+.NCHAP2
+ IF CHAPTER<>5 THEN NCHAP5
+ IF PARAGRAPH>7 THEN @CHECKFAIL
+.NCHAP5
+ IF CHAPTER<>19 THEN NCHAP19
+ IF PARAGRAPH>10 THEN @CHECKFAIL
+.NCHAP19
+ RETURN
+
+;---
+;----------------------------------------------------------
+;-----------------------------------------------------------
+;-----------------------------------------------------------

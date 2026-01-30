@@ -1,0 +1,275 @@
+; ARCADE.TXT
+;
+; Minor 'arcade' games for Billy, called from within town.
+; e.g. Bank Robbery, card game.
+;
+; Mike Austin September 1990.
+;
+; Copyright (C) 1990 Level 9 Computing Ltd.
+;
+;
+ var
+  StickMoving ; timer until stick arrives.
+  MovingToLeft ; set to true if stick is moving that way.
+
+ begin
+
+.BankRobbery
+ gosub @CheckPlayerGang ; in two player mode, gang
+; can be wiped out whilst Billy's walking in town.
+ if PlayerGang<>0 then BankRobWithGang
+ m1=858 ; Billy did not have a gang for bank job
+ gosub @DisplayInstructions ; gosub, return
+ goto @BackToWalkabout
+
+.BankRobWithGang
+ CurrentScreen=BankGame
+ NextMusic=Generic5Music ; BankJobMusic
+
+ v4=BankJobSamples
+ gosub @LoadSamplesForGame
+
+; set DuelStatus as how many locks/hinges will be on this safe
+; (there are originally six on the picture, we want to get
+; rid of between 0 and 4 of them. i.e. we want 2..6)
+ code -
+ x2=5
+ gosub @iRandomLimitX2
+; get x3 as a random number less than x2
+; i.e. there will be x2 possible values.
+ add x3,c2 ; between 2 and 6
+ code +
+; initialise various variables for this game
+ DuelStatus=x3
+ StickMoving=0
+ MovingToLeft=0
+
+ v4=7 ; in bank, positioning dynamite
+ gosub @DisplayLinkingPicture ; load linking structure file,
+; open sprites file, and build the picture we've asked for(v4).
+; preload the most graphics-intensive outcome scenes now...
+ dv1=9 ; too much picture
+ dv5=dMarkPreload
+ gosub @MCDrawObjectDV1
+ dv1=11 ; too little picture
+ gosub @MCDrawObjectDV1
+ gosub @MCPreloadCells
+ gosub @MenuWait ; wait for fire to be released
+
+ RasterOffset=0
+ ObjectNumber=20 ; 6 sticks of dynamite on left
+ dv2=228 ; x
+ dv3=58 ; z
+ dv4=65439 ; h
+ gosub @StartFreeACB
+ x5=dx4 ; save off acb for Left Hand Pile
+ push x5
+  ObjectNumber=26 ; 0 sticks of dynamite on left
+  dv2=258 ; x
+  gosub @StartFreeACB
+ pop x5
+ x6=dx4 ; save off acb for left hand pile
+
+.BankLoop
+ push x5
+ push x6
+  gosub @PlayTuneForScene
+  gosub @DisplayEverything
+  gosub @sGetControls
+ pop x6
+ pop x5
+ gosub @BankControls
+ if FireKey=0 then BankLoop
+ if FireKeyChange=0 then BankLoop
+
+; have pressed fire to leave the dynamite. What happens?
+ &dx1=ACBList(x5) ; how many sticks at left?
+ dx2=20
+ sub dx1,dx2 ; dx1 = 6-number of sticks at left, Therefore
+; dx1=number of sticks at right.
+ dv1=9 ; 9=too much dynamite. 10=safe open. 11=too little.
+ Won=false
+ if dx1>DuelStatus then BankOutcome
+ dv1=10 ; right amount
+ Won=true
+ if dx1=DuelStatus then BankOutcome
+ dv1=11 ; too little
+.BankOutcome
+ push dv1
+  gosub @MCEmptyRoom
+  gosub @InitACBs
+  v1=0
+  v2=0
+  gosub @MCBuildRoom
+  gosub @DisplayEverything ; display black screen
+  FrameCount=0 ; leave screen black for at least a second.
+ pop dv1 ; 9=too much dynamite. 10=safe open. 11=too little.
+ push dv1
+  gosub @PreLoadAndInsertDV1
+ pop dv1
+; now everything for the "outcome" should be in memory.
+; If it's happened too fast (e.g. on a fast PC), wait a while
+
+.BRWait
+ if FrameCount<10 then BRWait
+
+ push dv1
+  gosub @MenuWait ; wait for fire to be released
+
+; now display the outcome screen....
+  v1=0
+  v2=0
+  gosub @MCBuildRoom
+
+  x1=Town ; 10..15
+; go to 31..36 for bank clerk number
+  x2=21
+  add x1,x2
+  MenuNumber=32 ; "we've been robbed" menu
+  gosub @NewMenuForPerson
+; next time Player talks to person x1, use menu MenuNumber
+
+  x2=Town
+  gosub @GetMoneyInBank
+; return x2=TVD(x5) as amount of money in bank at town x2 (10..)
+  gosub @SetPrintMenu
+ pop dv1 ; outcome: dv1=10 = safe open
+ if dv1<>10 then BREnd5 ; only display amount of gold if safe open
+ if x2>10 then BREnd2
+ x2=10
+
+.BREnd2
+ x1=x2
+ add PlayerIncome,x1 ; paramter for BuildNewScreen entry point
+ asr x1
+ asr x1
+ asr x1
+ asr x1
+ add PlayerReputation,x1 ; gain more reputation for big robberies
+ add PlayerReputation,c4 ; always gain some reputation
+  code -
+   gosub @iStartPrinting
+   message 868 ; the safe contained
+   print x2
+   message 869 ; dollars worth of gold
+   gosub @iEndPrinting
+  code +
+   TextBoxDisplayed=CurrentDO
+
+.BREnd5
+ gosub WaitFireDisplay
+ goto @ToEscapeGame
+;------------
+.WaitFireDisplay
+.BRLoop
+ gosub @DisplayEverything
+ gosub @sGetControls
+ if FireKey=0 then BRLoop
+ if FireKeyChange=0 then BRLoop
+ return
+;---------
+.BankControls
+; have called GetControls.
+; acb for LH pile of dynamite is at x5,
+; acb of RH pile dynamite is at x6.
+; shovel between the two, and start animation sequences
+; to make the arm move.
+ &dv1=ACBList(PlayerACB) ; where is arm?
+
+ if StickMoving=0 then @BCNotMoving
+ sub StickMoving,c1
+ if StickMoving=4 then BC2
+ if StickMoving<>0 then @BCRet
+.BC2
+; stick arrives - but where?
+; if dv1=842 then PlaceAtRight
+; if dv1=845 then PlaceAtRight
+; if dv1=841 then PlaceAtRight
+ if MovingToLeft=false then PlaceAtRight
+; place at left
+ if StickMoving<>0 then TakeFromRight
+ dx4=x5 ; acb for left pile
+ &ObjectNumber=ACBList(dx4)
+ sub ObjectNUmber,c1 ; add a stick to pile
+ if ObjectNumber<20 then @BCRet ; too many sticks
+ goto @BCChangeACBDX4 ; gosub, return
+
+.TakeFromRight
+ dx4=x6 ; acb for right pile
+ &ObjectNumber=ACBList(dx4)
+ add ObjectNUmber,c1 ; take a stick from pile
+ goto @BCChangeACBDX4 ; gosub, return
+
+.PlaceAtRight
+ if StickMoving<>0 then TakeFromLeft
+ dx4=x6 ; acb for right pile
+ &ObjectNumber=ACBList(dx4)
+ sub ObjectNUmber,c1 ; add a stick to pile
+ goto @BCChangeACBDX4 ; gosub, return
+
+.TakeFromLeft
+ dx4=x5 ; acb for left pile
+ &ObjectNumber=ACBList(dx4)
+ add ObjectNUmber,c1 ; take a stick from pile
+ goto @BCChangeACBDX4 ; gosub, return
+
+
+.BCNotMoving
+ dx4=PlayerACB
+ &dx1=ACBList(x5) ; how many sticks at left?
+ dx2=20
+ sub dx1,dx2 ; dx1 = 6-number of sticks at left, Therefore
+; dx1=number of sticks at right.
+ if dv1=840 then @BCArmAtLeft
+ if dv1=846 then @BCArmAtLeft ; initial acb to position arm
+ if dv1=841 then @BCArmAtRight
+; arm is moving
+
+.BCRet
+ return ; can't control when moving.
+
+.BCArmAtLeft
+ if RightKey=0 then BCNotMoveToRight
+ if dx1=6 then BCRet ; all sticks already at right
+ MovingToLeft=false
+ ObjectNumber=842 ; move right with dynamite, then return empty.
+ gosub @BCChangeACBDx4
+ StickMoving=4
+ goto @TakeFromLeft ; make stick disappear at once
+
+.BCNotMoveToRight
+ if LeftKey=0 then BCRet
+ if dx1=0 then BCRet ; no sticks at right
+ MovingToLeft=true
+ ObjectNumber=843 ; move right empty, then return with dynamite.
+ gosub @BCChangeACBDx4
+ StickMoving=8
+ return
+;---
+.BCArmAtRight
+ if LeftKey=0 then BCNotMoveToLeft
+ if dx1=0 then @BCRet ; no sticks at right
+ MovingToLeft=true
+ ObjectNumber=844 ; move left with dynamite, then return empty.
+ gosub @BCChangeACBDx4
+ StickMoving=4
+ goto @TakeFromRight ; make stick disappear at once.
+
+.BCNotMoveToLeft
+ if RightKey=0 then @BCRet
+ if dx1=6 then @BCRet ; no sticks at right
+ MovingToLeft=false
+ ObjectNumber=845 ; move left empty, then return with dynamite.
+ gosub @BCChangeACBDx4
+ StickMoving=8
+ return
+
+.BCChangeACBDX4
+ push x5
+ push x6
+  gosub @ChangeACBDX4
+ pop x6
+ pop x5
+ return
+
+;----------

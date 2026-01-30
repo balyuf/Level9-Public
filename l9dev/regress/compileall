@@ -1,0 +1,210 @@
+#!/bin/bash
+
+cd ${0%/*}
+rm -f compile.log
+
+echo "Compiling Knight Orc part 1" >>compile.log
+cd games.l9/knight1.l9
+pwd
+../../../l9gamegen --old --bugcomp >>../../compile.log
+cmp ref/table.dat table.dat
+cmp spec48.l9/ref/squash.dat spec48.l9/squash.dat
+cmp spec48.l9/ref/gamedata.dat spec48.l9/gamedata.dat
+cd ../..
+
+echo "Compiling Knight Orc part 2" >>compile.log
+cd games.l9/knight2.l9
+pwd
+../../../l9gamegen --old --bugcomp >>../../compile.log
+cmp ref/table.dat table.dat
+cmp msx.l9/ref/squash.dat msx.l9/squash.dat
+cmp msx.l9/ref/gamedata.dat msx.l9/gamedata.dat
+cd ../..
+
+echo "Compiling Knight Orc part 3" >>compile.log
+cd games.l9/knight3.l9
+pwd
+../../../l9gamegen --old --bugcomp >>../../compile.log
+cmp ref/table.dat table.dat
+cmp msx.l9/ref/squash.dat msx.l9/squash.dat
+cmp msx.l9/ref/gamedata.dat msx.l9/gamedata.dat
+cd ../..
+
+echo "Compiling Lancelot part 1" >>compile.log
+cd games.l9/lancelt1.l9
+pwd
+../../../l9gamegen >>../../compile.log
+cmp ref/table.dat table.dat
+cmp main.l9/ref/squash.dat main.l9/squash.dat
+cmp main.l9/ref/gamedata.dat main.l9/gamedata.dat
+cd ../..
+
+echo "Compiling Lancelot part 2" >>compile.log
+cd games.l9/lancelt2.l9
+pwd
+../../../l9gamegen --no-table >>../../compile.log
+cmp main.l9/ref/squash.dat main.l9/squash.dat
+cmp main.l9/ref/gamedata.dat main.l9/gamedata.dat
+cd ../..
+
+echo "Compiling Lancelot part 3" >>compile.log
+cd games.l9/lancelt3.l9
+pwd
+../../../l9gamegen >>../../compile.log
+cmp ref/table.dat table.dat
+cmp main.l9/ref/squash.dat main.l9/squash.dat
+cmp main.l9/ref/gamedata.dat main.l9/gamedata.dat
+cd ../..
+
+echo "Compiling Ingrid's Back part 1" >>compile.log
+cd games.l9/ingrid.l9/ingrid1.l9
+pwd
+../../../../l9gamegen --bugcomp >>../../../compile.log
+cmp ref/table.dat table.dat
+cmp main.l9/ref/squash.dat main.l9/squash.dat
+cmp main.l9/ref/gamedata.dat main.l9/gamedata.dat
+cd ../../..
+
+echo "Compiling Ingrid's Back part 2" >>compile.log
+cd games.l9/ingrid.l9/ingrid2.l9
+pwd
+../../../../l9gamegen --bugcomp >>../../../compile.log
+cmp ref/table.dat table.dat
+cmp main.l9/ref/squash.dat main.l9/squash.dat
+cmp main.l9/ref/gamedata.dat main.l9/gamedata.dat
+cd ../../..
+
+echo "Compiling Ingrid's Back part 3" >>compile.log
+cd games.l9/ingrid.l9/ingrid3.l9
+pwd
+../../../../l9gamegen --bugcomp >>../../../compile.log
+cmp ref/table.dat table.dat
+cmp main.l9/ref/squash.dat main.l9/squash.dat
+cmp main.l9/ref/gamedata.dat main.l9/gamedata.dat
+cd ../../..
+
+echo "Compiling Scapeghost part 1" >>compile.log
+cd games.l9/ghost.l9/part1.l9
+pwd
+../../../../l9gamegen >>../../../compile.log
+cmp ref/table.dat table.dat
+cmp main.l9/ref/squash.dat main.l9/squash.dat
+cmp main.l9/ref/gamedata.dat main.l9/gamedata.dat
+cd ../../..
+
+echo "Compiling Scapeghost part 2" >>compile.log
+cd games.l9/ghost.l9/part2.l9
+pwd
+../../../../l9gamegen >>../../../compile.log
+cmp ref/table.dat table.dat
+cmp main.l9/ref/squash.dat main.l9/squash.dat
+cmp main.l9/ref/gamedata.dat main.l9/gamedata.dat
+cd ../../..
+
+echo "Compiling Scapeghost part 3" >>compile.log
+cd games.l9/ghost.l9/part3.l9
+pwd
+../../../../l9gamegen >>../../../compile.log
+cmp ref/table.dat table.dat
+cmp main.l9/ref/squash.dat main.l9/squash.dat
+cmp main.l9/ref/gamedata.dat main.l9/gamedata.dat
+cd ../../..
+
+echo "Compiling Lords of Time" >>compile.log
+cd games.l9/timelord.l9
+pwd
+../../../l9gamegen --old >>../../compile.log
+cmp ref/table.dat table.dat
+cmp st.l9/ref/squash.dat st.l9/squash.dat
+cmp st.l9/ref/gamedata.dat st.l9/gamedata.dat
+cd ../..
+
+echo "Compiling Red Moon" >>compile.log
+cd games.l9/red_moon.l9
+pwd
+../../../l9gamegen --old --oddacode >>../../compile.log
+cmp ref/table.dat table.dat
+cmp st.l9/ref/squash.dat st.l9/squash.dat
+cmp st.l9/ref/gamedata.dat st.l9/gamedata.dat
+cd ../..
+
+echo "Compiling The Price of Magik" >>compile.log
+cd games.l9/magik.l9
+pwd
+../../../l9gamegen --no-table --bugcomp >>../../compile.log
+cmp msx.l9/ref/squash.dat msx.l9/squash.dat
+cmp msx.l9/ref/gamedata.dat msx.l9/gamedata.dat
+cd ../..
+
+echo "Compiling Snowball" >>compile.log
+cd games.l9/snowball.l9
+pwd
+../../../l9gamegen --old --no-message --oddacode >>../../compile.log
+cmp ref/table.dat table.dat
+cmp st.l9/ref/gamedata.dat st.l9/gamedata.dat
+cd ../..
+
+echo "Compiling Return to Eden" >>compile.log
+cd games.l9/eden.l9
+pwd
+../../../l9gamegen --old --no-message --oddacode >>../../compile.log
+cmp ref/table.dat table.dat
+cmp st.l9/ref/gamedata.dat st.l9/gamedata.dat
+cd ../..
+
+echo "Compiling The Worm in Paradise" >>compile.log
+cd games.l9/worm.l9
+pwd
+../../../l9gamegen --old --oddacode >>../../compile.log
+cmp ref/table.dat table.dat
+cmp st.l9/ref/squash.dat st.l9/squash.dat
+cmp st.l9/ref/gamedata.dat st.l9/gamedata.dat
+cd ../..
+
+echo "Compiling Colossal Adventure" >>compile.log
+cd games.l9/colossal.l9
+pwd
+../../../l9gamegen --old --no-message >>../../compile.log
+cmp ref/table.dat table.dat
+cmp st.l9/ref/gamedata.dat st.l9/gamedata.dat
+cd ../..
+
+echo "Compiling Grange Mudrders for ST" >>compile.log
+cd games.l9/grange.l9/st.l9
+pwd
+../../../../l9gamegen --splitdata >>../../../compile.log
+cmp ref/table.dat table.dat
+cmp ref/squash.dat squash.dat
+cmp ref/acode.acd acode.acd
+cmp ref/gamedata.dat gamedata.dat
+cd ../../..
+
+echo "Compiling Grange Mudrders for PC" >>compile.log
+cd games.l9/grange.l9/pc.l9
+pwd
+../../../../l9gamegen --splitdata --i8086 >>../../../compile.log
+cmp ref/table.dat table.dat
+cmp ref/squash.dat squash.dat
+cmp ref/acode.acd acode.acd
+cmp ref/gamedata.dat gamedata.dat
+cd ../../..
+
+echo "Compiling Billy the Kid for ST" >>compile.log
+cd games.l9/billy.l9/st.l9
+pwd
+../../../../l9gamegen --no-table --no-message --splitdata >>../../../compile.log
+cmp ref/acode.acd acode.acd
+cmp ref/gamedata.dat gamedata.dat
+cd ../../..
+
+echo "Compiling Billy the Kid for PC" >>compile.log
+cd games.l9/billy.l9/pc.l9
+pwd
+../../../../l9gamegen --no-table --no-message --splitdata --i8086 >>../../../compile.log
+cmp ref/acode.acd acode.acd
+cmp ref/gamedata.dat gamedata.dat
+cd ../../..
+
+grep -e " in line " -e " at line " compile.log
+
+./compileerrors

@@ -1,0 +1,1774 @@
+; GNOME 2.2 source, copyright (C) 1988 Level 9 Computing.
+;
+; ASPECIAL.TXT, special case handlers for the game. (In practice, 
+; this means most of the code to handle puzzles etc.)
+;
+; Known bugs:
+; The compiler is happier if all DATA statements are followed by 
+; comments, otherwise line numbers for errors go wrong.
+;
+;
+BEGIN
+; now print any messages to be printed after certain movements
+.AFTERMOVE
+ if actor=user then amUser
+; is ACTOR carrying USER?
+ x1=hicurrentpos(user)
+ if x1=0 then amUser
+ x1=currentpos(user)
+ if x1<>actor then amUser
+; yes - so do description of the room we've arrived in.
+ wanttoPrintAnd=0 ; bug fix
+ actor=user ; force printing of desc etc.
+ gosub @setuproom ; force first few words to be printed
+ message cr
+ gosub @PrintRoom
+ actor=currentpos(user) ; reset it
+;
+.amUser
+; handle ECHO LOCATIONS
+ if room<125 then amNotEcho
+ if room>150 then amNotEcho
+;
+; Force ACTOR back to previous room.
+; Use this for ECHO type rooms WHENEVER IT IS POSSIBLE THAT ACTOR IS IN
+; A VEHICLE.
+.backmove
+ hidest=0
+ dest=lastroom
+ x1=dir
+ add x1,startreversaltable
+ dir=list5(x1)
+ verb=dir
+ x8=descriptionmode
+ descriptionmode=ibrief
+ if actor<>user then describebackmove ;*
+ descriptionmode=inone ;*
+.describebackmove ;*
+ m1=cr
+ gosub @printm1
+ gosub @absnewlocation
+ descriptionmode=x8
+; aftermoves has been executed in absnewlocation, hence the return here:
+ return
+.amNotEcho
+;
+;*
+;-------------------------------------------------------------------------
+; MISCELLANEOUS AFTERMOVES
+;-------------------------------------------------------------------------
+; leave secret room via secret door
+ if room<>36 then amnotsecret
+ if lastroom<>37 then amnotsecret
+ m1=2570
+ gosub @printm1dot
+.amnotsecret
+;
+; leave secret room via BALCONY
+ if room<>58 then amnotsecret1
+ if lastroom<>37 then amnotsecret1
+ m1=2824 ; close door to prevent open door appearing at end gallery
+ gosub @printm1dot
+.amnotsecret1
+;-------------------------------------------------------------------------
+; USER AFTERMOVES
+;-------------------------------------------------------------------------
+ if actor<>user then amnotuser
+;---
+; scoring when reach certain rooms
+ gosub @scoreroom
+;---
+; jasper hides in ballroom if endgame. the devious old sod!
+ if room<>16 then notjasperhide
+ if endsequence<>1 then notjasperhide
+ endsequence=2
+ m1=2684
+ goto @printm1dot
+.notjasperhide
+;---
+; see jasper in ballroom from balcony if endgame
+ if room<>30 then notjasperinballroom
+ if endsequence<>2 then notjasperinballroom
+ endsequence=3
+ m1=2690
+ goto @printm1dot
+.notjasperinballroom
+;---
+; ingrid is caught by butler when leaving office
+ if lastroom<>31 then notleaveoffice
+ object=butler
+ gosub @checkifpresent
+ if result=false then notleaveoffice ; butler not here
+ pos=user
+ hipos=carried
+ dest=desk
+ hidest=on
+ gosub swapevidencepos ; remove ingrid's evidence
+ m1=2512
+ if value=false then @pushingrid
+ gosub @printm1dot
+ goto @pushingrid
+.notleaveoffice
+;*
+;---
+.amnotuser
+;---
+.amret
+ RETURN
+;---
+;*
+; exchange all evidence at pos,hipos to dest,hidest
+; value=true if at least one item was exchanged
+; belonginsafe=true when items other than the filofax are swapped
+.swapevidencepos
+ value=false ; nothing exchanged yet
+ belonginsafe=false
+
+;>>Mike 29/9/88 - kludge code removed + a better kludge
+; added in SpecialAfterMoveObj to prevent things dropped in flue
+; (by other people) from appearing in the fireplaces. This, I think,
+; must have been the code at fault, though I cannot see how.
+
+;;&*&*&
+;; Fail-safe code to prevent treasure (esp. filofax) ending up in 
+;; reading room fireplace (don't know why it does!)...
+; if hidest<>0 then sepnotroom
+; if dest=26 then sepret
+; if dest=27 then sepret
+;.sepnotroom
+; if dest=fireplace3 then sepret
+;;&*&*&
+
+ object=mintreasure
+;
+.seploop
+; must use absolute pos (i.e. not a chain of positions)
+ x1=currentpos(object)
+ if x1<>pos then nextsep
+ x1=hicurrentpos(object)
+ if x1<>hipos then nextsep ; evidence not at pos,hipos
+;
+ if object=filofax then specialfilofax
+ belonginsafe=true ; evidence other than filofax is swapped
+ goto endspecialfilofax
+.specialfilofax
+ if dest=osafe then nextsep ; jasper doesn't put filofax in safe
+; NB: make sure this routine isn't used by anyone else to put evidence
+; in safe, or to put evidence in room 132 (safe object no.)
+;
+.endspecialfilofax
+ currentpos(object)=dest
+ hicurrentpos(object)=hidest ; exchange object
+ value=true ; set "exchanged" flag
+;
+.nextsep
+ add object,c1
+ if object<maxtreasureplus1 then seploop
+.sepret
+ return
+;---
+; score 20 points for reaching certain rooms
+.scoreroom
+ x1=10
+ if room=40 then @addscore20 ; porch
+ x1=11
+ if room=38 then @addscore20 ; kitchen
+ x1=12
+ if room=57 then @addscore20 ; ledge
+ x1=13
+ if room=55 then @addscore20 ; roof
+ return
+;*
+;---
+.SPECIALMOVES
+;
+; Given ROOM, HIDEST, DEST, ACTOR is to move that way
+; and exit has been validated as possible (and hence described)
+; in SPECIALEXITS. The purpose of code here is when something
+; happens on moving. If exit is to be blocked, code here should
+; print the appropriate message and set RESULT=FALSE.
+;
+ if hidest<>0 then @smOk
+;*
+;-------------------------------------------------------------------------
+; MISCELLANEOUS SPECIALMOVES
+;-------------------------------------------------------------------------
+; can't leave jasper's bedroom if under bed
+ if room<>34 then notleavebedroom
+ x1=hicurrentpos(actor)
+ if x1=0 then notleavebedroom ; not in container
+ x1=currentpos(actor)
+ if x1<>bed then notleavebedroom ; not in bed
+ if actor<>user then @smprevent ; no message for npcs
+ m1=2825
+ goto @smpreventm1dot ; user is told to get up first
+.notleavebedroom
+;
+; can't go into garret unless artist arrived
+ if dest<>10 then notgogarret
+ if artistarrived=true then okgogarret
+ if actor<>user then @smprevent
+ m1=2114 ; Ingrid couldn't go that way
+ goto @smpreventm1dot
+.okgogarret
+ gosub @printactor
+ m1=2601 ; go through door
+ goto @smokm1dot
+.notgogarret
+;
+; can't go in secret stairs if no hole
+ if room<>23 then notgostairs
+ if dest<>12 then notgostairs
+ x1=currentpos(hole)
+ if x1<>0 then @smok
+ if actor<>user then @smprevent
+ m1=2114 ; Ingrid couldn't go that way
+ goto @smpreventm1dot
+.notgostairs
+;
+; can't go ledge if window closed
+ if dest<>57 then notgoledge
+ if room<>36 then notgoledge
+ x1=currentpos(owind)
+ m1=2571
+ if x1=0 then @smpreventm1dot ; window closed
+.notgoledge
+;
+; can't go in from ledge if window closed
+ if dest<>36 then notgofromledge
+ if room<>57 then notgofromledge
+ x1=currentpos(owind)
+ m1=2572
+ if x1=0 then @smpreventm1dot ; window closed from inside
+.notgofromledge
+;
+; door to ballroom is locked if endgame
+ if dest<>20 then notgoballroom
+ if endsequence<>2 then notgoballroom
+ m1=2688
+ if actor=underlay then @smokm1dot ; underlay gets through
+ goto @doorislocked
+.notgoballroom
+;
+; door to hall is locked from outside
+ if dest<>16 then notenterhall
+ if room<>40 then notenterhall ; not entering hall from porch
+ if latchopen=true then notenterhall ; latch is open
+ m1=2505
+ if actor=butler then @smokm1dot ; unlock door
+ goto @doorislocked
+.notenterhall
+;
+; jasper's bedroom door is locked
+ if dest<>34 then notenterbedroom
+ if room<>33 then notenterbedroom
+ m1=2540
+ if actor=jasper then @smokm1dot ; unlock door
+ goto @doorislocked
+.notenterbedroom
+;
+; jasper prevents anyone leaving pool and heading towards the changing rooms
+;
+; see also jasper's routine in specialactivatenpc, in which he sends away 
+; anybody already on the path or in the changing room when he arrives
+;
+ if actor=jasper then notgochanging ; jasper is the exception!
+ if room<>52 then notgochanging
+ if dest<>53 then notgochanging ; not going towards changing room
+ object=jasper
+ gosub @checkifpresent
+ if result=false then notgochanging ; jasper not here
+ m1=2530 ; get away from there, 
+ gosub @printm1
+ lastwordprinted=0
+ gosub @printactor ; <actor>
+ m1=0 ; dummy for dot
+ goto smpreventm1dot
+.notgochanging
+;
+; butler stops ingrid & daisy  entering office
+ if actor=daisy then checkgoinoffice
+ if actor<>user then smnotuser
+.checkgoinoffice
+ if dest<>31 then notenteroffice
+ object=butler
+ gosub @checkifpresent
+ if result=false then notenteroffice ; butler not here
+ if actor=user then pushingrid ;*****
+; daisy is simply told by the butler not to enter...
+ m1=2822
+ goto @smpreventm1dot
+.pushingrid
+ x1=38 ; push ingrid in kitchen
+ currentpos(user)=x1
+ hicurrentpos(user)=c0
+ add butlerstops,c1 ; add to count
+ m1=2510
+ if butlerstops<3 then smpreventm1dot ; pushed into kitchen
+ m1=2511
+ gosub @printm1dot ; fired!
+ goto @userdeath
+.notenteroffice
+;*
+;---
+.smnotuser
+;---
+.smok
+ RESULT=TRUE
+ RETURN
+;
+.smPreventActorM1Dot
+ gosub @ActorM1Dot
+ goto smPrevent
+
+.smpreventm1dot
+ gosub @printm1dot
+.smprevent
+ FatalError=True
+ result=FALSE
+ commandfinished=TRUE
+ if room<>currentuserroom then garet ;&&
+ fatalerror=2 ;&&
+.garet
+ return
+
+.smokm1dot
+ gosub @printM1dot
+ goto @smok
+;---
+;*
+.doorislocked
+ gosub @printactor
+ m1=2490
+ gosub @varymessagedot
+ goto @smprevent ; locked!
+;*
+;---
+.specialtakes
+; is POS to be allowed to gain OBJECT?
+; return result=FALSE to prevent action
+;
+;*
+; pick up phone
+ if object=telephone1 then oktakephone
+ if object<>telephone2 then nottakephone
+.oktakephone
+ if phoneringing=true then answerphone
+ m1=2633
+ goto stpreventactorm1dot
+.answerphone
+ gosub nextconversation
+ gosub @printactor
+ m1=2635
+ gosub @printm1
+ m1=2640
+ add m1,phoneconversation
+ gosub @printm1dot
+ m1=2636
+ goto stpreventactorm1dot
+.nottakephone
+;*
+;
+.stok
+ result=TRUE ; allow actor to take object
+.stret
+ return
+
+.stokm1dot
+ result=true ; allow actor to take object
+ goto @printm1dot
+
+.stprevent
+ result=false
+ goto stret
+
+.StPreventActorM1Dot
+ gosub @printActor
+
+.stpreventm1dot
+ result=FALSE ; prevent taking
+ goto @printM1dot
+;---
+; move on to next phone conversation
+; used when answer phone or record message
+.nextconversation
+ phoneringing=false
+ add phoneconversation,c1
+ if phoneconversation<10 then ncret
+ phoneconversation=0
+.ncret
+ return
+;---
+.sign
+ goto @noverb
+;---
+.specialaftermoveobj
+; OBJECT has just been moved from HIFROM, FROM to POS, HIPOS
+; do anything you want, then return
+; no values to return
+;
+;*
+; objects dropped in flues & chimneys fall into fireplaces
+ if hipos<>0 then notdropinflue ; not dropped on floor
+ if actor>Daisy then NotDropInFlue ;>>Mike 29/9/88 - prevent filofax appearing in fireplace.
+ dest=fireplace3 ; reading room
+ if pos=26 then objectfalls
+ if pos=27 then objectfalls
+ dest=fireplace1 ; bedroom
+ if pos=28 then objectfalls
+ if pos<>29 then notdropinflue
+; object falls to relevant fireplace
+.objectfalls
+ currentpos(object)=dest
+ hidest=in
+ hicurrentpos(object)=hidest
+ gosub @printtheobject
+ m1=2621
+ goto @printm1dot ; object falls down shaft
+.notdropinflue
+;
+; drawer is removed. cheque stubs fall out.
+ if object<>drawer then notmovedrawer
+ if stubsfound=true then notmovedrawer ; stubs already been found
+ stubsfound=true
+ object=stubs
+ gosub @createobject
+ x1=stubs
+ gosub @treasurebeinghandled ; user scores by seeing treasure
+ m1=2514
+ goto @printm1dot
+.notmovedrawer
+;
+; artist pleased when ingrid takes painting
+ if object<>painting then nottakepainting
+ if takenpainting=true then nottakepainting ; already done this!
+ takenpainting=true
+; only print message if artist around, and first time taken painting
+ x1=currentpos(artist)
+ m1=2602
+ if x1=room then @printm1dot ; artist not here
+.nottakepainting
+;*
+;
+ return
+;---
+.specialaftergive
+; NOUN1 has just been given to the npc NOUN2
+;
+.saythankyou
+ object=noun2
+ gosub @printTheobject
+ m1=2204 ; said "thankyou"
+ goto @printM1Dot
+;---
+.TIMEDEPENDENTCODE
+; called for every minute that goes past
+ actor=user ; just in case there is any doubt!
+;
+ gosub phonering
+ gosub @atticghost
+ gosub hidefromjasper
+ m1=2800
+ add totalmoves,c1 ; >> Pete 30/9/88. Avoid multiple message
+ if totalmoves=seamuswarning then @printm1dot
+ if totalmoves=policearrive then dopolicearrive
+ sub totalmoves,c1 ; >> Pete 30/9/88. 
+;
+ return
+;---
+; hide under bed if jasper enters bedroom
+.hidefromjasper
+ object=user
+ m1=2730
+ gosub objecthidesfromjasper
+ object=daisy
+ m1=2732
+.objecthidesfromjasper
+ gosub @getobjectposx2
+ if x2<>34 then hfjret ; not in bedroom
+ x1=currentpos(object)
+ if x1=bed then hfjret ; already under bed
+ x8=object
+ object=jasper
+ gosub @checkifpresent
+ object=x8
+ if result=false then hfjret ; jasper not here
+ x1=bed
+ currentpos(object)=x1
+ x1=under
+ hicurrentpos(object)=x1 ; get under bed
+ goto @printm1dot ; print associated message
+.hfjret
+ return
+;---
+; police arrive after so many turns
+.dopolicearrive
+ message 2801
+ message dot
+ goto @userdeath
+;---
+; handle phone ringing
+.phonering
+ if phoneringing<>false then phoneisringing
+; phone is dead, so try ringing
+ if room=34 then okring
+ if room<>31 then phoneret ; not near phone
+.okring
+ add phonedelay,c1
+ if phonedelay<phonetarget then phoneret ; don't ring
+ random x1
+ if x1>128 then phoneret ; don't ring
+; start phone ringing
+ phonedelay=0
+ phoneringing=true
+ object=jasper
+ gosub @checkifpresent
+ if result=false then jaspernotanswer
+ phoneringing=false
+ m1=2637 ; jasper answers in room phone is ringing
+ goto @printm1dot
+.jaspernotanswer ; otherwise, phone rings & stops as jasper answers
+ m1=2631 ; it elsewhere
+ goto @printm1dot ; ring ring
+; phone already ringing
+.phoneisringing
+ phoneringing=false
+ m1=2632
+ if room=34 then @printm1dot ; only hear phone stop if still in 
+ if room=31 then @printm1dot ; a phone room
+.phoneret
+ return
+;---
+; handle time in attic until artist arrived
+.atticghost
+ if artistarrived=true then noghost
+ if room<>11 then notinattic
+ add timeinattic,c1
+ m1=2589 ; base-1 for "ghost" messages
+ add m1,timeinattic
+ gosub @printm1dot
+ if timeinattic<5 then noghost
+; artist arrives on fifth message
+ artistarrived=true
+ currentpos(artist)=room
+.noghost
+ return
+.notinattic
+ timeinattic=false
+ return
+;---
+.OBJECTTRIGGER
+; Trigger on OBJECT
+; set PROCESSED=TRUE if the command is completed
+; by this routine (usually by the printing of an
+; error message, or some other general response)
+;
+ processed=FALSE
+ if object=nullobject then @otok
+ if verb=iexamine then @otExamine
+;
+;*
+; safe combination
+ if object<>combination then notcombination
+.verbcombin
+ object=csafe
+ gosub @checkifpresent
+ if result=false then sillyprevent ; no closed safe here!
+ gosub @isjasperhere
+ if result=true then @otprevent ; jasper prevents portrait being pushed
+ currentpos(csafe)=c0
+ currentpos(osafe)=room
+ if actor<>user then OtNotUser1 ;>>mike30/9/88
+ itword=osafe
+.OtNotUser1
+ safe=osafe
+ m1=2523
+ goto otpreventm1dot
+.sillyprevent
+ gosub @silly
+ goto otprevent
+.notcombination
+;*
+;
+ gosub @checkifpresent
+ if result=FALSE then otret ; not here, so do nothing
+ OTPOS=CURRENTPOS(OBJECT) ; remain set throughout this routine
+ OTHIPOS=HICURRENTPOS(OBJECT)
+ processed=TRUE ; prevent processing unless cleared at end of routine
+; special cases...
+;
+;*
+; handling evidence in front of jasper!
+ if actor=jasper then nothandleevidence ; jasper is exception!
+ if object<mintreasure then nothandleevidence
+ if object>maxtreasure then nothandleevidence ; not evidence
+; jasper must be in same POS,HIPOS as user
+ x1=currentpos(user)
+ x2=currentpos(jasper)
+ if x1<>x2 then nothandleevidence
+ x1=hicurrentpos(user)
+ x2=hicurrentpos(jasper)
+ if x1<>x2 then nothandleevidence ; jasper not here
+ x1=jasper
+ currentpos(object)=x1
+ x1=carried
+ hicurrentpos(object)=x1 ; jasper takes the evidence
+ m1=2542
+ gosub @printm1 ; "I'll have that", said jasper as he snatched
+ gosub @printtheobject ; <evidence>
+ gosub @printdot ; .
+ if object=filofax then otprevent
+ m1=2543
+ gosub @printm1dot ; "I'll put this in the safe"
+ object=jasper
+ x6=jasper
+ gosub @newracetrackforobject
+ jaspergoessafe=true
+ goto otprevent
+.nothandleevidence
+;*
+;
+.otExamine
+.OTOK
+ processed=FALSE ; PROCESSING MAY CONTINUE
+.otret
+ RETURN
+;
+.otpreventm1dot
+ gosub @printM1dot
+.otprevent
+ processed=TRUE
+ return
+;
+;*
+; if jasper is here, return true and
+; print "get your thievin' hands off that!"
+.isjasperhere
+ x8=object ; save object
+ object=jasper
+ gosub @checkifpresent
+ object=x8 ; restore object
+ m1=2528
+ if result=true then @printm1dot
+ return
+;*
+;
+.FUNNIES
+; Value of word entered is in 'OBJECT' (relative to NOUNOFFSET)
+; Also have 'VERB' and may have 'PREP' if one has been entered
+; before this noun on the input line.
+; Return processed=TRUE if a special message is printed in this routine
+; which should prevent the printing of other messages
+ if object=nullobject then funniesok
+ processed=true ; prevent action unless drop through to end
+; if verb<>iexamine then fnotexamine
+; gosub isroomvandalised
+; if result=false then fnotvandalised
+; message 2213 ; vandals seem to have been at work here
+; message dot
+; if noun1<255 then fnotvandalised ; normal object, so also
+;; print normal description
+; return
+;
+;.fnotvandalised
+; if object<600 then nothingspecial ;*needed?
+; if object>699 then funniesok ;nothingspecial
+;; examining tree/terrain
+; verb=iam
+; gosub @printOBJECTverb
+; x1=object
+; x2=340
+; add x1,x2
+; message x1 ; examine message for tree/terrain
+; message dot
+; return
+;
+.nothingspecial
+
+; message 2112 ; it looks exactly as you would expect
+; return
+
+.fnotexamine
+ if object<240 then notvandal
+; if verb=iattack then vandal
+
+.notvandal
+.examnotscenery
+.funniesok
+ processed=FALSE
+ RETURN
+;---
+;.vandal
+;; vandalising scenery in ROOM
+;; has it already been vandalised?
+; if noun1<minsceneryobj then notvandal
+; gosub isroomvandalised
+; if result=true then alreadyvandalised
+; if x2=vandalmax then cantaddentry ; off end of table
+;
+;; add entry
+; message 2210 ; vandal!
+; message dot
+; vandaltable(x2)=room
+; add vandalptr,c1
+; return
+;
+;.cantaddentry
+;; can't add any more vandalised locations, so be rude to player..
+; message 2212 ; get knotted!
+; message dot
+; return
+;
+;.alreadyvandalised
+; message 2211 ; don't bother.. you made a good job last time
+; message dot
+; return
+;---
+;.isroomvandalised
+;; has room already been vandalised?
+;; return result=true or false accordingly
+; result=false
+; x2=vandalbase ; pointer into table
+;.vandal1
+; x1=vandaltable(x2)
+; if x2=vandalptr then irvret ; return false
+; if x1=room then @returntrue
+; add x2,c1
+; if x2<vandalmax then vandal1
+;.irvret
+; return
+;
+;---
+.SPECIALEXAMINE
+; print any special examine messages which follow
+; the basic message but are before any contents are printed
+; set processed=TRUE if the contents should not be printed
+;
+;*
+; examine crack in loft wall to see artist
+ m1=2580
+ if object=crack1 then @varymessagedot
+;
+; examine tree & then shadow to find hole
+ if object<>tree then notexamtree
+ currentpos(shadow)=room
+.notexamtree
+;
+ if object<>shadow then notexamshadow
+ currentpos(hole)=room
+.notexamshadow
+;
+; latch open/closed
+ if object<>latch then notexaminelatch
+ m1=2501
+ add m1,latchopen ; it was closed/open
+ goto @printm1dot
+.notexaminelatch
+;
+; find letter after examining rubbish
+ if object<>rubbish then notfindletter
+ if letterfound=true then notfindletter ; letter been found once
+ letterfound=true
+ currentpos(letter)=actor
+ x1=carried
+ hicurrentpos(letter)=x1 ; actor is given letter
+ x1=letter
+ gosub @treasurebeinghandled ; user scores by seeing treasure
+ gosub @printactor ; <actor>
+ m1=2554 ; takes crumpled letter
+ goto @printm1dot
+.notfindletter
+;
+;*
+; examine ingrid. does she smell?
+ if object<>user then notexamineuser
+ x1=24
+ gosub @DrawPictureX1 ; draw ingrid & flopsy piccy (same as village hall!)
+ m1=2553
+ if contaminated=true then @printm1dot
+.notexamineuser
+;*
+;
+ return
+;---
+.SPECIALPREEXAMINE
+; before printing examine message / contents, check if
+; anything should prevent this. Return TRUE if details should
+; NOT be printed
+; if object>MaxNpc then SPENotPerson
+; gosub ReportHealth
+; if x1=0 then returnTrue ; dead!
+;
+;.SPENotPerson
+;
+;*
+; can't examine filofax if jasper has it
+ if object<>filofax then notexamfilofax
+ pos=jasper
+ hipos=carried
+ gosub @checkobjectpos
+ m1=2820
+ if result=true then @returntruem1dot ; get off my filofax
+.notexamfilofax
+;
+; read books in library
+ if object<>books then notreadbooks
+ if readbooks>9 then readbooksmess
+ add readbooks,c1
+.readbooksmess
+ m1=2609 ; read books base-1
+ add m1,readbooks
+ goto returntruem1dot
+.notreadbooks
+;
+; examine rubbish contaminates ingrid
+ if object<>rubbish then notexaminerubbish
+ if actor<>user then notexaminerubbish ; only affects user
+ message 2550
+ gosub @yesorno
+ m1=2551
+ if result=false then returntruem1dot ; no - wise decision!
+ contaminated=true
+ x1=14
+ x2=minus10
+ gosub @addscorex2
+ m1=2552
+ gosub @printm1dot ; contaminated
+.notexaminerubbish
+;*
+;
+ RESULT=FALSE ; proceed normally
+.speok
+ RETURN
+
+.returnTrueM1Dot
+ result=true
+ goto @printM1Dot
+;---
+.CANTSEETHAT
+ M1=2019 ; can't see that
+ GOTO @errorm1
+;---
+.mighthurtyourself
+ m1=2401 ; you might hurt yourself
+ goto @errorm1dot
+;----
+;---
+.StopObject
+ actorsave=actor
+ actor=object
+ gosub @stop
+ actor=actorsave
+ goto resetactor
+;---
+.resetactor
+ gosub @setACTORATTRIBUTES
+ goto @initfifo
+;---
+;---
+.MAKEENEMIES
+; make TARGET and ACTOR be enemies
+ OBJECT=TARGET
+ GOSUB @setX4toOBJECTATTRIBUTES
+;;; and set up attacker and target to be enemies...
+ NPCCURRENT(X4)=ACTOR
+ NPCCURRENT(ACTORATTRIBUTES)=TARGET
+ return
+;---
+; Routines to return pointer to character 'OBJECT' data. Note that they 
+; rely on npcentrysize=16, so beware if you change this.
+.setACTORATTRIBUTES
+ ACTORATTRIBUTES=ACTOR
+ ADD ACTORATTRIBUTES,ACTORATTRIBUTES
+ ADD ACTORATTRIBUTES,ACTORATTRIBUTES
+ ADD ACTORATTRIBUTES,ACTORATTRIBUTES
+; ADD ACTORATTRIBUTES,ACTORATTRIBUTES
+ RETURN
+;
+.setX4toOBJECTATTRIBUTES
+; return pointer in X4. (Modify .notifynpc if you change this routine)
+ X4=0
+ if object>maxNpc then sxtnnotalive
+ X4=OBJECT
+ ADD X4,X4
+ ADD X4,X4
+ ADD X4,X4
+; ADD X4,X4
+.sxtnnotalive
+ return
+;---
+.SILLY
+; prs "[actor who is being silly is: "
+; x1=actor
+; gosub @printTHEobjectx1
+; prs "]"
+; message cr
+ gosub @AbsCancelInput
+ M1=3100
+ GOTO @VARYERRORM1DOT
+;---
+.SPECIALDESC
+; come here after all objects and exits printed
+; no return necessary
+.sdret
+ RETURN
+;---
+.SPECIALEXITS
+; Given 'FROM' 'DIR' 'DEST'
+; Modify if an exit is blocked for some reason
+ HIDEST=0 ; normally can't move onto a container through an exit
+ X1=HICURRENTPOS(ACTOR)
+ IF X1=0 THEN SEORDINARY
+; ACTOR is on something - so exits may be different
+; Standing on something, but can take as being an
+; ordinary exit from the room in which the container is ('ROOM')
+.SEORDINARY
+; now check any other modified exits
+; if dest<minsynthroomminus1 then senotsynth
+; x1=dest
+; gosub @GetTerrainType
+; if x1<minsynthroomminus1 then seprevent ; should be going to a fixed room
+; if x1=112 then seprevent ; unavailable room
+;
+; If you want to prevent movement onto a particular class
+; of terrain, add the line:
+;
+; IF x1<116 (say) then seprevent
+;
+; then terrain types MINSYNTHROOM to 115 will be impossible to move onto.
+; (You may need to remove the range check on DEST above, as well)
+.senotsynth
+; if from<>116 then seNotBridge
+; if dir<>4 then seNotBridge
+; dest=28
+;
+;.seNotBridge
+.specialexitsok
+ RETURN
+
+.seprevent
+.SEFALSE
+; Exit is not present
+ DEST=0
+ EXITVISIBLE=FALSE
+ RETURN
+;---
+.SPECIALDROPS
+; trying to drop 'OBJECT' to position HIPOS, POS
+; Print appropriate message if desired
+; and return RESULT=FALSE if ACTOR is to be prevented from dropping it
+; if hipos=0 then sdnotputonobject
+;.sdnotputonobject ; not going to a container
+;*
+; put phone down
+ if object=telephone1 then sdphone
+ if object<>telephone2 then sdnotphone
+.sdphone
+ gosub @done
+ result=false ; avoid any further messages
+ return
+.sdnotphone
+;*
+ RESULT=TRUE ; allow it to be dropped
+ RETURN
+;---
+.SPECIALACTOR
+; print ACTOR
+
+;*
+;; cif AllowBoat
+  x1=hicurrentpos(actor)
+  if x1=0 then specialActor1
+  x1=currentpos(actor)
+  if x1=curtain then sa1
+  if x1=bed then sa1
+  if x1<>lounger then specialactor1
+;;  if x1<>boat then specialactor1
+.sa1
+; print "the container was..."
+  object=x1
+  verb=iam
+  goto @printObjectVerb
+.specialActor1
+;; cend
+;*
+
+ lastwordprinted=actor ; force it to print the article - 'you'
+ verb=iam
+ goto @printACTORverb
+;---
+; CHECK IF ACCESSIBLE BEFORE CHECKING OBVIOUS THINGS LIKE OBJECT IS
+; OMNI PRESENT, OR OWNED BY SOMEONE ELSE.
+;
+.specialcheckifaccessible
+; if no special code is needed, LEAVE RESULT UNCHANGED
+; otherwise return RESULT=TRUE if OBJECT is accessible to VERB
+; or RESULT=FALSE if not accessible.
+; *graham* this is necessary when using two objects for a wardrobe etc.
+; (i.e. a wardrobe which is open, and one which is closed)
+ if processingsay=TRUE then conditionaltrue ;*graham* bug fix. sciatrue
+.sciaNotAutomatic
+ if verb=ifollow then conditionaltrue ;*graham* bug fix
+ if verb=isetupgo then conditionaltrue ; sciatrue
+ if verb=igdgo then conditionaltrue ; sciatrue
+ if verb=isetupfind then conditionaltrue ; sciatrue
+ if verb=igdfind then conditionaltrue ; sciatrue
+ if verb=igetme then sciatrue
+ if verb=iwaitforperson then conditionaltrue ; sciatrue ; wait for ...
+ if verb=iwaitforperiod then conditionaltrue ; sciatrue ; wait for ...
+ if verb=iwaituntiltime then conditionaltrue ; sciatrue ; wait until ...
+ if object<>generaldoor then scianotdoor
+ gosub @setupdoor
+ if door=TRUE then sciatrue
+ goto @returnfalse
+;
+.scianotdoor
+;
+;*
+; ok to drop phone if in phone room
+ if verb<>idrop then notdropphone
+ if object=telephone1 then okdropphone
+ if object<>telephone2 then notdropphone
+.okdropphone
+ gosub @checkifpresent
+ if result=true then sciatrue ; ok if phone here
+.notdropphone
+;
+; can't reach items out of container
+ outofreach=false
+ if verb=iexamine then notoutofreach ; ok to look at/examine item
+ if object<>248 then objectisnotIT
+ object=itword ; to prevent examine object. take it (when out of reach)
+.objectisnotIT
+ hipos=hicurrentpos(actor)
+ if hipos=0 then notoutofreach ; actor not in container
+ pos=currentpos(actor)
+ if object=pos then notoutofreach ; the object is the container!
+ gosub @checkobjectpos ; is object in container with actor?
+ if result=true then notoutofreach ; if so, then it is within reach
+ outofreach=true ; otherwise, it is treated as out of reach
+ goto @returnfalse
+.notoutofreach
+;*
+;
+ return
+;---
+.conditionaltrue
+; only true if OBJECT exists in the game
+ x1=currentpos(object)
+ if x1=0 then @returnfalse
+.sciatrue
+ result=TRUE
+ return
+;---
+.isobjectalive
+; return result=TRUE if it is
+ if object>maxnpc then @returnfalse
+ gosub @SetX4ToObjectAttributes
+ x1=hitpointOffset
+ add x1,x4
+ x1=npcCurrent(x1)
+ if x1>0 then sciatrue
+ result=FALSE
+.ioaret
+ return
+;---
+;
+.specialdescbeforeexits
+; printed immediately after short+long room descs.
+; no return needed
+
+.printdistantfeatures ;*
+; what is the height of the current location?
+; what is the special feature at the current location?
+;
+ return
+;---
+.calcheight
+; return x1 = height of ROOM with scenery object x4
+; x4=1..25 corresponding to room if special feature
+ return
+;---
+.CalcTerrainAndTree
+; return x1=tree type and x2+x3=terrain type
+; for ROOM.
+ return
+;---
+.GetXY
+; return X=x co-ordinate on grid
+; Y=y co-ordinate on grid
+ if room>minsynthroomminus1 then getxysynth
+; fixed room
+ x=0
+ y=0
+ return
+
+.getxysynth
+ x1=room
+.getxyx1
+ x2=minsynthroomminus1
+ sub x1,x2
+ sub x1,c1
+ x2=xmaxplus1
+ gosub @x1divx2
+ y=x1 ; y:=room div xmax = y co-ordinate
+ add x2,x3
+ x=x2 ; x:=room mod xmax = x co-ordinate
+ return
+;---
+.convertroom
+; return x1 as the room number for the description
+; printed by a room object being here.
+; descriptions are in table with offsets 240..255
+; exits are stored in table from room 10..30
+ x1=minsceneryobjt2m1 ; double to give index into initial pos
+.cr1
+ x2=objectstart(x1)
+ if x2=room then crfound
+ add x1,c2
+ if x1<maxsceneryobjtimes2plus2 then cr1
+ x1=0
+ return
+.crfound
+; objects have numbers minsceneryobj..maxsceneryobj
+; we want offset in objects 1..25
+;; so subtract minsceneryobjminus1
+ x2=2
+ gosub @x1divx2 ; get object number
+ x2=minsceneryobjminus1
+ sub x1,x2
+ return
+;---
+.GetUserHitPoints
+ object=user
+ gosub @SetX4toObjectAttributes
+ x1=hitpointoffset
+ add x1,x4
+ x1=npccurrent(x1)
+ return
+;---
+.specialactivatenpc
+; We are activating npc ACTOR
+; Put special code handlers for them HERE.
+; Set processed=TRUE if they have already done
+; everything they are going to this turn.
+; return verb<>0 to do that action
+;
+; THIS IS USED QUITE A LOT IN GNOME2.2 BECAUSE TRAPS MUST BE EXECUTED 
+; FOR ANY OF THE 7 TROLLS.
+;
+; THIS IS LIKE A KIND OF TIMEDEPENDANT FOR NPCs.
+;
+;-------------------------------------------------------------------------
+; HIGH PRIORITY INTERCEPTS
+;-------------------------------------------------------------------------
+;-------------------------------------------------------------------------
+; MISCELLANEOUS ACTIVATIONS
+;-------------------------------------------------------------------------
+;
+;*
+ if actor<>jasper then @sannotjasper
+;-------------------------------------------------------------------------
+; JASPER ACTIVATIONS
+;-------------------------------------------------------------------------
+; jasper sends back anyone in changing room or path leading to them
+;
+; see also routine in specialmoves, in which jasper prevents anyone 
+; going towards path if he is in the pool area
+;
+ if room=53 then jaspersendback ; from path
+ if room<>25 then jaspernotsendback ; not from changing room
+.jaspersendback
+ object=user
+.sendbackobject
+ gosub @checkifpresent
+ if result=false then nextsendback
+ x1=currentpos(user)
+ if x1=lounger then nextsendback ; user hiding in lounger
+;
+; send back npc...
+ x1=53
+ m1=2531
+ if room=25 then sendactorback ; ...from changing rooms
+ x1=52
+ m1=2532 ; ...or from path
+;
+.sendactorback
+ currentpos(object)=x1
+ hicurrentpos(object)=c0
+ if object<>user then nextsendback
+;
+; user is sent back
+ gosub @printm1dot ; forced back message (only seen by user, since user 
+; is always first to be forced back)
+ actor=user
+ room=currentpos(user)
+ currentuserroom=room
+ message blankline
+ gosub @printroom
+ actor=jasper
+ room=currentpos(jasper)
+ object=user ; object was corrupted!!
+;
+.nextsendback
+ add object,c1
+ if object<jasper then sendbackobject
+; this routine was only an intercept, since nobody may have been 
+; pushed out of the way. hence, we fall through to the next routine...
+.jaspernotsendback
+;---
+; jasper comes across evidence
+ if room=25 then notfindevidence ; evidence is ok in changing rooms
+ pos=room
+ hipos=0 ; find evidence on floor
+ dest=jasper
+ hidest=carried ; jasper takes it
+ gosub @swapevidencepos
+ if value=false then notfindevidence ; nothing found
+; evidence found
+ m1=2541
+ gosub @printm1dot ; Jasper picks up some evidence
+; if only filofax taken, then don't go safe & continue with rt command...
+ if belonginsafe=false then sanok
+ m1=2543
+ gosub @printm1dot ; "I'll take this to the safe"
+ gosub @restartracetrack ; trigger safe racetrack
+ jaspergoessafe=true
+ goto saprevent ; ignore command, we now have a new racetrack
+.notfindevidence
+;---
+; jasper comes across open safe & closes it
+ object=osafe
+ gosub @checkifpresent
+ if result=false then notjaspersafe
+ if jaspergoessafe=true then notjaspersafe ; about to stash evidence
+ verb=iclose
+ prep=0
+ noun1=safe
+ noun2=nullobject
+ m1=2720
+ goto sanokm1dot
+.notjaspersafe
+;---
+; jasper comes across closed safe & slides portrait over it
+ object=csafe
+ gosub @checkifpresent
+ if result=false then notjasperportrait
+ if jaspergoessafe=true then sanNotJasper ;>>mike 28/9/88 - was notjaspersafe ; about to stash evidence
+ verb=ipush
+ prep=0
+ noun1=portrait
+ noun2=nullobject
+ m1=2721
+ goto sanokm1dot
+.notjasperportrait
+;---
+.sannotjasper
+;*
+;
+.sanOK
+ processed=false ; no special code - so allow npc to activate
+.sanRet
+ return
+
+.sanOKm1dot
+ gosub @printm1dot
+ goto sanok
+
+.saPreventActorM1Dot
+ gosub @printActor
+
+.setProcessedM1Dot
+.saPreventM1Dot
+; print m1, do nothing else this turn
+ gosub @printM1Dot
+
+.saPrevent
+ processed=true
+ return
+;---
+.isobjectalert
+; return result=TRUE if OBJECT is awake
+ gosub @isobjectalive
+;; if result=FALSE then ioalertret
+.ioalertret
+ return
+;---
+.canactormove
+; return result=FALSE if ACTOR is prevented from moving
+ result=TRUE
+.camret
+ return
+;---
+.canactorrandommove
+; return result=TRUE if actor can make random moves
+ x1=hicurrentpos(actor)
+ if x1<>0 then carmfalse
+ random x1 ;*
+ if x1>128 then carmfalse ;*
+ result=true
+ if actor=daisy then carmret
+.carmfalse
+ result=false ; no-one moves at random in this part. TRUE
+.carmret
+ return
+;---
+.handleinterruption
+; ACTOR has been interrupted in the middle of something
+; Do whatever you see fit, then return
+; No values need be returned
+ return
+;---
+.specialrtmessage
+; actor is just about to print M1 as part of a racetrack
+; instruction. Use this hook to intercept particular things
+; which may happen in the message which cannot be easily
+; coded elsewhere.
+;
+; create scone when cook offers it to Ingrid
+ if m1<>5180 then notscone
+ currentpos(scone)=room
+ return
+.notscone
+;
+; trigger daisy to follow ingrid after her intro
+; (for some reason, this hangs up if put in the racetrack!)
+ if m1<>5090 then notdaisyfollow
+ object=daisy
+ gosub @SetX4ToObjectAttributes
+ x1=followOffset
+ add x1,x4
+ npccurrent(x1)=c1 ; make daisy follow Ingrid
+ return
+.notdaisyfollow
+;
+; jasper operates safe
+; NB: we don't physically need to open safe or slide picture
+ if m1<>5101 then notusesafe
+ if room<>currentuserroom then safeopen ; no user, so skip messages
+ gosub @printm1dot ; look around suspiciously
+ x1=currentpos(safe)
+ if x1<>0 then safevisible
+ message 2524 ; slide portrait
+.safevisible
+ if safe=osafe then safeopen
+ message 2525 ; enter combination & safe swings open
+.safeopen
+ pos=jasper
+ hipos=carried
+ dest=osafe
+ hidest=in
+ gosub @swapevidencepos ; deposit any evidence in safe
+ jaspergoessafe=false
+; now return an appropriate message to be printed by racetrack
+ m1=2526
+ if value=false then usesaferet ; no evidence, just check inside 
+				; safe & then close it. replace painting
+ m1=2527			; put evidence in & close it. 
+				; replace painting
+.usesaferet
+ currentpos(safe)=c0 ; hide safe behind painting
+ safe=csafe ; make sure it's closed when painting is moved again
+ return
+.notusesafe
+;
+; notify ingrid in office when butler departs/returns
+ if currentuserroom<>31 then notofficertmess
+ if m1<>5000 then notbutlerdepart
+ message 2515 ; hear butler go to answer door
+ return
+.notbutlerdepart
+ if m1<>5002 then notofficertmess
+ message 2516 ; hear butler return
+ return
+.notofficertmess
+;
+; piccy when butler arrives at door on long racetrack
+ if m1<>5001 then notbutlerpiccy
+ if room<>currentuserroom then notbutlerpiccy ; ingrid not watching
+ x1=25
+ goto @drawpicturex1
+.notbutlerpiccy
+;
+ return
+;---
+.newracetrackforobject
+; start racetrack x6 for actor OBJECT
+ actorsave=actor
+ actor=object ; replace its racetrack with a new one...
+ gosub @setACTORATTRIBUTES
+ gosub @stop ; kill existing racetrack
+ x1=x6 ; race track number to execute
+ gosub @initracetrackx1
+ actor=actorsave
+ goto @resetactor ; from actorsave
+;---
+.checknullaction
+; ACTOR has no stack actions to do, so we may want to start up a new 
+; one. This is used for people such as the valkyrie in Knight Orc, 
+; for whom it is VITAL that they should not become 'unhooked'. Set 
+; ORDERWAITING to the first command to  execute, if you want ACTOR 
+; to obey it immediately.
+; if actor=* then RestartRacetrack
+ return
+
+.RestartRacetrack
+; restart the original racetrack
+ x6=actor
+ object=actor
+ goto @NewRaceTrackForObject
+;---
+.specialcheckifpresent
+; have just checked if object is present
+; Add special modifiers here.
+; return RESULT=TRUE if object here.
+ return
+;---
+.specialinitnpcs
+ return
+;---
+.destroyobject
+; object gets destroyed, and replaced in a location as appropriate
+ currentpos(object)=c0
+ hicurrentpos(object)=c0
+ return
+;---
+.createobject ;** used now?
+; OBJECT gets created in current room
+ currentpos(object)=room
+ hicurrentpos(object)=c0
+ return
+;---
+.createobjectpos ;** used now?
+; create OBJECT at position HIPOS, POS
+ currentpos(object)=pos
+ hicurrentpos(object)=hipos
+ return
+;---
+.TRIGGERWORDS
+; check current word to see if it is a trigger word
+; ACTOR is the target of conversation
+;; SEARCHTYPE=NOUNTYPE
+;; GOSUB @CHECKTYPE
+;;; see if there is any action to take on VALUE
+;; if value=nullvalue then tgret
+;;; gosub @checknoun
+;; if processed=TRUE then tgret
+;;
+;;; OBJECT is a word spoken TO actor
+;; if twNoun<>0 then tw2 ; verb seems to be cleared before subsequent words.
+;; if verb<>itell then tgret
+;;.tw2
+;; if object<>user then tellNotUser
+;; if twNoun=object then TellNotUser ; "tell me about me"
+;; twNoun=object ; "tell me about.. "
+ return
+
+;;.tellNotUser
+;; result=false
+;; gosub doquestion
+;; if result=true then @realsayend ; clear stack, terminates if processed
+;;.TGRET
+;; return
+
+
+;;; if verb=itell then tgret ; process as parsed sentence
+;;;; OBJECT is a word spoken TO actor
+;;; result=false
+;;; gosub doquestion
+;;; if result=true then @realsayend ; clear stack, terminates if processed
+;;;.TGRET
+;;; RETURN
+;---
+.tell
+ goto @noverb
+;;; tell me about NOUN2
+;; if actor=user then @ask
+;; result=false
+;; object=noun1
+;; if object<>nullobject then tell1
+;; object=noun2
+;;.tell1
+;; gosub doquestion
+;; if result=false then @startorders
+;; return
+;---
+;;.doquestion
+;;; rainbird prints examine messages for item OBJECT
+;;; set result=true if processed
+;; if verb=itell then doquestion2
+;;; if verb=iask then doquestion2
+;;; if verb=isay then doquestion2
+;; if verb=0 then doquestion2
+;; return ; result=false, so not processed
+;;
+;;.doquestion2
+;; if object=nullobject then rainbirdret
+;; gosub @PrintActor
+;; m1=3612 ; clears its throat and says "
+;; gosub @Printm1
+;; m1=3611 ; ..you, dummy!
+;; if object=user then twprint
+;; m1=3610 ; me!
+;; if object=actor then twprint
+;; if object=iyou then twprint
+;;;
+;;; objects which the rainbird won't describe because
+;;; their examine messages contain spell names...
+;; m1=2112 ; nothing special
+;; if object>maxobject then twprint
+;;
+;; gosub @printTheObject
+;;; do "it is/they are" in PRESENT TENSE
+;; x1=object
+;; gosub @conjugatex1
+;; m1=135 ; are (present tense)
+;; if result=pluralsome then dor1
+;; m1=136 ; is (present tense)
+;;.dor1
+;; gosub @printm1
+;;
+;;;; verb=iam
+;;;; gosub @printobjectverb ; that is..
+;; m1=examinemessages ; base of examine messages
+;; add m1,object
+;;.twprint
+;; gosub @printm1 ;dot
+;; m1=dotquote
+;; gosub @printm1
+;;
+;; result=true ; processed
+;;.rainbirdret
+;; return
+;---
+;---
+.isactorflying
+; return RESULT=TRUE if ACTOR is flying
+ result=FALSE
+.iafret
+ return
+;----------------
+.specialconversation
+; USER is saying 'verb prep noun1 noun2' to ACTOR
+; make any intercepts you fancy.
+; If the command is not to be stored, set PROCESSED=TRUE
+; and SAYRESPONSE=TRUE
+;
+; see also TRIGGERWORDS
+ if verb=ihello then npchello
+
+;; if verb=itell then @tell
+;;
+;;; m1=3270 ; won't give anything away
+;;; if verb=igive then scprint
+;; if verb<211 then scnonotquestion
+;; m1=3250 ; won't answer that
+;; if verb<217 then scprint
+;;.scnonotquestion
+ m1=3620 ; seemed very offended
+ if verb=217 then scprint
+;; m1=3640 ; won't help
+;; m1=2038 ; said "that was a rhetorical question"
+;; if verb=200 then scPreventActorM1Dot
+;; if verb=201 then scPreventActorM1Dot
+;; if verb=207 then scprint
+ m1=3660 ; echo verb - can't do it etc.
+ if verb>199 then scprint
+ if verb<20 then scNotSystem
+ if verb<32 then scPrint ; system verbs - SAVE, RESTORE etc.
+.scNotSystem
+ return ; nothing unusual - probably an order, so pass back
+; for normal handling code to cope with it.
+
+.scprint
+ goto scpreventVaryM1Dot
+
+;---
+.scPreventActorM1Dot
+ gosub @ActorM1Dot
+ goto scPrevent
+;
+.NPCHELLO
+; ACTOR is the person the user is trying to talk to, who is here
+ m1=3170 ; hello
+
+.scPreventVaryM1Dot
+ LASTWORDPRINTED=0 ; prevent use of IT
+ gosub @varysaym1dot
+.scprevent
+ SAYRESPONSE=TRUE
+ processed=TRUE
+.NPCHELLOret
+.scNoPrint
+ RETURN
+;
+.scpreventm1dot
+ gosub @printm1dot
+ goto scprevent
+;---
+.empty ;** remove verbs?
+.pour
+ goto @silly
+;---
+.knock
+;
+ if room<>40 then notknockporch
+ gosub @printactor
+ if actor<>user then summonbutler
+ if alreadyknocked=true then summonbutler
+ alreadyknocked=true
+ x1=25
+ gosub @drawpicturex1
+ m1=2503
+ goto @printm1dot ; knock for first time
+.summonbutler
+ object=butler
+ x6=40
+ gosub @newracetrackforobject ; butler is summoned
+ m1=2504
+ goto @printm1dot
+.notknockporch
+;
+;*
+; late addition to knock on wall panel at end gallery
+ m1=2823 ; wall panel sounds hollow
+ if room=36 then @PrintM1dot
+;*
+;
+ m1=2545
+ goto @printm1dot ; rat-a-tat-tat
+;---
+.WaterSomething
+.checkForWater
+ goto @noverb
+;---
+.hold
+ if noun1=chandelier then @done
+ goto @take
+;---
+.wave
+ if actor<>user then @printactorverbdot
+ if room=220 then summongnoah
+ if room<>43 then @printactorverbdot
+; summon gnoah and silas
+.summongnoah
+ gosub @calcscore
+ m1=2681
+ if evidenceowned=0 then @printm1dot ; no evidence
+ m1=2682
+ if evidenceowned<9 then @printm1dot ; not enough
+;; x1=user ; >> Pete 3/10/88. Ingrid automatically drinks phial. 
+;; currentpos(phial)=x1 ; >> Pete 3/10/88 
+;; x1=carried ; >> Pete 3/10/88
+;; hicurrentpos(phial)=x1 ; give ingrid the phial >> Pete 3/10/88 
+ x1=15 ; Score for drinking phial. >> Pete 3/10/88. 
+ gosub @addscore10 ; >> Pete 3/10/88 
+; 
+ currentpos(gnoah)=room
+ currentpos(seamus)=room ; gnoah & seamus appear
+ x1=20
+ currentpos(jasper)=x1
+ hicurrentpos(jasper)=c0 ; jasper in ballroom
+ actor=jasper
+ gosub @stop ; stop his racetrack
+ actor=user
+ endsequence=1 ; start end sequence
+ m1=2683
+ gosub @printm1dot ; let's go & see Jasper
+ object=daisy
+ gosub @checkifpresent
+ currentpos(daisy)=c0
+ ;; m1=2826 ; diasy leaves at end to prevent her swinging from chandelier
+ ;; if result=true then @printm1dot
+ return
+;---
+.win
+ x1=16
+ x2=40
+ gosub @addscorex2
+ message blankline
+ message 2700
+ message blankline
+ x1=29 ; marriage photo
+ gosub @drawpicturex1
+ gosub @score
+ gosub @restartorrestore
+ goto @startgame ; just in case didn't chain
+;---
+.SpecialConjugate
+; return x1 as type for noun x2 (if different to that in the table)
+ if x2=underlay then scProperFemale
+ if x2=daisy then scProperFemale
+ if x2=cook then scProperFemale
+.scNotPF
+ return
+.scProperFemale
+ x1=ProperFemale
+ return
+;---
+.SpecialEchoVerb
+; trap any unusual responses, then set result=true to prevent
+; printing the standard reply
+ result=false ; do standard reply
+ return
+;---
+.specialEssentialInit
+; DEFINE disabled as npc's which are temporarily inactive - 
+; i.e. npc's which are in a different part to the user.
+; disable/re-enable npcs as appropriate - just
+; swap over bit 6 of the "enemy" flag
+ return
+;---
+;.SwapDisabledFlags
+; object=2
+;.seiLoop1
+; gosub SwapDisabledFlag
+; add object,c1
+; if object<maxNpc then seiLoop1
+;; and do MaxNpc by dropping through...
+;;
+;.SwapDisabledFlag
+; gosub SetX4ToObjectAttributes
+; x1=npccurrent(x4)
+; x2=64
+; if x1>191 then seiEnable
+; if x1>127 then seiDisable
+; if x1>63 then seiEnable
+;.seiDisable
+; add x1,x2
+; goto seiLoop2
+;
+;.seiEnable
+; sub x1,x2
+;
+;.seiLoop2
+; npcCurrent(x4)=x1
+; return
+;---
+; SPECIALNPCGOLDSINGING ( Graham 17/12/87 Bits of 8ish )
+; For special cases such as when ACTOR is p*ssed off or whatever.
+; E.g. when waiting for something, "I'm getting p*ssed off.",
+; "I'm getting bored sh*tless.", "B*llocks to this.", etc.
+;
+.SPECIALNPCGOLDSINGING
+;
+ if descriptionmode=ibrief then nogoldatall ;*no singing if brief mode*
+ x1=startliedowntable
+ add x1,actor
+ x2=list7(x1)
+ if x2<>0 then nogoldatall ; don't sing if lying down
+ random x1
+ if x1>96 then nospecialgold
+ if actor=daisy then specialdaisysinging
+.nospecialgold
+ if x1>230 then @npcgoldsinging ;*see change in npc.txt*
+.nogoldatall
+ return
+;
+; since diasy follows Ingrid on a permanent basis, she doesn't get
+; chance to do any normal goldsinging.
+.specialdaisysinging
+ gosub @printactor
+ m1=3430
+ goto @varymessagedot
+;

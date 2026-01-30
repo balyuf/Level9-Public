@@ -1,0 +1,298 @@
+; TABLE DEFINITIONS
+ ORG 0
+start
+ dc.l LIST1-start
+; MOVEABLE OBJECT START
+ dc.l $8000 ; OBJECT CURRENT
+ dc.l $8000+NUMOBJ ; HI OBJECT CURRENT
+ dc.l LIST4-start ; tramlines for mobiles
+ dc.l MATHSTABLE-start
+ dc.l $8000+NUMOBJ+NUMHIOBJ+OUTPUTBUFFER+SCORETABLE+OBJTABLE+IBUFFER 
+ dc.l $8000+NUMOBJ+NUMHIOBJ ; OUTPUT BUFFER
+ dc.l $8000+NUMOBJ+NUMHIOBJ+OUTPUTBUFFER
+ dc.l $8000+NUMOBJ+NUMHIOBJ+OUTPUTBUFFER+SCORETABLE+OBJTABLE
+ dc.l ENDTABLE-start
+;---
+; CONTAINER POSITONS
+ON EQU 1
+UNDER EQU 2
+BEHIND EQU 3
+CARRIED EQU 4
+WORN EQU 5
+HIDDEN EQU 6
+IN EQU 7
+HANGINGFROM EQU 8 ; E.G. TREE
+LOOSESCALE EQU 11
+LIEON EQU 12
+SITON EQU 13
+FORSALE EQU 14
+FASTENEDTO EQU 15 ; E.G. BADGE ON TRADCLADS
+LYINGNEAR EQU 16 ; e.g. where wallet is found 
+;
+OBV EQU $80
+;
+NUMOBJ EQU 150
+NUMHIOBJ EQU NUMOBJ ; NO. OF OBJECTS WITH A HIGH POSITION
+STACK EQU 50
+OUTPUTBUFFER EQU 10
+SCORETABLE EQU 32 ;length of score table
+OBJTABLE EQU 16 ; number of objects which can be specified on one line
+SCRATCH EQU 32 ; GENERAL PURPOSE WS LIST
+IBUFFER EQU 32 ; LENGTH OF INPUT BUFFER
+;
+INVITEHIDDEN EQU 254
+;---
+LIST1
+ dc.b 0,0               ; OBJECT 0
+ dc.b 38,FASTENEDTO     ; BADGE - STARTS IN TRADCLADS 
+ dc.b 11,IN             ; BROOCH - STARTS IN WALLET
+ dc.b 94,0              ; MEDALLION - STARTS IN SHOP
+ dc.b SAVEPLAYER,WORN   ; COLLAR
+ dc.b 35,IN             ; BATPAK - STARTS IN DAGGET
+ dc.b 125,FORSALE    ; TICKET
+ dc.b 0,0               ; JOBCENTRE CARD
+ dc.b 32,IN             ; CORK - STARTS IN BOTTLE
+ dc.b 0,0               ; INVITATION - BEHIND WALLPAPER
+ dc.b 124,FORSALE       ; VALVE
+ dc.b 62,CARRIED        ; WALLET - CARRIED BY SUSPECT. * CONTAINER
+ dc.b 51,HANGINGFROM    ; APPLE
+ dc.b 16,ON             ; PIE - ON PLATE
+ dc.b 33,IN             ;  CUSTARD - IN CUP
+ dc.b 32,IN             ; WINE - IN BOTTLE
+ dc.b 34,IN             ; PLATE - IN BOX. * CONTAINER 
+ dc.b 123,FORSALE       ; 17 - PIZZA
+ dc.b SAVEPLAYER,WORN   ; COLLAR
+ dc.b 36,WORN           ; HELMET - STARTS ON DUMMY
+ dc.b SAVEPLAYER,WORN   ; VISOR
+ dc.b 0,0               ; 21
+ dc.b 60,FORSALE        ; FLAG - CARRIED BY FLAGSELLER
+ dc.b 70,FORSALE        ; BOUQUET 
+ dc.b 70,FORSALE        ; POT PLANT
+ dc.b 70,FORSALE        ; WREATH
+ dc.b 124,FORSALE       ; CAMERA 
+ dc.b 0,0               ; CLOCK
+ dc.b 61,FORSALE    ; NEWSPAPER
+ dc.b 52,LOOSESCALE     ; SHIELD - STARTS ON BEHEMOTH
+ dc.b 0,0               ; 30
+ dc.b 0,0               ; 31
+ dc.b 121,FORSALE        ; BOTTLE, STARTS FULL OF WINE
+ dc.b 36,CARRIED      ; CUP - STARTS FULL OF CUSTARD. CARRIED BY KIM
+ dc.b 73,FORSALE        ; BOX - STARTS FULL OF PIE/PLATE
+ dc.b 122,FORSALE        ; DAGGET - STARTS FULL OF BATPAK * CONTAINER
+ dc.b 106,BEHIND       ; 36 - DUMMY OF KK. STARTS BEHIND SCREEN
+ dc.b 36,WORN          ; LEOTARD - STARTS ON DUMMY
+ dc.b SAVEPLAYER,WORN  ; TRADCLADS
+ dc.b 174,0            ; ALIEN COSTUME
+ dc.b 212,0          ; 40 - BENCH
+ dc.b 0,0           ; 41
+ dc.b 0,0           ; 42
+ dc.b 0,0           ; 43
+ dc.b 0,0           ; 44
+ dc.b 0,0           ; 45
+ dc.b 0,0           ; 46
+ dc.b 0,0           ; 47
+ dc.b 0,0           ; 48
+ dc.b 0,0           ; 49
+;---
+ dc.b 0,0           ; GATE
+ dc.b 210,0         ; TREE
+ dc.b 226,0         ; BEHEMOTH
+ dc.b 0,0           ; WORM
+ dc.b 0,0           ; 124
+ dc.b 141,0         ; CARPET
+ dc.b 0,0           ; CLEANING DROID
+ dc.b 0,0           ; CLEANING DROID
+ dc.b 0,0           ; CLEANING DROID
+ dc.b 0,0           ; BAND
+ dc.b 27,OBV        ; FLAGSELLER
+ dc.b 34,OBV        ; NEWSVENDOR
+ dc.b 25,0             ; POLICE SUSPECT 
+ dc.b 0,0           ; TRAMP
+ dc.b 0,0           ; TOURISTS + GUIDE
+ dc.b 0,0           ; TOURISTS + GUIDE
+ dc.b 0,0           ; WARRIOR / ALIEN
+ dc.b 0,0           ; RIVERBOAT
+ dc.b 0,0           ; 138
+ dc.b 0,0           ; 139
+ dc.b 95,OBV        ; 70 - ASSISTANT 
+ dc.b 103,OBV       ; JOB CENTRE DROID
+ dc.b 0,0           ; CONSULTANT
+ dc.b 93,OBV        ; PIE-MAN
+ dc.b 111,0         ; CUSTODIAN
+ dc.b 0,0           ; FUZBOT
+ dc.b 0,0           ; PICKET
+ dc.b 0,0           ; QUEUE
+ dc.b 174,0         ; TECHNICIANS
+ dc.b 146,0         ; WALDROIDS
+ dc.b 0,0           ; 150
+ dc.b 0,0           ; 151
+ dc.b 0,0           ; 152
+ dc.b 0,0           ; 153
+ dc.b 0,0           ; 154
+ dc.b 86,ON         ; 85 - ARM OF BANDIT
+ dc.b 110,0         ; ONE ARM BANDIT
+ dc.b 0,OBV         ; BED
+ dc.b 0,0           ; 88
+ dc.b 0,0           ; BUTTONS
+ dc.b 193,0         ; CRACK WHERE BED WILL APPEAR 
+ dc.b 0,0           ; GRILL
+ dc.b 15,0          ; JUNKHEAP
+ dc.b 0,0           ; INDICATOR LIGHTS
+ dc.b 11,0          ; CAR MARKS
+ dc.b 0,0           ; MANHOLE COVER
+ dc.b 24,0          ; MEMORIAL
+ dc.b 0,0           ; 97
+ dc.b 160,0         ; MIRROR
+ dc.b 148,0         ; JOBCENTRE NOTICE
+ dc.b 192,0         ; BODYMAINT NOZZLE
+ dc.b 166,0         ; FOAM ORIFICE
+ dc.b 0,0           ; PARTITION
+ dc.b 193,0         ; POSTER (TV) B
+ dc.b 173,0         ; ALIEN SAUCER
+ dc.b 166,0         ; SCANNERS
+ dc.b 129,OBV          ; SCREEN AROUND MUSEUM OBJECTS
+ dc.b 15,0          ; 107 - SIGNBOARD
+ dc.b 0,0           ; WALLPAPER
+ dc.b 0,0           ; 109
+ dc.b 0,0
+ dc.b 223,OBV      ; CREVICE
+ dc.b 131,0         ; 112 - COUCH
+ dc.b 0,OBV        ; 113 - CHAIR
+ dc.b 0,0
+ dc.b 0,0          ; 115
+ dc.b 0,0
+ dc.b 0,0 
+ dc.b 0,0
+ dc.b 0,0
+ dc.b 0,0          ; HOLE IN GARDEN WALL - 120
+ dc.b 90,OBV       ; 121 - TEMPLE DROID SELLER
+ dc.b 91,OBV       ; 122 - PET SHOP DROID
+ dc.b 92,OBV       ; 123 - KIOSK DROID
+ dc.b 96,OBV        ; HARDWARE WAREHOUSE DROID
+ dc.b 97,OBV        ; TRAVEL AGENTR DROID
+ dc.b 106,OBV       ; PYRAMID RECEPTIONIST
+ dc.b 0,0
+ dc.b 0,0
+ dc.b 0,0
+ dc.b 0,0          ; 130
+ dc.b 0,0
+ dc.b 0,0
+ dc.b 0,0
+ dc.b 0,0
+ dc.b 0,0          ; 135
+ dc.b 0,0
+ dc.b 0,0
+ dc.b 0,0
+ dc.b 0,0
+ dc.b 0,0          ; 140 - PLAYER
+SAVEPLAYER EQU 139
+PLAYER EQU 140
+;---
+ENDOBJECTS
+LIST4
+; Tramlines for mobiles
+;
+; Worm
+ dc.b 0
+ dc.b 215
+ dc.b 216
+ dc.b 217
+ dc.b 218
+ dc.b 211
+ dc.b 212
+ dc.b 213
+ dc.b 214
+ dc.b 215
+ dc.b 210
+ dc.b 211
+ dc.b 219 ; outside garden
+ dc.b 220
+ dc.b 221
+ dc.b 222
+ dc.b 223
+ dc.b 225
+ dc.b 224
+ dc.b 232
+ dc.b 233
+ dc.b 234
+ dc.b $FF ; stop!
+ dc.b 0
+; tourists + guide
+ dc.b 130
+ dc.b 85
+ dc.b 86
+ dc.b 129
+ dc.b 129
+ dc.b 86
+ dc.b 85
+ dc.b 130
+ dc.b 0
+; now suspect wandering round park
+ dc.b 33
+ dc.b 24
+ dc.b 24
+ dc.b 25
+ dc.b 26
+ dc.b 27
+ dc.b 28
+ dc.b 29
+ dc.b 30
+ dc.b 31
+ dc.b 32
+ dc.b 0
+; now cleaning droids
+ dc.b 2
+ dc.b 1
+ dc.b 3
+ dc.b 175
+ dc.b 176
+ dc.b 178
+ dc.b 179
+ dc.b 180
+ dc.b 179
+ dc.b 181
+ dc.b 179
+ dc.b 182
+ dc.b 179
+ dc.b 178
+ dc.b 176
+ dc.b 177
+ dc.b 176
+ dc.b 183
+ dc.b 184
+ dc.b 183
+ dc.b 15
+ dc.b 183
+ dc.b 176
+ dc.b 175
+ dc.b 3
+ dc.b 0
+; now aliens / dumpy droids
+ dc.b 174
+ dc.b 173
+ dc.b 172
+ dc.b 173
+ dc.b 174
+ dc.b 0
+;
+;
+MATHSTABLE
+; for +- 3^N WHERE N=0 .. 12
+; +-1
+ dc.b 1,0,0,0,0,0
+ dc.b 3,0,0,0,0,0
+ dc.b 9,0,0,0,0,0
+ dc.b 7,2,0,0,0,0
+ dc.b 1,8,0,0,0,0
+ dc.b 3,4,2,0,0,0
+ dc.b 9,2,7,0,0,0
+ dc.b 7,8,1,2,0,0
+ dc.b 1,6,5,6,0,0
+ dc.b 3,8,6,9,1,0
+ dc.b 9,4,0,9,5,0
+ dc.b 7,4,1,7,7,1
+ dc.b 1,4,4,1,3,5
+;
+;
+ENDTABLE
+;---

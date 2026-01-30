@@ -1,0 +1,37 @@
+#!/bin/bash
+
+usage() {
+  echo "Usage: $0 [options] <name>"
+  echo
+  echo "Options:"
+  echo "--help: this usage message"
+  echo
+  exit 1
+}
+
+if ! type -P m68k-linux-gnu-as >/dev/null
+then
+  echo "Please install binutils-m68k-linux-gnu ..."
+  echo "On Ubuntu Linux: sudo apt install binutils-m68k-linux-gnu"
+  echo "On Rocky Linux:  sudo dnf install binutils-m68k-linux-gnu"
+  echo
+  usage
+fi
+
+name=""
+while [[ $# -gt 0 ]]
+do
+  case $1 in
+    --help) usage ;;
+    --*) echo "Unrecognized option: $1"; usage ;;
+    *) name=$1 ;;
+  esac
+  shift
+done
+if [[ -z $name ]]; then usage; fi
+
+if [[ ! -f $name.s ]]; then echo "The file $name.s was not found."; exit 2; fi
+
+m68k-linux-gnu-as -M -o $name.o $name.s
+m68k-linux-gnu-objcopy -O binary $name.o $name.bin
+rm $name.o

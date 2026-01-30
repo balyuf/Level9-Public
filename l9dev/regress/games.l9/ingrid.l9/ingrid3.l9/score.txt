@@ -1,0 +1,98 @@
+; Standard adventure sources 14/5/88
+;
+; score code
+;
+; 14/5/88
+
+ begin
+
+.CalcScore
+; return X4=current score
+
+;*
+; add 10 points for each item of evidence OWNED
+ object=mintreasure
+ pos=user
+ hipos=nonspecific
+ x8=10 ; score addition
+ x9=0 ; tally
+ evidenceowned=0 ; used for end game test
+.scoretreasure
+ if object<>tape then treasurenottape
+ if messagerecorded<>blankmessage then treasurenottape
+; don't score for tape with message recorded on it
+ x1=8
+ gosub @clearscore ; also, clear "see tape" cell if tape is blank
+ goto treasurenotowned
+.treasurenottape
+ gosub @checkobjectpos
+ if result=false then treasurenotowned
+ add x9,x8 ; add 10 to tally
+ add evidenceowned,c1
+.treasurenotowned
+ add object,c1
+ if object<maxtreasureplus1 then scoretreasure
+;*
+
+ x1=32 ; start of score table
+ x4=x9 ;x4=0 ;*
+
+.CalcScore1
+ x2=list7(x1)
+ if x2<128 then calcScoreNotNegative
+; convert negative 8 bit number to negative 16 bit
+ x3=65280
+ add x2,x3
+
+.calcScoreNotNegative
+ add x4,x2
+ add x1,c1
+ if x1<ScMaxPlus1 then CalcScore1
+
+ add x4,GeneralScoreAddition
+ add x4,lastpartscore ;*****
+ return
+;---
+.SCORE
+ gosub @SetupRoom ; >> PETE 29/9/88 
+ MESSAGE 2240 ; you score
+ 
+.PRINTSCORE
+ gosub @CalcScore
+ x1=x4 ;*
+ IF X4<30000 THEN SCORE1 ; failsafe test to prevent negative score
+ message 2243 ; minus sign
+; x1=x4 ;*
+ x4=0
+ sub x4,x1
+
+.SCORE1
+ PRINT X4 ; score
+ sub x4,lastpartscore ;*****
+ M1=2249 ; message below lowest rating
+ MESSAGE 2242 ; out of 400 and are
+ if x1>30000 then @PrintM1Dot ;* rating for -ve score is 2249
+ X1=40 ; size of score categories (max score, 400, has unique rating)
+.SCORE2
+ SUB x4,X1
+ ADD M1,C1
+ IF x4<NEGATIVE THEN SCORE2
+ goto @printM1dot
+;---
+.AddScore10
+ x2=10
+ goto AddScorex2
+
+.AddScore20
+ x2=20
+ goto AddScoreX2
+
+.ClearScore
+ x2=0
+
+.AddScoreX2
+ x3=32
+ add x1,x3
+ list7(x1)=x2
+ return
+;---

@@ -1,0 +1,18 @@
+; Standard Adventure source, copyright (C) 1988 Level 9 Computing.
+;
+; PCONST.TXT, Part-specific constants, to distinguish between parts of 
+; game. This file must be different for each part.
+;
+CONST
+ CONSTANTPARTNUM=3
+ part1=0
+ part2=0
+ part3=1
+;
+ NOTpart1=1
+ NOTpart2=1
+ NOTpart3=0
+;
+; Ingrid's Back! has 5/5/5 or 3/3/3 for 16 bit machines
+ alternatives16=5 
+ alternatives8=3 ; set to 10 for 16 bit versions

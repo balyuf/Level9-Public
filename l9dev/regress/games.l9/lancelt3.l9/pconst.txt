@@ -1,0 +1,24 @@
+; Standard adventure source, copyright (C) 1987 Level 9 Computing.
+;
+; PCONST.TXT, Part-specific constants, to distinguish between parts of 
+; game. This file must be different for each part.
+;
+CONST
+ CONSTANTPARTNUM=3
+ part1=0
+ part2=0
+ part3=1
+
+ NOTpart1=1
+ NOTpart2=1
+ NOTpart3=0
+;
+ l1=0
+ l2=0
+ l3=1
+
+ NotL3=0
+
+; Lancelot has 10/5/10 for P1/P2/P3 on 16 bit machines
+ alternatives16=10
+ alternatives8=3 ; set to 10 for 16 bit versions

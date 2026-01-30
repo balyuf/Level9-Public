@@ -1,0 +1,54 @@
+#!/bin/bash
+
+usage() {
+  echo "Usage: $0 [options]"
+  echo
+  echo "Options:"
+  echo "--help: this usage message"
+  echo "--old: for strict binary compatibility with older games"
+  echo "--no-table: do not assemble table.txt into table.dat"
+  echo "--no-message: do not squash message.txt into squash.dat"
+  echo "--bugcomp: enable bugwards compatibility (e.g. for conditional compilation)"
+  echo "--oddacode: do not align acode in gamedata.dat"
+  echo "--i8086: generate MC code for PC"
+  echo "--splitdata: generate split acode and gamedata"
+  echo
+  exit 1
+}
+
+if ! type -P m68k-linux-gnu-as >/dev/null
+then
+  echo "Please install binutils-m68k-linux-gnu ..."
+  echo "On Ubuntu Linux: sudo apt install binutils-m68k-linux-gnu"
+  echo "On Rocky Linux:  sudo dnf install binutils-m68k-linux-gnu"
+  echo
+  usage
+fi
+
+old=""
+bugcomp=""
+oddacode=""
+no_table=""
+no_message=""
+i8086=""
+splitdata=""
+while [[ $# -gt 0 ]]
+do
+  case $1 in
+    --help) usage ;;
+    --old) old=$1 ;;
+    --bugcomp) bugcomp=$1 ;;
+    --oddacode) oddacode=$1 ;;
+    --no-table) no_table=$1 ;;
+    --no-message) no_message=$1 ;;
+    --i8086) i8086=$1 ;;
+    --splitdata) splitdata=$1 ;;
+    --*) echo "Unrecognized option: $1"; usage ;;
+  esac
+  shift
+done
+
+path=`dirname $0`
+if [[ -z $no_table ]]; then $path/l9tablegen $old; fi
+if [[ -z $no_message ]]; then $path/l9squash; fi
+$path/l9comp $bugcomp $oddacode $i8086 $splitdata

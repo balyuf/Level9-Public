@@ -1,0 +1,295 @@
+; AAVars.txt
+;
+; M.J.Austin Nov 1988
+;
+; Copyright (C) 1988 Level 9 Computing
+;
+ var
+; LoopCounter1 LoopCounter2
+ c4
+ PrintX PrintY  
+ LeftMargin ; margin for printing code.
+ TopMargin
+; RepeatCount
+; SelectedLine
+; FirstLine
+ xsize ysize zsize
+ size
+ ObjectNumber
+ Header
+ ObjectNumberType
+ MinXZH MinCompressed MinAnimation MinCell
+ MinRaster
+ byte1 Byte2 Byte3
+ CurrentAnimationY
+; ObjectSizeIncrease ItemSizeIncrease
+; HighlightedX HighlightedY CurrentArg HighlightedArg
+; AniViewMode ; 0 for script/1 for preview
+; PixelCursorH PixelCursorX
+; XZHFlashCounter2
+ AA CC EE ; ACB words
+ opcode num SP z h ACBHeader
+; PixelCursorY
+
+; px1
+
+; TextAreaSaved
+; SchedulerX1
+; SX1
+; bx1 ; used in save/display backdrop ONLY
+; tx1
+ ViewMapBuilt
+; PlayerPixelX PlayerPixelZ PlayerPixelH
+; FlashCount CursorIsOn
+
+; PlayerPixelXSpeed
+; crx1 crx2 ; for use in DoCr only.
+ MaxX
+ dx1 dx2 dx3 dx4 dx5 dx6 dx7
+; ix1 ix2 ix3 ix4
+ dresult
+; ACBsOnly XZHCursorX XZHCursorZ XZHCursorH
+; UseMC
+; vblx1 vblx2 vblx3
+ CursorACB
+ dv1 dv2 dv3 dv4 dv5 dv6
+ ACBPtr
+ CurrentStore ; for z-sorting sprites on output
+; ACBLoopBreaker
+; EntryV1 ; really only needed for editor
+ ExitOffsets
+ PlayerACB
+ RasterOffset
+ RoomCDWidth
+
+; shared between user interface task and graphics task...
+; KeyPadDirection LastRequestedDirection
+ c16 c32
+
+; ClimbingStairs ; npc currently climbing stairs
+; StairsZ ; Z pos of stairs
+; StairsX ; X pos of stairs
+; ExecutingCommand ; set when player is executing a menu command
+; ExecutingRacetrack ; set when player executing a racetrack (e.g. 
+; an involuntary distraction)
+; JustArrived ; flag set when npc just arrived at a destination pos
+; MenuText MenuData
+;
+; WantMenu ; set in user interface task, checked by strategy
+; GameLoopTimer ; incremented every game loop
+; NpcLoopTimer ; incremented every npc activations loop
+; UserDisabled ; set when manual control disabled
+; FastMode ; set when game runs without display
+; TestHiresCoords ; flag set when hires co-ords should be tested 
+; when doing people collision, as an oppose to using on-screen co-ords
+
+ ReturnCode CurrentSquare 
+ PointOnMap
+
+ ACBStart ; now a variable so that BuildAndDisplayFrame can 
+; be used for room animation only
+
+; GoalNowX GoalNowZ ;coords right now
+ 
+ FireKey FireKeyChange LastFireKey
+ LeftKey RightKey UpKey DownKey XSpeed YSpeed
+
+ m1 m2
+ TextBoxDisplayed TextBoxWidth
+ PlayerDirection
+ PlayerX PlayerZ
+
+ PleaseStopPlayer ; set to non-zero if something wants
+; the player to stop walking.
+ result
+
+
+
+ C0 C1 C2 C3 ; 
+ C5 C7 C9 ;
+ C6 C8 C10 ; "Constants" with corresponding values
+ x y
+
+; gunfight stuff:
+ length height  positionx positiony; variables for gunfight 
+ Hit             ; flag for hit in gunfight
+ arraycount
+
+; WaitingForInput ; interlock for continous npc actions
+; InputX1 InputX2 ; for use by input routine
+; CSx1            ; CalcScreenAddress
+ object
+; IBMScrollOffset
+; Joystick joystickInUse
+; Debug1 Debug2 Debug3 Debug4 ;!
+
+; graphics task vars...
+; gxdirection gydirection
+; g1 g2 g3 g4
+
+;framelimiting variables:
+;; framelimiting
+ FrameCount DisplayedFrameCount
+
+; LastKey ;Joystick value
+
+; PRINT.TXT variables needing common access across overlays...
+ PrintRasterNum
+ FirstAsciiInFont
+ FontHeight ; character height, in pixels
+
+
+
+
+ Won
+ GameOver
+
+ RepeatScroll ; countdown timer for TriggerScroll
+
+
+; text printing vars...
+ ForegroundColour
+ BackgroundColour ; (0-16),   
+ RasterPrintWidth ; = width of text, 
+; RasterPrintRaster 
+ RasterPrintX
+ RasterPrintY
+ CurrentDO
+ CurrentPrintRaster
+
+
+
+ UpdateACBs ; false if acbs are to be frozen for a while,
+; e.g. whilst displaying menu
+
+; MeetingPerson ; set to Identikit number of person to meet,
+; if we're due to meet them.
+ Town ; contains number of town/map location being visited
+ Location ; contains number of location (e.g. within town) 
+; being visited by player.
+
+ NextMusic ; contains next music
+
+ ScrollXDir ScrollYDir
+ ScreenX ScreenY
+
+ TellOtherPlayer ; set to 1 if TownUpdateRoutine is to
+; pass on the change to the other player.
+ PeopleVarData ; offset within TownVarData()
+
+ AccostCounter ; time till someone in the room
+; thinks about accosting Billy - presumably with some
+; interesting other or other.
+
+ PosRange NegRange ; size of CD for HiresCD
+
+ TwoPlayerMode
+
+ IdentikitTableBase ; offset within TVD.
+
+
+
+
+
+
+
+ WantedDirection ; mainly for compatability with walkabout code.
+
+
+ CurrentScreen
+
+ CurrentRoom RoomNum
+ MapNumber
+
+ MenuDisplayed
+ MenuOffset ; offset of menu tables within IntroTables
+ MenuNumber ; menu we want to display
+
+ PlayersName ; contains 2 is Billy, 3 if Pat. Corresponds to
+; message number in all parts.
+
+ cursory
+ CursorX CursorZ CursorH ; position of people
+ CursorSpeed TimeHeld
+ KeyHeld MaxCursorSpeed CrossHairACB
+
+ StructureFile ; set to either TownStructures or IdentikitStructures
+
+ lastTunePlayed
+ PersonDisplayed ; set to true when there is
+ SubPlotsOffset ; offset of ptrs within TownVarData
+
+ ThisPersonVarData ; TownVarData(PersonVarData) is for NPC we're talking to.
+
+ SubPlotFlags ; offset in TVD of flags and counters etc.
+; used in subplots - see arbitrary offsets (SPFxxxxx) defined
+; in AACONST.TXT
+
+ GameOverTimer
+ ACBEnd
+ ACBSearchStart
+
+ PlayerReputation
+ PlayerGold
+ ObjectsInformation ; used in Strategy.txt as an offset into TVD
+
+;; LastMapX LastMapY
+ TicksSinceLawful
+ RobberyTillMDGoesBust ; amount of money that Billy still
+; needs to steal before the next Murphy-Dolan ranch goes bust.
+
+ PlayerIncome ; amount of gold earned by player since last
+; screen - used mainly for Billy robbing things, to determine
+; when another Murphy Dolan ranch goes out of business.
+ ExtraNewsStory ; message number of extra news stories... e.g.
+; ranches going out of business etc. Commonly in range
+; 400+Location number.
+
+;; BillysCash ; Billy's global cash, used in card game
+
+ Round ; game round, passed from main game
+ RoundsToPlay ; number of game rounds to win the brawl
+
+ NextMeetingMenu ; message printed next time we leave the
+; map to visit somewhere: like the random meetings, but can
+; be easily programmed by other code. Used for when
+; the law enforcement budget runs out and we have to
+; fire deputies. Also when a town rebels.
+; NextMeetingMessage ; like NextMeetingMenu, but just a quick message
+; always from the player's second in command
+
+ PatWarnings ; number of warnings player has had about imminent loss of game
+ TexanDeputies ; number of free deputies from Texas
+
+ PlayerGang ; set to LOCATION of gang which has been recruited
+
+ HourglassState ; =0 -> not displayed
+; =1 -> want it displaying
+; =2 -> currently displayed
+
+ Difficulty ; current difficulty of arcade game.  Standard
+; is 256, will usually get harder as game progresses.
+; If it doubles, the game should be twice as hard.
+
+ BillyLives ; number of lives remaining (number of times
+; he can get nursed)
+
+ TotalGoldStolen ; total amount of gold stolen in game
+
+ SoundOn ; 0 if sound is disabled, 1 if sound FX are on
+ MusicOn ; 0 if music is disabled, 1 if music is on
+
+ SmoothScroller ; 0 for jump scrolling, non-zero for smoothy
+
+ CopyProtectChecked ; 0 until it's been checked.
+
+ ScrollDirectionDone ; set when ScrollDirection has been
+; done in a particular frame - reset at the end of DisplayEverything
+ PlotLogicalDone ; set when ScrollDirection has been
+; done in a particular frame - reset at the end of DisplayEverything
+
+
+ Language 
+ EnemyName ; name for duel: Pat, Billy or $ff for other.
+
+ CGAMode ; set to non-zero for CGA2/4. 0 for EGA/VGA etc.

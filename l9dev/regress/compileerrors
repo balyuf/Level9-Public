@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd ${0%/*}
+rm -f errors.log
+
+echo "Compiling errors.txt" >>errors.log
+echo "$PWD/errors.txt"
+../l9comp --testcomp >>errors.log
+cmp errors.ref errors.log

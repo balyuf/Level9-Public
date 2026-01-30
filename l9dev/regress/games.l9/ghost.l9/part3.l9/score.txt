@@ -1,0 +1,88 @@
+; Standard adventure sources 14/5/88
+;
+; score code
+;
+; 14/5/88
+
+ begin
+
+.CalcScore
+; return X4=current score
+ x1=32 ; start of score table
+ x4=0
+
+.CalcScore1
+ x2=list7(x1)
+ if x2<128 then calcScoreNotNegative
+; convert negative 8 bit number to negative 16 bit
+ x3=65280
+ add x2,x3
+
+.calcScoreNotNegative
+ add x4,x2
+ add x1,c1
+ if x1<ScMaxPlus1 then CalcScore1
+
+ add x4,GeneralScoreAddition
+
+ cif NotPart1
+ add x4,lastpartscore
+ cend
+
+ if x4>1000 then calcscorenearlymax ; >> Pete 21/9/89 
+ if x4<980 then calcscorenearlymax ; >> Pete 21/9/89 
+ x4=1000 ; if nearly max score, make up to max ; >> Pete 21/9/89 
+.calcscorenearlymax 
+
+ return
+;---
+.SCORE
+ MESSAGE 2240 ; you score
+ 
+;;.PRINTSCORE ; >> Pete 14/9/89 
+ gosub @CalcScore
+ x1=x4
+ IF X4<30000 THEN SCORE1 ; failsafe test to prevent negative score
+ message 2243 ; minus sign
+ x4=0
+ sub x4,x1
+
+.SCORE1
+ PRINT X4 ; score
+
+ cif NotPart1
+ sub x4,lastpartscore
+ cend
+
+ M1=2249 ; message below lowest rating
+ MESSAGE 2242 ; out of 400 and are
+ if x1>30000 then @forceM1Dot ;* rating for -ve score is 2249
+ X1=40 ; size of score categories (max score, 400, has unique rating)
+.SCORE2
+ SUB x4,X1
+ ADD M1,C1
+ IF x4<NEGATIVE THEN SCORE2
+ goto @forcem1dot
+;---
+.AddScore10
+ x2=10
+ goto AddScorex2
+
+.AddScore20
+ x2=20
+ goto AddScoreX2
+
+;;.AddScore25 ; >> Pete 14/9/89 
+;; x2=25 ; >> Pete 14/9/89 
+;; goto AddScoreX2 ; >> Pete 14/9/89 
+
+.ClearScore
+ x2=0
+
+.AddScoreX2
+ x3=32
+ add x1,x3 ; add offset to start of score table
+ list7(x1)=x2
+;;.aesret ; >> Pete 14/9/89 
+ return
+;---

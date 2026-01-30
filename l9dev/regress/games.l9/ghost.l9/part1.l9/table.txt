@@ -1,0 +1,1554 @@
+; Spook Part 1 source, copyright (C) 1987 Level 9 Computing.
+;
+; TABLE.TXT, assembler format data for tables, a.k.a lists/arrays. 
+; (Save the assembled data as TABLE.DAT). 
+;
+; You must start all DEFWs on EVEN boundaries, else subsequent code 
+; seems to be padded to make it even (according to the GENST listing, 
+; anyway). The EVEN directive inserts a padding byte if appropriate.
+;
+ ORG 0
+starttables
+ dc.l LIST1-starttables ; MOVEABLE OBJECT START
+ dc.l $8000 ; OBJECT CURRENT
+ dc.l $8000+MaxObject ; HI OBJECT CURRENT
+ dc.l LIST4-starttables ; scenery table
+ dc.l NPCINITIAL-starttables ; npc initial and 'floor pointers'
+ dc.l $8000+LIST23SIZE ; 6 - NPC current attributes, stack
+ dc.l $8000+LIST236SIZE ; 7 - output buffer,scoretable
+ dc.l list8-starttables ; 8 - assorted fixed system tables
+ dc.l $8000+LIST2367SIZE ; 9 - input table,object table
+ dc.l ENDTABLE-starttables
+;---
+; CONTAINER POSITONS
+ON EQU 1
+UNDER EQU 2
+BEHIND EQU 3
+CARRIED EQU 4
+WORN EQU 5
+PREPIN EQU 7
+HANGINGFROM EQU 8 ; E.G. TREE
+pushedby equ 11
+LIEON EQU 12
+SITON EQU 13
+fastenedto equ 14
+;=====
+; special to spook.1
+;; lyingon equ 15
+lodgedin equ 15
+;=====
+;
+; additions to high initial position
+OBV EQU $80
+ita equ 0
+itan equ $10 ; starts with a vowel
+singularsome equ $20 ; "some cheese is tasy"
+he equ $30
+she equ $40
+pluralsome equ $50 ; "some ropes are strong"
+you equ $60
+properMale equ $70
+ProperFemale equ $70
+; ProperFemale is handled by SpecialConjugate
+;
+MaxObject EQU 189 ; should be two bigger than it really needs to be
+NUMHIOBJ EQU MaxObject ; NO. OF OBJECTS WITH A HIGH POSITION
+minnpc equ 1
+maxnpc equ 64
+npctablesize EQU (MaxNpc+1)*8
+npcstacksize equ 260 ;300
+;=====
+
+OUTPUTBUFFER EQU 32
+SCORETABLE EQU 40 ;length of score table
+OBJTABLE EQU 16 ; number of objects which can be specified on one line
+;
+;
+LIST23SIZE EQU MaxObject+NUMHIOBJ
+LIST236SIZE EQU LIST23SIZE+npctablesize+npcstacksize
+LIST2367SIZE EQU LIST236SIZE+OUTPUTBUFFER+SCORETABLE+170+maxnpc
+; 120 is num rooms
+;;LIST23678SIZE equ LIST2367SIZE ; >>Mike 8/8/87 - reduced from ST version
+;>>mike 8/8/87 LIST23678SIZE EQU LIST2367SIZE+OBJTABLE
+;
+;---
+LIST1
+ dc.b 0,0               ; OBJECT 0
+;
+; people
+USER EQU 1
+ dc.b you,44		; 1 USER (ingrid)
+;
+; note that the positions of ghosts 2-9 are not initialised 
+; until night-time
+joe equ 2
+ dc.b propermale,49	; 2 joe
+bert equ 3
+ dc.b propermale,59	; 3 bert
+edna equ 4
+ dc.b properfemale,59	; 4 edna
+david equ 5
+ dc.b propermale,52	; 5 david
+alex equ 6
+ dc.b propermale,0	; 6 alex
+edith equ 7
+ dc.b properfemale,11	; 7 edith
+colonel equ 8
+ dc.b propermale,56	; 8 colonel
+violet equ 9
+ dc.b properfemale,45	; 9 violet
+;
+mourners equ 10
+ dc.b obv+pluralsome,44	; 10 mourners
+man equ 11
+ dc.b he,44		; 11 man (criminal)
+supervisor equ 12
+ dc.b obv+propermale+prepin,cart	; 12 supervisor
+workman equ 13
+ dc.b obv+propermale,15	; 13 workman
+vandals equ 14
+ dc.b pluralsome,51	; 14 vandals
+;
+; animals
+dog equ 15
+ dc.b ita,3		; 15 dog
+ dc.b 0,0		; 16 
+ dc.b 0,0		; 17 
+ dc.b 0,0		; 18 
+ dc.b 0,0		; 19
+ dc.b 0,0		; 20
+ dc.b 0,0		; 21
+ dc.b 0,0		; 22
+ dc.b 0,0		; 23
+ dc.b 0,0		; 24
+ dc.b 0,0		; 25
+ dc.b 0,0		; 26
+ dc.b 0,0		; 27
+ dc.b 0,0		; 28
+ dc.b 0,0		; 29
+ dc.b 0,0		; 30
+ dc.b 0,0		; 31
+ dc.b 0,0		; 32
+ dc.b 0,0		; 33
+ dc.b 0,0		; 34
+ dc.b 0,0		; 35 
+ dc.b 0,0		; 36 
+ dc.b 0,0		; 37 
+ dc.b 0,0		; 38 
+ dc.b 0,0		; 39
+ dc.b 0,0		; 40
+ dc.b 0,0		; 41
+ dc.b 0,0		; 42
+ dc.b 0,0		; 43
+ dc.b 0,0		; 44
+ dc.b 0,0		; 45
+ dc.b 0,0		; 46
+ dc.b 0,0		; 47
+ dc.b 0,0		; 48
+ dc.b 0,0		; 49
+ dc.b 0,0		; 50
+ dc.b 0,0		; 51
+ dc.b 0,0		; 52
+ dc.b 0,0		; 53
+ dc.b 0,0		; 54
+ dc.b 0,0		; 55
+ dc.b 0,0		; 56
+ dc.b 0,0		; 57
+ dc.b 0,0		; 58
+ dc.b 0,0		; 59
+ dc.b 0,0		; 60
+ dc.b 0,0		; 61
+ dc.b 0,0		; 62
+ dc.b 0,0		; 63
+ dc.b 0,0		; 64
+ dc.b 0,0		; 65
+ dc.b 0,0		; 66
+ dc.b 0,0		; 67
+ dc.b 0,0		; 68 
+ dc.b 0,0		; 69 
+ dc.b 0,0		; 70
+ dc.b 0,0		; 71
+ dc.b 0,0		; 72
+ dc.b 0,0               ; 73
+ dc.b 0,0               ; 74
+ dc.b 0,0               ; 75
+ dc.b 0,0               ; 76
+ dc.b 0,0               ; 77
+ dc.b 0,0               ; 78
+ dc.b 0,0               ; 79
+;
+; now some ordinary objects (80 onwards)..
+ dc.b singularsome,49	; 80 thistledown
+ dc.b 0,50		; 81 petal
+ dc.b 0,53		; 82 dry leaf
+matchbook equ 83
+ dc.b carried,man	; 83 matchbook
+ dc.b 0,44		; 84 pebble
+ dc.b on,mywreath	; 85 white card
+ dc.b on,fadedwreath	; 86 yellow card
+ dc.b lodgedin,dog	; 87 fishbone
+ dc.b prepin,branches	; 88 twig
+ dc.b 0,15		; 89 watch
+bell equ 90
+ dc.b 0,15		; 90 bell
+ dc.b 0,0		; 91 gnomon
+ dc.b 0,0		; 92
+ dc.b 0,0		; 93 
+ dc.b 0,0		; 94 
+ dc.b 0,15		; 95 carrier bag
+ dc.b carried,man	; 96 newspaper
+ dc.b 0,0		; 97 magazine
+ dc.b carried,vandals	; 98 bottle
+shovel equ 99
+ dc.b 0,42		; 99 shovel
+mywreath equ 100
+ dc.b 0,44              ;100 my wreath
+ dc.b 0,59		;101 bert's wreath
+fadedwreath equ 102
+ dc.b 0,59              ;102 faded wreath
+ dc.b 0,0		;103 
+ dc.b 0,0               ;104
+ dc.b 0,0               ;105
+ dc.b 0,0               ;106
+ dc.b 0,0               ;107
+ dc.b 0,0               ;108
+ dc.b 0,0               ;109
+;
+; static objects... (110+)
+button equ 110
+ dc.b 0,15		; 110 button
+switch equ 111
+ dc.b 0,15		; 111 switch
+ dc.b 0,15		; 112 lightbulb
+lock equ 113
+ dc.b prepin,sheddoor	; 113 lock
+ dc.b prepin,lock	; 114 barrel
+ dc.b prepin,lock	; 115 lever 1
+ dc.b prepin,lock	; 116 lever 2
+ dc.b prepin,lock	; 117 lever 3
+ dc.b on,sheddoor	; 118 rope handle
+ dc.b obv+singularsome,11	; 119 gravel
+ dc.b 0,11		; 120 vase
+bush equ 121
+ dc.b obv,45		; 121 bush
+branches equ 122
+ dc.b 0,41		; 122 heap of branches
+ dc.b 0,44		; 123 mound
+vault equ 124
+ dc.b 0,6		; 124 vault
+ dc.b 0,4		; 125 spotlight
+ dc.b 0,3		; 126 thermometer
+ dc.b 0,9		; 127 lawn
+ dc.b 0,9		; 128 seat
+stonework equ 129
+ dc.b singularsome,53	; 129 stoneworn
+ dc.b pluralsome,0	; 130 carvings
+plinth equ 131
+ dc.b 0,0		; 131 plinth
+ dc.b on,plinth		; 132 statue
+ dc.b 0,48		; 133 sundial
+ dc.b 0,0		; 134 broken sundial
+sarcophagus equ 135
+ dc.b 0,52		; 135 sarcophagus
+ dc.b itan+on,sarcophagus	; 136 urn
+ dc.b 0,0		; 137 unmarked time object (pure text)
+sheddoor equ 138
+ dc.b obv,42		; 138 shed door
+ dc.b 0,3		; 139 wall by thermometer
+cart equ 140
+ dc.b obv,3		; 140 cart
+ dc.b 0,0		; 141
+ dc.b 0,0		; 142
+ dc.b 0,0		; 143
+ dc.b 0,0		; 144
+ dc.b 0,0		; 145
+ dc.b 0,0		; 146
+ dc.b 0,0		; 147
+ dc.b 0,0		; 148
+ dc.b 0,0		; 149
+;
+; invisible objects
+ dc.b 0,44		; 150 headstone
+ dc.b 0,44		; 151 grave (150 & 151 follow player)
+ dc.b 0,7		; 152 gate
+ dc.b 0,8		; 153 main gate
+ dc.b 0,4		; 154 spotlight frame
+ dc.b 0,5		; 155 church
+ dc.b 0,4		; 156 therm. from spotl.
+ dc.b 0,6		; 157 therm. from vault
+ dc.b 0,0		; 158 *null*
+ dc.b 0,42		; 159 shed
+ dc.b pluralsome,42	; 160 footprints
+ dc.b 0,51		; 161 cenotaph
+ dc.b pluralsome,50	; 162 marigolds
+ dc.b 0,53		; 163 beech
+ dc.b obv+pluralsome,55	; 164 bushes
+ dc.b 0,51		; 165 flowerbed
+ dc.b pluralsome,57	; 166 crosses
+ dc.b pluralsome+prepin,vault ; 167 carrier bags
+ dc.b 0,0		; 168
+ dc.b 0,6		; 169 wall from vault
+ dc.b 0,15		; 170 shed window (from inside)
+ dc.b 0,42		; 171 (from outside)
+ dc.b pluralsome,0               ;172 company
+ dc.b 0,0               ;173
+ dc.b 0,0               ;174
+ dc.b 0,0               ;175 shed light source
+ dc.b 0,0               ;176 spotlight source
+ dc.b pluralsome,0      ;177 streetlights
+ dc.b 0,0               ;178 illuminated air
+ dc.b 0,0               ;179
+;-------------------------
+;
+; Brief location objects (479+N). See 779+ for examine messages and 
+; 1199+ for their verbose equivalents..
+ dc.b 0,42		; 180 shed
+ dc.b 0,43		; 181 path
+ dc.b 0,40              ; 182 sepulcre
+;
+;---
+ even
+ENDOBJECTS
+terraintable
+LIST4
+; table giving scenery types on grassy plain grid
+m equ 220 ; minsynthroom
+ dc.b m,m,m
+ dc.b m,m,m
+ dc.b m,m,m
+ even
+;---------
+list8
+; table for remarks made by 'PET' - Damosel Maledisant (Galahad in L3)...
+ dc.b 10,0
+ dc.b 11,1
+ dc.b 21,2
+ dc.b 26,4
+ dc.b 56,8
+ dc.b 67,9
+ dc.b 80,11
+ dc.b 119,12
+ dc.b 120,13
+ dc.b 121,14
+ dc.b 130,15
+ dc.b 141,16
+ dc.b 150,17
+ dc.b 151,18
+ dc.b 152,19
+ dc.b 153,20
+ dc.b 154,21
+ dc.b 156,22
+ dc.b 161,23
+ dc.b 162,24
+ dc.b 171,25
+ dc.b 173,27
+ dc.b 174,28
+ dc.b 175,29
+ dc.b 176,30
+ dc.b 182,31
+ dc.b 190,32
+ dc.b 200,33
+;
+; dc.b 255,250 ; add on 250 to "trigger message" numbers...
+;
+ dc.b 0,0
+;
+;---------
+ even
+NPCINITIAL
+list5
+; first we have a dummy entry for npc 0
+; this is used as some pointers to the *other*
+; things which are used in this list
+; (the equivalent of this area in list6 is used for temp workspace)
+;
+ dc.w floorpointers-npcinitial
+ dc.w racetracks-npcinitial
+ dc.w reversaltable-npcinitial
+ dc.w roompictures-npcinitial
+;
+; For greed agression, timidity, obediance, there
+; is a special case - if one of the values is 255, then
+; the npc will always choose that one, if it is possible
+; This is particularly useful for slaves etc.
+; Note that npcs will still respond to attacks etc. - 
+; anything which sets the 'attention flag'
+;
+FRIENDLY EQU 0
+dodge equ 0
+damage equ 0
+;
+; npc 0 has dummy entry used as pointers above
+;
+; dc.b enemy, dodge, attack, hit points, obedience, patience, gold-sing
+; if bit 7 of the "enemy" byte is set, the npc will be inactive
+; until it meets Ingrid
+;
+ dc.b friendly,dodge,10,100,255,1 ; 1 USER
+ dc.w 3300
+ dc.b friendly,dodge,10,100,255,1 ; 2 joe
+ dc.w 3300
+ dc.b friendly,dodge,10,100,255,1 ; 3 bert
+ dc.w 3310
+ dc.b friendly,dodge,10,100,255,1 ; 4 edna
+ dc.w 3310
+ dc.b friendly,dodge,10,100,255,1 ; 5 david
+ dc.w 3320
+ dc.b friendly,dodge,10,100,255,2 ; 6 alex (speed 2 so that he 
+; can be stopped when going back to his grave, and to sleep)
+ dc.w 3330
+ dc.b friendly,dodge,10,100,255,1 ; 7 edith
+ dc.w 3300
+ dc.b friendly,dodge,10,100,255,1 ; 8 colonel
+ dc.w 3340
+ dc.b friendly,dodge,10,100,255,1 ; 9 violet
+ dc.w 3300
+ dc.b friendly,dodge,10,100,255,1 ; 10 mourners
+ dc.w 3350
+ dc.b friendly,dodge,10,100,255,1 ; 11 man
+ dc.w 3360
+ dc.b friendly,dodge,10,100,255,1 ; 12 supervisor
+ dc.w 3370
+ dc.b friendly,dodge,10,100,255,1 ; 13 workman
+ dc.w 3370
+ dc.b friendly,dodge,10,100,255,1 ; 14 vandals
+ dc.w 3380
+ dc.b friendly,dodge,10,100,255,1 ; 15 dog
+ dc.w 3390
+;
+;---
+
+floorpointers
+; part of list5
+; now 'floor pointers'
+; there is one bye pair for each static room - the
+; first byte gives the direction to go inwards
+; and the second byte gives direction for going outwards
+; (i.e. towards the synthesised grid)
+;
+; ** BIG WARNING **
+; all shapes must be simply connected. i.e. given a pair of rooms,
+; you must be able to trace a path between them using only the
+; OUT paths of one OR the other.
+; This is because of the way the follow and GO code works.
+north equ 1
+ne equ 2
+east equ 3
+se equ 5
+south equ 4
+sw equ 6
+west equ 7
+nw equ 8
+up equ 9
+down equ 10
+verbin equ 11
+out equ 12
+cross equ 13
+climb equ 14
+jump equ 15
+
+ dc.b 0 ; room 0 (not used)
+ dc.b 0 ; room 1 (not used)
+ dc.b 0 ; room 2 (not used)
+ dc.b north ; 3
+ dc.b west ; 4
+ dc.b east ; 5
+ dc.b north ; 6
+ dc.b west ; 7
+ dc.b north ; 8
+ dc.b north ; 9
+ dc.b north ; 10
+ dc.b north ; 11
+ dc.b 0 ; 12
+ dc.b 0 ; 13
+ dc.b 0 ; 14
+ dc.b out ; 15
+ dc.b 0 ; 16
+ dc.b 0 ; 17
+ dc.b 0 ; 18
+ dc.b 0 ; 19
+ dc.b 0 ; 20
+ dc.b 0 ; 21
+ dc.b 0 ; 22
+ dc.b 0 ; 23
+ dc.b 0 ; 24
+ dc.b 0 ; 25
+ dc.b 0 ; 26
+ dc.b 0 ; 27
+ dc.b 0 ; 28
+ dc.b 0 ; 29
+ dc.b 0 ; 30
+ dc.b 0 ; 31
+ dc.b 0 ; 32
+ dc.b 0 ; 33
+ dc.b 0 ; 34
+ dc.b 0 ; 35
+ dc.b 0 ; 36
+ dc.b 0 ; 37
+ dc.b 0 ; 38
+ dc.b 0 ; 39
+ dc.b 0 ; 40
+ dc.b 0 ; 41
+ dc.b 0 ; 42
+ dc.b 0 ; 43
+ dc.b 0 ; 44
+ dc.b 0 ; 45
+ dc.b 0 ; 46
+ dc.b 0 ; 47
+ dc.b 0 ; 48
+ dc.b 0 ; 49
+ dc.b 0 ; 50
+ dc.b 0 ; 51
+ dc.b 0 ; 52
+ dc.b 0 ; 53
+ dc.b 0 ; 54
+ dc.b 0 ; 55
+ dc.b 0 ; 56
+ dc.b 0 ; 57
+ dc.b 0 ; 58
+ dc.b 0 ; 59
+ dc.b 0 ; 60
+ dc.b 0 ; 61
+ dc.b 0 ; 62
+ dc.b 0 ; 63
+ dc.b 0 ; 64
+ dc.b 0 ; 65
+ dc.b 0 ; 66
+ dc.b 0 ; 67
+ dc.b 0 ; 68
+ dc.b 0 ; 69
+ dc.b 0 ; 70
+ dc.b 0 ; 71
+ dc.b 0 ; 72
+ dc.b 0 ; 73
+ dc.b 0 ; 74
+ dc.b 0 ; 75
+ dc.b 0 ; 76
+ dc.b 0 ; 77
+ dc.b 0 ; 78
+ dc.b 0 ; 79
+ dc.b 0 ; 80
+ dc.b 0 ; 81
+ dc.b 0 ; 82
+ dc.b 0 ; 83
+ dc.b 0 ; 84
+ dc.b 0 ; 85
+ dc.b 0 ; 86
+ dc.b 0 ; 87
+ dc.b 0 ; 88
+ dc.b 0 ; 89
+ dc.b 0 ; 90
+ dc.b 0 ; 91
+ dc.b 0 ; 92
+ dc.b 0 ; 93
+ dc.b 0 ; 94
+ dc.b 0 ; 95
+ dc.b 0 ; 96
+ dc.b 0 ; 97
+ dc.b 0 ; 98
+ dc.b 0 ; 99
+ dc.b 0 ; 100
+ dc.b 0 ; 101
+ dc.b 0 ; 102
+ dc.b 0 ; 103
+ dc.b 0 ; 104
+ dc.b 0 ; 105
+ dc.b 0 ; 106
+ dc.b 0 ; 107
+ dc.b 0 ; 108
+ dc.b 0 ; 109
+ dc.b 0 ; 110
+ dc.b 0 ; 111
+ dc.b 0 ; 112
+ dc.b 0 ; 113
+ dc.b 0 ; 114
+ dc.b 0 ; 115
+ dc.b 0 ; 116
+ dc.b 0 ; 117
+ dc.b 0 ; 118
+ dc.b 0 ; 119
+ dc.b 0 ; 120
+ dc.b 0 ; 121
+ dc.b 0 ; 122
+ dc.b 0 ; 123
+ dc.b 0 ; 124
+ dc.b 0 ; 125
+ dc.b 0 ; 126
+ dc.b 0 ; 127
+ dc.b 0 ; 128
+ dc.b 0 ; 129
+ dc.b 0 ; 130
+ dc.b 0 ; 131
+ dc.b 0 ; 132
+ dc.b 0 ; 133
+ dc.b 0 ; 134
+ dc.b 0 ; 135
+ dc.b 0 ; 136
+ dc.b 0 ; 137
+ dc.b 0 ; 138
+ dc.b 0 ; 139
+ dc.b 0 ; 140
+;---
+ even
+racetracks
+; sequences of commands which actors obey
+; each is referred to by a 16-bit offset from the start of list5
+; the initial sequences are contained in this table at the start..
+;
+; day time...
+ dc.w 0 ; 0
+ dc.w 0 ; 1
+ dc.w 0 ; 2 joe
+ dc.w 0 ; 3 bert
+ dc.w 0 ; 4 edna
+ dc.w 0 ; 5 david
+ dc.w 0 ; 6 alex
+ dc.w 0 ; 7 edith
+ dc.w 0 ; 8 colonel
+ dc.w 0 ; 9 violet
+ dc.w mournersrt-list5 ; 10 mourners
+ dc.w manrt-list5 ; 11 man
+ dc.w supervisorrt-list5 ; 12 supervisor
+ dc.w workmanrt-list5 ; 13 workman
+ dc.w 0 ; 14 vandals (pissing on graves etc.)
+ dc.w 0 ; 15 dog
+ dc.w 0 ; 16
+ dc.w 0 ; 17
+ dc.w 0 ; 18
+ dc.w 0 ; 19
+;
+; night time...
+ dc.w 0 ; 20
+ dc.w 0 ; 21
+ dc.w joert-list5 ; 22 joe
+ dc.w bertrt-list5 ; 23 bert
+ dc.w 0 ; 24 edna
+ dc.w davidrt-list5 ; 25 david
+ dc.w 0 ; 26 alex
+ dc.w edithrt-list5 ; 27 edith
+ dc.w colonelrt-list5 ; 28 colonel
+ dc.w violetrt-list5 ; 29 violet
+ dc.w 0 ; 30 mourners
+ dc.w 0 ; 31 man
+ dc.w 0 ; 32 supervisor
+ dc.w 0 ; 33 workman
+ dc.w vandalsrt-list5 ; 34 vandals
+ dc.w dogrt-list5 ; 35 dog
+ dc.w 0 ; 36
+ dc.w 0 ; 37
+ dc.w 0 ; 38
+ dc.w 0 ; 39
+;
+; triggered racetracks
+ dc.w 0 ; 40
+ dc.w 0 ; 41
+ dc.w bertobedient-list5 ; 42 bert's obedient racetrack
+ dc.w ednaobedient-list5 ; 43 edna's obedient racetrack
+ dc.w alexrt-list5 ; 44 alex pym is woken up
+ dc.w restartalex-list5 ; 45 alex is left unattended
+ dc.w edithobedient-list5 ; 46 edith's obedient racetrack
+ dc.w davidobedient-list5 ; 47 david's obedient racetrack
+ dc.w colonelobedient-list5 ; 48 colonel's obedient racetrack
+ dc.w restartcolonel-list5 ; 49 colonel is left unattended
+ dc.w dogobedient-list5 ; 50 dog's obedient racetrack
+ dc.w violetobedient-list5 ; 51 violet's obedient racetrack
+;
+StartRt
+; each of the race track entries has a 4-byte entry:
+; VERB PREP NOUN1 NOUN2
+ipin equ 7
+ipwith equ 16
+
+drop equ 107
+attack equ 40
+ifollow equ 113
+open equ 114 ;64
+go equ 96 ; go to room noun1 (=setupgo)
+close equ 140 ; 90
+wait equ 92
+examine equ 100
+take equ 105
+give equ 111
+eat equ 123
+find equ 139
+kill equ 93
+push equ 118
+waitforperson equ 89
+waituntiltime equ 90
+waitforperiod equ 91
+put equ 108
+returnobject equ 136
+gdfind equ 139
+
+Conditional equ 247
+
+ActorVaryMessage equ 248 ; goes straight on in same turn to next step in rt
+WRtActorVaryMessage equ ActorVaryMessage*256
+
+ActorSingleMessage equ 249 ; this completes actor's turn. Like ActorM1Dot
+WActorSingleMessage equ ActorSingleMessage*256
+
+racetrackmessage equ 251
+WRtMessage equ racetrackMessage*256
+
+racetrackvarymessage equ 252
+WRtVaryMessage equ racetrackvaryMessage*256
+
+racetrackgosub equ 253
+WRtGosub equ racetrackGosub*256
+
+racetrackgoto equ 254
+WRtGoto equ racetrackGoto*256
+
+racetrackreturn equ 255
+light equ 165 ; 115
+ride equ  185 ; 135
+
+stand equ 46
+lie equ 47
+drink equ 60
+wear equ 106
+remove equ 109
+
+; nouns...
+people equ 237
+everything equ 234
+nullobject equ 255
+water equ 241
+
+; prepositions...
+to equ 202
+; note that:
+;
+; NOUN1 will always be searched for if not accessible
+; to the verb (using the usual accessability rules)
+;
+; NOUN2 will normally be searched for using the same rules.
+; There are situations where this is awkward - so if the
+; preposition is WITH, then NOUN2 must be carried (or it will
+; be searched for by the npc).
+;
+rtmess equ 5000
+;---
+; mourners leave the grave at start of game
+mournersrt
+ dc.w WActorSingleMessage,rtmess+0 ; mourners begin to leave grave. 
+; police walk a few feet behind rest of mourners, muttering
+;
+ dc.b go,0,43,nullobject ; go path
+ dc.w WActorSingleMessage,rtmess+2 ; ...yes, now he's blown the whole 
+; operation, and now the drugs gang have taken off with the hostage...
+;
+ dc.b go,0,3,nullobject ; go path+thermom
+ dc.b waitforperiod,0,0,nullobject ; wait for supervisor comment
+ dc.w WActorSingleMessage,rtmess+3 ; ...we should never have assigned 
+; him to the case. he was far too incompetent. and now he's probably 
+; cost the life of the hostage
+;
+ dc.b go,0,6,nullobject ; go path+vault
+ dc.w WActorSingleMessage,rtmess+4 ; walked quietly past vault. 
+; one of them patted it casually and made a sick joke about vampires.
+;
+ dc.b go,0,5,nullobject ; go path+church
+ dc.w WActorSingleMessage,rtmess+5 ; look at old church. east wall 
+; looks as though it could tumble any minute
+;
+ dc.b go,0,8,nullobject ; go main gate
+ dc.w WActorSingleMessage,rtmess+6 ; ah well, it's lunch time already. 
+; anyone fancy a big mac. wander south out of gate
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; detective wanders around cemetary before leaving
+manrt
+ dc.b waitforperiod,0,0,nullobject ; use opposite turn to mourners
+ dc.w WActorSingleMessage,rtmess+10 ; wait until mourners gone, and then 
+; smile slightly. 
+; I recognised him as the new detective currently working for the police 
+; on the drugs case.
+;
+ dc.b go,0,43,nullobject ; go path
+ dc.w WActorSingleMessage,rtmess+11 ; pause to light cigarette
+ dc.w WActorSingleMessage,rtmess+14 ; strolled casually along path, 
+; kicking gravel. "well, that's one lousy snoop taken care of", he 
+; muttered. "none of those cops would think for a moment that I was 
+; one of the drugs gang. fools!"
+; think, no wonder he's not looking sorry. he's not a detective at 
+; all, he helped the drugs gang bump me off. 
+; and now everybody blames me for blowing the whole operation. 
+;
+ dc.b go,0,6,nullobject ; go vault
+ dc.w WActorSingleMessage,rtmess+15 ; pat vault lid. "who'd think 
+; of looking in here?", he laughed rhetorically.
+; think, I put two and two together and realised that the vault 
+; must be the hiding place for the drugs hoard.
+;
+ dc.b go,0,7,nullobject ; go carpark gate
+ dc.w WActorSingleMessage,rtmess+16 ; wander off through twilight 
+; mists. supervisor appears in cart
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; workman starts racetrack in shed
+workmanrt
+ dc.b waitforperiod,0,3,nullobject ; wait a short while
+ dc.b push,0,switch,nullobject ; turn shed light off
+;
+ dc.b go,0,42,nullobject ; go outside shed
+ dc.w WActorSingleMessage,rtmess+20 ; ah, well. time to get back to work
+ dc.b take,0,shovel,nullobject ; take shovel
+;
+ dc.b go,0,44,nullobject ; go to player's grave
+ dc.w WActorSingleMessage,rtmess+21 ; alan chance, eh? miserable old 
+; sod, he was.
+ dc.w WActorSingleMessage,rtmess+22 ; push shovel into mound of 
+; earth and begin throwing it into the grave
+ dc.w WActorSingleMessage,rtmess+23 ; throw more earth into grave
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+24 ; rub back. tiring work, this.
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+25 ; finish shovelling earth into 
+; grave. pat grave with shovel to flatten the earth.
+waituntilshed
+; following supervisor, wait until inside shed, then drop shovel
+;
+ dc.b find,0,supervisor,nullobject ; follow supervisor
+ dc.b conditional,0,switch,nullobject
+ dc.w WRtGoto,dropshovel-list5
+ dc.w WRtGoto,waituntilshed-list5
+dropshovel
+ dc.b drop,0,shovel,nullobject
+; "find" is used, since "follow" before "racetrackreturn" seemed to 
+; cause an endless loop!
+;
+followsuper
+ dc.b find,0,supervisor,nullobject ; continue following supervisor
+ dc.w WRtGoto,followsuper-list5
+;---
+; supervisor starts racetrack at path+thermometer
+supervisorrt
+ dc.b waitforperson,0,mourners,nullobject ; wait for mourners
+ dc.b waitforperiod,0,0,nullobject ; wait in case user is following
+ dc.w WActorSingleMessage,rtmess+30 ; complain to mourners, 
+; bloody electric cart. i've seen faster c5's than this
+;
+ dc.b go,0,48,nullobject ; go sundial
+ dc.w WActorSingleMessage,rtmess+34 ; drive around circular steps, 
+; stabbing leaves with his spike
+;
+ dc.b find,0,fadedwreath,nullobject ; go to faded wreath
+ dc.w WActorSingleMessage,rtmess+35 ; this wreath smells rotten
+ dc.b take,0,fadedwreath,nullobject ; take it
+;
+ dc.b go,0,41,nullobject ; go to pruned branches
+ dc.b put,on,fadedwreath,branches ; put it on pile of brances
+;
+ dc.b go,0,42,nullobject ; go back to shed
+ dc.w WActorSingleMessage,rtmess+36 ; where the heck is that 
+; lousy four-eyed workman?
+ dc.b stand,0,nullobject,nullobject ; get out of cart
+ dc.b waitforperson,0,workman,nullobject ; wait for workman
+ dc.w WActorSingleMessage,rtmess+37 ; you took your time. did you fall 
+; into the grave or something?
+; I wish you'd fall into a grave, muttered workman, I'd fill it in 
+; before you could climb back out again
+;
+ dc.b go,0,15,nullobject ; go inside shed
+ dc.b push,0,switch,nullobject ; turn light on
+ dc.w WActorSingleMessage,rtmess+38 ; well, that's another day over 
+; with.
+ dc.b push,0,button,nullobject ; turn on spotlight
+; rtmessage used, because workman is speaking
+ dc.w WRtMessage,rtmess+39 ; workman puts tools away in cupboards. I 
+; wonder who's turn it is to be buried tomorrow, he joked
+ dc.b push,0,switch,nullobject ; turn light off
+;
+ dc.b go,0,42,nullobject ; go outside
+ dc.b waitforperson,0,workman,nullobject ; wait for workman to follow
+ dc.b close,0,sheddoor,nullobject ; close shed door
+ dc.w WActorSingleMessage,rtmess+40 ; well, I could murder a pint.
+; workman, so could I. let's go to the happy sialor.
+ dc.b stand,0,nullobject,nullobject ; get in cart
+;
+ dc.b go,0,7,nullobject ; go carpark gate
+ dc.w WActorSingleMessage,rtmess+41 ; drive off to pub
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; joe introduces player to the cemetary
+joert
+;;;;; dc.b find,0,user,nullobject ; find player
+ dc.w WRtMessage,rtmess+50 ; greetings. you must be the 
+; new one. I see from your headstone that you're a detective. I'm 
+; joe danby, the late publican of the happy sailor. been here for 
+; five years nearly, I have. come on, I'll show you around the place.
+;
+ dc.b go,0,49,nullobject ; go joe's grave
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+51 ; this is my own grave. see the 
+; lovely mowed grass. that shows how much those humans miss me. If 
+; only they knew I was still around.
+;
+ dc.b go,0,59,nullobject ; go willmot graves
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+52 ; and these are the willmot 
+; graves. whispers into my ear, boring old bunch of fogeys if you 
+; ask me.
+ dc.b conditional,0,bert,nullobject
+ dc.w WRtMessage,rtmess+53 ; bert, What was that?!
+; joe, Oh, I was just saying what a lovely couple you and edna were
+;
+ dc.b go,0,52,nullobject ; go ridge grave
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+54 ; this is the grave of david 
+; ridge. beckons me to his ear. always has to prove something he 
+; does. he's a typical show-off
+ dc.b conditional,0,david,nullobject
+ dc.w WActorSingleMessage,rtmess+55 ; hi there david. still showing 
+; off your psychic powers - as david concentrated on dive-bombing a 
+; moth repeatedly against the ground
+;
+ dc.b go,0,56,nullobject ; go colonel's graves
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+56 ; and this is colonel Rycroft's 
+; grave. served good for his country, he did. it's not surprising 
+; that he dislikes the youth of today.
+ dc.b conditional,0,colonel,nullobject
+ dc.w WRtMessage,rtmess+57 ; hi there, joe. I see you've brought along 
+; the new chap. holds hand out to shake. you take it but go straight 
+; throught it.
+; ho, ho, he's not very solid yet is he, says colonel to joe
+;
+ dc.b go,0,45,nullobject ; go violet's grave
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+58 ; this is the grave of violet 
+; conway, one of our oldest residents. she's as blind as 
+; a bat, but she's got a good pair of ears to make up for it.
+ dc.b conditional,0,violet,nullobject
+ dc.w WRtGoto,violetispresent-list5
+ dc.w WRtGoto,novioletintro-list5
+violetispresent
+ dc.w WRtMessage,rtmess+59 ; violet, I certainly have, you must be alan.
+; she smiled to greet me.
+ dc.b conditional,0,bell,nullobject ; violet doesn't complain if bell here
+ dc.w WRtGoto,novioletintro-list5
+ dc.w WRtMessage,rtmess+60 ; you must forgive me if I don't follow you. 
+; for if I wander too far from my grave, I shall never find my way 
+; back again
+novioletintro
+;
+ dc.b go,0,11,nullobject ; go edith's grave
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+61 ; and lastly, but by no means 
+; least, this is the grave of edith dean
+ dc.b conditional,0,edith,nullobject
+ dc.w WActorSingleMessage,rtmess+62 ; say in a low voice, she's 
+; a typical hypocondriact. get's a bee in her bonnet and she's off.
+; last week, she beleived she had turned into a toadstool. 
+; the week before that, she thought she was a slug.
+;
+ dc.b go,0,40,nullobject ; go sepulcre
+ dc.w WActorSingleMessage,rtmess+63 ; well, that's most of the gang 
+; introduced. I hope I havn't bored you stiff already (stiff, geddit). 
+; laughs hysterically and then says, I'll let you wander around 
+; now as you please. I'm sure you won't mind If I walk with you.
+; grudgingy, I forced a sort of squashed smile and agreed.
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; bert intro, then protect wreath from edna
+bertrt
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.b conditional,0,joe,nullobject
+ dc.w WRtGoto,bertjoeintro-list5
+ dc.w WRtGoto,bertfullintro-list5
+bertjoeintro	
+ dc.b waitforperiod,0,2,nullobject ; wait 0,1 for joe intro and then 
+; wait 0 for joe to go
+ dc.b waitforperson,0,user,nullobject ; wait for user to return
+bertfullintro
+ dc.w WRtMessage,rtmess+70 ; edna tries to snatch bert's wreath and 
+; they squabble over it
+ dc.b waitforperiod,0,1,nullobject
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+71 ; bert guards wreath. edna insists he 
+; pinched it from her and wants it back
+ dc.b waitforperiod,0,0,nullobject
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+72 ; bert runs around wreath, guarding 
+; it from edna 
+ dc.b waitforperiod,0,0,nullobject
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+73 ; bert suggests that her wreath was 
+; faded, and has probably been thrown away.
+; edna, I don't believe you. give me my wreath back
+ dc.b waitforperiod,0,0,nullobject
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WRtMessage,rtmess+74 ; edna trips bert up and jumps up and down 
+; on him. he still manages to guard his wreath from her
+ dc.b waitforperiod,0,0,nullobject
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WRtMessage,rtmess+75 ; edna sits on headstone and folds her arms 
+; in a huff. if you don't give it back, I won't speak to you until the 
+; end of eternity.
+; suits me fine, says bert as he sits down on the grave, facing away 
+; from her.
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; bert's racetrack after edna is given the wreath
+bertobedient
+ dc.b conditional,0,user,nullobject
+ dc.w WRtGoto,dontgograve-list5
+ dc.b go,0,59,nullobject ; go to own grave when unattended
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+78 ; do you wan't any help? it's 
+; pretty boring just hanging around here
+dontgograve
+ dc.b conditional,0,edna,nullobject
+ dc.b waitforperiod,0,1,nullobject ; wait for edna to nag
+ dc.b conditional,0,edna,nullobject
+ dc.w WRtActorVaryMessage,rtmess+80 ; take stick from edna. edna replies
+ dc.b waitforperiod,0,1,nullobject ; prevent endless loop
+ dc.w WRtGoto,bertobedient-list5
+;---
+; edna's racetrack after she is given the wreath
+ednaobedient
+ dc.b conditional,0,user,nullobject
+ dc.w WRtGoto,dontgobert-list5
+ dc.b go,0,59,nullobject ; go to own grave when unattended
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.b waitforperiod,0,0,nullobject ; wait for bert's initial offer 
+; for help
+dontgobert
+ dc.b conditional,0,bert,nullobject
+ dc.w WRtActorVaryMessage,rtmess+90 ; edna nagging bert. bert replies
+ dc.b conditional,0,bert,nullobject
+ dc.b waitforperiod,0,1,nullobject ; wait for bert to take stick
+ dc.b waitforperiod,0,1,nullobject ; prevent endless loop
+ dc.w WRtGoto,ednaobedient-list5
+;---
+; alex is woken up
+alexrt
+ dc.w WRtVaryMessage,rtmess+100 ; stretched and yawned etc.
+; what time do you call this? 
+; I must have nodded off.
+; what a weird dream I was having. etc...
+restartalex ; returns here when alex has no commands to execute
+ dc.b conditional,0,joe,nullobject
+ dc.w WActorSingleMessage,rtmess+110 ; yawned tiredly. joe shook his 
+; head and said. you're always flippin' fallin' asleep, you are.
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+111 ; talked gibberish about nine 
+; overthrowing the church
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+112 ; began to nod off and then 
+; woke in a frenzy. help! they're coming to take me away, he yelled.
+; later, he calmed down and looked around. I could have sworn I saw a
+; big white van...
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+113 ; sang a strange little song 
+; about pixies
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+114 ; began to argue furiously with 
+; the ground. he lost his temper and began to stamp madly on it.
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+115 ; I feel ever so tired. I think 
+; I'll go and take a nap.
+ dc.b go,0,52,nullobject ; go back to statue area
+ dc.w WActorSingleMessage,rtmess+120 ; turn back into statue
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; edith beleives she is cursed to stay here until the end of time
+edithrt
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.b conditional,0,joe,nullobject
+ dc.w WRtGoto,ednajoeintro-list5
+ dc.w WRtGoto,ednafullintro-list5
+ednajoeintro	
+ dc.b waitforperiod,0,2,nullobject ; wait 0,1 for joe intro and then 
+; wait 0 for joe to go
+ dc.b waitforperson,0,user,nullobject ; wait for user to return
+ednafullintro
+ dc.w WActorSingleMessage,rtmess+130 ; edith moans. cursed, I am. 
+; cursed to remain beside my grave until the end of time. what 
+; knid of an afterlife is this, I ask you?
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.b conditional,0,joe,nullobject
+ dc.w WRtMessage,rtmess+131 ; joe says, there she goes again with 
+; self-pity. cursed to stay here 'till the end of time, pah!
+; mind you, there's no way I could talk her out of it
+ dc.b waitforperiod,0,0,nullobject
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+132 ; wept on her grave. have you any 
+; idea how boring it's going to get, staying here until the end of 
+; time? she asked rhetorically.
+ dc.b waitforperiod,0,0,nullobject
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+133 ; this is worse than waiting 
+; for the number 57 bus, complained edith, I wish time would hurry 
+; up and come to an end. I'm bored stiff.
+ dc.b waitforperiod,0,0,nullobject
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.b conditional,0,joe,nullobject
+ dc.w WRtMessage,rtmess+134 ; joe says, pull your self together, 
+; edith. I'm sure time will soon come to an end and free you of 
+; your curse.
+; joe turns to me, there must be some way of convincing her that 
+; it's the end of time. some kind of pun, maybe?
+ dc.b waitforperiod,0,0,nullobject
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+135 ; coninued her weeping. It's 
+; no use, she said to me, there's no way you can help me. I'll just 
+; have to stay here until the end of time.
+; I felt helpless as she sat by her grave, sobbing.
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; edith's obedient racetrack
+edithobedient
+ dc.w WActorSingleMessage,rtmess+140 ; I think I'll have a wander 
+; around the cemetary, now that I'm free of my curse
+;
+ dc.b go,0,11,nullobject ; go sepulcre
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+141 ; skip around sepulcre. It feels 
+; so good to be free again. I feel so, er, alive!
+ dc.b conditional,0,joe,nullobject
+ dc.w WRtMessage,rtmess+142 ; mind you don't tread on any landmines 
+; or anything, sniggered joe as he watched edith prancing around
+;
+ dc.b find,0,violet,nullobject ; find violet
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.b conditional,0,violet,nullobject ; if violet still here...
+ dc.w WRtMessage,rtmess+143 ; gossip with violet. tell her 
+; the good news etc.
+ dc.b conditional,0,bush,nullobject
+ dc.w WRtGoto,violetbygrave-list5
+ dc.w WRtGoto,violetisnthere-list5 ; violet not by her grave (bush)
+violetbygrave
+ dc.b conditional,0,bell,nullobject
+ dc.w WRtGoto,violetisnthere-list5 ; violet puzzle been solved
+ dc.w WRtMessage,rtmess+144 ; maybe alan can help you as well, 
+; violet.
+violetisnthere
+;
+ dc.b find,0,colonel,nullobject ; find colonel
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.b conditional,0,colonel,nullobject ; if colonel still here...
+ dc.w WActorSingleMessage,rtmess+145 ; gossip for a good while about 
+; the "good old days"
+;
+ dc.w go,0,58,nullobject ; go new graves
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+146 ; walked among the new graves. 
+; I don't care much for these new graves, she commented, they're 
+; so dull and boring.
+ dc.w WActorSingleMessage,rtmess+147 ; edith continued, I much prefer 
+; the older and more interesting headstones. 
+; like mine, she added with a smile, while pointing in the general 
+; direction of her own grave.
+;
+ dc.w go,0,48,nullobject ; go sundial area
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+148 ; sit down on steps and look 
+; around cemetary. my, my, this place has changed since I 
+; became cursed.
+ dc.w WActorSingleMessage,rtmess+149
+; she looked at new graves around close by. If I remember rightly, the 
+; area east of here used to be a big lawn. I guess a lot of people 
+; have copped it since then.
+; I nodded in complete agreement.
+;
+ dc.w go,0,46,nullobject ; go overgrown tombstones
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+150 ; wandered around tombstones, 
+; humming a jolly little tune.
+; It feels so good to be free of my curse, she said to me, there 
+; must be something I can do to help you in return...
+ dc.b waitforperiod,0,0,nullobject
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; david ridge "arrogant" racetrack
+davidrt
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.b conditional,0,joe,nullobject
+ dc.w WRtGoto,davidjoeintro-list5
+ dc.w WRtGoto,davidfullintro-list5
+davidjoeintro	
+ dc.b waitforperiod,0,2,nullobject ; wait 0,1 for joe intro and then 
+; wait 0 for joe to go
+ dc.b waitforperson,0,user,nullobject ; wait for user to return
+davidfullintro
+ dc.w WActorSingleMessage,rtmess+160 ; so you're the new one. weedy 
+; little chap, aren't you? pah, I bet you can't even move objects 
+; yet.
+ dc.b waitforperson,0,user,nullobject
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+161 ; show off by levitating a mouse 
+; about fifty feet in the air and then letting it drop to the ground.
+ dc.b waitforperson,0,user,nullobject
+ dc.b conditional,0,joe,nullobject
+ dc.w WRtMessage,rtmess+162 ; joe gives advice. go on, show him what 
+; you can do. maybe he'll help you if you can impress him
+ dc.b waitforperson,0,user,nullobject
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+163 ; wave hands about to cause 
+; a breeze and blow fallen leaves in my face.
+; laugh pretentiously.
+ dc.b waitforperson,0,user,nullobject
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+175 ; david pestering me
+ dc.b waitforperson,0,user,nullobject
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+176 ; david pestering me
+ dc.b waitforperson,0,user,nullobject
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+177 ; david pestering me
+ dc.b waitforperson,0,user,nullobject
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+178 ; david pestering me
+ dc.b waitforperson,0,user,nullobject
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+179 ; david pestering me
+ dc.b waitforperson,0,user,nullobject
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+164 ; I bet you wish you had my 
+; powers, he announced quite arrogantly, while leaning against 
+; his sacrophagus
+ dc.b waitforperson,0,user,nullobject
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+165 ; well, it's you're turn to 
+; show me what you can do. I might even help you if I'm impressed
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; david ridge "obedient" racetrack
+davidobedient
+ dc.b conditional,0,user,nullobject
+ dc.w WRtGoto,daviddontgograve-list5
+ dc.b go,0,52,nullobject ; go to own grave when unattended
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+168 ; I'm busy practicing my powers, 
+; but I'll help you if you ask nicely
+daviddontgograve
+ dc.w WRtActorVaryMessage,rtmess+170 ; show off etc.
+ dc.b waitforperiod,0,3,nullobject ; prevent endless loop
+ dc.w WRtGoto,davidobedient-list5
+;---
+; colonel follows vandals. most of his messages are handled by the 
+; vandals' racetrack
+colonelrt
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.b conditional,0,joe,nullobject
+ dc.w WRtGoto,coloneljoeintro-list5
+ dc.w WRtGoto,colonelfullintro-list5
+coloneljoeintro	
+ dc.b waitforperiod,0,2,nullobject ; wait 0,1 for joe intro and then 
+; wait 0 for joe to go
+ dc.b waitforperson,0,user,nullobject ; wait for user to return
+colonelfullintro
+ dc.w WActorSingleMessage,rtmess+180 ; what's that noise? I bet it's 
+; those young scoundrels again. I'd better go and investigate
+;
+; "find" is used, since "follow" before "racetrackreturn" seemed to 
+; cause an endless loop!
+colonelfollow
+ dc.b find,0,vandals,nullobject ; follow vandals
+ dc.w WRtGoto,colonelfollow-list5
+;---
+colonelobedient
+ dc.b find,0,user,nullobject ; go to player
+ dc.w WActorSingleMessage,rtmess+185 ; and thank him for turning shed 
+; light on to send vandals away
+ dc.b waitforperiod,0,0,nullobject
+ dc.b find,0,user,nullobject ; go to player (just in case he's gone)
+ dc.w WActorSingleMessage,rtmess+186 ; well, if you need me for anything, 
+; I'll be wandering around the cemetary to see if there are any 
+; more of those ruddy holdlums
+;
+; look for hooligans etc. in ridiculous places...
+restartcolonel
+ dc.b go,0,52,nullobject ; go ridge grave
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+187 ; examine urn. no vandals here
+ dc.b conditional,0,david,nullobject
+ dc.w WRtMessage,rtmess+188 ; david mutters, stupid old bastard
+;
+ dc.b go,0,53,nullobject ; go copper beech
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+189 ; rummidge throught leaves to 
+; see if vandals hiding there.
+ dc.b conditional,0,joe,nullobject
+ dc.w WRtMessage,rtmess+190 ; joe begins to snigger
+;
+ dc.b go,0,41,nullobject ; go pruned branches
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+191 ; bend down and poke a stick 
+; violently into the branches, hoping to prod any hoodlums out
+ dc.b conditional,0,joe,nullobject
+ dc.w WRtMessage,rtmess+192 ; joe says, the colonel's finally cracked 
+; this time!
+;
+ dc.b go,0,11,nullobject ; go edith's grave
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+193 ; look inside vase to see if 
+; any vandals inside
+ dc.b conditional,0,edith,nullobject
+ dc.w WRtMessage,rtmess+194 ; edith, ...and people say that I'm crazy!
+;
+ dc.b go,0,56,nullobject ; go back to his own grave
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+195 ; complain about state of today's 
+; youth. I wish that I could have bought my shotgun to the afterlife 
+; with me. I'd blast their arses!
+ dc.b waitforperiod,0,0,nullobject
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; vandals loiter around, drinking and joking etc.
+vandalsrt
+ dc.b go,0,51,nullobject ; go to cenotaph
+ dc.b waitforperson,0,user,nullobject ; wait for user
+ dc.w WActorSingleMessage,rtmess+200 ; sit around cenotaph, drinking 
+; vodka and joking. one of them climbs up cenotaph and acts like 
+; a monkey.
+ dc.b conditional,0,colonel,nullobject ; is colonel here?
+ dc.w WRtMessage,rtmess+201 ; colonel comments on their lack of respect. 
+; I fought hard for this country and this is the thanks I get from 
+; today's youth.
+;
+ dc.b go,0,52,nullobject ; go ridge grave
+ dc.b waitforperson,0,user,nullobject ; wait for user
+ dc.w WActorSingleMessage,rtmess+202 ; sit on sepulcre and light up 
+; cigarettes. one of them chokes with smoke and another laughs, 
+; oi! give over coffin!
+; he continues choking and then throws up in urn on sepuclcre.
+ dc.b conditional,0,david,nullobject ; is david here?
+ dc.w WRtMessage,rtmess+203 ; david is angered by this and scares them 
+; away by rocking the urn.
+;
+ dc.b go,0,53,nullobject ; go to beech tree
+ dc.b waitforperson,0,user,nullobject ; wait for user
+ dc.w WActorSingleMessage,rtmess+204 ; climb tree and swing from branches. 
+; hey, this is dead good, he jokes
+; huh, what a grave joke, replies another
+ dc.b conditional,0,colonel,nullobject ; is colonel here?
+ dc.w WRtMessage,rtmess+205 ; colonel is fuming and concentrates on 
+; making himself visible to scare them away. he manages this for a 
+; second, but only one of them sees him and comments on the strength 
+; of the vodka. Wow! I'm seeing things now.
+;
+ dc.b go,0,45,nullobject ; go violet's grave
+ dc.b waitforperson,0,user,nullobject ; wait for user
+ dc.w WActorSingleMessage,rtmess+206 ; stub cigarettes out on violet's 
+; headstone and then relieve themselves on bush.
+ dc.b conditional,0,violet,nullobject ; is violet here?
+ dc.w WRtMessage,rtmess+207 ; violet is frightened by vandals, as she 
+; remembers being mugged by thugs a few years before her death.
+;
+ dc.b go,0,46,nullobject ; go tombstones
+ dc.b waitforperson,0,user,nullobject ; wait for user
+ dc.w WActorSingleMessage,rtmess+208 ; kick tombstones, knocking 
+; a few of them over. then deface them with spraypaint.
+ dc.b conditional,0,colonel,nullobject ; is colonel here?
+ dc.w WRtMessage,rtmess+209 ; colonel shouts at the top of his voice, 
+; but they cannot hear him. he kneels down in disgust and tries to 
+; rub the paint off the tombstones, but it just won't come off.
+;
+ dc.w WRtGoto,vandalsrt-list5
+;---
+; dog before fishbone removed
+dogrt
+; begins on path near thermometer
+ dc.b waitforperson,0,user,nullobject
+ dc.w WActorSingleMessage,rtmess+210 ; dog seems to notice me and 
+; begins to shiver a little. it tries to bark, but only manages 
+; a dry choking noise.
+;
+dogloop
+ dc.b go,0,43,nullobject ; go to cemetary path
+ dc.b waitforperson,0,user,nullobject
+ dc.w WActorSingleMessage,rtmess+211 ; dog has a fit of violent 
+; choking
+ dc.b conditional,0,joe,nullobject
+ dc.w WRtMessage,rtmess+212 ; joe tries to calm dog, but it just 
+; growls as if in pain
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+213 ; caugh hoarsley, as if trying 
+; to clear its throat
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.b go,0,47,nullobject ; go to long grass
+ dc.b waitforperson,0,user,nullobject
+ dc.w WActorSingleMessage,rtmess+214 ; eat grass and start pawing 
+; its mouth in frustration.
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+215 ; opened its mouth wide and 
+; made vomiting noises
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+216 ; wander around with its 
+; tail between its legs, feeling sorry for itself
+;
+ dc.b go,0,42,nullobject ; go to shed
+ dc.b waitforperson,0,user,nullobject
+ dc.w WActorSingleMessage,rtmess+217 ; sit down outside shed door, 
+; caughing hoarsley
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+218 ; rub neck against gravel as if 
+; trying to dislodge something in its throat
+ dc.b conditional,0,joe,nullobject
+ dc.w WRtMessage,rtmess+219 ; joe suggests that something may have 
+; become stuck in its throat
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtGoto,dogloop-list5
+;---
+; dog "friendly" racetrack
+dogobedient
+ dc.b find,0,user,nullobject ; find player
+ dc.w WRtActorVaryMessage,rtmess+220 ; sniff my leg timidly etc.
+ dc.b waitforperiod,0,2,nullobject ; prevent endless loop
+ dc.w WRtGoto,dogobedient-list5
+;---
+; violet conway is afraid to leave her grave, since she is blind
+violetrt
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.b conditional,0,joe,nullobject
+ dc.w WRtGoto,violetjoeintro-list5
+ dc.w WRtGoto,violetfullintro-list5
+violetjoeintro	
+ dc.b waitforperiod,0,2,nullobject ; wait 0,1 for joe intro and then 
+; wait 0 for joe to go
+ dc.b waitforperson,0,user,nullobject ; wait for user to return
+violetfullintro
+ dc.w WActorSingleMessage,rtmess+230 ; oh, I wish I hadn't aged so 
+; much before my death. it's terrible having to spend the rest of my 
+; afterlife as blind as a bat
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.b conditional,0,joe,nullobject ; is joe here?
+ dc.w WRtMessage,rtmess+231 ; joe, but I'm sure you could find your 
+; way about by sound.
+ dc.b waitforperiod,0,0,nullobject
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+232 ; I suppose I could find my 
+; way about by sound, but I'm afraid that I might not find my way back 
+; to my grave before dawn
+; I could do with something noisy beside my grave so that I don't 
+; get lost, she added
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.b conditional,0,joe,nullobject ; is joe here?
+ dc.w WRtMessage,rtmess+233 ; talk to player, I wish we could help her.
+; if only we had some kind of siren or something.
+ dc.b waitforperiod,0,0,nullobject
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+234 ; the bush beside my grave usually 
+; makes some noise with the breeze, but it's so quiet that I can't 
+; hear it from a few yards away.
+ dc.b waitforperiod,0,0,nullobject
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+235 ; oh, I wish you could help me.
+; it would be so nice to wander through the cemetary rather than 
+; stay by my grave all night.
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; violet "obedient" racetrack
+; have a little wander, now that bell is on bush
+violetobedient
+ dc.b go,0,45,nullobject
+ dc.w WActorSingleMessage,rtmess+240 ; Oh, it's so nice to hear 
+; that bell. I feel safe to wander around the cemetary on my own 
+; at last.
+;
+ dc.b go,0,50,nullobject ; go marigolds
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+241 ; walk through marigolds. 
+; oh, these flowers smell so lovely. I wonder what type they are.
+ dc.b conditional,0,joe,nullobject
+ dc.w WRtMessage,rtmess+242 ; joe picks a flower for violet and she 
+; holds it to her nose. it's a long time since I smelled marigolds.
+;
+ dc.b find,0,colonel,nullobject ; find colonel
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.b conditional,0,colonel,nullobject ; is colonel still here?
+ dc.w WActorSingleMessage,rtmess+243 ; hello colonel. what a nice 
+; night it is. tell him about me fixing bell to bushes. It's 
+; so nice to be able to wander around by myself.
+;
+ dc.b go,0,53,nullobject ; go copper beech
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+244 ; walk through fallen leaves and 
+; listen to them rustling in the breeze. I love autumn, she sighed
+ dc.b conditional,0,joe,nullobject
+ dc.w WRtMessage,rtmess+245 ; joe says, I bet you havn't been to my 
+; grave yet. It's one of the new ones over there. he took her hand 
+; and pointed it in the general direction of his grave. why not 
+; have a wander over there? he suggested
+;
+ dc.b go,0,49,nullobject ; go joe's grave
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+246 ; run fingers over joe's 
+; headstone, reading the inscription. 
+ dc.b conditional,0,joe,nullobject
+ dc.w WActorSingleMessage,rtmess+247 ; what a nice headstone you 
+; have, joe. you obviously had many friends before you death.
+;
+ dc.b find,0,bell,nullobject ; find bell
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+248 ; this bell really works, 
+; she enthused, it was no trouble finding my way back to it.
+;
+ dc.b go,0,51,nullobject ; go cenotaph
+ dc.b waitforperson,0,user,nullobject ; wait for player
+ dc.w WActorSingleMessage,rtmess+249 ; feel inscription on cenotaph, 
+; lips moving as she runs her fingers slowly over each word.
+ dc.b conditional,0,joe,nullobject
+ dc.w WRtMessage,rtmess+250 ; joe helps her read inscription by 
+; placing her hand carefully on each word. 
+; violet says, oh, everyone's being so kind to me tonight, she says, 
+; it's been much nicer than staying by my grave all the time.
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+ even
+reversaltable
+; part of list5
+; gives reverse directions for directions
+ dc.b 0,4,6,7,1,8,2,3,5 ; compass directions
+ dc.b 10,9,12,11,13,14,15
+;-----------
+ even
+roompictures
+; part of list 5
+; gives pictures associated with various rooms.
+; the bytes are arranged in ROOM,PIC pairs rather than a table of 
+; pictures for each room. this is because some rooms begin from 
+; number 220, hence the table would be rather big.
+ dc.b 3,26 ; path (thermometer)
+ dc.b 4,26 ; lawn (thermometer)
+ dc.b 5,26 ; path (thermometer)
+ dc.b 6,26 ; vault (thermometer)
+ dc.b 7,26 ; east gate (thermometer)
+ dc.b 8,26 ; main gate (thermometer)
+ dc.b 9,26 ; yew (thermometer)
+ dc.b 10,26 ; lawn (thermometer)
+ dc.b 11,13 ; edith's grave (graveyard)
+ dc.b 15,3 ; shed (church tower)
+ dc.b 40,13 ; sepulcre (graveyard)
+ dc.b 41,13 ; branches (graveyard)
+ dc.b 42,3 ; outside shed (church tower)
+ dc.b 43,3 ; path (church tower)
+ dc.b 44,11 ; my grave (headstone)
+ dc.b 45,13 ; violet's grave (graveyard)
+ dc.b 46,13 ; tombstones (graveyard)
+ dc.b 47,13 ; long grass (graveyard)
+ dc.b 48,4 ; sundial (graves)
+ dc.b 49,28 ; joe's grave (graveyard)
+ dc.b 50,13 ; marigolds (graveyard)
+ dc.b 51,13 ; senotaph (graveyard)
+ dc.b 52,13 ; david's grave (graveyard)
+ dc.b 53,4 ; beech (graves)
+ dc.b 54,13 ; new graves (graveyard)
+ dc.b 55,13 ; elder bushes (graveyard)
+ dc.b 56,13 ; colonel's grave (graveyard)
+ dc.b 57,13 ; lawn (graveyard)
+ dc.b 58,13 ; new graves (graveyard)
+ dc.b 59,27 ; willmot graves (graveyard)
+ dc.b 0,0
+ even
+
+ENDTABLE
+;---------
+ END
+

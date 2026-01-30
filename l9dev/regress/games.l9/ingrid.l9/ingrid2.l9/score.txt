@@ -1,0 +1,84 @@
+; Standard adventure sources 14/5/88
+;
+; score code
+;
+; 14/5/88
+
+ begin
+
+.CalcScore
+; return X4=current score
+ x1=32 ; start of score table
+ x4=0
+
+.CalcScore1
+ x2=list7(x1)
+ if x2<128 then calcScoreNotNegative
+; convert negative 8 bit number to negative 16 bit
+ x3=65280
+ add x2,x3
+
+.calcScoreNotNegative
+ add x4,x2
+ add x1,c1
+ if x1<ScMaxPlus1 then CalcScore1
+
+ add x4,GeneralScoreAddition
+ add x4,lastpartscore ;*****
+ return
+;---
+.SCORE
+ gosub @SetupRoom ; >> PETE 29/9/88 
+ MESSAGE 2240 ; you score
+ 
+.PRINTSCORE
+ gosub @CalcScore
+ x1=x4 ;*
+ IF X4<30000 THEN SCORE1 ; failsafe test to prevent negative score
+ message 2243 ; minus sign
+; x1=x4 ;*
+ x4=0
+ sub x4,x1
+
+.SCORE1
+ PRINT X4 ; score
+ sub x4,lastpartscore ;*****
+ M1=2249 ; message below lowest rating
+ MESSAGE 2242 ; out of 300 and are
+ if x1>30000 then @PrintM1Dot ;* rating for -ve score is 2249
+ X1=30 ; size of score categories (max score, 300, has unique rating)
+.SCORE2
+ SUB x4,X1
+ ADD M1,C1
+ IF x4<NEGATIVE THEN SCORE2
+ goto @printM1dot
+;---
+.AddScore10
+ x2=10
+ goto AddScorex2
+
+.AddScore20
+ x2=20
+ goto AddScoreX2
+
+.ClearScore
+ x2=0
+
+.AddScoreX2
+ x3=6
+ add x1,x3 ; ambul+6=32=start of score table
+ list7(x1)=x2
+; check if all trolls captured
+ t1=32
+ t2=0
+.checkcapt
+ if alltrollscaptured=2 then asx2ret ; already triggered endgame
+ x2=list7(t1)
+ add t2,x2 ; add troll's score to total
+ add t1,c1
+ if t1<39 then checkcapt ; add all 7 trolls' scores
+ if t2<140 then asx2ret
+ alltrollscaptured=true
+.asx2ret
+ return
+;---

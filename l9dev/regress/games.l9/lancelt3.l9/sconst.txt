@@ -1,0 +1,350 @@
+; Standard adventure source, copyright (C) 1987 Level 9 Computing.
+;
+; SCONST, game-specific constants. You will probably need to change 
+; most of the values of these. 
+;
+; A standard labelling convention for constants is that constants 
+; preceded by I (e.g ILOOK) are relative to their appropriate offset 
+; (e.g verboffset).
+;
+CONST
+ Lancelot=2004 ; unique game identifier value
+;
+ STARTsynthSHORTdescs=1199 ; shortroomdescs+minsynthroom
+ SHORTroomDESCS=1000
+ LONGroomDESCS=1200
+;;
+ MAXMOVEABLE=125 ; MAX OBJECT WHICH MAY BE TAKEN, THROWN ETC.
+ MAXMOVEAPLUS1=130
+
+ MaxMounted=9
+
+ xmax=4 ; co-ords go 0..xmax - remember to change room 1 exits.
+ xmaxplus1=5
+ ymax=3
+; 
+ minsynthroomminus2=111
+ minsynthroomminus1=112
+ minsynthroom=113 ; the first room on the grid (bottom left hand corner)
+ maxsynthroom=132
+;
+ minsceneryobj=180
+ minsceneryobjminus1=179
+ maxsceneryobj=190
+ maxsceneryobjplus1=191
+ minsobjtimes2minus1=359
+ maxsceneryobjtimes2plus2=382
+ numsceneryobjplus1=11
+;
+ minweaponminus1=39
+ minweapon=40
+ maxweapon=43
+ maxweaponplus1=44
+;
+ minclothes=99 ; 60
+ maxclothes=99 ; 61
+;
+ minfood=80
+ maxfood=81
+ maxfoodplus1=82
+
+ mintreasure=84 ; used for ingredients range in gnome2
+ maxtreasure=91 ; used for ingredients range in gnome2
+
+ minallobject=40
+ maxallobject=129
+
+ MAXOBJECTVISIBLE=149
+ MAXOBJECT=184 ; includes scenery objects.
+; goes wrong for maxobject>190 (dunno why!)
+; - inventory gets a funny value for hisearchpos (24)
+ MAXOBJECTPLUS1=187
+; 
+ MINOMNI=190 ; 158 ; all real objects above this are omni-present
+ MINOMNIMINUS1=189 ; 159
+ MAXOMNI=260 ; must include ieverything, except, it
+;
+; Preposition values (all relative to prepoffset)
+;
+;; riddenby=6
+ growingfrom=9 ; >>special to GNOME-II
+ FASTENEDTO=14
+
+ through=209
+;
+; VERBS...
+ idrink=110
+ iburn=115
+ ikiss=129
+ itakegoldtopub=137 ; for npcs only
+;; irecruit=146
+ ipast=162
+;; ifly=163
+ iwalk=164
+ icatch=165
+ ifill=241
+;---
+;
+; Offsets into SCORETABLE.. ( table 7 )
+ scbase=32
+ scClearing=32
+ scPavilion=33
+ scWasteland=34
+ scHermitage=35
+ scAbbey=36
+ scSandIsle=37
+ scTurnance=38
+ scDarkShore=39
+ scCastle=40
+ scCorridor=41
+ scPriest=42
+ scDamosel=43
+ scGentlewoman=44
+ scEctor=45
+ scPilgrim=46
+ scFiend=47
+ scBoat=48
+ scDragons=49
+ scKey=50
+ scExit=51
+
+
+ scmax=51
+ scmaxplus1=52
+
+ VisitTableStart=52
+ VisitTableEnd=109 ; VisitTableStart + (57=num of "Real" rooms)
+
+ meetingTable=110
+ meetingTableEnd=138 ; 110+MaxNpc
+;
+; Objects..
+ user=1
+ BlackKnight=2
+ nacien=3
+ ector=4
+ bors=5
+ percival=6
+ WoodlandKnight=7
+ Galahad=8
+ evilKnights=9
+
+ priest=10
+ pilgrim=11
+ maid=12
+ damosel=13
+ cleric=14
+ monks=15
+
+ lions=25
+ RedDragon=26
+ foulFiend=27
+ BlackDragon=28
+ Elemental=29
+
+ crown=80
+ tray=81
+ OneCake=82
+ ThreeCakes=84
+ body=85
+ chalice=86
+ shield=87
+ horn=88
+ sword=89
+ key=90
+ cup=91
+
+;;  ChaliceOfWater=100
+ ChaliceOfWater=101
+ ChaliceOfMead=102
+ ChaliceOfSand=103
+
+;; CupOfWater=105
+ CupOfWater=106
+ CupOfMead=107
+ CupOfSand=108
+
+ altar=130
+ cross=131
+ boat=132
+ thorn=133
+ grail=134
+ pavillion=135
+ bed=136
+ fire=137
+ SandDune=138
+ well=139
+
+ tomb=129
+ stake=151
+ river=152
+
+ ithing=246
+ iroom=243
+;
+ minpeople=1 ; = creaturebase
+ maxpeople=24 ;
+ maxpeopleplus1=25
+;
+ creaturebase=1 ; including people, user etc.
+ creaturebaseminus1=0 ; including people, user etc.
+ MINNPC=2 ; all except user
+ MINNPCMINUS1=1 ; all except user
+ MAXNPC=28
+ MAXNPCPLUS1=29
+ MAXTALKINGNPCPLUS1=25
+;
+; npc status in list 6..
+ NPCTABLESIZE=232 ; 480 ; MAXNPCPLUS1*16
+; NPCTABLESIZEPLUS16=496
+ npcTableSizePlus8=240 ; 488
+ NPCCURRENTOFFSET=0
+;
+; NPCENTRYSIZE=16; each entry is 16 bytes (hence the 16's above)
+ npcentrySize=8
+ 
+; npc command queues follow the above in list 6..
+ npcstackbase=248 ; 496 ; immediately after npc table
+ npcstackbaseplus5=253 ; 500
+ maxnpcentries=100 ; 5 bytes per queued-command entry on stack
+;
+ npcstackentrysize=5; each entry is 5 bytes (hence the 5's above)
+;
+ npctablesizetozero=1536 ; now fixed. was 1039
+; vandalised rooms table follows the above in list 6..
+; vandalbase=1029 ; maxnpcentries*5+npcstackbase 
+; vandalmax=1039 ; vandalbase+10
+; PotionWorkspace=1168 ; 4 bytes used in list 6, offset 1 from here.
+;
+; offsets within each npc table entry in list 6..
+; enemyoffset=0
+; followoffset=1 ; person to follow normally
+; masteroffset=2 ; the person or creature who subdued this npc
+; hitpointoffset=3
+; hatredoffset=4 ; the amount which this npc hates its enemy
+; npcptroffset=8
+; boredomoffset=9
+; attentionoffset=10
+; and offsets within each corresponding entry in npcinitial, list 5..
+; dodgeoffset=1
+; attackoffset=2
+; greedoffset=4 ; in static data
+; aggressionoffset=5 ; in static data
+; timidityoffset=6 ; in static data
+; obedienceoffset=7
+; goldsingingoffset=8 ; in static data - word (hi byte first)
+; patienceoffset=10;
+; 
+ enemyoffset=0
+ followoffset=1 ; person to follow normally
+ masteroffset=2 ; the person or creature who subdued this npc
+ hitpointoffset=3
+ hatredoffset=4 ; the amount which this npc hates its enemy
+ npcptroffset=5
+ boredomoffset=6
+;>>l2 attentionoffset=7
+; and offsets within each corresponding entry in npcinitial, list 5..
+ attackoffset=2
+; hitpoint offset=3
+ obedienceoffset=4
+ patienceoffset=5
+ goldsingingoffset=6 ; in static data - word (hi byte first)
+;----
+
+ s1=1 ; pride
+ s2=2 ; wrath
+ s3=3 ; envy
+ s4=4 ; lust
+ s5=5 ; gluttony
+ s6=6 ; avarice
+ s7=7 ; sloth
+ v1=8 ; lackOfFaith
+ v2=9 ; lack of hope
+ v3=10 ; lackOfCharity
+ v4=11 ; injustice
+ v5=12 ; lackOfFortitude
+ v6=13 ; lackOfPrudence
+ v7=14 ; intemperence
+ com1=15 ; worshipAnotherGod
+ com2=16 ; gravenImage
+ com3=17 ; to take the name of Lord your God in vain
+ com4=18 ; not to remember the Sabbath] ;? is this possible
+ com5=19 ; not to honour your parents] ; ?ditto
+ com6=20 ; to kill
+ com7=21 ; to commit adultery
+ com8=22 ; to steal
+ com9=23 ; to bear false witness against your neighbour
+ com10=24 ; to covet
+
+;----
+
+TABLE
+ list6=6
+
+; game-specific variables...
+
+VAR
+; CentaurOnHoliday ShopOpen ErrandOffered Itemsdeposited CentaurIntroduced
+; CentaurMetRecently EnvelopeOpened
+; NymphHappy
+; ActorHoldingRock
+; EagleFriendly
+; LeprecaunFriendly
+; DogsHaveToldIngrid
+; DogBarking
+; WitchLookingOut
+; BackDoorBroken
+; DogGone
+; WitchStoningEveryone
+; FollowingSomeone Misty
+; LeprecaunTime
+; DogsHaveFused
+; UnicornHappy
+;----------
+; HaveKilledPlant
+; StartPotionTable
+; IngredientNumber
+; CurrentBook
+; HoldingBreath
+; WeedkillerSmeared
+; BoulderRocking
+; BeanStalkState
+; HOldingCaveMouth
+; HaveDrunkAntidote
+; FlowerRaised
+; GreenSlaveAnimated
+;----
+; GemsAttached GateIntroduced
+; YetiIntroduced FireKingIntroduced IceQueenIntroduced IceChildReturned
+; OnRiver RiverUnDammed WaterLevel DamHeight
+; ThankedForRiver
+; RubyTime
+; PenguinOnBoard
+; EggExamined
+; ShoesPadded GameFinished
+ TotalMoves
+ LHasLeftVagon LHasStolenCrown
+ DamoselRandy
+ NameGiven ; =1 if L told lie, 2 if told a lie
+ ClimbingPath ; =1 if climbing, =2 if L has met N
+ TombOpen
+ TimeSinceRescueSeen EctorRescued MaidRescued
+ GalahadRescued GalahadCaptured GalahadDeadCounter
+ WindBlowing
+ ProblemObject ProblemVerb
+ gdCurrentSave gdHiSave
+ FireStrength
+ CurrentElemental
+ ChapelUnlocked
+ TempTitle TempTitleCounter
+ GalahadComment
+ LastDream ForgivenessImPossible
+ FirstSin SecondSin LatestSin SinsCommited
+ NumberFailedCrosses
+ CurrentRank
+
+ GeneralScoreAddition
+ P1Score
+ CrossedThisTurn
+
+ HaveSavedOops

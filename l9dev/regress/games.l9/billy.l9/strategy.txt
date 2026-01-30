@@ -1,0 +1,1760 @@
+; STRATEGY.TXT for Billy The Kid
+;
+; Mike Austin August 1990.
+;
+; Copyright (C) 1990 Level 9 Computing Ltd.
+;
+;
+const
+ CostDeputy=20 ; cost per month
+
+begin
+
+.ClockTick
+; called every time the player goes back to the map.
+; Handle the game's sense of time here...
+ gosub @TownIntelligence
+ gosub @GangIntelligence
+ if TwoPlayerMode<>false then CT3
+ gosub @PatIntelligence
+.CT2
+.CT3
+ code -
+  if PlayersName<>Pat then CTNotPat
+ code +
+  gosub @CountLawfulTowns
+; return x4 as number of lawful towns. x1..x5 corrupted, at least
+  if x4>5 then @ToFinalDuel ;***WinGame
+ code -
+
+; increase Pat's wealth due to the law enforcement budget
+  gosub @iCalcCostOfDeputies ; gets running cost in x3
+; and gets income in x5
+ sub x5,x3
+ add PlayerGold,x5
+ if PlayerGold<32000 then CTPat2
+ x1=0
+ sub x1,PlayerGold
+ gosub @iBudgetShortfallX1
+ NextMeetingMenu=178 ; Pat - we've run out of money
+ PlayerGold=0
+
+.CTPat2
+
+.CTNotPat
+ if PlayersName<>Billy then CTNotBilly
+ code +
+  gosub @CheckPlayerGang ; see if gang has been wiped out.
+  gosub @CountBustRanches
+; return x4 as number of lawful towns. x1..x5 corrupted, at least
+ if x4>5 then @ToFinalDuel ;****WinGame
+ code -
+
+.CTNotBilly
+ gosub @iSubPlotTimeOuts
+
+ code +
+
+ return
+;----------
+ code -
+.iSubPlotTimeOuts
+; handle subplots timing out
+ x1=SPFTexanPosseeAvailable ; number of members (byte)
+ x2=SubPlotFlags
+ add x1,x2
+ x2=TownVarData(x1) ; number of deputies working for nothing
+ if x2=0 then iSPT2
+ sub x2,c1
+ if x1>TownVarDataSize then @iStratBug ;******
+ TownVarData(x1)=x2
+; every 4th possee member who leaves triggers a warning message
+ if PlayersName<>Pat then iSPT2
+ x1=3
+ code +
+  and x1,x2
+ code -
+ if x1<>0 then iSPT2
+ NextMeetingMenu=184 ; Pat - another of that possee left
+
+.iSPT2
+ return
+
+.iStratBug
+ code + ;*******
+ break ;********
+ code - ;****
+ return ;*********
+
+ code +
+
+;---------
+.InitStrategy
+; set up strategy game tables:
+;  for town, people.
+ TellOtherPlayer=0
+ RobberyTillMDGoesBust=0 ; amount of money that Billy still
+; needs to steal before the next Murphy-Dolan ranch goes bust.
+
+ PlayerIncome=0 ; amount of gold earned by player since last
+; screen - used mainly for Billy robbing things, to determine
+; when another Murphy Dolan ranch goes out of business.
+ ExtraNewsStory=0 ; message number of extra news stories... e.g.
+; ranches going out of business etc. Commonly in range
+
+; set up town table (16 bytes per town)
+ v1=0 ; offset to update
+ v2=0 ; value to write in.
+ x4=0 ; town number being written
+
+.InitStrategyLoop
+ gosub @UpdateVarDataWordInc ; lawless, no time since last robbed
+ gosub @UpdateVarDataWordInc ; 
+ gosub @UpdateVarDataWordInc ; 
+ gosub @UpdateVarDataWordInc ; 
+ gosub @UpdateVarDataWordInc ; 
+ gosub @UpdateVarDataWordInc ; 
+ gosub @UpdateVarDataWordInc ; 
+ gosub @UpdateVarDataWordInc ; 
+ add x4,c1
+ if x4<NumberOfTowns then InitStrategyLoop ; number of towns
+
+; PeopleTableBase=v1
+ PeopleVarData=v1
+ PersonNumber=0 ; number of person being done
+ &x4=TownFixedData(0) ; start of people's fixed data
+ v5=0 ; last opinion
+.InitPeopleLoop
+ gosub @UpdateVarDataByteInc ; 0: met Pat, Billy?
+ v2=v5 ; last opinion
+ add v5,c32
+ add v5,c32
+ gosub @UpdateVarDataByteInc ; 1: opinion of Billy
+ x1=0
+ sub x1,v2
+ v2=x1
+ gosub @UpdateVarDataByteInc ; 2: opinion of Pat
+ v2=0
+ gosub @UpdateVarDataByteInc ; 3: Time till Prepared to do next robbery
+ gosub @UpdateVarDataByteInc ; 4: Time till prepared to help Pat Again.
+ code -
+  random v2
+ code +
+ x1=131 ; $83
+ and v2,x1
+ gosub @UpdateVarDataByteInc ; 5: <128 if good guy, >=128 if bad guy
+; bit 0 set if cowardly, bit 1 set if greedy.
+; what name shall we give this person?
+ gosub @ChooseName
+ gosub @UpdateVarDataByteInc ; 6 name
+
+ code -
+  random v2
+ code +
+ x1=7
+ and v2,x1 ; 4 types of information. Top bit is set
+; if person knows about latest event of appropriate type.
+ if v2<4 then TVDInfo2
+ v2=2 ; half the people know about gang locations
+
+.TVDInfo2
+ gosub @UpdateVarDataByteInc ; 7 Information type this person finds out about
+; .w Offset of "Money Location" information. (type 0)
+; .w Offset of "Deputies Location" information. (type 1)
+; .w Offset of "Gang Location" information (type 2)
+; .w Offset of "Recent robbery" information (type 3)
+
+
+ x1=TFDMenuoffset ; offset of menu number in TFD
+ add x1,x4 ; get initial menu (particularly for people with subplots)
+ v2=TownFixedData(x1)
+ add v2,v2 ; double to get menu offset
+ if v2<>0 then ISGotMenu
+ v2=28 ; meet Billy for the first time menu.
+
+;7 jan 91 removed to allow the appropriate bank intro to come
+; through
+; if PersonNumber<31 then ISNotBank
+; if PersonNumber>36 then ISNotBank
+; v2=26 ; bank menu
+; goto ISGotMenu
+
+.ISNotBank
+ if PersonNumber<>50 then ISNotHostess
+ v2=14 ; hostess/call girl menu
+ goto ISGotMenu
+
+.ISNotHostess
+ if PersonNumber<>52 then ISNotBarman
+ v2=12 ; barman menu
+
+.ISNotBarman
+.ISGotMenu
+; v2=menu to use when meet Billy
+ gosub @UpdateVarDataWordInc ; 8 Current Menu offset for talking to Billy
+; v2=menu to use when meet Pat
+ gosub @UpdateVarDataWordInc ; 10 Current Menu offset for talking to Pat
+ v2=0
+ gosub @UpdateVarDataWordInc ; 12
+ gosub @UpdateVarDataWordInc ; 14
+ add PersonNumber,c1
+ add x4,c8 ; offset in TFD
+ if PersonNumber<NumberOfPeople then @InitPeopleLoop ; number of people in game.
+
+
+ IdentikitTableBase=v1
+ code -
+  PersonNumber=0 ; number of person being done
+.IdentikitPeopleLoop
+  gosub @iDesignPerson
+  add PersonNumber,c1
+  if PersonNumber<NumberOfPeople then @IdentikitPeopleLoop ; number of people in game.
+ code +
+
+; now initialise sub-plot tables, from initial
+; version.
+ &v4=TownFixedData(4) ; pointer to initial sub-plot data
+; v4 is start of table:
+; first word is offset of end of table, from v4
+; subsequent few words are pointers into table, relative to v4
+ SubPlotsOffset=v1 ; start of sub-plot tables in TVD.
+
+ &v5=TownFixedData(v4)
+ add v4,c2
+ add v5,v4 ; v5 is first word not in sub-plot tables.
+
+ x3=10 ; number of pointers
+.InitSubPlotsLoop1
+ &v2=TownFixedData(v4) ; pointer, relative to v4 in TFD
+ sub v2,c2 ; allow for relative to before length pointer in TFD,
+; which is not copied into TVD
+ add v4,c2
+ add v2,SubPlotsOffset ; make relative to start of TVD.
+ gosub @UpdateVarDataWordInc ; pointer
+ sub x3,c1
+ if x3>0 then InitSubPlotsLoop1
+
+.InitSubPlotsLoop2
+ &v2=TownFixedData(v4) ; pointer, relative to v4 in TFD
+ add v4,c2
+ gosub @UpdateVarDataWordInc ; write into TVD
+ if v4<v5 then InitSubPlotsLoop2
+
+; now clear out some space used by the gangs in
+; their decision making process, and by the towns in their
+; decision-making process, and by the cows - er - actually
+; maybe not by the cows - but they have space allocated
+; 
+ ObjectsInformation=v1
+ v2=0
+ x3=400 ; number of objects (approx 50), 8 bytes each.
+.InitSubPlotsLoop3
+ gosub @UpdateVarDataByteInc
+ sub x3,c1
+ if x3>0 then InitSubPlotsLoop3
+
+; set up the flags used by the subplots
+; These are referenced by arbitrary offsets defined in AACONST
+ v2=0 ; clear the table!
+ x3=200
+ SubPlotFlags=v1
+.InitSubPlotsLoop4
+ gosub @UpdateVarDataByteInc
+ sub x3,c1
+ if x3>0 then InitSubPlotsLoop4
+
+ gosub @InitTowns
+ gosub @SetPeoplesKnowledge ; - randomly set about half the
+; people to know something (of the type they are likely
+; to know anything about).
+ return
+;--------------
+.InitTowns
+; Each town has the following variable table
+; which is part of ObjectsInformation: 8 bytes each
+; (i.e. 8 bytes per object, including e.g. cows, gangs)
+; TVD(x1+LawfulOffset=0) .b 0 if lawless, 1 if lawful
+; TVD(x1+HappinessOffset=1) .b How happy the town is: starts at 128 (moderately happy)
+; 		to 0 (completely unhappy) and up to 255 (ecstatic)
+; TVD(x1+DeputiesOffset=2)  .b Number of deputies stationed
+ x4=SantaFe; (10)
+.InitTownsLoop
+ gosub @GetLocationData ; is town object x4 (10..15) lawful?
+; x2=TVD(x1)
+ v1=x1
+ add v1,c1 ; on to happiness offset
+ v2=128 ; happiness
+ gosub @UpdateVarDataByteInc
+ v2=2 ; default number of deputies
+ if x4<13 then ITL2
+ v2=1 ; reduced number for later towns
+
+.ITL2
+ gosub @UpdateVarDataByte
+ add x4,c1
+ if x4<16 then InitTownsLoop
+ return
+;-------------
+.ChooseName
+ code -
+  x1=TFDPersonTypeOffset ; offset of person type in TownFixedData()
+  add x1,x4 ; add to base in TFD
+  x1=TownFixedData(x1)
+; bit 1 will be clear if male
+  x2=2
+ code +
+
+   and x2,x1
+  code -
+
+  if x2<>0 then ChooseFemaleName
+.ChooseMale2
+  random v2
+  if v2>49 then ChooseMale2 ; numbmer of male names available
+ goto GotName
+
+.ChooseFemaleName
+ random v2
+ if v2>9 then ChooseFemaleName
+
+ x2=100
+ add v2,x2 ; female names are 100.109
+.GotName
+ code +
+ return
+;-------------
+code -
+.iRandomLimitX2
+; get x3 as a random number less than x2
+; i.e. there will be x2 possible values.
+ random x3
+ if x3<x2 then iRLEnd
+ if x2>0 then iRL0 ; in case we're asked for zero options.
+ x3=0
+ return
+
+.iRL0
+ code + ; compile it for speed.
+.iRL1
+  sub x3,x2
+  if x3>x2 then iRL1
+  if x3=x2 then iRL1
+ code -
+
+.iRLEnd
+ return
+;----------
+.iDesignPerson
+; person number PersonNumber
+ x6=0 ; offset within this person's 32-byte "components" table.
+; that we are going to assemble...
+ code +
+  &x4=TownFixedData(0) ; offset of fixed people data
+  x1=PersonNumber ; person number being designed
+  add x1,x1 ; times 8 - 8 bytes per person in TownFixedData(*0)
+  add x1,x1
+  add x1,x1
+  add x1,x4
+  add x1,c3 ; get identikit prototype number to use.
+  x1=TownFixedData(x1)
+  add x1,x1 ; double to get offset in tables.
+  &x4=TownFixedData(6) ; pointer table to identikit people prototypes
+  add x4,x1 ; get identikit appropriate prototype
+  &x4=TownFixedData(x4) ; get offset of identikit itself.
+ code -
+
+.iDPLoop
+ v2=TownFixedData(x4) ; first XZH
+ v5=v2 ; save xzh number
+ add x4,c1
+ if v2=0 then iDPEnd
+ add x6,c2 ; increase number of 2-byte entries we've written
+; into TVD.
+ x2=TownFixedData(x4) ; number of XZHs to choose from
+ add x4,c1
+ if x2=1 then IDPSingleXZH
+ gosub @iRandomLimitx2 ; gets x3 as a random number
+ add v2,x3 ; vary xzh number.
+
+.IDPSingleXZH
+ code +
+  gosub @UpdateVarDataByteInc ; 0: xzh number for component.
+ code -
+
+ v2=TownFixedData(x4) ; first raster offset
+ add x4,c1
+ x2=TownFixedData(x4) ; number of raster offsets to choose from
+ add x4,c1
+ if x2=1 then IDPSingleRO
+.idpChooseRO
+ gosub @iRandomLimitx2 ; gets x3 as a random number
+
+ if v5=2 then idpFemaleFace
+ if v5<>1 then idpNotFace ; what was xzh number?
+; faces have much bigger raster offsets - 10 between each.
+; Also, for Men, offsets 20 and 50 don't work - and I haven't
+; time to fix them. So just prevent them happening.
+ if x3=2 then idpChooseRO
+ if x3=5 then idpChooseRO
+.idpFemaleFace
+; multiply x3 by 10
+ add x3,x3 ; times 2
+ v5=x3 ; save times 2
+ add x3,x3 ; times 4
+ add x3,x3 ; times 8
+ add x3,v5 ; plus times 2-> times 10.
+
+.idpNotFace
+
+ add v2,x3 ; vary RO.
+
+.IDPSingleRO
+ code +
+  gosub @UpdateVarDataByteInc ; 1: raster offset for component.
+ code -
+ goto @iDPLoop
+
+.iDPEnd
+ code +
+.iDPEnd1
+ if x6>31 then iDPEnd2
+ gosub @UpdateVarDataWordInc
+ add x6,c2
+ goto iDPEnd1
+
+.iDPEnd2
+ code -
+ return
+ code +
+;-------------
+.GenerateEvent
+; of type x4: come up with a new event of one type
+; or another. Possible types are:
+; 1 + Contents of banks
+; 2 + Number of deputies in a particular town
+; 3 + Contents of train
+; 4 + Locations of gangs
+; 5 + Recent Robberies
+; 6 + Sub-plot hint.
+
+ return
+;----------
+.MoveMoneyAround
+; increase the amount of money in all the banks except Santa Fe.
+; This is special because the bank gets filled when the train
+; arrives from the east.
+
+ return
+;---------
+.GangIntelligence
+; Process all the gangs: if they're overripe for a new
+; robbery, make them take out the most lucrative target
+; without Billy's help...
+; If Pat is playing single-player, randomly allocate Billy
+; to one of the robberies...
+ x4=ObjectsInformation
+ x3=41 ; gang number we're processing: go from 41 to 46
+; TownVarData(x4) contains an 8-byte workspace area for
+; this gang. Its format is determined mostly by this routine.
+; It is initialised entirely to 0 at the start of the game.
+;  .w Amount of money possessed by gang.
+;  .w 
+;  .w
+;  .w
+.GILoop
+ &x1=TownVarData(x4) ; got any money?
+ if x1=0 then GIDoRobbery
+ if x1>32767 then GIDoRobbery ; got an overdraft.
+ x2=10 ; rate at which gang spends money
+ sub x1,x2
+ if x4>TownVarDataSize then @StratBug ;******
+ &TownVarData(x4)=x1
+.GINext
+ add x4,c8 ; next gang
+ add x3,c1
+ if x3<47 then GILoop
+ return
+
+.StratBug ;********
+ break ;********
+ return ;******
+
+.GIDoRobbery
+; the gang will rob the local bank, if it has
+; a noticeable amount of money. Otherwise they may
+; rob the train.
+ x2=x3 ; gang object
+ x5=31 ; convert from gang (41..) into town (10..)
+ sub x2,x5 ; x2 is now town number
+
+ push x2
+  x1=x2 ; 10..15
+; go to 31..36 for bank clerk number
+  x2=21
+  add x1,x2
+  MenuNumber=34 ; "we've been robbed by someone other than Billy" menu
+  gosub @NewMenuForPerson
+; next time Player talks to person x1, use menu MenuNumber
+ pop x2
+
+ gosub @GetMoneyInBank
+ if x2<500 then @GIAfterRobbery
+ if x5>TownVarDAtaSize then @StratBug ;*****
+ &TownVarData(x5)=c0 ; clear out the bank!
+; x1 was amount of money owned by the gang
+ add x1,x2
+ if x4>TownVarDAtaSize then @StratBug ;*****
+ &TownVarData(x4)=x1 ; give the gang some money!
+; and now update the "last robbery" information...
+ x1=SPRobberyOffset
+ add x1,SubPlotsoffset ; pointer to this subplot area
+ &x1=TownVarData(x1) ; get this subplot area itself
+ if x1>TownVarDAtaSize then @StratBug ;*****
+ &TownVarData(x1)=x3 ; save gang name involved.
+ add x1,c2
+; convert from gang name (41.. to town name 10..)
+ x2=31
+ sub x3,x2
+ if x3>TownVarDAtaSize then @StratBug ;*****
+ &TownVarData(x1)=x3 ; write in town that was hit.
+
+; make town annoyed at Pat
+ x1=x3 ; x1:=town robbed.
+ x5=10
+ sub x1,x5 ; go from town name 10.. to TVD offset 0..
+ add x1,x1
+ add x1,x1
+ add x1,x1
+ add x1,x1 ; 16 bytes per town at start of TVD
+ x2=4 ; opinion of Pat offset
+ add x1,x2
+ &x2=TownVarData(x1) ; current opinion
+ x3=100 ; change in opinion caused by robbery
+ sub x2,x3
+ if x1>TownVarDAtaSize then @StratBug ;*****
+ &TownVarData(x1)=x2
+
+.GIAfterRobbery
+ goto @GINext
+;--------------
+.GetMoneyInBank
+; return x2=TVD(x5) as amount of money in bank at town x2 (10..)
+ x5=10
+ sub x2,x5 ; go from location (10..) to entry in TVD (0..)
+ add x2,x2
+ add x2,x2
+ add x2,x2 ; times 8: bytes per entry in SPD table.
+ &x5=TownVarData(SubPlotsOffset) ; "money location" table.
+ add x5,x2
+ add x5,c2
+; &TVD(x5) is amount of money in local bank
+ &x2=TownVarData(x5)
+ return
+;-------------
+;.GetBestTarget
+; return TVD(x1) as the SubPlotData entry for the
+; most tempting robbery target. This should be the bank
+; with the most money that is unguarded, or guarded
+; by less than 5 deputies.
+; Or the train, if it has loads of cash.
+; &x1=TownVarData(SubPlotsOffset) ; "money location" table.
+; x2=SPDeputiesOffset
+; add x2,SubPlotsOffset
+; &x2=TownVarData(x2) ; "deputies" information.
+
+;-------------
+.TownIntelligence
+; The towns need to decide if they are unhappy with the
+; way Pat is running things. I think this can work by just
+; setting a flag when a robbery is attempted. When Pat positions
+; some deputies, this flag is reduced by the number of deputes
+; there each time interval. When the number reaches 0, the
+; town is happy.
+; Every town that has been made law-abiding is happier: and
+; so makes a positive contribution to Pat's number of votes.
+; (Wealth of town? - would make it well worth while protecting
+;  a big pot of gold in one town)
+ x4=10 ; town being considered (as TOWN variable)
+.TownIntelligence1
+ push x4
+  x2=x4
+  gosub @GetMoneyInBank
+; (returns x2=TVD(x5) as amount of money in bank at town x2 (10..))
+  add x2,c32 ; make Banks get rich much quicker...
+ if x5>TownVarDAtaSize then @StratBug ;*****
+  &TownVarData(x5)=x2
+ pop x4
+
+
+ gosub @GetLocationData ; is town object x4 (10..15) lawful?
+; Each town has the following variable table
+; which is part of ObjectsInformation: 8 bytes each
+; (i.e. 8 bytes per object, including e.g. cows, gangs)
+; TVD(x1+LawfulOffset=0) .b 0 if lawless, 1 if lawful
+; TVD(x1+HappinessOffset=1) .b How happy the town is: starts at 128 (moderately happy)
+; 		to 0 (completely unhappy) and up to 255 (ecstatic)
+; TVD(x1+DeputiesOffset=2)  .b Number of deputies stationed
+ x2=DeputiesOffset
+ add x2,x1
+ x3=TownVarData(x2) ; number of deputies
+ sub x3,c2 ; if >2 deputies, get happier each turn. Else get less happy
+ add x3,x3
+ add x3,x3
+ add x3,x3
+ add x3,x3
+ add x3,x3 ; times 32, so 0 deputies means happiness goes down a full
+; division every month
+ push x4
+  gosub @ChangeHappiness
+ pop x4
+
+ add x4,c1
+ if x4<16 then @TownIntelligence1
+
+ return
+;-------------
+.ChangeHappiness
+; change happiness for town with data TVD(x1)
+; by x3: signed word
+ x2=HappinessOffset
+ add x2,x1
+ x4=TownVarData(x2)
+ add x4,x3 ; add on change in happiness
+ if x4<500 then TINotBottomLimit
+ x4=0
+ if PlayersName<>Pat then TINotBottomLimit
+ x1=3
+ and x1,PatWarnings
+ if x1<>0 then TINotBottomLimit ; get warning every 4th time into town
+ NextMeetingMenu=182 ; Barney said "sorry, old chum. You;re out" (1815)
+; (See this next time we leave the map)
+ add PatWarnings,c1
+ if PatWarnings>5 then TINotBottomLimit
+ NextMeetingMenu=180 ; Pat - people are revolting!
+
+.TINotBottomLimit
+ if x4<256 then TINotTopLimit
+ x4=255
+
+.TINotTopLimit
+ if x2>TownVarDAtaSize then @StratBug ;*****
+ TownVarData(x2)=x4 ; write back happiness
+ return
+;-------------
+; menu options for sheriff's office
+; when finished, Jump back to MeetDoMenu with MenuNUmber set
+; or jump to BackToWalkabout if don't want anything else.
+.WhereAreDeputies
+ code -
+  gosub @iStartPrinting
+  x4=10 ; town being considered
+.WhereADLoop
+  m1=500 ; base for names
+  add m1,x4
+  message m1 ; print town name.
+ code +
+  gosub @GetLocationData ; is town object x4 (10..15) lawful?
+; Each town has the following variable table
+; which is part of ObjectsInformation: 8 bytes each
+; (i.e. 8 bytes per object, including e.g. cows, gangs)
+; TVD(x1+LawfulOffset=0) .b 0 if lawless, 1 if lawful
+; TVD(x1+HappinessOffset=1) .b How happy the town is: starts at 128 (moderately happy)
+; 		to 0 (completely unhappy) and up to 255 (ecstatic)
+; TVD(x1+DeputiesOffset=2)  .b Number of deputies stationed
+ add x1,c1
+ x2=TownVarData(x1) ; get happiness
+ asr x2
+ asr x2
+ asr x2
+ asr x2
+ asr x2 ; divide by 32 to give 0..7 as happiness rating
+ code -
+  add x1,c1
+  x3=TownVarData(x1) ; x3=number of deputies
+  print x3
+  message dot
+  message ForceCR
+  m1=456 ; base for happiness messages
+  add m1,x2
+  message 455 ; people are
+  message m1 ; rebelling->ecstatic
+  message ForceCR
+  add x4,c1
+  if x4<16 then @WhereADLoop ; next town
+ gosub @iEndPrinting
+ code +
+ gosub @TTPDI2 ; DisplayInstructions2 ; using text on raster already
+.SheriffMenu
+ MenuNumber=174 ; what now?
+ goto @MeetDoMenu
+
+.HireDeputy
+ MenuNumber=176 ; get town number
+ gosub @PrettyMenu
+; result=town number (10..15)
+ x4=result
+ gosub @GetLocationData
+ x2=DeputiesOffset
+ add x2,x1
+ x3=TownVarData(x2)
+ add x3,c1
+ if x2>TownVarDAtaSize then @StratBug ;*****
+ TownVarData(x2)=x3
+ goto SheriffMenu
+
+.FireDeputy
+ MenuNumber=176 ; get town number
+ gosub @PrettyMenu
+; result=town number (10..15)
+ x4=result
+ gosub @GetLocationData
+ x2=DeputiesOffset
+ add x2,x1
+ x3=TownVarData(x2)
+ if x3=0 then @SheriffMenu
+ sub x3,c1
+ if x2>TownVarDAtaSize then @StratBug ;*****
+ TownVarData(x2)=x3
+ goto @SheriffMenu
+
+
+
+
+;------------------
+ code -
+.iCalcCostOfDeputies ; gets running cost in x3
+; and gets income in x5
+  x4=10 ; town being considered
+  x3=0 ; cost so far
+  x5=200 ; income so far
+.iCCOD1
+ code +
+  gosub @GetLocationData ; is town object x4 (10..15) lawful?
+; Each town has the following variable table
+; which is part of ObjectsInformation: 8 bytes each
+; (i.e. 8 bytes per object, including e.g. cows, gangs)
+; TVD(x1+LawfulOffset=0) .b 0 if lawless, 1 if lawful
+; TVD(x1+HappinessOffset=1) .b How happy the town is: starts at 128 (moderately happy)
+; 		to 0 (completely unhappy) and up to 255 (ecstatic)
+; TVD(x1+DeputiesOffset=2)  .b Number of deputies stationed
+ x2=DeputiesOffset
+ add x2,x1
+ dx2=TownVarData(x2)
+ dx1=CostDeputy
+ gosub @Multdx1dx2
+ x2=dx1 ; cost per month
+ add x3,x2 ; add on to running cost
+ code -
+ x2=TownVarData(x1) ; LawfulOffset
+ add x2,x2
+ add x2,x2
+ add x2,x2
+ add x2,x2
+ add x2,x2 ; each lawful town brings income of 32
+ add x5,x2 ; add on to income
+
+ add x4,c1
+ if x4<16 then ICCOD1
+
+ x1=SPFTexanPosseeAvailable ; number of members (byte)
+ x2=SubPlotFlags
+ add x1,x2
+ dx1=TownVarData(x1) ; number of deputies working for nothing
+ dx2=CostDeputy
+code +
+ gosub @MultDX1DX2
+code -
+ sub x3,dx1
+ if x3<32000 then ICCOD2
+ x3=0 ; cost has gone negative, so limit to zero
+
+.ICCOD2
+ return
+;--------------
+.iBudgetShortfallX1
+; oh dear - Pat is trying to spend x1 gold more than
+; he's got
+  x4=15 ; town being considered
+  x3=x1 ; cost still to save
+.iBS1
+ code +
+  gosub @GetLocationData ; get TVD(x1) for x4
+; Each town has the following variable table
+; which is part of ObjectsInformation: 8 bytes each
+; (i.e. 8 bytes per object, including e.g. cows, gangs)
+; TVD(x1+LawfulOffset=0) .b 0 if lawless, 1 if lawful
+; TVD(x1+HappinessOffset=1) .b How happy the town is: starts at 128 (moderately happy)
+; 		to 0 (completely unhappy) and up to 255 (ecstatic)
+; TVD(x1+DeputiesOffset=2)  .b Number of deputies stationed
+ code -
+ x2=DeputiesOffset
+ add x2,x1
+.iBS2
+ x1=TownVarData(x2)
+; x1 deputies currently at this town. Take them away!
+ if x1=0 then iBS3
+ sub x1,c1
+ if x2>TownVarDAtaSize then @iStratBug ;*****
+ TownVarData(x2)=x1
+ x5=CostDeputy
+ sub x3,x5 ; take off from shortfall
+ if x3>32000 then iBSEnd ; have saved enough money
+ goto iBS2
+
+.iBS3
+ sub x4,c1
+ if x4>9 then iBS1
+.iBSEnd
+ return
+
+ code +
+;--------------
+.SetPeoplesKnowledge
+; go through people tables and randomly make people
+; know things (as and when there is information of
+; the right type for them to know).
+ v1=TVDInfoByte
+ add v1,PeopleVarData
+ x3=NumberOfPeople ; countdown
+.SPKLoop
+ v2=TownVarData(v1)
+ x1=127 ; mask off top bit
+ and v2,x1
+; code -
+;  random x1
+; code +
+; if x1>127 then SPKKnowNothing
+ x1=128
+ or v2,x1 ; know something!
+
+.SPKKnowNothing
+ gosub @UpdateVarDataByte ; write v2 into TVD(v1)
+ add v1,c16 ; size of peopleData entries in TVD
+ sub x3,c1 ; reduce number
+ if x3>0 then @SPKLoop
+ return
+;--------
+.PurgeIdentikitCells
+; purge cells that will be used by identikits (7500..8900)
+ v1=7100
+ v5=dPurgeObject
+.DClear1
+ gosub @MCDrawObjectV1
+ add v1,c1
+ if v1<8900 then DClear1
+ return
+
+;---------
+.FullDisplayPerson
+; display person with data at TVD(ThisPersonVarData)
+; who is person number PersonNumber
+; DO AN INITACBS BEFORE calling this routine.
+ gosub @PutUpHourglass
+ push x1
+  gosub @OpenIdentikitStructures
+ pop x1
+; gosub @PurgeIdentikitCells ; purge cells common to identikits
+; and town sprites file.
+
+.FDP1
+ push x1
+  gosub @DisplayPerson
+ pop x1
+ return
+
+;---------
+.DisplayPerson
+; display person with data TVD(ThisPersonVarData)
+; who is number PersonNumber
+ cif pc
+  v1=0
+  v2=0
+  gosub @SafeScrollDirection
+  gosub @SafePlotLogical
+ cend
+ gosub @MCDisplayRoom
+;; gosub @DisplayEverythingSprites ; display acbs, text box etc.
+ PersonDisplayed=true ; stop SpecialAniObj problems with funny acbs
+; set up for the person conflicting with e.g. what SAO thinks
+; is the player's acb in the walkabout code.
+ x4=IdentikitTableBase ; 32 bytes per person.
+ x1=PersonNumber
+ add x1,x1
+ add x1,x1
+ add x1,x1
+ add x1,x1
+ add x1,x1 ; x1=PersonNumber*32
+ add x4,x1
+
+ dv2=32 ; x
+ dv3=616 ; z
+ dv4=600 ; h 
+ dv6=0 ; non-reversed.
+ x3=0 ; offset within table.
+
+ dv5=dMarkPreload
+ push x4
+  gosub @DPLoop
+ pop x4
+ gosub @MCPreloadCells
+
+ x3=0 ; offset within table.
+ dv5=1 ; draw type
+
+.DPLoop
+; sixteen two-byte entries: first byte is xzh,
+; second byte is Raster Offset
+  dv1=TownVarData(x4)
+  add x4,c1
+  x1=TownVarData(x4)
+  add x4,c1
+  &WordWS(WordRasterOffset)=x1
+  RasterOffset=x1 ; for setting up acbs
+  add dv3,c1 ; make each plane by one higher than the last,
+  add dv4,c1 ; to make sure the acb handler gets them in the right order.
+  push x3
+  push x4
+  push dv3
+  push dv4
+   gosub DPDO
+  pop dv4
+  pop dv3
+  pop x4
+  pop x3
+  add x3,c2
+  if x3<32 then @DPLoop
+  gosub @MCCopyScreenToBuffer
+; cif pc
+;  gosub @MCUpdateScreen
+;  gosub @MCUnplotScreen
+; cend
+
+.DPDORet
+ return
+;------------
+.DPDO
+ if dv5<>1 then @MCDrawObjectDV1 ; preload
+ ObjectNumber=dv1
+
+ if dv1>2 then @DPDONotFace
+ if dv1=0 then DPDORet
+; for face, set up animation directly.
+ push ObjectNumber
+ push dv1
+ push dv3
+ push dv4
+  if dv1=1 then DPDOMaleFace
+  add dv3,c16
+  ObjectNumber=710
+  push dv4
+   sub dv4,c32 ; move mouth down
+   gosub @DPSFA2
+  pop dv4
+  ObjectNumber=712
+  gosub @DPSFA2
+  goto DPDOAfterFace
+
+.DPDOMaleFace
+  add dv3,c32
+  add dv4,c32
+  ObjectNumber=700
+  gosub @DPSFA2
+  ObjectNumber=703
+  gosub @DPSFA2
+
+.DPDOAfterFace
+ pop dv4
+ pop dv3
+ pop dv1
+ pop ObjectNumber
+
+.DPDONotFace
+ dx1=240 ; make hair be much further forward, so
+ if dv1=22 then DPDOSideBurn ; men's sideburns.
+ if dv1=51 then DPDOSideBurn ; women's hair
+ if dv1<>21 then DPDONotHair
+ dx1=250 ; make hair be much further forward, so
+.DPDOSideBurn
+; mouth animates behind it.
+ add dv3,dx1
+ add dv4,dx1
+ goto DPSFA2 ; do as acb, so it appears in front of mouth
+
+.DPDONotHair
+ if dv1<40 then DPDONotHat
+ if dv1>42 then DPDONotHat
+ dx1=260 ; make hat be in front of hair/beard
+ add dv3,dx1
+ add dv4,dx1
+ goto DPSFA2 ; do as acb, so it appears in front of mouth
+
+.DPDONotHat
+; drop through to DPSFA
+
+.DPSFA
+; draw objectNumber (will be CopyScreenToBuffered)
+  push dv2
+  push dv3
+  push dv4
+  push RasterOffset ; zeroed by StartFreeACB
+   dv5=dPlot
+   dv6=0 ; reversal
+   &WordWS(WordRasterOffset)=RasterOffset
+   gosub @MCDrawObjectDV1
+   &WordWS(WordRasterOffset)=c0
+  pop RasterOffset
+  pop dv4
+  pop dv3
+  pop dv2
+  return
+
+.DPSFA2
+; start ObjectNumber as an ACB
+ push dv2
+  push dv3
+  push dv4
+  push RasterOffset ; zeroed by StartFreeACB
+   gosub @StartFreeACB
+  pop RasterOffset
+  pop dv4
+  pop dv3
+  pop dv2
+ return 
+;--------
+.NewsOffice
+; display newspaper headlines - called from walkabout when
+; go into the news room.
+; No need to swap overlay, cause we don't show a person here.
+ push CurrentPrintRaster
+ push CurrentDo
+  CurrentPrintRaster=2744 ; newspaper print raster.
+  CurrentDO=391 ; 391:epitath newspaper with Billy's photo (390 is without)
+  Newspaper=true
+  gosub @MCEmptyRoom
+  gosub @MCBuildROom
+  gosub @InitACBs
+  x2=3
+; .w Offset of "Money Location" information. (type 0)
+; .w Offset of "Deputies Location" information. (type 1)
+; .w Offset of "Gang Location" information (type 2)
+; .w Offset of "Recent robbery" information (type 3)
+; .w Offset of sub-plot table.
+  gosub @TTPScanInformation
+; what information of type x2 is known?
+; Return: information is at TownVarData(x4). Or if result=false,
+; no information on this topic is available
+  code -
+   gosub @iStartPrinting
+   message ExtraNewsStory ; e.g. ranch going out of business
+   message cr
+  code +
+   PersonDisplayed=0 ; flag which also determines if "I hear.." printed at start
+   gosub @AddSPEntries ; also displays the text box
+;  code -
+;   gosub @iEndPrinting
+;  code +
+  NewScreen=CurrentScreen
+ pop CurrentDO
+ pop CurrentPrintRaster
+ Newspaper=false
+ goto @BuildNewScreen ; re-enter current outside room.
+;----------
+.WantedPoster
+; display newspaper headlines - called from walkabout when
+; go into the news room.
+; No need to swap overlay, cause we don't show a person here.
+ push CurrentPrintRaster
+ push CurrentDo
+ push TextBoxWidth
+ push BackgroundColour
+  CurrentPrintRaster=2743 ; newspaper print raster.
+  CurrentDO=392 ; 392:wanted poster
+  TextBoxWidth=100
+  BackgroundColour=0 ; transparent
+  gosub @MCEmptyRoom
+  gosub @MCBuildROom
+  gosub @InitACBs
+  code -
+   gosub @iStartPrinting
+   message 1852 ; reward for Billy is
+;   x1=500 ; amount of gold in reward is $
+   gosub @iPrintReputation
+   message 1853 ; .
+   gosub @iEndPrinting
+  code +
+  NewScreen=CurrentScreen
+ gosub @TTPDI2 ; DisplayInstructions2 ; using text on raster already
+ pop BackgroundColour
+ pop TextBoxWidth
+ pop CurrentDO
+ pop CurrentPrintRaster
+ goto @BuildNewScreen ; re-enter current outside room.
+;----------------
+code -
+.iPrintReputation
+   if PlayerReputation>2 then PrintRep2
+   PlayerReputation=2
+
+.PrintRep2
+   print PlayerReputation
+ return
+code +
+ 
+;------------
+.SpecialPrintMenu
+; If talking to a person, they are described by TownVarData(ThisPersonVarData)
+; M1 is message requested by menu code. 
+; Can also clear PersonDisplayed to false if want to get rid
+; of the person from the location
+ result=m1
+ x1=600 ; MM
+ sub result,x1
+ gosub @GetCost
+; get cost in x1, increase in reputation x2
+; from printing message MM(600)+result
+ if x1<PlayerGold then SPM2
+ if x1=PlayerGold then SPM2
+ m1=0 ; suppress message when haven't got enough gold/money
+ return
+
+.SPM2
+ if result=300 then SPMBrawl ; refuse to buy someone a drink
+ if result<>301 then SPMNotBrawl ; refuse to buy someone a drink
+.SPMBrawl
+ result=300 ; Billy, we're gonna cream ya
+ if PlayersName=Billy then SPMNotBrawl
+ result=301 ; Pat, we're gonna cream ya
+
+
+.SPMNotBrawl
+ x1=PersonNumber
+ x2=7
+ and x1,x2 ; get variation between different people in town
+ code -
+ if m1<342 then SPMNotNeedsHelp
+ if m1>359 then SPMNotNeedsHelp ; first message available is 342,
+ if x1<5 then SPMNeedsHelp2 ; last message available is 346: minus 342  -> 4
+ sub x1,c4 ; bring into range
+.SPMNeedsHelp2
+ message 340 ; a friend of mine needs help...
+ add m1,x1
+ message m1
+ m1=341 ; might be able to help ya too!
+
+.SPMNotNeedsHelp
+ if m1<362 then SPMNotLooking
+ if m1>379 then SPMNotLooking ; first message available is 362, 
+ if x1<65 then SPMLooking2 ; last message available is 367: minus 362 -> 5
+ sub x1,c4
+.SPMLooking2
+ message 360 ; hey mister, someone was looking for ya
+ add m1,x1
+ message m1 ; e.g. over in Santa Fe
+ m1=361 ; why not get over there and look em up
+
+.SPMNotLooking
+ if m1<>1519 then SPMNotAshUpton
+;;; dc.w 1519-MM,MMenu+158 * the store was deserted...
+; MD person has buggered off somewhere, to let player
+; get hold of the forged accounts.
+ PersonDisplayed=0
+
+.SPMNotAshUpton
+ if m1<>1516 then SPMNotDeliverBooks
+ message Playersname ; before 'showed the books to colonel...'
+ x1=68 ; soldier at fort Sumner
+ MenuNumber=16 ; default meeting menu 
+ code +
+  gosub @NewMenuForPerson
+ code -
+ x1=100
+ add PlayerReputation,x1
+
+.SPMNotDeliverBooks
+ if m1<>1518 then SPMNotGotBooks
+;;; dc.w 1518-MM,MPrintDoM1+1515-MM * get books
+  x1=68 ; soldier at fort Sumner
+  MenuNumber=168 ; menu to trigger player showed books to Colonel Mustard, etc.
+  code +
+  push MenuNumber
+   gosub @NewMenuForPerson
+   x1=44 ; Murphy Dolan guy at store
+   MenuNumber=16 ; back to default menu
+   gosub @NewMenuForPerson
+  pop MenuNumber
+ code -
+ PersonDisplayed=0 ; don't display person in store
+;  next time Player talks to person x1, use menu MenuNumber
+
+.SPMNotGotBooks
+;[870:"we've been robbed by Billy The Kid - so don't ask to make
+;a big withdrawal! "]
+;; when Billy goes into a bank he's recently robbed.
+;[871:"we've been robbed. I hope you've come to make a deposit. "]
+;; when Billy goes into a bank another gang has recently robbed
+ x2=200 ; unlikely they won't recognize Billy!
+ if m1=870 then SPMRecognize ; recently robbed by Billy
+ x2=60 ; normal probability they'll recognize Billy
+ if m1<>871 then SPMDontRecognize
+.SPMRecognize
+ gosub @iCheckRecognizeBilly
+
+.SPMDontRecognize
+  if m1<920 then @PMNotHello
+  if m1>951 then @PMNotHello
+; person is just saying hello
+ if PlayersName<>Billy then SPMNotRecognize
+; if in a lawful town, will Billy be recognized?
+ x2=60 ; normal probability they'll recognize Billy
+ gosub @iCheckRecognizeBilly
+
+.SPMNotRecognize
+
+; - occasionally add on the amount of reward,
+; or the number of votes that Pat got
+;[1870:Hey, I hear your reward is now $] ; ||||
+;[1871:Hey, I hear you polled ] ;|||  for Pat
+;[1872:. ] ; ||| follows 1870/amount of money
+;[1873:votes. ] ;||| follows 1871
+ random x1
+ if x1>35 then PMNotMentionReward
+ m1=1869
+ add m1,PlayersName ; +1(Pat) or 2 (Billy)
+ message m1
+ gosub @iPrintReputation ;  print PlayerReputation
+ add m1,c2
+; m1 replaces normal greeting
+
+.PMNotMentionReward
+.PMNothello
+ if m1<1891 then SPMNotGangBust
+ if m1>1897 then SPMNotGangBust
+;[1890:Tom O'Foliard rode up and said "Billy, ] ;|||
+;[1891:the Cooper Gang have been raided". ] ;|||
+;[1892:the Socorro Varueros gang has been raided". ]
+;[1893:the Seven Rivers Gang gang has been raided". ]
+;[1894:the Dona Ana Bunch gang has been raided". ]
+;[1895:the Jesse Evans gang has been raided". ]
+;[1896:the fugitives' gang has been raided". ]
+;[1897:the regulators' gang has been raided". ]
+ if PlayersName<>Pat then SPMNotBustPat
+ message 1490 ; [1490:Barney Mason rode up and said, "]
+
+.SPMNotBustPat
+ if PlayersName<>Billy then SPMNotGangBust
+ message 1890 ; add on header "Tom O'Foliard rode up and said"
+
+.SPMNotGangBust
+
+ if PlayersName<>Pat then SPMNotPat
+; SPECIALS FOR PAT GARRETT.
+
+ if m1<>665 then SPMNotMenuRobBank
+; menu option "ROB BANK"
+  m1=0 ; Pat can't rob the bank!
+
+.SPMNotMenuRobBank
+ if m1<>1680 then SPMNotBuzzOff
+; soldier/rancher tells Billy to Buzz off. Slightly more polite to Pat
+ m1=1686
+
+.SPMNotBuzzOff
+
+.SPMNotPat
+ if m1<920 then SPMNotGreeting
+ if m1>930 then SPMNotGreeting
+ x1=ThisPersonVarData
+ code +
+  gosub @GetGreetingMessage
+  gosub @GetPersonalGreeting
+ code -
+; for person TownVarData(x1)
+; return m1=personal greeting, if we've already met them.
+; or leave m1 unchanged if we haven't met them.
+; Also return x2=0 if they are strangers.
+; person's data is at TownVarData(ThisPersonVarData)
+
+.SPMNotGreeting
+
+
+code +
+ if m1<>904 then SPMNotDuel
+; "I'll see you outside" -> "Draw, varmit" if already outside
+ if CurrentScreen>MaxOutside then SPMNotDuel
+ m1=899 ; "Draw, varmit"
+
+.SPMNotDuel
+ code -
+
+
+
+.SPMEnd
+ code +
+ return
+;--------------------
+ code -
+.iCheckRecognizeBilly
+; are just about to print message M1, usually whilst
+; talking to the bank teller. If this is a lawful town,
+; or if Billy has hit this bank before, he may get an
+; escape game for his pains...
+; x2 is prob. threshold of being recognized.
+ if PlayersName<>Billy then CRBNotRecognize
+ random x1
+ if x1>x2 then CRB1
+; most of the time in a lawless time, Billy can rob the same
+; bank again, but sometime they'll recognize him and chase him off...
+ if m1=870 then CRB2 ; just been robbed by Billy, so recognize him!
+
+.CRB1
+; in lawful towns, usually recognize him...
+ x4=town
+ code +
+  gosub @IsTownLawful ; x2=TVD(x1) is non-zero if lawful
+ code -
+ if x2=0 then CRBNotRecognize ; still lawless when 0
+ random x1
+ if x1>160 then CRBNotRecognize
+
+.CRB2
+ m1=1880 ;[1880:hey, It's Billy The Kid! Get him boys! ]
+ code +
+  gosub @DisplayInstructions
+  goto @ToEscapeGame
+ code -
+;
+.CRBNotRecognize
+ return
+ code +
+;-------------
+.NewRoomSubPlotEncounters
+; Player is going into a new room in the
+; walkabout section. Is he going to meet anyone?
+; (Moving from CurrentScreen->NewScreen
+ code -
+ if NewScreen>MaxOutside then @SPEEnd ; don't get shootouts when
+; goin into saloon, etc.
+
+  random x1
+  if x1>80 then @SPEEnd ; make a decision one third of the
+; times we leave first room. If decision made, that's it.
+; Otherwise same probability on leaving each room until
+; the decision HAS been made.
+
+
+  v2=255 ; default value to update flags (UpdateVarDataByte)
+  v1=SPFAmbushDecision
+  add v1,SubPlotFlags
+  x1=TownVarData(v1)
+  if x1<>0 then @SPEEnd ; decision already made in this town
+  gosub @iUpdateVarDataByte ; have now made decision
+  v1=SPFMeetBounterHunter
+  add v1,SubPlotFlags
+  x1=TownVarData(v1) ; due to meet bounty hunter?
+  if x1=0 then SPENotBountyHunter
+  m1=1634 ; bounty hunter waiting
+  goto @iDuel
+
+.SPENotBountyHunter
+  random x1
+  if x1>40 then @SPEEnd ; proportion of towns -> encounter
+
+
+  v1=SPFSevenRiversAmbush
+  add v1,SubPlotFlags
+  x1=TownVarData(v1)
+  if x1<>0 then SPENotSevenRivers
+  gosub @iUpdateVarDataByte
+.SevenRiversAmbush
+  m1=1645 ; seven rivers ambush
+  code +
+   gosub @DisplayInstructions
+  code -
+  goto @iSubPlotShootoutNoM1
+
+.SPENotSevenRivers
+  v1=SPFJesseEvans
+  add v1,SubPlotFlags
+  x1=TownVarData(v1)
+  if x1<>0 then SPENotJesseEvans
+  gosub @iUpdateVarDataByte
+  m1=1646 ; Jesse Evans gang ambush
+  code +
+   gosub @DisplayInstructions
+  code -
+  goto @iSubPlotShootoutNoM1
+
+.SPENotJesseEvans
+  v1=SPFJoeGrantMet
+  add v1,SubPlotFlags
+  x1=TownVarData(v1)
+  if x1=0 then SPENotJoeGrant
+  if x1>2 then SPENotJoeGrant
+   v2=255 ; duel fought
+   gosub @iUpdateVarDataByte
+; x1=2 if Joe's gun won't fire
+  m1=1678 ; Joe Grant was waiting outside the saloon
+  goto @iDuel
+
+.SPENotJoeGrant
+.SPEEnd
+ code +
+ return
+
+
+.WalkingSubPlotEncounters
+; Player is walking around.
+; Is he going to meet anyone?
+ code -
+  v2=255 ; default value to update flags (UpdateVarDataByte)
+  if Town<>LincolnCity then wspNotMcSween
+  if Location<>165 then wspNotMcSween ; in saloon?
+  v1=SPFMcSweenStage
+  add v1,SubPlotFlags
+  x1=TownVarData(v1)
+  if x1<>1 then wSPNotMcSween ; Brady not waiting to murder McSween
+  v2=2 ; has done now
+  gosub @iUpdateVarDataByte ; have now made decision
+  MenuNumber=118
+  gosub @iprettyMenu
+  if result=1064 then @isubPlotShootoutNoM1 ; 1664-MM
+
+.wspNotMcSween
+ if Town<>SantaFe then wspNotSantaFe
+  if Location<>160 then wspNotSantaFe ; in Santa Fe saloon?
+  if PlayersName<>Billy then wspNotSantaFe ; Billy-only subplot
+  v1=SPFJoeGrantMet
+  add v1,SubPlotFlags
+  x1=TownVarData(v1)
+  if x1<>0 then wSPNotJoeGrant ; have we met Joe Grant?
+  MenuNumber=128 ; come here Big Boy and look at my pistol.
+  x1=1248 ; 78*16 - i.e. Joe Grant person
+  code +
+  push v1
+   gosub @TalkToPerson ; come here Big Boy and look at my pistol.
+  pop v1
+  PlayingDuel=true ; have a duel when we leave saloon
+  code -
+  v2=2 ; turned gun to empty chamber
+  if result=1077 then joeGrantLeaves
+  v2=1 ; has done now - gun unmolested
+.JoeGrantLeaves
+  gosub @iUpdateVarDataByte ; have now made decision
+  goto @iBackToWalkabout
+
+.wspNotJoeGrant
+.wspNotSantaFe
+
+
+; PAT'S ENCOUNTERS...
+; Mayor accosts Pat...
+;Menu84
+;Menu86
+;; Mayor accosts Pat...
+;Menu88
+;Menu90
+ if PlayersName<>Pat then wspNotPat
+ random x1
+ if x1>10 then wspNotMayor
+ random x1
+ MenuNumber=88 ; Mayor accosts Pat (2)
+ if x1>127 then wspMayor2
+ MenuNumber=84 ; Mayor accosts Pat (1)
+.wspMayor2
+ code +
+  gosub @PrettyMenu
+ code -
+
+.wspNotMayor
+.wspNotPat
+
+
+ code +
+
+; Billy gets challenged after a while in each room of a
+; lawful town...
+ if CurrentScreen>MaxOutside then @wspNotLawful
+ if PlayersName<>Billy then @wspNotLawful
+ x4=town
+ gosub @IsTownLawful ; returns x2=TVD(x1) non-zero if lawful
+ if x2=0 then wspNotLawful
+;[1859:down the street, a deputy called out "Billy The Kid - hold it
+;right there. You gonna come quietly?" ] ;|||
+;[1860:run away.` ] ; ||| menu option
+;[1861:ignore him.` ] ; ||| menu option
+;[1862:Billy fled the town. ] ; run away |||
+;[1863:"go for your gun, outlaw." ] ;|||
+ MenuNumber=160 ; you gonna come quietly?
+ gosub @PrettyMenu
+ if result=1262 then @ReturnToMap ; 1860-MM
+ goto @FightDuel ; 1863-MM
+
+.wspNotLawful
+ if location=160 then wspSaloon
+ if Location=165 then wspSaloon
+ if Location<170 then wspNotSaloon
+.wspSaloon
+ code -
+ random x1
+ code +
+ if x1>70 then wspNotSaloon
+ goto @ToBrawlGame
+;.ToBrawl
+; v4=BrawlScreen
+; v1=ArcadeAcode ; '3'
+; gosub @FireVisitPlace
+; goto @BackToWalkabout ; in case we get back here, which is unlikely
+
+.wspNotSaloon
+ return
+;-----------
+.SetSubPlotFlags
+ code -
+  x1=SPFCowboysMet ; ; cowboys to ambush player in town?
+  if result=908 then @SPSetFlagToPlayer
+  x1=SPFSickManOnHorse ; sick man riding with Player?
+  if result=1100 then @SPSetFlagToPlayer
+  if result=910 then @SPSetFlagToFinished ; refuse to help
+
+  x1=SPFAccountsRequested ; player been asked to fetch accounts?
+  if result=917 then @SPSetFlagToPlayer
+  x1=SPFAccountsGot ; player got accounts from store?
+  if result=919 then @SPSetFlagToPlayer
+  x1=SPFGangToGrassOnBilly ; gang name which has promised
+; to grass on Billy
+  x2=41 ; gang name
+  if result=924 then @SPSetFlagTox2 ; name of person talking to (gang)
+ 
+  x1=SPFTexanPosseeAvailable ; number of members (byte)
+  x2=8 ; number of deputies available
+  if result=932 then @SPSetFlagTox2
+; x1=SPFFreeDeputies ; number of deputies unallocated (byte)
+
+  x1=SPFTrackingBarneysOutlaw ; tracking outlaw suggested by
+; Barney Mason
+  if result=937 then @SPSetFlagToPlayer
+  x1=SPFBeefWanted ; beef asked for by Indian Chief?
+  if result=1010 then @SPSetFlagToPlayer
+  x1=SPFUprisingOffered ; number of uprisings available (byte)
+  x2=1 ; 1 uprising available
+  if result=1011 then @SPSetFlagTox2
+
+  x1=SPFMeetBountyHunter ; meet bounter hunter referred
+; to in 1634. Name of town: byte
+  x2=13 ; Mesilla
+  if result=911 then @SPSetFlagTox2
+
+; x1=SPFAmbushDecision ; cleared whenever go into new town,
+;; set when program has made a decision about whether Billy
+;; is to be ambushed here, or not.
+
+  x1=SPFCounterfeitOffered ; set when Billy has been offered
+; counterfeit money as his share in a robbery.
+  if result=1050 then @SPSetFlagToPlayer
+  if result=1053 then @SPsetFlagToPlayerLose ; spend counterfeit normally
+
+  x1=SPFMcSweenStage ; set to the following values:
+; 0=startup - Mrs McSween running Tunstall ranch, happy.
+; 1=Billy has been offered chance to save McSween's cows.
+; 2=Sheriff Brady has gone to attack McSween. This is set when
+;   Billy has been told of this. If player does nothing, then
+;   we go on to 3. Otherwise 2 is the final state. i.e. she is ok
+; 3=McSween is dead, ranch stays deserted
+  x2=1 ; offered chance to save cows
+  if result=1070 then SPSetFlagToX2
+  x2=3 ; McSween is dead, unless overridden by gunfight
+  if result=1060 then SPSetFlagTox2Lose
+ 
+  x1=SPFJoeGrantMet ; met Joe Grant? Set to 1 if yes but his
+; gun unmolested, set to 2 if gun turned to empty chamber.
+; Set to FF if duel fought.
+  x2=1
+  if result=1079 then SPSetFlagToPlayer
+  x2=2
+  if result=1077 then SPSetFlagToPlayerGain
+  goto SPSetFlagToPlayer
+
+.SPSetFlagToPlayerGain
+ add PlayerReputation,c16
+ goto SPSetFlagToPlayer
+
+.SPSetFlagToPlayerLose
+ sub PlayerReputation,c16
+ goto SPSetFlagToPlayer
+
+.SPSetFlagTox2Lose
+ sub PlayerReputation,c16
+ goto SPSetFlagToPlayer
+
+.SPSetFlagToFinished
+ x2=255 ; subplot is over
+ goto SPSetFlagToX2
+
+.SPSetFlagToPlayer
+ x2=PlayersName
+.SPSetFlagToX2
+ v1=SubPlotFlags
+ add v1,x1
+ v2=x2
+ code +
+ gosub @UpdateVarDataByteInc ; TVD(V1)=V2
+ return
+;-------------
+.PlayerNewScreen
+; call this routine every time we switch to a new screen.
+; Do various housekeeping tasks here, like adding the amount
+; of gold stolen in robberies.
+ add TotalGoldStolen,PlayerIncome
+ add PlayerGold,PlayerIncome
+ sub RobberyTillMDGoesBust,PlayerIncome ; amount of money that Billy still
+; needs to steal before the next Murphy-Dolan ranch goes bust.
+ PlayerIncome=0
+
+ if RobberyTillMDGoesBust<32000 then @PNS2
+; another Murphy-Dolan ranch goes bust...
+ RobberyTillMDGoesBust=ConstTillMDGoesBust
+ x4=24 ; object number for ranch (24..30, 29=Tunstall Ranch(McSween))
+.BustRanch1
+ gosub @GetLocationData ; returns x2=TVD(x1) where x1=position in ObjectsInfo
+ if x2=0 then BustRanch2
+.BustRanchNext
+ add x4,c1 ; next ranch
+ if x4<31 then BustRanch1
+; all ranches are broke... Billy wins!
+ goto @ToFinalDuel ;****WinGame
+; gosub @AnnounceWin ; tell other player
+; m1=1850 ; And so the west was won, Billy was a legend...
+; gosub @DisplayInstructions
+; v1=19 ; linking picture : Billy/Girl
+; gosub @DisplayLinkingPicture
+; return
+
+.BustRanch2
+
+ if x4<>29 then @BustRanch3
+; Tunstall Ranch: is McSween still there? If so, she's
+; still in charge, and therefore will not go bust...
+ push x1 ; 
+ push x4 ; ranch number
+  x3=ML ; =400: base for LOCATION variable.
+  add x3,x4
+  gosub @WhoIsAtX3
+; gets x1 as person number * 16 for room x3.
+  x2=x1 ; copy into x2 (x1 popped in a tick)
+ pop x4
+ pop x1 
+ if x2=74 then BustRanchNext ; person 74 - Mrs McSween - at Tunstall Ranch
+
+
+.BustRanch3
+ if x1>TownVarDAtaSize then @StratBug ;*****
+ TownVarData(x1)=c1 ; this ranch is broke!
+ ExtraNewsStory=400 ; extra news story=Ranch goes bust
+ add ExtraNewsStory,x4 ; ranch which has gone broke
+; if Playersname<>Billy then PNS2
+; NextMeetingMenu=254 ; ssage=ExtraNewsStory ; make Tom O'Foliard come
+;; up and tell ya as well
+;
+.PNS2
+ return
+;---------
+.PatIntelligence
+; For Billy single-player, Pat has to decide where
+; to position his deputies. I suggest we do this by assigning
+; 5 to either the most tempting robbery target, or the second
+; most tempting, at random.
+; Do we need to consider political problems? e.g. town
+; demanding protection to pacify them?
+
+; ACTUALLY, we're just going to make another town
+; lawful every N clock ticks...
+ if PlayersName=Pat then PI0a
+ add TicksSinceLawful,c1
+.PI0a
+ if TicksSinceLawful<8 then PIRet ;****15
+ TicksSinceLawful=0
+
+;SantaFe=10
+;WhiteOaks=11
+;LincolnCity=12
+;Mesilla=13
+;Roswell=14
+;ElPaso=15
+ x4=10 ; SantaFe
+.PI1
+ gosub @IsTownLawful
+ if x2=0 then @BringLawToTown
+ add x4,c1
+ if x4<16 then PI1 ; ElPaso+1
+
+.PIRet
+ return
+;------------
+.CountLawfulTowns
+; return x4 as number of lawful towns. x1..x5 corrupted, at least
+ x4=10 ; SantaFe
+.CLT1
+ gosub @IsTownLawful
+ if x2=0 then CLTDone
+ add x4,c1
+ if x4<16 then CLT1 ; ElPaso+1
+.CLTDone
+; x4 is first lawless town
+ x1=10
+ sub x4,x1
+; x4 is number of lawful towns
+ return
+;---------
+.CountBustRanches
+; return x4 as number of bust ranches, corrupts x1..x6
+ x4=24 ; object number for ranch (24..30, 29=Tunstall Ranch(McSween))
+.CBR1
+ gosub @GetLocationData ; returns x2=TVD(x1) where x1=position in ObjectsInfo
+ if x2=0 then BustRanchDone
+ add x4,c1 ; next ranch
+ if x4<31 then CBR1
+.BustRanchDone
+; x4 is first operating ranch
+ x1=24
+ sub x4,x1
+; x4 is number of bust ranches
+ return
+;---------
+.BillyStatusReport
+ gosub @CountBustRanches ; x4 is number of bust ranches towns
+ code -
+ gosub @iStartPrinting
+ if MenuNumber=150 then BSR2 ; visiting gang - get status report anyway
+; code +
+;  break ;****
+; code -
+ prs "Tom O'Foliard ...."
+; prs "Tom's name here..." ;********
+ message 1890 ; [1890:Tom O'Foliard rode up and said, "hello old friend, ]
+ m1=1901 ; [1901:you've gotta hurry up. The Murphy-Dolans are taking over
+ if x4<3 then BSR1
+ m1=1902 ; [1902:you've got the Murphy-Dolans on the run. Keep going
+ if x4<5 then BSR1
+ m1=1903 ; [1903:you've almost nailed the Murphy-Dolans, my friend. But
+.BSR1
+ message m1
+.BSR2
+ message 1904 ; [1904:you've stolen a total of $] 
+ print TotalGoldStolen
+ message 1905 ; [1905: which has bankrupted ]
+ code +
+  gosub @CountBustRanches
+ code -
+ print x4
+ message space
+ message 1906 ; [1906:of their ranches, but ]
+ code +
+  gosub @CountLawfulTowns
+ code -
+ print x4
+ message space
+ message 1907 ; [1907:of the 6 important gangs have been wiped out". ] ; œœœ punc 
+ gosub @iEndPrinting
+ code +
+ goto @TTPDI2 ; DisplayInstructions2 ; using text on raster already
+;---------------

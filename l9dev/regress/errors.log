@@ -1,0 +1,215 @@
+Compiling errors.txt
+
+68000 Acode compiler 1.3 (for Linux)
+Copyright (C) 1988 Level 9 Computing.
+M.J.Austin 2/6/88
+
+Looking for compilation batch file - 'compile.bat'
+
+Executing instructions in file 'compile.bat'
+Debugging info is now on
+Compiling file 'errors.txt'. 
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 1: * Modified test.txt to cover as many errors as possible
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 2: * To catch all errors use --testcomp
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 3: 
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 4: table
+Starting table definitions at line 4
+
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 5:  list1=1
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 6: 
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 7: var
+Starting variable definitions at line 7
+
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 8:  a b c d e f g x1
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 9:  a1 b1 c1 d1 e1 f1 g1
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 10:  a2 b2 c2 d2 e2 f2 g2
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 11:  a3 b3 c3 d3 e3 f3 g3
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 12:  a4 b4 c4 d4 e4 f4 g4
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 13:  a5 b5 c5 d5 e5 f5 g5
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 14:  a6 b6 c6 d6 e6 f6 g6
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 15:  a7 b7 c7 d7 e7 f7 g7
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 16:  a8 b8 c8 d8 e8 f8 g8
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 17:  a9 b9 c9 d9 e9 f9 g9
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 18:  aa ba ca da ea fa ga
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 19:  ab bb cb db eb fb gb
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 20:  ac bc cc dc ec fc gc
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 21:  ad bd cd dd ed fd gd
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 22:  ae be ce de ee fe ge
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 23:  af bf cf df ef ff gf
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 24:  ag bg cg dg eg fg gg
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 25:  ah bh ch dh eh fh gh
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 26:  ai bi ci di ei fi gi
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 27:  aj bj cj dj ej fj gj
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 28:  ak bk ck dk ek fk gk
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 29:  al bl cl dl el fl gl
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 30:  am bm cm dm em fm gm
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 31:  an bn cn dn en fn gn
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 32:  ao bo co do eo fo go
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 33:  ap bp cp dp ep fp gp
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 34:  aq bq cq dq eq fq gq
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 35:  ar br cr dr er fr gr
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 36:  as bs cs ds es fs gs
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 37:  at bt ct dt et ft gt
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 38:  au bu cu du eu fu gu
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 39:  av bv cv dv ev fv gv
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 40:  aw bw cw dw ew fw gw
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 41:  ax bx cx dx ex fx gx
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 42:  ay by cy dy ey fy gy
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 43:  az bz cz dz ez fz gz
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 44:  a0 b0 c0 ; ERROR: Too many variables
+Too many variables at line 44 in file 'errors.txt'
+
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 45: 
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 46: begin
+Starting main program at line 46
+
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 47: .Start
+FFFFFFF8: FF FF FF FF FF FF FF FF  - 48:  cls x ; ERROR: Bad argument
+Bad argument at line 48 in file 'errors.txt'
+
+FFFFFFF9: FF FF FF FF FF FF FF 15  - 49:  prs " start of acode: "
+0000000D: 61 63 6F 64 65 3A 20 00  - 50:  input x1 x1 x1 x1
+00000012: 3A 20 00 07 08 08 08 08  - 51:  a=Start ; ERROR: Variable expected
+Variable expected at line 51 in file 'errors.txt'
+
+00000012: 3A 20 00 07 08 08 08 08  - 52:  a=12345
+00000016: 08 08 08 08 08 39 30 01  - 53:  h=a ; ERROR: Instruction not recognized
+Instruction not recognized at line 53 in file 'errors.txt'
+
+00000016: 08 08 08 08 08 39 30 01  - 54:  c=1
+00000019: 08 08 39 30 01 48 01 03  - 55:  a=h ; ERROR: Syntax error
+Syntax error at line 55 in file 'errors.txt'
+
+00000019: 08 08 39 30 01 48 01 03  - 56: 
+00000019: 08 08 39 30 01 48 01 03  - 57: ;code +
+00000019: 08 08 39 30 01 48 01 03  - 58: 
+00000019: 08 08 39 30 01 48 01 03  - 59:  push a ; ERROR: Instruction not allowed in interpreted acode
+Instruction not allowed in interpreted acode at line 59 in file 'errors.txt'
+
+00000019: 08 08 39 30 01 48 01 03  - 60: code : ; ERROR: Plus or minus expected
+Plus or minus expected at line 60 in file 'errors.txt'
+
+00000019: 08 08 39 30 01 48 01 03  - 61: ;pop b
+00000019: 08 08 39 30 01 48 01 03  - 62: ;and a,b
+00000019: 08 08 39 30 01 48 01 03  - 63: ;or a,b
+00000019: 08 08 39 30 01 48 01 03  - 64: ;xor a,b
+00000019: 08 08 39 30 01 48 01 03  - 65:  add a,b
+0000001C: 30 01 48 01 03 0A 02 01  - 66:  sub a,b
+0000001F: 01 03 0A 02 01 0B 02 01  - 67:  sub a-b ; ERROR: Comma expected
+Comma expected at line 67 in file 'errors.txt'
+
+00000020: 03 0A 02 01 0B 02 01 0B  - 68:  list1(0)=a
+00000023: 01 0B 02 01 0B 81 00 01  - 69:  list1(0)>a ; ERROR: Equals expected
+Equals expected at line 69 in file 'errors.txt'
+
+00000023: 01 0B 02 01 0B 81 00 01  - 70: ;&list1(2)=a
+00000023: 01 0B 02 01 0B 81 00 01  - 71:  b=4
+00000026: 01 0B 81 00 01 48 04 02  - 72: &list1(b)=a ; ERROR: Can't do 16 bit tables in interpreted mode
+Can't do 16 bit tables in interpreted mode at line 72 in file 'errors.txt'
+
+00000026: 01 0B 81 00 01 48 04 02  - 73:  d=list1(3)
+00000029: 00 01 48 04 02 C1 03 04  - 74:  e=list1(b)
+0000002C: 04 02 C1 03 04 A1 02 05  - 75: ;&f=list1(2)
+0000002C: 04 02 C1 03 04 A1 02 05  - 76: ;&g=list1(b)
+0000002C: 04 02 C1 03 04 A1 02 05  - 77: ;code -
+0000002C: 04 02 C1 03 04 A1 02 05  - 78: code +
+0000002C: 04 02 C1 03 04 A1 02 05  - 79: code + ; ERROR: Already in specified code state
+Already in specified code state at line 79 in file 'errors.txt'
+
+0000002C: 04 02 C1 03 04 A1 02 05  - 80:  push a ; ERROR: Something not implemented
+Something not implemented at line 80 in file 'errors.txt'
+
+0000002C: 04 02 C1 03 04 A1 02 05  - 81: 
+0000002C: 04 02 C1 03 04 A1 02 05  - 82: .transcode
+0000002C: 04 02 C1 03 04 A1 02 05  - 83:  prs " Not allowed in MC ..." ; ERROR: Instruction not allowed in machine code
+Instruction not allowed in machine code at line 83 in file 'errors.txt'
+
+0000002C: 04 02 C1 03 04 A1 02 05  - 84: code -
+0000002C: 04 02 C1 03 04 A1 02 05  - 85:  jump transcode x1; ERROR: Can't jump into area of different code state
+Can't jump into area of different code state at line 85 in file 'errors.txt'
+
+0000002D: 02 C1 03 04 A1 02 05 0E  - 86: code + ; ERROR: MC must be even-aligned (not if code is properly implemented)
+MC must be even-aligned at line 86 in file 'errors.txt'
+
+0000002D: 02 C1 03 04 A1 02 05 0E  - 87: code -
+0000002D: 02 C1 03 04 A1 02 05 0E  - 88: 
+0000002D: 02 C1 03 04 A1 02 05 0E  - 89:  prs " contents of list 1 are: "
+00000049: 31 20 61 72 65 3A 20 00  - 90:  prs ' contents of list 1 are: ' ; ERROR: Missing quote
+Missing quote at line 90 in file 'errors.txt'
+
+00000049: 31 20 61 72 65 3A 20 00  - 91:  a=0
+0000004C: 72 65 3A 20 00 48 00 01  - 92: .Tloop2
+0000004C: 72 65 3A 20 00 48 00 01  - 93:  b=list1(a)
+0000004F: 20 00 48 00 01 A1 01 02  - 94:  b=list1[a]; ERROR: Bracket expected
+Bracket expected at line 94 in file 'errors.txt'
+
+0000004F: 20 00 48 00 01 A1 01 02  - 95:  print b
+00000051: 48 00 01 A1 01 02 03 02  - 96:  prs " "
+00000055: 01 02 03 02 06 FA 20 00  - 97:  b=list1(Start) ; ERROR: Bad table index
+Bad table index at line 97 in file 'errors.txt'
+
+00000055: 01 02 03 02 06 FA 20 00  - 98:  add a,c
+00000058: 02 06 FA 20 00 0A 03 01  - 99:  if 8<20 then Tloop2 ; ERROR: Variable not defined
+Variable not defined at line 99 in file 'errors.txt'
+
+00000058: 02 06 FA 20 00 0A 03 01  - 100:  if a<20 then Tloop2
+0000005C: 00 0A 03 01 7A 01 14 F1  - 101:  if !<20 then Tloop2 ; ERROR: Bad symbol
+Bad symbol at line 101 in file 'errors.txt'
+
+0000005C: 00 0A 03 01 7A 01 14 F1  - 102:  prs " d="
+00000062: 14 F1 06 FA 20 64 3D 00  - 103:  print d
+00000064: 06 FA 20 64 3D 00 03 04  - 104:  if a<20 then OoR
+00000068: 3D 00 03 04 7A 01 14 FD  - 105:  prs " This is a very long string to produce out of range error "
+000000A5: 20 65 72 72 6F 72 20 00  - 106:  prs " This is another very long string to produce out of range error "
+000000E8: 20 65 72 72 6F 72 20 00  - 107:  prs " This is again a very long string to produce out of range error "
+0000012B: 20 65 72 72 6F 72 20 00  - 108: .OoR ; ERROR: Forward reference to '%s' out of range
+Forward reference to 'OoR' out of range at line 104 in file 1
+
+0000012B: 20 65 72 72 6F 72 20 00  - 109:  prs " This is a final very long string to produce out of range error "
+0000016E: 20 65 72 72 6F 72 20 00  - 110:  if a<20 then Tloop2 ; ERROR: Relative jump out of range
+Relative jump out of range at line 110 in file 'errors.txt'
+
+00000171: 72 6F 72 20 00 7A 01 14  - 111:  prs " e="
+00000177: 01 14 06 FA 20 65 3D 00  - 112:  if a<20 then x1 ; ERROR: Symbol redefined as different type
+Symbol redefined as different type at line 112 in file 'errors.txt'
+
+0000017A: FA 20 65 3D 00 7A 01 14  - 113:  print e
+0000017C: 65 3D 00 7A 01 14 03 05  - 114:  if a!=20 then Tloop2 ; ERROR: Bad operator
+Bad operator at line 114 in file 'errors.txt'
+
+0000017C: 65 3D 00 7A 01 14 03 05  - 115:  prs " f="
+00000182: 03 05 06 FA 20 66 3D 00  - 116:  prs " This is not allowed: œ ..." ; ERROR: Pound sign is not allowed in prs
+Pound sign is not allowed in prs at line 116 in file 'errors.txt'
+
+0000019A: 6C 6C 6F 77 65 64 3A 20  - 117:  print f
+0000019C: 6F 77 65 64 3A 20 03 06  - 118: .x1 ; ERROR: Can't redefine symbol
+Can't redefine symbol at line 118 in file 'errors.txt'
+
+0000019C: 6F 77 65 64 3A 20 03 06  - 119:  prs " g="
+000001A2: 03 06 06 FA 20 67 3D 00  - 120:  if a<Start then Tloop2 ; ERROR: Bad type
+Bad type at line 120 in file 'errors.txt'
+
+000001A2: 03 06 06 FA 20 67 3D 00  - 121:  print g
+000001A4: 06 FA 20 67 3D 00 03 07  - 122: .s12345678901234567890123456789 ; ERROR: Symbol too long
+Symbol too long at line 122 in file 'errors.txt'
+
+000001A4: 06 FA 20 67 3D 00 03 07  - 123:  input x1 x1 x1 x1
+000001A9: 00 03 07 07 08 08 08 08  - 124:  jump forward x1
+000001AD: 08 08 08 08 0E B1 01 08  - 125: .x2 ; ERROR: Symbol table overflow
+Symbol table overflow at line 125 in file 'errors.txt'
+
+000001AD: 08 08 08 08 0E B1 01 08  - 126:  jump forward x1
+000001B1: 0E B1 01 08 0E B5 01 08  - 127:  jump forward x1 ; ERROR: The forward reference table overflowed
+The forward reference table overflowed at line 127 in file 'errors.txt'
+
+000001B2: B1 01 08 0E B5 01 08 0E  - 128: .forward
+000001B2: BA 01 08 0E BA 01 08 0E  - 129:  prs " This should trigger an acode overflow ... " ; ERROR: Acode overflow
+Acode overflow at line 129 in file 'errors.txt'
+
+000001DF: 6C 6F 77 20 2E 2E 2E 20  - 130:  xyzzy ; ERROR: Fatal compiler bug
+Fatal compiler bug at line 130 in file 'errors.txt'
+
+000001DF: 6C 6F 77 20 2E 2E 2E 20  - 131: 
+000001DF: 6C 6F 77 20 2E 2E 2E 20  - 132: 
+000001DF: 6C 6F 77 20 2E 2E 2E 20  - 133: End of source file.
+

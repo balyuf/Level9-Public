@@ -1,0 +1,583 @@
+; Dummy Exits File for Hero
+;
+; EXIT.TXT, data for the game exits. The numeric values for the 
+; directions is as follows:
+;
+;         1           up=9      in=11    cross=13   climb=14   jump=15
+;      8     2        down=10
+;         !
+;    7  --+--  3
+;         !
+;      6     4
+;         5
+;
+; Room 1 - Santa Fe Undertaker
+1000 0 0
+
+; Room 2 - bank
+1000 0 0
+
+; Room 3 - bank
+1000 0 0
+
+; Room 4 - bank
+1000 0 0
+
+; Room 5 - Santa Fe Wire Office
+1000 0 0
+
+; Room 6 - bank
+1000 0 0
+
+; Room 7
+1000 0 0
+
+; Room 8 - Santa Fe News Office
+1000 0 0
+
+; Room 9
+1000 0 0
+
+; Room 10
+1000 0 0
+
+; Room 11
+1000 0 0
+
+; Room 12 - Santa Fe Bank
+1000 0 0
+
+; Room 13
+1000 0 0
+
+; Room 14
+1000 0 0
+
+; Room 15
+1000 0 0
+
+; Room 16
+1000 0 0
+
+; Room 17
+1000 0 0
+
+; Room 18
+1000 0 0
+
+; Room 19
+1000 0 0
+
+; Room 20
+1000 0 0
+
+; Room 21
+1000 0 0
+
+; Room 22
+1000 0 0
+
+; Room 23
+1000 0 0
+
+; Room 24
+1000 0 0
+
+; Room 25
+1000 0 0
+
+; Room 26
+1000 0 0
+
+; Room 27
+1000 0 0
+
+; Room 28
+1000 0 0
+
+; Room 29
+1000 0 0
+
+; room 30 - Santa Fe
+0001 1 1 ; to undertaker
+0001 2 5 ; to wire
+1001 3 31 ; to street
+
+; room 31 - Santa Fe
+0001 5 36 ; to other street
+0001 1 8 ; to news
+0001 2 64 ; to store
+1001 3 32 ; to street
+
+; room 32 - Santa Fe
+0001 1 12 ; to bank
+1001 3 33 ; to street
+
+; room 33 - Santa Fe
+0001 1 160 ; to saloon
+0001 2 0 ; to train station
+1001 3 34 ; to street
+
+; room 34 - Santa Fe
+0001 1 80 ; to jail Sheriff's office
+0000 5 38 ; south to other street
+1001 2 65 ; to store
+
+; room 35 - Santa Fe (Street 2)
+0001 1 171 ; to saloon
+1001 3 36 ; to street
+
+; room 36 - Santa Fe
+0001 2 190 ; to courthouse CLOSED
+1001 3 37 ; to street
+
+; room 37 - Santa Fe
+0001 1 190 ; CLOSED
+0001 2 190 ; CLOSED
+1001 3 38 ; to street
+
+; room 38 - Santa Fe
+0001 1 190 ; to other street
+0001 2 34 ; to other street
+1001 3 39 ; to street
+
+; room 39 - Santa Fe
+1001 1 19 ; to livery stables
+
+; 40
+1000 0 0
+
+; 41
+1000 0 0
+; 42
+1000 0 0
+; 43
+1000 0 0
+; 44
+1000 0 0
+; 45
+1000 0 0
+; 46
+1000 0 0
+; 47
+1000 0 0
+; 48
+1000 0 0
+; 49
+1000 0 0
+
+; 50 - El Paso
+0001 3 51
+0001 1 168 ; to saloon
+1001 2 24 ; to doctors
+
+; 51
+0001 3 52
+0000 2 55 ; NE goes to other street
+1001 1 66 ; to hotel
+
+; 52
+0001 3 53
+1001 1 13 ; to bank
+
+; 53
+0001 3 54
+0001 1 6 ; to telegraph office
+1001 2 56 ; to other street
+
+; 54
+1001 1 20 ; to stable
+
+; 55 El Paso second street.
+0001 3 56
+0000 5 51 ; south goes back to southern street
+0001 1 167 ; to saloon
+1001 2 60 ; to store
+
+; 56
+0001 3 57
+0001 2 81 ; to sheriff's office
+0001 7 55 ; west to saloon/store
+0000 5 53 ; south goes back to southern street
+1001 1 9 ; to El Paso Sun
+
+; 57
+1001 1 2 ; to Undertakers
+
+; 58
+1000 0 0
+
+; 59 unused
+1000 0 0
+
+; 60 store
+1000 0 0
+
+; 61
+1000 0 0
+
+; 62
+1000 0 0
+
+; 63
+1000 0 0
+
+; 64 Store
+1000 0 0
+
+; 65 store Zang's (Santa Fe)
+1000 0 0
+
+; 66 hotel
+1000 0 0
+
+; 67 Not USED
+1000 0 0
+
+; 68
+1000 0 0
+
+; 69
+1000 0 0
+
+; 70 Roswell.
+0001 3 71
+1001 1 82 ; to Sheriff's office
+
+; 71
+0001 3 72
+1001 1 3 ; to undertakers
+
+; 72
+0001 3 73
+0001 2 61 ; to hardware store
+1001 1 173 ; 67 ; to hotel
+
+; 73
+0001 1 190 ; CLOSED. to post office
+1000 0 0
+
+; 74
+1000 0 0
+
+; 75
+1000 0 0
+
+; 76
+1000 0 0
+
+; 77
+1000 0 0
+
+; 78
+1000 0 0
+
+; 79
+1000 0 0
+
+; 80 Sheriff's Office (Santa Fe)
+1000 0 0
+
+; 81 Sheriff's Office (El Paso)
+1000 0 0
+
+; 82 Sheriff's Office (Roswell)
+1000 0 0
+
+; 83 Sheriff's Office (Lincoln City)
+1000 0 0
+
+; 84 Sheriff's Office (Mesilla)
+1000 0 0
+
+; 85 Sheriff's Office (White Oaks)
+1000 0 0
+
+; 86
+1000 0 0
+
+; 87
+1000 0 0
+
+; 88
+1000 0 0
+
+; 89
+1000 0 0
+
+; 90
+1000 0 0
+
+; 91
+1000 0 0
+
+; 92
+1000 0 0
+
+; 93
+1000 0 0
+
+; 94
+1000 0 0
+
+; 95
+1000 0 0
+
+; 96
+1000 0 0
+
+; 97
+1000 0 0
+
+; 98
+1000 0 0
+
+; 99
+1000 0 0
+
+; 100 Lincoln City
+0001 7 21 ; to corral / Torreon?
+0001 3 101
+1001 1 165 ; to saloon
+
+; 101
+0001 3 102
+1001 1 62  ; to store
+
+; 102
+0001 3 103 ; east along street
+1001 1 83 ; to sheriff's office
+
+; 103
+0001 3 104
+1001 1 15 ; to bank
+
+; 104
+0001 3 105
+1001 1 69 ; to house
+
+; 105
+1000 1 190 ; CLOSED to courts/jail
+
+; 106
+1000 0 0
+
+; 107
+1000 0 0
+
+; 108
+1000 0 0
+
+; 109
+1000 0 0
+
+; 110
+1000 0 0
+
+; 111
+1000 0 0
+
+; 112
+1000 0 0
+
+; 113
+1000 0 0
+
+; 114
+1000 0 0
+
+; 115
+1000 0 0
+
+; 116
+1000 0 0
+
+; 117
+1000 0 0
+
+; 118
+1000 0 0
+
+; 119
+1000 0 0
+
+; 120
+1000 0 0
+
+; 121 Mesilla
+;; 0001 7 120 ; west to empty desert
+0001 3 122
+1001 1 25 ; doctor's
+
+; 122
+0001 3 123
+1001 1 16 ; to bank
+
+; 123
+0001 3 124
+0000 2 191 ; NE goes to nowhere
+1001 1 169 ; saloon
+
+; 124
+0000 2 191 ; goes nowhere
+1001 1 190 ; CLOSED
+
+; 125
+1000 0 0
+
+; 126
+1000 0 0
+
+; 127
+1000 0 0
+
+; 128
+1000 0 0
+
+; 129
+1000 0 0
+
+; 130
+1000 0 0
+
+; 131
+1000 0 0
+
+; 132
+1000 0 0
+
+; 133
+1000 0 0
+
+; 134
+1000 0 0
+
+; 135
+1000 0 0
+
+; 136
+1000 0 0
+
+; 137
+1000 0 0
+
+; 138
+1000 0 0
+
+; 139
+1000 0 0
+
+; 140 White Oaks
+0001 3 141
+0001 5 142 ; to other street
+1001 1 63 ; to store
+
+; 141
+1001 1 17 ; to bank
+
+; 142
+0001 3 143
+0000 2 140 ; NE to other street
+1001 1 172 ; to saloon
+
+; 143
+0001 3 144
+1001 1 10 ; to news office
+
+; 144
+1001 1 22 ; to livery stables
+
+; 145
+1000 0 0
+
+; 146
+1000 0 0
+
+; 147
+1000 0 0
+
+; 148
+1000 0 0
+
+; 149
+1000 0 0
+
+; 150
+1000 0 0
+
+; 151
+1000 0 0
+
+; 152
+1000 0 0
+
+; 153
+1000 0 0
+
+; 154
+1000 0 0
+
+; 155
+1000 0 0
+
+; 156
+1000 0 0
+
+; 157
+1000 0 0
+
+; 158
+1000 0 0
+
+; 159
+1000 0 0
+
+; 160 ; saloon right (Santa Fe 1)
+1001 7 162
+
+; 161
+1000 0 0
+
+; 162 ; saloon left (Santa Fe 1)
+1000 5 33 ; south back to street
+
+; 163
+1000 0 0
+
+; 164
+1000 0 0
+
+; 165 ; big single saloon in Lincoln City
+1000 0 0
+
+; 166 ; left El Paso 1
+1000 5 55 ; south back to street
+
+; 167 ; right El Paso 1
+1001 7 166
+
+; 168 ; single El Paso 2
+1000 0 0
+
+; 169 ; single Mesilla
+1000 0 0
+
+; 170 Left Santa Fe 2
+1000 5 35 ; south back to street
+
+; 171 Right Santa Fe 2
+1001 7 170
+
+; 172  Single White Oaks
+1000 0 0
+
+; 173 Left Roswell
+1001 5 72 ; south back to street
+
+; 174 Right Roswell
+1001 7 173
+
+1000 0 0
+0000 0 0
+
+

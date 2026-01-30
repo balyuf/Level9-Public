@@ -1,0 +1,1200 @@
+; MESSAGE.TXT
+;
+; Messages for Billy The Kid Map/Strategy Games
+;
+; Copyright (C) 1991 Level 9 Computing Ltd.
+;
+;
+; ||| are changes since initial text sent to Ocean for translation
+; œœœ are changes since final text sent to Ocean for translation 8 Dec 90
+; (Corrections of obvious spelling and punctuation errors are not 
+; marked - but additions to punctuations are).  
+; &&& are additional things
+; ^^^ are changes from 1991 onwards.
+;l *********** what about copyright message????
+; 
+[1:Pat ]
+[2:Billy ] ; names for "PLAYERSNAME" variable.
+[3:`]
+[5:%]
+[6:% %]
+[7:. ] ; dot
+[8: ] ; space ; ^^^^
+ 
+[11:Sheriff Pat Garrett ] ; full name for Pat, e.g. for
+; when introduced to people.
+[12:Billy The Kid ] ; full name for Billy, e.g. for
+; when introduced to people.
+
+
+
+;||| messages 21..102 moved to other parts of the game... 
+;[21:Billy spread the map and figured on it a while. He'd gotta
+;make a move and he'd gotta make it right... ]
+;[22:Billy drove off the herd and started the long drive to Mexico... ]
+;[23:Outside, a man shouted, "Come on out with your hands in the air,
+;fella. We've gotcha surrounded!" ]
+;[24:The Kid was trapped! The law was all over the place, and he hadn't
+;got nuthin' but his ol' 6-gun. ]
+[25:The plan was perfect. The train'd have to slow when it hit the
+incline. And that'd be the chance to catch onto it. ]
+
+[26:Run alongside, jump over the rocks, then climb up the ladder
+and jump onto the fuel wagon. Stop that train! ] ; œœœinstructions
+; added. Also "Billy" replaced with "the"
+
+;
+; Duel messages. Both follow Player's name |||
+[101:had won by a whisker. His opponent collapsed to the floor. ] ;^^^
+;It seemed best to hightail it outa there before anyone started
+;to ask awkward questions about who fired first. ] ;|||
+[102:went down in agony. The last thing he remembered
+was friendly hands dragging him onto a horse... ] ;|||
+
+
+; Brawl messages |||
+[300:A group of thugs entered the bar and said, "Hombre, we're
+gonna cream you good". He knew that he would 
+have to fight his way to the door if he wanted to escape in one 
+piece. ] ;Billy is on the right. ] ; Billy ||| œœœ(mentions group of thugs)
+[301:A group of thugs entered the bar and said, "Hombre, we're
+gonna cream you good". He knew he'd 
+have to fight his way to the door if he wanted to escape in one 
+piece. You are on the right. ] ; Pat |||œœœ(mentions group of thugs)
+[302:"I reckon you jogged ma
+elbow and spilled my beer there Mister. Get me another drink,
+if you know what's good for you". ] ;||| Ned Parkin
+[303:"I don't like
+the way you're looking at me, son. Reckon you'd best take
+you're liquor elsewhere". ] ;||| Jack Shoe
+[304:"We don't like your sort in this bar, Mister.
+Maybe you'd better find another place to drink your sasparilla!" ] ;||| Ben Davis
+[305:"Hey Mister, some guys other there
+were talking about jumping you. You gonna stand there and take
+that?" ] ;||| Lavinia Strumpet
+
+
+; invitations to  card game in saloon
+[320:"They say
+you're pretty good with a deck, Mister. But how about a game
+with the grown-ups?" ]  ;||| Rick Sands
+[321:"Sorry Mister, I must have mistaken you for a man!" ] ;|||
+
+; encounters elsewhere in town, or others
+[330:"You look the type who might aid an honest godfearing woman,
+Sir. My respectable boarding house has been taken over by ruffians. Can
+you drive them off for me?" ] ;||| Laura Picket
+[331:"Hey mister. Some drifter friends of
+the local Judge have taken over my homestead. You've got an honest
+face - can't you help me?" ] ;||| œœœno longer mentions name.
+[332:"I guess you think you can strut around this town like you
+own the place, Stranger. Well there's only room for one tough
+guy in this town. Draw or git!" ] ; Rick "Two Fingers" Rider. ;|||
+[333:"Hey mister, they say you're pretty good with those shootin'
+irons of yours. Won'cha help me out - some of Murphy's mob have
+taken over my claim. Move 'em out and I'll cut you in for a share!" ] ;|||
+[334:"Why hello again, dear. I'd love to talk to ya some more,
+but I've just gotta wash my hair..." ] ;||| visit girlfriend! œœœpunc
+
+
+
+; references to people elsewhere who need help.
+[340:"Hey mister, a friend of mine needs help... ] ; before 342..349 ;|||
+[341:Might be able to help ya in return, too! ] ; after 342..349 ;|||
+[342:It's Whiskey Pete the prospector out at his claim. ] ;|||
+[343:Laura Picket at the El Paso hotel has got big trouble. ] ;|||
+; ^^^ now at El Paso
+
+[344:Wilma Dunn out at the Dunn ranch. ] ;|||
+[345:Joe Dunn out at his ranch. ] ;|||
+[346:lil' ol' Miss Rose, out at her old place. ] ;|||
+
+
+
+[360:"Hey mister, someone was looking for you... ] ; before 362..369
+[361:why not get over there and look 'em up?" ] ; after 362..369
+[362:Joe Grant was the name. He was hanging out in the Santa
+Fe Saloon. ]
+[363:Karl Bekkert was the name. He was hanging out in the Santa Fe
+Saloon. ]
+[364:Jack Shoe was his name. Saw him in the El Paso Saloon. ]
+[365:Ben Davis, I think. Saw him in the Santa Fe Saloon. ]
+[366:Warren Oaks, I think. He hangs out in the Mesilla saloon. ]
+[367:lil' ol' Miss Rose, out at her old place. ] ;|||
+;[367:Wayne Rogers, so I'm told. He hangs out in the
+;White Oaks saloon. ] ;|||
+
+
+
+; 400+location number is press stories about the most common events
+; that happen at places... |||
+[410:Pat Garrett has been made Sheriff of Santa Fe ]
+[411:Pat Garrett has been made Sheriff of White Oaks ]
+[412:Pat Garrett has been made Sheriff of Lincoln City ]
+[413:Pat Garrett has been made Sheriff of Mesilla ]
+[414:Pat Garrett has been made Sheriff of Roswell ]
+[415:Pat Garrett has been made Sheriff of El Paso ]
+
+[424:the Bitter Lake Ranch, of the Murphy-Dolan's, has gone out of 
+business. ] ;||| œœœ 
+[425:the Fritz Ranch, of the Murphy-Dolan's, has gone broke. ] ;||| œœœ 
+[426:the Chisum Ranch has gone out of business. ] ;||| œœœ 
+[427:the Dedrick Ranch, of the Murphy-Dolan's, has closed down. ] ;||| œœœ 
+[428:the Beckwiths, associates of Murphy and Dolan, have closed their 
+ranch and left the state. ] ;||| œœœ 
+[429:the Tunstall Ranch has gone out of business. ] ;|||
+[430:the Reed Ranch, of the Murphy-Dolan's, has gone out of 
+business. ] ;||| œœœ 
+
+[431:only another ] ;œœœ (Followed by number of ranches left, then 432)
+[432: of those Murphy-Dolan swine to get. Keep at it, Billy] ;œœœ
+
+; text for Pat to control deputies etc.;|||
+[450:WHERE ARE DEPUTIES `] ;|||menu option ;|||
+[451:HIRE DEPUTY `] ; |||menu option
+[452:FIRE DEPUTY `] ; |||menu option
+[453:deputy ] ; for reporting number
+[454:deputies ]
+[455:people are ] ; followed by happiness: 456..464
+[456:rioting. ]
+[457:very angry. ]
+[458:angry. ]
+[459:displeased. ]
+[460:restless. ]
+[461:content. ]
+[462:happy. ]
+[463:ecstatic. ]
+[464:money: $] ;|||
+[465:`income next month: $]  ;|||
+[466:`costs next month: $] ;|||
+[467:`(] ; 467, number, 468 ||
+[468: Texan Deputies working for nothing). ] |||
+
+; menu option versions of town names...
+[470:Santa Fe `] 
+[471:White Oaks `]
+[472:Lincoln City `]
+[473:Mesilla `] 
+[474:Roswell `] 
+[475:El Paso `] 
+
+
+;||| Full stops removed from messages 500..548 
+[501:a herd of longhorns ] ; 0
+[502:a herd of longhorns ] ; 0
+[503:a herd of longhorns ] ; 0
+[504:a herd of longhorns ] ; 0
+[505:a herd of longhorns ] ; 0
+ 
+[510:Santa Fe ] ; dc.w 3345 ; Santa Fe 10
+[511:White Oaks ] ; dc.w 3346 ; Albe'que 11
+[512:Lincoln City ] ; dc.w 3347 ; Lincoln City 12
+[513:Mesilla ] ; dc.w 588 ; Las Cruces 13
+[514:Roswell ] ; dc.w 589 ; Roswell 14
+[515:El Paso ] ; dc.w 0  ; spare town 15
+[516:Frontier Town ] ; dc.w 0 ; spare town 16
+[517:Frontier Town ] ; dc.w 0 ; spare town 17
+[518:Frontier Town ] ; dc.w 0 ; spare town 18
+[519:Fort Stanton ] ; dc.w 3351 ; Fort Stanton 19
+[520:Fort Sumner ] ; dc.w 3352 ; Fort Sumner 20
+[521:A New Fort ] ; dc.w 0 ; spare fort 21
+[522:A New Fort ] ; dc.w 0 ; spare fort 22
+[523:A New Fort ] ; dc.w 0 ; spare fort 23
+[524:Bitter Lake ] ; dc.w 581 ;
+[525:the Fritz Ranch ] ; dc.w 582 ;
+[526:the Chisum Ranch ] ; dc.w 583 ;
+[527:the Dedrick Ranch ] ; dc.w 584
+[528:the Beckwith Ranch ] ; dc.w 585
+[529:the Tunstall Ranch ] ; dc.w 586 ;
+[530:the Reed Ranch ] ; dc.w 587
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+; one of these should be Blazer's Mill, nr Mescalero Apache...
+; See P.10 design
+[531:the Dunn farmhouse ] ; 31
+[532:the Dunn farmhouse ] ; 32
+[533:the Rose homestead ] ; 33
+[534:a farmhouse ] ; 34
+ 
+ 
+[535:Mescalero Apache Reservation ] ; dc.w 3356 ; Mescalero Apache
+settlement 35
+[536:Wild Apache Settlement ] ; dc.w 0 ; spare indians 36
+[537:Wild Apache Settlement ] ; dc.w 0 ; spare indians 37
+[538:Wild Apache Settlement ] ; dc.w 0 ; spare indians 38
+[539:the Santa Fe express ] ; 39
+[540:a wagon train ] ; 40
+; outlaw hideout names...
+[541:The Cooper Gang hideout ] ; 41 Santa Fe
+[542:Socorro Vaqueros ] ; 42 White Oaks Run by Pete Stewart |||
+[543:The Seven Rivers Gang hideout ] ; 43 Lincoln City
+[544:The Dona Ana Bunch hideout ] ; 44 Mesilla
+[545:The Jesse Evans gang hideout ] ; 45 Roswell
+[546:The fugitives' hideout ] ; 46 El Paso
+[547:The regulators' hideout ] ; 47 ; Los Portales, NE of Fort Sumner. |||
+[548:a prospector ] ; 48
+ 
+;|||[598:Billy ]
+;|||[599:Pat ]
+; Menu messages start at 600...
+; general message ranges:
+;  MM+1..MM+49: involve spending money
+; MM+50..MM+99: are the menu options themselves
+; MM+100..MM+149: involve chaining to a new overlay
+ 
+; menu options involving spending money...
+[601:BUY ROUND OF DRINKS ($5) `]
+[602:GO UPSTAIRS WITH THE GIRL ($25) `]
+[603:OFFER A BRIBE ($15) `]
+[604:GIVE $20 `]
+; drinks on offer at bar...
+[605:NOTHING `]
+[606:RED-EYE ($1) `]
+[607:BEER ($1) `]
+ 
+; menu options not involving spending money...
+[650:LEAVE TOWN. `]
+[651:DO NOTHING. `] ; menu option
+[652:GO THERE. `] ; menu option
+;; [653:think about it. `] ; menu option ******
+[654:YES. `]
+[655:NO. `] 
+[656:RAISE HELL. `] ; option in bar |||
+[657:Yeehaa... ] ; response to 656. |||
+
+;[656:ROB THE TRAIN. `] ; option when click on train.
+;[657:meet the wagon train. `] ; option when click on wagons
+;[658:go visit the Apaches. `] ; option when click on apache ;
+;settlement.
+; standard menu for talking to people.
+[659:GREET. `] ; ||| HULLO. `]
+[660:TALK. `]
+[661:THREATEN. `]
+[662:MOVE ON. `]
+; menu for when challenged to a duel...
+[663:ACCEPT. `]
+[664:BACK DOWN. `] ; try to pacify person.
+[665:ROB THE BANK. `]
+[666:STEAL COWS. `]
+[667:TAKE COWS TO APACHES. `]
+
+; SYSTEM menu options...
+[668:SAVE GAME `] ;|||
+[669:RESTORE `] ;|||
+[670:RESTART `] ;|||
+
+[671:English `] ; menu option
+[672:Deutsch `] ; menu option
+[673:Fran‡ais `] ; menu option
+
+
+;600+100..129: arcades overlay games
+;600+130..159: intermission overlay games
+;600+160..189: scrolling overlay games
+;[700:rode off to intercept the train. ]
+;[701:rode off to the ranch... ]
+;[702:rode off to the ranch... ]
+;[703:rode off to the ranch... ]
+;[704:rode off to the ranch... ]
+;[705:rode off to the ranch... ]
+;[706:rode off to the ranch... ]
+ 
+;[730:rode off to meet the wagon train. ]
+;[731:rode off to visit the Apache settlement. ]
+ 
+[760:set off to steal the steers. ]
+[761:Get behind them longhorns
+and drive 'em south. Press fire to switch between the
+members of your gang. ] ; rustling game. œœœinstructions added.
+[762:track the gang southwards. Press fire when near a clue
+to see what it means. Don't take too long! ] ;œœœadded.
+[763:when the bell goes, push forwards to draw, and then steer
+the gunsight onto the other guy. Press FIRE to shoot him. ] ;œœœ
+;[761:set off to hunt down the gang. ] ; tracking game
+;[762:escaped from the bank. ] ; Billy bank escape
+;[763:set off to ambush Billy. ] ; prevent Bank robbery game.
+[764:set off to take the cows to the Indians. ] ;||||
+[765:Press fire and down to duck, fire and up to raise your
+head above the barricade. Shoot as many of the bad guys as
+you can. You can't shoot or be shot so long as you keep your
+head down. ] ;œœœ
+[766:Press right//left to move sticks of dynamite, and press
+FIRE to light the fuse. But how many do you need? ] ;œœœ
+ 
+; responses...
+;[851:rode off. Press fire. ] ; result of 652
+;[852:had finally come to a decision, and rode into town. ]
+;; result of 652 under other circumstances (***debugging)
+[853:called for drinks on the house. That sure made him popular. ]
+[854:went upstairs with the saloon girl... ]
+[855:offered the bribe. ]
+[856:handed over some money. ]
+[857:Billy headed back to the hideout to round up the gang,
+and burst into the bank in force... ]
+[858:Billy started to draw his gun, but realised that without
+a gang to back him up he hadn't a hope. ] ;||| try to rob bank
+; without having contacted a gang first.
+[859:Billy started to ride off, but realised that without
+a gang free to back him up he hadn't a hope. ] ;||| try to rob train
+; without having contacted a gang first.
+
+
+; invitation to train robbery (less common, so one only)...
+[867:"There's gonna be a whole heap of gold on that train tomorrow.
+Why, if a body had a mind to, he could catch it real easy at the
+gradient". ] ; œœœ punc 
+[868:the safe contained ] ; followed by amount of gold, 869.
+[869: dollars in gold. ]
+[870:"We've been robbed by Billy The Kid - so don't ask to make
+a big withdrawal! "]
+; when Billy goes into a bank he's recently robbed.
+[871:"We've been robbed. I hope you've come to make a deposit". ] ; œœœ punc 
+; when Billy goes into a bank another gang has recently robbed
+ 
+; GENERAL MESSAGES |||
+[872:owned $] ;preceded by PlayersName, followed by amount, 873 |||
+[873:. ] ; after 872/amount. |||
+[874:A voice called out "Get outa here - we're closed!" ] ;|||
+; try to go into buildings which are just scenery.
+[875:Billy decided not to go into the Sheriffs office, just
+to be on the safe side. ] ; |||
+[876:"You deaf or something, boy?" ] ; œœœ ask same person a second
+; question ; œœœ punc 
+[877:"I said, YOU DEAF OR SOMETHING, BOY?" ] ; œœœ ask same person a second
+; question ; œœœ punc 
+[878:"Can't stand around jawing all day. Be seeing ya". ] ;œœœ ; œœœ punc 
+ 
+
+
+
+
+
+; Saloon bits and pieces...
+[899:"Prepare to draw, varmit". ] ;||| challenged to duel whilst outside. ; œœœ punc 
+[900:"I hear you play Monte. D'you want to deal?" ] ; œœœ reworded 
+[901:"Some other time, pard." ] ; refuse to play monte. ; œœœ punc 
+[902:Accuse the varmit of cheating. ] ; Monte 
+[903:Forget it. ] ; After Monte game 
+[904:"I'll meet you on the street". ] ; what Billy says if he decides
+; to fight the duel.
+[905:"OK, Yellabelly. Just crawl outa here fast, or I'll plug you". ] ; œœœ punc 
+; climb down instead of fighting duel.
+[906:"Yeh, well... I guess I'll help ya... ] ;|||trailing quote removed
+; threaten, agrees to give info. ; œœœ punc 
+[907:"Gee, I'd surely like to help ya, but I don't know nuthin'!" ] ; œœœ punc 
+; threaten, but doesn't know anything. 
+[908:"You trying to push me around, you saddle bum? Let's settle this
+right now, gun-to-gun". ] ; |||no longer mentions outside ; œœœ punc 
+[909:"What'll it be, friend?" ] ; barman offers drinks ; œœœ punc 
+[910:"Wanna place a bet, friend?" ] ; roulette ; œœœ punc 
+[911:put his money on the table. The wheel span, and as it stopped
+the ball sprang sideways into 00. That table surely was crooked! ]
+[912:Accuse the croupier of cheating. ] ; roulette table.
+[913:Forget it. ] ; roulette table.
+;|||[914:I'll see you outside. ] ; what Billy says if he decides
+;; to challenge 
+[915:"I'm ] ; then player's full name
+[916:", the reply came back: "I'm ] ; name chosen from 1000...
+[917:". ] ; after 916, name.
+[918:"Nobody tells me nuthin'." ] ; unthreatened, just knows nothing
+[919:"I ain't telling you nuthin' about anythin', bud!" ] ; refuses
+; to tell Player, in response to "talk" option on menu
+ 
+; MESSAGES FOR FIRST MEETING VARIOUS TYPE OF PEOPLE...
+; a group of 10 messages from a cowardly person...
+; a group of 10 messages from a greedy person...
+; a group of 10 messages from anyone else...
+;
+; cowardly meeting...
+[920:"Why, hello stranger". ] ; œœœ punc 
+[921:"Well, howdy mister". ] ; œœœ punc 
+[922:"Welcome, stranger". ] ; œœœ punc 
+[923:"Er, greetings stranger". ] ; œœœ punc 
+[924:"Er, howdoo young fella". ] ; œœœ punc 
+[925:"Er, hello pardner". ] ; œœœ punc 
+[926:"Er, howdoo stranger". ] ; œœœ punc 
+[927:"Er, good day to you, pardner". ] ; œœœ punc 
+[928:"Er, howdoo stranger". ] ; œœœ punc 
+[929:"Er, hello young Sir". ] ; œœœ punc 
+ 
+; greedy meeting...
+[930:"Hello stranger". ] ; œœœ punc 
+[931:"Howdoo stranger". ] ; œœœ punc 
+[932:"Hi there, stranger". ] ; œœœ punc 
+[933:"Good day, pardner". ] ; œœœ punc 
+[934:"Hello stranger". ] ; œœœ punc 
+[935:"Hello friend. You new around here?" ] ; œœœ punc 
+[936:"Hello there, boy. You want anything from me?" ] ; œœœ punc 
+[937:"Greetings stranger. You wanting something?" ] ; œœœ punc 
+[938:"Hello stranger. Can I help you some?" ] ; œœœ punc 
+[939:"Howdy pardner. You needing some help?" ] ; œœœ punc 
+;
+; normal, well-balanced people...
+[940:"Hello pardner". ] ; œœœ punc 
+[941:"Howdoo stranger". ] ; œœœ punc 
+[942:"Hi stranger". ] ; œœœ punc 
+[943:"Greetings stranger". ] ; œœœ punc 
+[944:"Howdoo stranger". ] ; œœœ punc 
+[945:"Hello pardner". ] ; œœœ punc 
+[946:"Howdy stranger". ] ; œœœ punc 
+[947:"Goodday stranger". ] ; œœœ punc 
+[948:"Howdoo friend". ] ; œœœ punc 
+[949:"Hello stranger". ] ; œœœ punc 
+ 
+[950:"Howdy Pat". ] ; œœœ punc 
+[951:"Howdy Billy". ] ; meet someone again. ; œœœ punc 
+[952:Sheriff Pat Garrett`] ;œœœ last bit moved to 975ish
+
+[953:Billy The Kid`] ; copy of message 2||| MENU OPTION
+[954:Who do you want to play?` `(Press FIRE or SPACE). ] ; |||opening question. œœœ reworded 
+[955:Pat, you must track down and capture all the outlaw gangs. Talk 
+to people for information. And when in a sheriffs office, check your 
+deputies are where they're wanted.` `(Press FIRE or SPACE). ] ;||| œœœ reworded 
+[956:Billy, you must try to bankrupt the Murphy-Dolan gang. Rob
+their banks and steal their cows. Talk to people for information. 
+And try to steer clear of the law.` `(Press FIRE or SPACE). ] 
+;||| œœœ reworded 
+[957:"Oh, it's you again". ] ; ||| meet someone again that you
+; haven't been introduced to. ; œœœ punc 
+[958:"Clear off buster, I don't associate with your kind". ] ;|||
+; meet someone again who we didn't get on with last time!
+
+ 
+;[951:"I don't deal with your kind, lawman". ] ; Pat tries to talk to
+;; someone he is very unpopular with.
+;[952:"I don't have nothing to do with outlaws". ]
+; likewise Billy.
+;
+;[953:"What can I do for you, stranger. ] ; either player
+;; talks to someone for the first time, when they are not
+;; very well known (i.e. at the start of the game).
+ 
+;[954:Ain't you Billy the Kid? Anything I can do to oblige you? ]
+;; meet's someone for the first time when better known
+;[955:well, if it isn't Sheriff Garrett. What can I do for you, sir? ]
+;; meet's someone for the first time when better known
+ 
+;; meet someone who is inclined towards/neutral towards player
+ 
+ 
+[960:] ; header for 960..990 messages. |||quote removed
+[961:." ] ; terminator for 960..990 messages.
+[962:I hear ] ; always followed by gang name.
+[963:just robbed the bank in ] ; followed by town name
+[964:just rustled some cows from ] ; followed by ranch name
+[965:hideout is right near ] ; preceded by gang name, followed by town
+; name.
+[966:Folks tell me there's a pile of money at the bank in ]
+;|||moved to 972. [967:I hear say there are x deputies stationed at ]
+[968:"There's a widow woman over at ] ; œœœ punc 
+[969:who needs help". ] ; œœœ punc 
+[970:"I'm being run off my land by Murphy. I need help!" ] ; œœœ punc 
+[971:"That gunslinger over there is threatening me and my folks.
+Kill him, won't ya?" ] ; œœœ punc 
+[972:there are ] ; followed by number, 973|||
+[973: deputies stationed at ] ; after 972/number, before town name.|||
+[974:2-PLAYER GAME (Use UP//DOWN to select,
+then press FIRE or SPACE). ] ; œœœcopy of message 1||| MENU OPTION AT START OF GAME
+[975:Trying serial connection. ];^^^ (press FIRE to give up). ] ;œœœ œœœ punc 
+ 
+
+
+; 1000+Location number for various places that people can
+; mention things happening. Events can include train
+
+; contents, contents of banks, number of deputies in
+; various towns, gang locations, recent robberies,
+; subplot hints: e.g. Widow women needing help(!)
+[1010:Santa Fe. ] ; Santa Fe 10
+[1011:White Oaks. ] ; Albe'que 11
+[1012:Lincoln City. ] ; Lincoln City 12
+[1013:Mesilla. ] ; Las Cruces 13
+[1014:Roswell. ] ; Roswell 14
+[1015:El Paso. ] ; 15
+ 
+[1039:the express train. ] ; 39
+[1040:the wagon train. ] ; 40
+ 
+; messages where someone tells one of the players
+; about various robberies, train/bank, that are
+; planned during the next little while.
+[1041:the Cooper Gang] ; 41 Santa Fe ; œœœ punc 
+[1042:Socorro Vaqueros] ; 42 White Oaks ||| ; œœœ punc 
+[1043:the Seven Rivers Gang] ; 43 Lincoln City ; œœœ punc 
+[1044:the Dona Ana Bunch] ; 44 Mesilla ; œœœ punc 
+[1045:the Jesse Evans gang] ; 45 Roswell ; œœœ punc 
+[1046:the fugitives] ; 46 El Paso ; œœœ punc 
+[1047:the Regulators] ; 47 Near Fort Sumner ||| ; œœœ punc 
+;
+; names for white American Males (young/old)...
+; other possible formula names are...
+; ... the rat
+
+[1100:honest Jake] ; œœœ punc 
+[1101:cookhouse Charlie] ; œœœ punc 
+[1102:Jericho Jake] ; œœœ punc 
+[1103:little Joe] ; œœœ punc 
+[1104:Black Jake] ; œœœ punc 
+[1105:Trapper John] ; œœœ punc 
+[1106:Prairie John] ; œœœ punc 
+[1107:long tall John] ; œœœ punc 
+[1108:Johnny Reb] ; œœœ punc 
+[1109:Omaha John] ; œœœ punc 
+ 
+[1110:Sam Peckinpaw] ; œœœ punc 
+; ** also name on a grave in Fistful of Dollars  **
+[1111:Cornish Sam] ; œœœ punc 
+[1112:snake-eyes Sam] ; œœœ punc 
+[1113:Yosemite Sam] ; œœœ punc 
+[1114:slippery Sam] ; œœœ punc 
+[1115:Ledger Bill] ; œœœ punc 
+[1116:Arkansas Will] ; œœœ punc 
+[1117:Hotel Bill] ; œœœ punc 
+[1118:Bronco Bill] ; œœœ punc 
+[1119:Tom Destry] ; œœœ punc 
+; ** as in Destry Rides Again
+ 
+[1120:Rowdy Yates] ; œœœ punc 
+; ** Clint Eastwood's role in Rawhide
+
+[1121:mad Mike] ; œœœ punc 
+[1122:Texas Mike] ; œœœ punc 
+[1123:mustang Mike] ; œœœ punc 
+[1124:Howard Johnson] ; œœœ punc 
+; ** as in Blazing Saddles 
+[1125:mule-skinner Jim] ; œœœ punc 
+[1126:Louis L'Amour] ; œœœ punc 
+; ** Western novelist 
+[1127:cool-hand Jim] ; œœœ punc 
+[1128:the Swede] ; œœœ punc 
+[1129:Bernardo O'Riley] ; œœœ punc 
+; ** Bronson's role in the Magnificent Seven
+;
+[1130:Slim Pickins] ; œœœ punc 
+[1131:Mexico Pete] ; œœœ punc 
+[1132:Two-gun Pete] ; œœœ punc 
+[1133:Billy-Joe Bob] ; œœœ punc 
+; ** character in Fresno
+[1134:Teacher Pete] ; œœœ punc 
+[1135:Red River Nick] ; œœœ punc 
+[1136:Nebraska Nick] ; œœœ punc 
+[1137:tricky Nick] ; œœœ punc 
+[1138:lucky Luke] ; œœœ punc 
+; ** Goscinny & Uderzo hero
+[1139:Navaho Nick] ; œœœ punc 
+;
+[1140:honest Dave] ; œœœ punc 
+[1141:dead-eye Dick] ; œœœ punc 
+[1142:Kansas Dave] ; œœœ punc 
+[1143:dainty Dave] ; œœœ punc 
+[1144:dynamite Dave] ; œœœ punc 
+[1145:red-eye Bert] ; œœœ punc 
+[1146:bull-whip Bert] ; œœœ punc 
+[1147:slick Bert] ; œœœ punc 
+[1148:Frenchie Dupont] ; œœœ punc 
+[1149:Duke Wayne] ; œœœ punc 
+; ** John Wayne nicknamed Duke
+;
+
+; new names for extra subplots...
+[1160:Whiskey Pete] ;||| ; œœœ punc 
+[1161:Joe Dunn] ;||| ; œœœ punc 
+[1162:Joe Grant] ;||| ; œœœ punc 
+[1163:Karl Bekkert] ;||| ; œœœ punc 
+[1164:Jack Shoe] ;||| ; œœœ punc 
+[1165:Ben Davis] ;||| ; œœœ punc 
+[1166:Warren Oaks] ;||| ; œœœ punc 
+[1167:Wayne Rodgers] ;||| ; œœœ punc 
+[1168:Ash Upton] ;||| ; œœœ punc 
+[1169:Chief How] ;********* at Mescalero Apache ;|||
+[1170:Rick Sands] ;||| ; œœœ punc 
+[1171:Rick "Two Fingers" Rider] ;||| œœœ ; œœœ punc 
+;
+; names for American Females...
+; call girls (10)...
+[1200:Honey Bun] ; œœœ punc 
+[1201:Sarah Jane] ; œœœ punc 
+[1202:Fast Sally] ; œœœ punc 
+[1203:Long tall Kerri] ; œœœ punc 
+[1204:Saucy Miss Cockwell] ; original wording at Kerri's request!
+[1205:Sweet Charity] ; œœœ punc 
+[1206:li'l Mabel] ; œœœ punc 
+[1207:Nice Nelly] ; American slang for excessive propriety
+[1208:Annabel Lee] ; œœœ punc 
+[1209:Dizzy Lizzie] ; œœœ punc 
+;
+
+[1210:Laura Picket] ;||| ; œœœ punc 
+[1211:Wilma Dunn]  ;||| ; œœœ punc 
+[1212:Miss Rosy] ;||| ; œœœ punc 
+[1213:Lavinia Strumpet] ;||| ; œœœ punc 
+[1214:Mrs McSween] ;||| ; œœœ punc 
+[1215:Paulita Maxwell] ; Billy/Pat's girlfriend.
+;------------
+; subplot messages
+
+[1490:Barney Mason rode up and said, "]
+[1491:Pat, it's the end of the month, and the wages just arrived.
+We've doling them out now, but you can change the budget for
+next month if you like. Just come into the sheriff's office in
+Lincoln and see how we're spending the money". ] ;œœœ
+
+
+; Mexican peasant going to be run off his land by Anglo ranchers
+[1500:"The Greengo ranchers, they try to drive me off my farm! Help me
+fight them!" ]
+[1501:"May the Blessed Virgin bring a thousand curses upon you". ] ; no to 1500
+ 
+; lady in saloon being pestered by notorious gunslinger
+[1503:"There's a gunslinger over there who don't know how to treat
+a lady right. Teach him a lesson, Big Boy and I could show you
+a good time". ] ;œœœ reworded from... ; œœœ punc 
+;; "This gunslinger don't know how to treat a lady right. Will you teach him
+;; a lesson, Big Boy?" ]
+
+[1504:the lady looked disappointed. ] ; no to 1503
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+; Mexican picked on by cowboys...
+[1506:"These cowboys, they picking on me. You make them stop, Senor?" ]
+[1507:The Mexican looked disappointed. ] ; no to 1506
+[1508:The cowboys walked off, saying, "We're gonna get you for this" ]
+; yes to 1506 ; œœœ punc 
+ 
+; sick man in desert...
+[1509:"Help me - my horse is dead, I'm out of water and plumb near dead". ]
+;|||mentions reason for being in trouble. ; œœœ punc 
+
+[1510:The man collapsed in despair. ] ; no to 1509
+;|||1511 moved to 1700 ; œœœ punc 
+
+
+; army being cheated by MD's subplot
+[1511:"Howdoo pardner. I'm Ash Upton. How can I be of service?" ] ;||| Store
+; in Lincoln ; œœœ punc 
+; Soldier at Fort Sumner - army are being cheated by Murphy-
+; Dolan's
+[1512:"The army are being cheated by the Murphy-Dolans on the meat
+contract". ] ; œœœ punc 
+[1513:"What the heck brung you here? Draw, you son of a bitch". ] ; œœœ punc 
+; Billy goes into store whilst MDs present 
+[1514:"Get out of here, lawman. You ain't welcome". ] ; ; œœœ punc 
+; Pat goes into store whilst MDs present.
+[1515:hunted through some papers and came up with the real account
+books for the Murphy-Dolans. Now to show them to Colonel Baxter... ]
+; pat/billy goes into the MD store whilst they're away.
+[1516:showed the books to Colonel Baxter. He was livid and vowed to
+prosecute the Murphy-Dolan's with the full force of the law. ]
+; go to Fort Sumner with books.
+[1517:"I can't go to the Colonel until I got proof - maybe you could
+get hold of their books from the store in Lincoln?" ]
+[1518:SEARCH FOR BOOKS. `] ; menu option in MD store 
+;;||| [1519:found the books and hid them in his jacket. ] ; find books in store 
+[1519:The store was deserted. ] ;||| go there when MD's / Ash not there
+ 
+; Pat is about to defeat a gang in a shootout,
+; their leader calls a truce and barters their escape
+[1520:The gang leader waved a white flag and called out: ] ;
+; followed by one of 1521..1523
+[1521:"Pat - let us go and we'll tell you when Billy's planning the
+next robbery". ]
+[1522:"Pat - let us go and we'll leave the territory". ]
+[1523:"Pat - let us go and we'll tell you where there is a stash of
+gold buried". ]
+; and responses to 1521..1523 if Pat accepts the offer...
+[1524:"Thanks Pat - we'll be seeing you". They rode off. ] ; œœœ punc 
+[1525:"Buenos dias Senor. Now we head for Mexico". ] ; œœœ punc 
+[1526:"It's on the east side of the Pecos, at a deserted prospector's
+camp". They rode off. ] 
+[1527:"Then we fight to the death". ] ; œœœ punc 
+ 
+; Pat meets Texan posse in desert. Player can choose to
+; lie that Billy has stolen Texan cattle.
+[1529:Pat met a Texan posse looking for rustlers. What did he tell
+them about Billy? ] ; intro message
+[1530:HE STEALS TEXAN CATTLE `] ; menu option|||upper case
+[1531:HE IS AN OUTLAW `] ; menu options - keep short. |||upper case
+[1532:the posse offered to ride along as deputies, for the time
+being. ] ; Pat lies about Billy stealing Texan cattle
+
+
+[1533:The posse wished Pat good luck, and were right sorry
+they couldn't help. ] ; Pat says Billy is an outlaw only.
+[1534:Barney Mason rode up and said, "Pat, another man from that Texan
+posse had to high-tail it outa town. You'd better get into
+town and check the budget". ] ; |||now mentions Barney Mason, budget
+ 
+; Barney Mason reports the escape of an outlaw
+; from Santa Fe - Pat can track him unaided for a reward.
+[1535:Barney Mason rode up. "Pat - an outlaw's just busted out from
+Santa Fe. Ride with me now, and I'll put you on his trail. "]
+[1536:Barney rode off. ] ; no to 1535
+[1537:Barney lead Pat at a gallop to the head of a winding valley,
+then left him to track the fugitive on his own. ] ; yes to 1535
+[1538:Pat took the outlaw in and claimed the $100 reward. ]
+; get the outlaw.
+
+ 
+; shootout message groups: intro/win/lose 1540..1569
+[1540:"Hurry! We must fight them!" ] ; yes to 1500
+[1541:"Muchos gracias, Senor. Now my farm is safe". ] ; œœœ punc 
+[1542:The peasant had been hit by a bullet. He died without saying a
+word. ] ; œœœ punc 
+
+
+
+ 
+; duel message groups: intro/win/lose 1570..1599
+ 
+; gunslinger bothering lady (1503)
+[1570:The gunslinger slowly turned around and started to head for the
+door... ] ; yes to 1503
+[1571:The gunslinger slumped to the floor... ]
+[1572:the bullet struck home, bringing merciful blackness. ]
+; invitations to duel in saloon
+
+[1573:"So you're the guy that drilled my
+kid brother in the back, Mister Big Shot. Wanna settle this
+outside?" ] ;||| Warren Oaks
+[1574:"They say you're pretty fancy with
+that six-gun of yours, Mister. But I reckon you ain't. Wanna take
+me on outside?" ]  ;||| Wayne Rodgers
+[1575:"I seeze you undressin' my Mary-Jane
+with your eyes, buster! Wanna settle this like a Man?" ]  ;||| Karl Bekkert
+
+ 
+;
+; Pat is accosted by a local mayor with request for more protection
+[1600:a pompous mayor walked up and shouted, "Sheriff Garrett,
+this town's gotta have more protection. I want at least one more
+deputy here before you leave us.] ;||| now mentions appearance ; œœœ punc 
+[1601:"OK, I guess that'll have to do". ] ; œœœ punc 
+[1602:"The people of this town ain't gonna be happy about this". ] ; œœœ punc 
+ 
+; The same mayor asks Pat to run a vagrant out of town
+; to enforce a bogus claim against the prospector (?)
+[1605:A pompous mayor walked up and shouted, "Sheriff Garrett, there's
+a vagrant I want run outa town. The varmit says he owns a claim
+that one of my friends has a mind to". ] ; œœœ punc 
+[1606:Pat helped the mayor, and drove the vagrant out of town. But he
+surely didn't feel good about doing it. ]
+[1607:Pat refused, saying that even a vagrant has his rights. ]
+ 
+; Pat encounters an outlaw whilst tracking
+; ++ In scrolling game ++
+ 
+; At Siege, Carlyle runs in.
+; ++ In arcades game ++
+ 
+; Pat meets outlaw gang in an old Building.
+; ++ In arcades game ++
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+; Billy Only encounters...
+[1610:"Paleface, we greet you. Beef promised us by treaty,
+Murphy-Dolans send us scraps. My people starve". ] ;|||no longer mentions Billy
+; comment from Indian chief.
+[1611:do you want to try to take these cows to the Indian Reservation? ] ;
+; when double-click on Longhorns, after seeing 1610.
+;[1612:the Indian chief rode up: "How, red man's friend?". He thanked
+;Billy for the beef and offered to fake an uprising, if needed, to
+;distract Pat in the future. ] ; +++ Moved to scrolling games ||||
+[1613:FAKE UPRISING. `] ; extra MENU option.
+[1614:"Yes paleface, for you we make lawman think we on warpath". ] ; œœœ punc 
+ ;^^^ Billy->paleface
+
+; meet Widow Woman who wants ALL BILLY'S MONEY (quel surprise)
+[1620:"Oh Sir, I'm jest a poor widow woman. If I can't pay the bank,
+I'll be thrown off my little farm and have to go a-begging in the
+streets. It ain't no more than $1000] ; followed by amount of gold
+[1621:; that surely ain't nothing to a rich man like you". ]
+[1622:"O thank you sir. I'll always be a-thinking on you". ]
+; yes to 1620
+[1623:"O no! My last hope is gone - I'll be in the poorhouse till the
+end of my days". ] ; no to 1620
+ 
+; Desert peasant meets Billy and entices him to his house
+; with story that family is sick. While Billy stays there,
+; an outlaw arrives wit news of a gold consignment at
+; the local bank, but it's a bluff - if Billy leaves to
+; travel there, he gets challenged in the street by a bounty
+; hunter. (Note: there may or may not be gold in then bank)
+[1630:A peasant rode up: "Senor Billy, my family are sick. I no can
+make them better. Please, you come try and help them". ]
+[1631:he rode off with the peasant and stayed at his farmhouse;
+fetching and boiling water and cooking for the family.
+After a few days, they were recovering and was
+about to leave when there come a knocking at the door... ]
+; yes to 1630 (|This is Followed by 1633)
+[1632:"Oh pity me, my family will surely die". ] ; no to 1630
+; 1633 moved to 1701|||
+[1634:a bounty hunter was lying in wait. "Gotcha! you dumb
+saddlebum - you've been set up!  I'm gonna take you in,
+dead or alive! Draw! ]
+; meet Bounty hunter in town, after 1630/1631/1633
+
+
+
+ 
+; ambush by Buckshot Roberts
+[1640:As he rode near a farmhouse, a huge man stepped out from
+behind a rock: "There's folks as wants to talk to ya. I'm takin' you
+in. The name's Roberts -
+Buckshot Roberts. I'm a bounty hunter - an' I've taken in fifty scum 
+like you already, and you're gonna make it fifty-one. ]
+;||| removed: You coming quiet? ]
+
+;|||moved to arcades.[1641:although Buckshot Roberts must have stopped half a dozen
+;|||bullets, he still found strength to climb onto a horse and ride off. ]
+
+
+
+
+
+
+
+
+
+
+
+
+; win gunfight +++ Move to arcades?
+ 
+ 
+; Seven Rivers gang ambushes Billy/Pat in town.
+[1645:Suddenly shots started to ring out. He dove for cover. On the
+other side of the street, gunslingers hired by the Murphy-Dolan gang were
+shooting at him! ] ; |||no longer mentions Billy ^^^now murphy-dolan,
+; not seven-rivers
+ 
+; Jesse Evans gang ambushes Billy in town.
+[1646:Suddenly the air rang to the crack of gunshot. He leapt for
+cover. Across the street, he could see some badmen
+throwing lead at him! ] ;|||no longer mentions Billy ^^^no longer
+; mentions Jesse Evans Gang
+ 
+; Tom Cooper offers Billy lots of counterfeit money
+; instead of his share in a robbery.
+[1650:Tom Cooper said, "Billy, how'd you like 5 times your share of
+this robbery - in counterfeit bills. There's a tenderfoot called
+Duncan, spreading it around. It's a good looking paper. Won't give you
+no problems if you spend it careful. What d'you say". ]
+[1651:Cooper smiled: "Say, that's great. Here's the sack of money".
+Billy pondered on it. How could he use it most easily? ]
+[1652:BUY CATTLE WITH IT. `] ; menu option after 1651
+[1653:SPEND IT NORMALLY. `] ; menu option after 1651
+[1654:Cooper counted out Billy's share and rode off. ] ; no to 1650
+ 
+; when Billy is in Lincoln City Saloon, he overhears that Sheriff
+; Brady is on his way to ambush McSween.
+[1660:he heard something that made him prick up his ears."You
+know that no-good sheriff Brady's gonna run Mrs McSween off her ranch.
+Ain't that the devil! But what can we do?" ]
+[1661:Good Mrs McSween! An old friend, and a friend of the late
+lamented Tunstall! One of the last alive to stand against the Murphy-
+Dolans! What now? ] ; after 1660 ;œœœ no longer mentions Billy
+[1662:DO NOTHING. `] ; menu option.
+[1663:STOP BRADY. ] ; menu option. ->1664
+ 
+[1664:he ran from the saloon and found Brady heading out of town.
+He caught up with him and pulled him from his horse. Brady got up,
+shaking with anger. It was obvious he was going to draw. ]
+; stop brady from 1663
+ 
+; Jose Miguel Sedillo, a friend of Billy's from way back, tells
+; him of an attempted horse-robbery on Tunstall Ranch,
+; while this is being run by Mrs McSween.
+[1670:Jose Miguel Sedillo - an old and
+trusted friend - rode up. "You must go help Mrs McSween - the
+Murphy-Dolan's are there right now. They try to steal her cattle".]
+;||| wording changed to make non-Billy specific
+
+; do nothing or...
+[1671:GO THERE. `]
+[1672:they rode off and got ready to fight... ] ; selects 1671:
+;goes into shootout.
+ 
+; meet Joe Grant,. drunk in a saloon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+[1674:Joe Grant staggered out of a back room, plainly drunk. "Hey Kid!
+You know I'm the fastest gun in the West now. Lookee here at this
+pearl-handled pistol I just - er - got gived". ]
+[1675:He handed over the
+pistol. It surely was pretty, but wouldn't be powerful enough to stop
+a mosquito. Only three chambers were loaded. What did he do? ]
+; nothing or...
+[1676:ROTATE THE BARREL TO AN EMPTY CHAMBER. `] ; menu option
+[1677:he turned the barrel and handed the gun back. ]
+[1678:Joe Grant was waiting outside. He seemed to have gotten sober
+real quick. He snarled "Draw, you prairie dog". ]
+[1679:he handed the gun back. ] ; don't play with chambers
+ 
+[1680:"Beat it, we don't want none of Tunstall's men hereabouts". ]
+; Billy meets hostile soldier
+ 
+; meet Mrs McSween
+[1681:"Why hello old friend - how're you keeping". ] ;|||no longer mentions billy
+[1682:"Gotta get going. This place keeps a body busy". ]
+; follows 1681
+ 
+; meet prospector
+[1683:"What do you want, stranger? You another claim jumper?" ]
+
+; take sick man to santa fe
+[1684:when they arrived with the sick man clinging to the horse,
+he said "thanks for the ride Pard" and staggered off. ] |||^^^no longer
+; mentions Billy
+
+; take sick man somewhere other than Santa Fe
+
+[1685:when they arrived with the sick man clinging to his horse,
+the sick man cursed him for not going to Santa Fe and
+staggered off on his own. ] |||
+
+[1686:"Sheriff, can you come back later. We're real busy right now". ]
+; Pat meets hostile soldier/rancher. ||| copied, slightly changed from 1680
+
+
+
+; messages which result in player being thrown back to map... 1700..1729
+[1700:the man struggled onto the horse, and clung on weakly. He
+gasped "Take me to Santa Fe, Mister. I got folks there". ] ; |||now mentions Santa Fe.
+; yes to 1509
+; if visit Santa Fe next, get 1684, otherwise get 1685.
+[1701:An outlaw burst through the door, brandishing a gun! He saw
+Billy and dropped it in terror. "Billy the Kid! Don't kill me please,
+I didn't mean ya no harm. Look, I'll help ya. The bank at White Oaks
+just had a big payroll for a ranch thereabouts. Git
+down there now, ya can pick up a whole load of money". ] ; follows
+; 1631 ;||| moved from 1633
+
+
+
+; Pat's strategy game messages...
+; Go into sheriff's office...
+;|||[1800:the deputy looked up and said, "Howdy Sheriff Garrett. What
+;|||can I do for you?" ]
+;|||[1801:move deputy to reserve. `] ; take deputy away from town
+;|||[1802:move deputy to town. `] ; station deputy in this town.
+;|||[1803:ok. ]
+;|||[1804:there are ] ; followed by number of deputies
+;|||[1805: deputies in town. ] ; follows 1804/digit
+;|||[1806: deputies in reserve. ] ; follows 1804/digit
+;|||[1807:Pat got a reward of ] ; followed by number: amount of dollars
+;|||[1808: dollars. ] ; follows number.
+;|||[1809:the deputy looked up and said, "Howdy Sheriff Garrett. What
+;|||are you going to do to calm down the people in this here town?" ]
+; people are upset about level of crime.
+[1810:"the people sure are not gonna be happy about this." ]
+[1811:And so the west was won. Pat had brought Law to
+his domain, and was respected throughout the land. ] ; win message
+[1812:And so Pat died in obscurity - known only by a few
+historians who read dusty books about the Wild West. ] ; lose message
+
+[1813:Barney Mason rode up: "Pat, the county has run out of money.
+I took temporary charge while you were away, but I had to fire
+some deputies. You'd better get into town real quick and sort
+it out". He rode off again. ] ; |||
+[1814:Barney Mason rode up: "Pat, there's trouble brewing.
+People are saying you're doing no good as sheriff. You'd
+better get into the office and do something". ] ;|||
+[1815:Barney Mason rode up: "Pat, you finally got it wrong. You've
+lost the election. Sorry old friend, you're no longer Sheriff". ] ; |||
+
+;Billy strategy messages
+
+[1850:And so Billy became a legend. His reputation was known
+throughout the world, and his story was oft repeated
+by people of all countries. ] ; win message
+[1851:And so Billy died in obscurity - known only by a few
+historians who read dusty books about the wild west. ] ; lose message
+
+[1852:WANTED! Billy The Kid, Dead or Alive. Reward $]||||
+[1853:. ] ; after 1852/number|||
+[1854:was stopped on the way. He pulled up his horse
+and dismounted... ] ; Actors name, 1854. Used when
+; get a random event whilst trying to go somewhere from map. ||||
+; messages to do with meeting a gang...
+
+[1855:"Hey Billy, come share some coffee"... ] ;||| then 1856 ; œœœ punc 
+[1856:Billy sat down with the gang and talked of daring deeds
+and famous crimes. Then he asked the crucial question...
+"I've got a real sweet job planned. You want in?". The gang
+looked at Billy. Should they trust this young hotblood? ] ;|||
+; 1856, 1857 |||
+[1857:their leader spoke "Sure, but we'll want a good big cut. Now get out of
+here before I change my mind". ] ;|||
+[1858:Billy and the gang went over and over the targets they
+could hit, but they couldn't agree which should be next... ] ; ||| visit gang again
+;œœœ made "meaner"
+
+
+; get spotted by a deputy in a lawful town...
+[1859:down the street, a deputy called out, "Billy The Kid - hold it
+right there. You gonna come quietly?" ] ;||| ; œœœ punc 
+[1860:RUN AWAY `] ; ||| menu option
+[1861:IGNORE HIM `] ; ||| menu option
+[1862:Billy fled the town. ] ; run away |||
+[1863:"Go for your gun, outlaw." ] ;|||
+
+[1864:woke to see his ex-girlfriend Paulita Maxwell tending
+his injuries. "You should take more care, my love. Next time
+could be your last". With her loving care, he was soon ready to go
+again. ] ;&&& note either Billy/Pat. Preceded by Players Name
+[1865:Suddenly, Pat Garrett burst in. ] ;&&&
+[1866:"Billy, you know I can't
+take you in. They'd hang ya like a dog, and I can't stand by and let that
+happen. We'll have to settle this now, gun-to-gun. Draw,
+outlaw". ] ;&&&
+[1867:Billy and Pat approached other and exchanged glances.
+Both knew that they were sworn enemies, but also old friends.
+Was this to be the end for one of them? ] ;&&&
+[1868:CHALLENGE TO DUEL. `] ; menu option &&&
+[1869:AVOID CONFLICT. `] ; menu option &&&
+
+
+; messages which occasionally replace the standard greetings
+[1870:"Hey, it's Pat Garrett. I hear you polled ] ;|||  for Pat ; œœœ punc 
+[1871:"Hey, it's Billy the Kid. I hear your reward is now $] ; |||| ; œœœ punc 
+[1872: votes". ] ;||| follows 1870 ; œœœ punc 
+[1873:". ] ; ||| follows 1871/amount of money ; œœœ punc 
+
+[1880:"Hey, It's Billy The Kid! Get him boys!" ] ; occasionally
+; when you go into a bank, or other law-abiding place
+; in town. Leads to escape game. |||
+[1881:(lawful) ] ; added to town name on map
+[1882:the place was completely deserted. ] ; ||| visit a ranch
+; etc. which has gone bust, or similar.
+
+
+; messages Billy gets when gangs go out of business
+[1890:Tom O'Foliard rode up and said, "hello old friend, ] ;||| ^^^
+; now now longer mentions Billy
+
+[1891:the Cooper Gang have been brought to justice". ] ;|||
+[1892:the Socorro Vaqueros gang has been brought to justice". ]
+[1893:the Seven Rivers Gang gang has been brought to justice". ]
+[1894:the Dona Ana Bunch gang has been brought to justice". ]
+[1895:the Jesse Evans gang has been brought to justice". ]
+[1896:the fugitives' gang has been brought to justice". ]
+[1897:the regulators' gang has been brought to justice". ]
+
+[1900:"Ain't nuthin going on around here". ] ; knows of no |||
+; relevant events in this town.
+; Tom O'Foliard's comments on Billy's progress.
+[1901:you've gotta hurry up. The Murphy-Dolans are taking over
+the county, and you've gotta stop 'em". ] ; œœœ punc 
+[1902:you've got the Murphy-Dolans on the run. Keep going
+ol' buddy". ] ; œœœ punc 
+[1903:you've almost nailed the Murphy-Dolans, my friend. But
+Pat's almost got the territory cleaned up, so you'd better pull
+off some pretty big heists to finish 'em off". ] ; œœœ punc 
+[1904:Billy, you've stolen a total of $] ;^^^Billy added at start (not
+; an important change)
+[1905: which has bankrupted ]
+[1906:of their ranches, but ]
+[1907:of the 6 important gangs have been wiped out". ] ; œœœ punc 
+
+; ratings added ^^^^
+[1920:Billy's final reward was $]
+[1921: out of a maximum of about $15000, and he will ] ;^^^^
+
+[1922:not be remembered. ]
+[1923:be a dim memory. ]
+[1924:be a figure of fun. ]
+[1925:be remembered by many. ]
+[1926:be remembered by most. ]
+[1927:be a minor hero. ]
+[1928:be a popular hero. ]
+[1929:be a household name till the end of time. ]
+
+; ratings added ^^^^
+[1930:Pat's final popularity was ]
+[1931: votes out of a maximum of about 4000, and he will ] ;^^^^
+
+
+;------------------
+;; [2000:Billy The Kid Intro screens. ]
+[2001:"Well if it ain't momma's boy Billy! Let's see how good you are
+now. Draw, Kid!" ]
+[2002:Tunstall Ranch in Lincoln County, across the state line. ]
+[2003:"...Murphy and Dolan are dangerous men, Mr Tunstall." ]
+[2004:"I ain't gonna let their threats worry me, Sheriff Garrett. I'm
+too riled up about the way they're cheating honest farmers." ]
+[2005:"Hey now! Here's someone who might be a help. Where've you
+been these past years, Billy? John Tunstall, meet the Kid, an old
+friend of mine and a good man in a fight." ]
+[2006:"I'd like you to join my men, Billy. Here's my lucky Silver
+Dollar on account. Keep it safe." ]
+[2007:"Pat, Billy, there goes dinner!" ]
+[2008:"Another good man dead! I swear I'll bring order to Lincoln
+County and hunt down every last outlaw in it." ]
+[2009:"You're wrong, Pat, you can't play it by their rules. If you 
+mean what you said, you'll be hunting me too. Because I vow to do 
+whatever I must to avenge this murder, inside or outside the law." ]
+[2010:"The Legend of Billy The Kid" is an authentic Western for
+one or two players. ]
+[2011:As Billy, you might tie up your horse on Main Street,
+swagger into the saloon, meet an outlaw gang at cards, and go
+on to rob the bank... ]
+[2012:...or raise money to help a poor widow by rustling a herd
+of cows and driving them to Mexico. ]
+[2013:As Pat you might learn of a planned train robbery from
+the local drunk... ]
+[2014:...and lead a posse after the outlaws, track them to their lair,
+and shoot it out with the gang. ]
+ 
+
+
+
+
+
+
+
+-------- 
+

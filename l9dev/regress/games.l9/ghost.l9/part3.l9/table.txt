@@ -1,0 +1,1523 @@
+; Scapeghost Part 2 source, copyright (C) 1987 Level 9 Computing.
+;
+; TABLE.TXT, assembler format data for tables, a.k.a lists/arrays. 
+; (Save the assembled data as TABLE.DAT). 
+;
+; You must start all DEFWs on EVEN boundaries, else subsequent code 
+; seems to be padded to make it even (according to the GENST listing, 
+; anyway). The EVEN directive inserts a padding byte if appropriate.
+;
+ ORG 0
+starttables
+ dc.l LIST1-starttables ; MOVEABLE OBJECT START
+ dc.l $8000 ; OBJECT CURRENT
+ dc.l $8000+MaxObject ; HI OBJECT CURRENT
+ dc.l LIST4-starttables ; scenery table
+ dc.l NPCINITIAL-starttables ; npc initial and 'floor pointers'
+ dc.l $8000+LIST23SIZE ; 6 - NPC current attributes, stack
+ dc.l $8000+LIST236SIZE ; 7 - output buffer,scoretable
+ dc.l list8-starttables ; 8 - assorted fixed system tables
+ dc.l $8000+LIST2367SIZE ; 9 - input table,object table
+ dc.l ENDTABLE-starttables
+;---
+; CONTAINER POSITONS
+ON EQU 1
+UNDER EQU 2
+BEHIND EQU 3
+CARRIED EQU 4
+WORN EQU 5
+PREPIN EQU 7
+HANGINGFROM EQU 8 ; E.G. TREE
+pushedby equ 11
+LIEON EQU 12
+SITON EQU 13
+fastenedto equ 14
+;
+; additions to high initial position
+OBV EQU $80
+ita equ 0
+itan equ $10 ; starts with a vowel
+singularsome equ $20 ; "some cheese is tasy"
+he equ $30
+she equ $40
+pluralsome equ $50 ; "some ropes are strong"
+you equ $60
+properMale equ $70
+ProperFemale equ $70
+; ProperFemale is handled by SpecialConjugate
+;
+MaxObject EQU 189 ; should be two bigger than it really needs to be
+NUMHIOBJ EQU MaxObject ; NO. OF OBJECTS WITH A HIGH POSITION
+minnpc equ 1
+maxnpc equ 64
+npctablesize EQU (MaxNpc+1)*8
+npcstacksize equ 260 ;300
+OUTPUTBUFFER EQU 32
+SCORETABLE EQU 40 ;length of score table
+OBJTABLE EQU 16 ; number of objects which can be specified on one line
+;
+LIST23SIZE EQU MaxObject+NUMHIOBJ
+LIST236SIZE EQU LIST23SIZE+npctablesize+npcstacksize
+LIST2367SIZE EQU LIST236SIZE+OUTPUTBUFFER+SCORETABLE+170+maxnpc
+; 120 is num rooms
+;
+;---
+LIST1
+ dc.b 0,0               ; OBJECT 0
+;
+; people
+USER EQU 1
+ dc.b you,3		; 1 USER
+;
+sarah equ 2
+ dc.b properfemale,24 ; 2 sarah
+priest equ 3
+ dc.b propermale,3	; 3 priest
+johnb equ 4
+ dc.b obv+propermale,3	; 4 john b
+johnq equ 5
+ dc.b obv+propermale,24	; 5 john q
+weasel equ 6
+ dc.b obv+propermale,3	; 6 weasel
+jude equ 7
+ dc.b obv+properfemale,20 ; 7 jude
+professor equ 8
+ dc.b obv+propermale,24	; 8 professor
+severian equ 9
+ dc.b obv+propermale,24	; 9 severian
+ dc.b 0,0		; 10
+ dc.b 0,0		; 11
+ dc.b 0,0		; 12
+ dc.b 0,0		; 13
+ dc.b 0,0		; 14
+ dc.b 0,0		; 15
+ dc.b 0,0		; 16 
+ dc.b 0,0		; 17 
+ dc.b 0,0		; 18 
+ dc.b 0,0		; 19
+ dc.b 0,0		; 20
+ dc.b 0,0		; 21
+ dc.b 0,0		; 22
+ dc.b 0,0		; 23
+ dc.b 0,0		; 24
+ dc.b 0,0		; 25
+ dc.b 0,0		; 26
+ dc.b 0,0		; 27
+ dc.b 0,0		; 28
+ dc.b 0,0		; 29
+ dc.b 0,0		; 30
+ dc.b 0,0		; 31
+ dc.b 0,0		; 32
+ dc.b 0,0		; 33
+ dc.b 0,0		; 34
+ dc.b 0,0		; 35 
+ dc.b 0,0		; 36 
+ dc.b 0,0		; 37 
+ dc.b 0,0		; 38 
+ dc.b 0,0		; 39
+ dc.b 0,0		; 40
+ dc.b 0,0		; 41
+ dc.b 0,0		; 42
+ dc.b 0,0		; 43
+ dc.b 0,0		; 44
+ dc.b 0,0		; 45
+ dc.b 0,0		; 46
+ dc.b 0,0		; 47
+ dc.b 0,0		; 48
+ dc.b 0,0		; 49
+ dc.b 0,0		; 50
+ dc.b 0,0		; 51
+ dc.b 0,0		; 52
+ dc.b 0,0		; 53
+ dc.b 0,0		; 54
+ dc.b 0,0		; 55
+ dc.b 0,0		; 56
+ dc.b 0,0		; 57
+ dc.b 0,0		; 58
+ dc.b 0,0		; 59
+ dc.b 0,0		; 60
+ dc.b 0,0		; 61
+ dc.b 0,0		; 62
+ dc.b 0,0		; 63
+ dc.b 0,0		; 64
+ dc.b 0,0		; 65
+ dc.b 0,0		; 66
+ dc.b 0,0		; 67
+ dc.b 0,0		; 68 
+ dc.b 0,0		; 69 
+ dc.b 0,0		; 70
+ dc.b 0,0		; 71
+ dc.b 0,0		; 72
+ dc.b 0,0               ; 73
+ dc.b 0,0               ; 74
+ dc.b 0,0               ; 75
+ dc.b 0,0               ; 76
+ dc.b 0,0               ; 77
+ dc.b 0,0               ; 78
+ dc.b 0,0               ; 79
+;
+; now some ordinary objects (80 onwards)..
+ dc.b singularsome+carried,priest ; 80 holy water
+ dc.b 0,28		; 81 whisky flask
+ dc.b singularsome,0	; 82 broken glass
+ dc.b prepin,lampholder	; 83 bulb
+; gag and ropes do not enter the game until weasel ties sarah up.
+; this is to prevent the user taking them out of the cellar just as 
+; weasel arrives.
+ dc.b 0,0		; 84 gag
+ dc.b pluralsome,0	; 85 ropes
+ dc.b itan+prepin,hay	; 86 sprayer
+ dc.b prepin,pocket	; 87 key
+ dc.b 0,0		; 88
+ dc.b 0,0		; 89
+briefcase equ 90
+ dc.b carried,severian	; 90 briefcase
+ dc.b obv,23		; 91 chair
+ dc.b 0,23		; 92 hammer
+ dc.b 0,0		; 93
+ dc.b 0,0		; 94
+ dc.b 0,0		; 95
+ dc.b 0,0		; 96
+ dc.b 0,0		; 97
+ dc.b 0,0		; 98
+ dc.b 0,0		; 99
+ dc.b 0,0               ; 100
+ dc.b 0,0               ; 101
+ dc.b 0,0               ; 102
+ dc.b 0,0               ; 103
+ dc.b 0,0               ; 104
+ dc.b 0,0               ; 105
+ dc.b 0,0               ; 106
+ dc.b 0,0               ; 107
+ dc.b 0,0               ; 108
+ dc.b 0,0               ; 109
+;
+; static objects... (110+)
+hay equ 110
+ dc.b singularsome,13	; 110 hay
+taxi equ 111
+ dc.b 0,14		; 111 taxi
+van equ 112
+ dc.b 0,7		; 112 van
+ dc.b 0,0		; 113
+ dc.b 0,0		; 114
+ dc.b 0,28		; 115 attic window
+ dc.b prepin,cellardoor	; 116 cellar window
+cupboard equ 117
+ dc.b 0,20		; 117 cupboard
+ dc.b prepin,cupboard	; 118 rccb
+ dc.b pluralsome,28	; 119 curtains
+ dc.b obv,22		; 120 shelf
+lampholder equ 121
+ dc.b 0,28		; 121 lampholder
+kitchentable equ 122
+ dc.b 0,24		; 122 table
+ dc.b singularsome,5	; 123 rubble
+ dc.b pluralsome,16	; 124 insulators
+ dc.b pluralsome,16	; 125 wires ; * sorry! can't put wires in 
+; insulators because we can't have plural containers! *
+cellardoor equ 126
+ dc.b obv,21		; 126 cellar door
+ dc.b 0,6		; 127 collapsed vault
+ dc.b 0,26		; 128 loose stair
+ dc.b 0,0		; 129
+pocket equ 130
+ dc.b prepin,jacket	; 130 pocket
+ dc.b 0,0		; 131
+ dc.b 0,0		; 132
+ dc.b 0,0		; 133
+ dc.b 0,0		; 134
+ dc.b 0,0		; 135
+ dc.b 0,0		; 136
+ dc.b 0,0		; 137
+ dc.b 0,0		; 138
+ dc.b 0,0		; 139
+ dc.b 0,0		; 140
+ dc.b 0,0		; 141
+ dc.b 0,0		; 142
+ dc.b 0,0		; 143
+ dc.b 0,0		; 144
+ dc.b 0,0		; 145
+ dc.b 0,0		; 146
+ dc.b 0,0		; 147
+ dc.b 0,0		; 148
+ dc.b 0,0		; 149
+;
+; invisible objects
+ dc.b 0,11		; 150 farmhouse (omni - outside house)
+ dc.b 0,3		; 151 church (omni - cemetary)
+ dc.b 0,0		; 152
+ dc.b 0,0		; 153
+ dc.b 0,0		; 154
+ dc.b 0,0		; 155
+ dc.b 0,0		; 156
+ dc.b 0,0		; 157
+ dc.b 0,0		; 158
+ dc.b 0,0		; 159
+ dc.b 0,3		; 160 my grave
+ dc.b pluralsome,28	; 161 police from window
+ dc.b pluralsome,28	; 162 movements from window
+ dc.b pluralsome+carried,johnq	; 163 playing cards
+ dc.b singularsome+carried,johnq ; 164 money
+ dc.b carried,johnq	; 165 cigarette
+ dc.b carried,jude	; 166 whisky bottle
+ dc.b 0,50		; 167 barn
+ dc.b pluralsome+on,taxi ; 168 taxi tyres
+ dc.b pluralsome+on,van	; 169 van tyres
+ dc.b 0,28		; 170 attic
+ dc.b carried,weasel	; 171 newspaper
+jacket equ 172
+ dc.b worn,johnq	; 172 jacket
+ dc.b carried,johnb	; 173 beano
+ dc.b 0,0		; 174
+ dc.b 0,0		; 175 light within the house
+ dc.b 0,0		; 176 light from attic bulb
+ dc.b 0,0		; 177
+ dc.b 0,0		; 178
+ dc.b 0,0		; 179
+;-------------------------
+;
+; Brief location objects (479+N). See 779+ for examine messages and 
+; 1199+ for their verbose equivalents..
+ dc.b 0,50		; 180 farmyard
+;
+;---
+ even
+ENDOBJECTS
+terraintable
+LIST4
+; table giving scenery types on grassy plain grid
+m equ 220 ; minsynthroom
+ dc.b m,m,m
+ dc.b m,m,m
+ dc.b m,m,m
+ even
+;---------
+list8
+; table for remarks made by 'PET' - Damosel Maledisant (Galahad in L3)...
+;
+ dc.b 52,1
+ dc.b 121,2
+ dc.b 131,3
+;;
+; dc.b 255,249 ; add on 249 to "trigger message" numbers...
+;;
+;
+ dc.b 0,0
+;
+;---------
+ even
+NPCINITIAL
+list5
+; first we have a dummy entry for npc 0
+; this is used as some pointers to the *other*
+; things which are used in this list
+; (the equivalent of this area in list6 is used for temp workspace)
+;
+ dc.w floorpointers-npcinitial
+ dc.w racetracks-npcinitial
+ dc.w reversaltable-npcinitial
+ dc.w roompictures-npcinitial
+;
+; For greed agression, timidity, obediance, there
+; is a special case - if one of the values is 255, then
+; the npc will always choose that one, if it is possible
+; This is particularly useful for slaves etc.
+; Note that npcs will still respond to attacks etc. - 
+; anything which sets the 'attention flag'
+;
+FRIENDLY EQU 0
+dodge equ 0
+damage equ 0
+;
+; npc 0 has dummy entry used as pointers above
+;
+; dc.b enemy, dodge, attack, hit points, obedience, patience, gold-sing
+; if bit 7 of the "enemy" byte is set, the npc will be inactive
+; until it meets Ingrid
+;
+ dc.b friendly,dodge,10,100,255,1 ; 1 USER
+ dc.w 3300
+ dc.b friendly,dodge,10,100,255,1 ; 2 sarah
+ dc.w 3310
+ dc.b friendly,dodge,10,100,255,1 ; 3 priest
+ dc.w 3320
+ dc.b friendly,dodge,10,100,255,1 ; 4 john b
+ dc.w 3330
+ dc.b friendly,dodge,10,100,255,1 ; 5 john q
+ dc.w 3330
+ dc.b friendly,dodge,10,100,255,1 ; 6 weasel
+ dc.w 3330
+ dc.b friendly,dodge,10,100,255,1 ; 7 jude
+ dc.w 3340
+ dc.b friendly,dodge,10,100,255,1 ; 8 professor
+ dc.w 3350
+ dc.b friendly,dodge,10,100,255,1 ; 9 severian
+ dc.w 3350
+ dc.b friendly,dodge,10,100,255,1 ; 10
+ dc.w 3300
+ dc.b friendly,dodge,10,100,255,1 ; 11
+ dc.w 3300
+ dc.b friendly,dodge,10,100,255,1 ; 12
+ dc.w 3300
+ dc.b friendly,dodge,10,100,255,1 ; 13
+ dc.w 3300
+ dc.b friendly,dodge,10,100,255,1 ; 14
+ dc.w 3300
+ dc.b friendly,dodge,10,100,255,1 ; 15
+ dc.w 3300
+;
+;---
+
+floorpointers
+; part of list5
+; now 'floor pointers'
+; there is one bye pair for each static room - the
+; first byte gives the direction to go inwards
+; and the second byte gives direction for going outwards
+; (i.e. towards the synthesised grid)
+;
+; ** BIG WARNING **
+; all shapes must be simply connected. i.e. given a pair of rooms,
+; you must be able to trace a path between them using only the
+; OUT paths of one OR the other.
+; This is because of the way the follow and GO code works.
+north equ 1
+ne equ 2
+east equ 3
+se equ 5
+south equ 4
+sw equ 6
+west equ 7
+nw equ 8
+up equ 9
+down equ 10
+verbin equ 11
+out equ 12
+cross equ 13
+climb equ 14
+jump equ 15
+
+ dc.b 0 ; room 0 (not used)
+ dc.b 0 ; room 1 (not used)
+ dc.b 0 ; room 2 (not used)
+ dc.b west ; 3
+ dc.b south ; 4
+ dc.b south ; 5
+ dc.b east ; 6
+ dc.b sw ; 7
+ dc.b west ; 8
+ dc.b nw ; 9
+ dc.b north ; 10
+ dc.b west ; 11
+ dc.b north ; 12
+ dc.b east ; 13
+ dc.b east ; 14
+ dc.b sw ; 15
+ dc.b south ; 16
+ dc.b 0 ; 17
+ dc.b 0 ; 18
+ dc.b 0 ; 19
+ dc.b out ; 20
+ dc.b up ; 21
+ dc.b out ; 22
+ dc.b south ; 23
+ dc.b west ; 24
+ dc.b south ; 25
+ dc.b down ; 26
+ dc.b down ; 27
+ dc.b east ; 28
+ dc.b 0 ; 29
+ dc.b south ; 30
+ dc.b south ; 31
+ dc.b se ; 32
+ dc.b north ; 33
+ dc.b south ; 34
+ dc.b north ; 35
+ dc.b west ; 36
+ dc.b west ; 37
+ dc.b 0 ; 38
+ dc.b 0 ; 39
+ dc.b out ; 40
+ dc.b out ; 41
+ dc.b south ; 42
+ dc.b 0 ; 43
+ dc.b 0 ; 44
+ dc.b 0 ; 45
+ dc.b 0 ; 46
+ dc.b 0 ; 47
+ dc.b 0 ; 48
+ dc.b 0 ; 49
+ dc.b 0 ; 50
+ dc.b 0 ; 51
+ dc.b 0 ; 52
+ dc.b 0 ; 53
+ dc.b 0 ; 54
+ dc.b 0 ; 55
+ dc.b 0 ; 56
+ dc.b 0 ; 57
+ dc.b 0 ; 58
+ dc.b 0 ; 59
+ dc.b 0 ; 60
+ dc.b 0 ; 61
+ dc.b 0 ; 62
+ dc.b 0 ; 63
+ dc.b 0 ; 64
+ dc.b 0 ; 65
+ dc.b 0 ; 66
+ dc.b 0 ; 67
+ dc.b 0 ; 68
+ dc.b 0 ; 69
+ dc.b 0 ; 70
+ dc.b 0 ; 71
+ dc.b 0 ; 72
+ dc.b 0 ; 73
+ dc.b 0 ; 74
+ dc.b 0 ; 75
+ dc.b 0 ; 76
+ dc.b 0 ; 77
+ dc.b 0 ; 78
+ dc.b 0 ; 79
+ dc.b 0 ; 80
+ dc.b 0 ; 81
+ dc.b 0 ; 82
+ dc.b 0 ; 83
+ dc.b 0 ; 84
+ dc.b 0 ; 85
+ dc.b 0 ; 86
+ dc.b 0 ; 87
+ dc.b 0 ; 88
+ dc.b 0 ; 89
+ dc.b 0 ; 90
+ dc.b 0 ; 91
+ dc.b 0 ; 92
+ dc.b 0 ; 93
+ dc.b 0 ; 94
+ dc.b 0 ; 95
+ dc.b 0 ; 96
+ dc.b 0 ; 97
+ dc.b 0 ; 98
+ dc.b 0 ; 99
+ dc.b 0 ; 100
+ dc.b 0 ; 101
+ dc.b 0 ; 102
+ dc.b 0 ; 103
+ dc.b 0 ; 104
+ dc.b 0 ; 105
+ dc.b 0 ; 106
+ dc.b 0 ; 107
+ dc.b 0 ; 108
+ dc.b 0 ; 109
+ dc.b 0 ; 110
+ dc.b 0 ; 111
+ dc.b 0 ; 112
+ dc.b 0 ; 113
+ dc.b 0 ; 114
+ dc.b 0 ; 115
+ dc.b 0 ; 116
+ dc.b 0 ; 117
+ dc.b 0 ; 118
+ dc.b 0 ; 119
+ dc.b 0 ; 120
+ dc.b 0 ; 121
+ dc.b 0 ; 122
+ dc.b 0 ; 123
+ dc.b 0 ; 124
+ dc.b 0 ; 125
+ dc.b 0 ; 126
+ dc.b 0 ; 127
+ dc.b 0 ; 128
+ dc.b 0 ; 129
+ dc.b 0 ; 130
+ dc.b 0 ; 131
+ dc.b 0 ; 132
+ dc.b 0 ; 133
+ dc.b 0 ; 134
+ dc.b 0 ; 135
+ dc.b 0 ; 136
+ dc.b 0 ; 137
+ dc.b 0 ; 138
+ dc.b 0 ; 139
+ dc.b 0 ; 140
+;---
+ even
+racetracks
+; sequences of commands which actors obey
+; each is referred to by a 16-bit offset from the start of list5
+; the initial sequences are contained in this table at the start..
+;
+ dc.w 0 ; 0
+ dc.w 0 ; 1
+ dc.w 0 ; 2 sarah
+ dc.w priestrt-list5 ; 3 priest
+ dc.w johnbrt-list5 ; 4 john b
+ dc.w johnqrt-list5 ; 5 john q
+ dc.w weaselrt-list5 ; 6 weasel
+ dc.w judert-list5 ; 7 jude
+ dc.w 0 ; 8 professor
+ dc.w 0 ; 9 severian
+ dc.w 0 ; 10
+ dc.w 0 ; 11
+ dc.w 0 ; 12
+ dc.w 0 ; 13
+ dc.w 0 ; 14
+ dc.w 0 ; 15
+ dc.w 0 ; 16
+ dc.w 0 ; 17
+ dc.w 0 ; 18
+ dc.w 0 ; 19
+;
+; triggered racetracks
+ dc.w johnqtriggered-list5 ; 20
+ dc.w weaseltriggered-list5 ; 21
+ dc.w johnbtriggered-list5 ; 22
+ dc.w johnbdistracted1-list5 ; 23
+ dc.w johnbdistracted2-list5 ; 24
+ dc.w johnbdistracted3-list5 ; 25
+ dc.w johnbdistracted4-list5 ; 26
+ dc.w johnbdistracted5-list5 ; 27
+ dc.w johnbscared-list5 ; 28
+ dc.w checksarah-list5 ; 29
+ dc.w weaselunconcious-list5 ; 30
+ dc.w saraharrives-list5 ; 31
+ dc.w 0 ; 32
+;
+; racetracks used when gang are leaving
+ dc.w johnbleaving-list5 ; 33
+ dc.w johnqleaving-list5 ; 34
+ dc.w weaselleaving-list5 ; 35
+ dc.w judeleaving-list5 ; 36
+ dc.w professorleaving-list5 ; 37
+ dc.w severianleaving-list5 ; 38
+ dc.w 0 ; 39
+;
+; racetracks used when gang check up on John B before leaving	
+ dc.w johnbleaving1-list5 ; 40
+ dc.w johnqleaving1-list5 ; 41
+ dc.w weaselleaving-list5 ; 42
+ dc.w judeleaving-list5 ; 43
+ dc.w professorleaving-list5 ; 44
+ dc.w severianleaving1-list5 ; 45
+;
+StartRt
+; each of the race track entries has a 4-byte entry:
+; VERB PREP NOUN1 NOUN2
+; prepositions...
+ipin equ 7
+ipwith equ 16
+to equ 202
+
+light equ 165
+ride equ  185
+stand equ 46
+lie equ 47
+drink equ 60
+wear equ 106
+remove equ 109
+drop equ 107
+attack equ 40
+ifollow equ 113
+open equ 114
+go equ 96 ; go to room noun1 (=setupgo)
+close equ 140
+wait equ 92
+examine equ 100
+take equ 105
+give equ 111
+eat equ 123
+find equ 139
+kill equ 93
+push equ 118
+waitforperson equ 89
+waituntiltime equ 90
+waitforperiod equ 91
+put equ 108
+returnobject equ 136
+gdfind equ 139
+
+Conditional equ 247
+
+ActorVaryMessage equ 248 ; goes straight on in same turn to next step in rt
+WRtActorVaryMessage equ ActorVaryMessage*256
+
+ActorSingleMessage equ 249 ; this completes actor's turn. Like ActorM1Dot
+WActorSingleMessage equ ActorSingleMessage*256
+
+racetrackmessage equ 251
+WRtMessage equ racetrackMessage*256
+
+racetrackvarymessage equ 252
+WRtVaryMessage equ racetrackvaryMessage*256
+
+racetrackgosub equ 253
+WRtGosub equ racetrackGosub*256
+
+racetrackgoto equ 254
+WRtGoto equ racetrackGoto*256
+
+racetrackreturn equ 255
+
+; nouns...
+people equ 237
+everything equ 234
+nullobject equ 255
+water equ 241
+
+; NOUN1 will always be searched for if not accessible
+; to the verb (using the usual accessability rules)
+;
+; NOUN2 will normally be searched for using the same rules.
+; There are situations where this is awkward - so if the
+; preposition is WITH, then NOUN2 must be carried (or it will
+; be searched for by the npc).
+;
+rtmess equ 5000
+;---
+; priest performs exorcism ceremony
+even 
+priestrt
+ dc.w WActorSingleMessage,rtmess+0 ; reached into pocket & removed phial 
+; of holy water. he blessed it and read another passage from his ^N book
+; before preparing to sprinkle the water over my grave. I felt weak.
+ dc.w WActorSingleMessage,rtmess+1 ; preist sprinkles water on my grave 
+; and I fade away to the laughter of john b and weasel.
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; john b waits for priest to finish exorcism, collects drugs and 
+; is driven by weasel to the farm.
+ even 
+johnbrt
+ dc.b waitforperiod,0,1,nullobject
+ dc.b go,0,4,nullobject ; go path
+ dc.w WActorSingleMessage,rtmess+10 ; laughs with weasel. come on, let's 
+; collect the drugs
+ dc.b go,0,6,nullobject ; go collapsed vault
+ dc.w WActorSingleMessage,rtmess+11 ; john b and weasel collected the 
+; remaining drugs from rubble and stuffed them into their pockets
+ dc.b go,0,7,nullobject ; go gate
+ dc.b stand,prepin,van,nullobject ; get in van
+ dc.b waitforperiod,0,6,nullobject ; wait until reached barn
+ dc.b stand,0,nullobject,nullobject ; get out of van
+ dc.b go,0,24,nullobject ; go kitchen
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; weasel follows john b to the van and then drives him to the farm.
+ even 
+weaselrt
+ dc.b waitforperiod,0,1,nullobject
+ dc.b go,0,4,nullobject ; go path
+ dc.b waitforperiod,0,0,nullobject
+ dc.b go,0,6,nullobject ; go collapsed vault
+ dc.b waitforperiod,0,0,nullobject
+ dc.b go,0,7,nullobject ; go gate
+ dc.b stand,prepin,van,nullobject ; get in van
+ dc.w WActorSingleMessage,rtmess+20 ; right, let's be off then. start van.
+ dc.b go,0,11,nullobject ; drive to track
+ dc.w WRtMessage,rtmess+21 ; john b says "what a dreary night. I hope we 
+; don't get another one of those power cuts."
+ dc.b waitforperiod,0,0,nullobject
+ dc.b go,0,50,nullobject ; drive to farmyard
+ dc.w WRtMessage,rtmess+22 ; john b says "park the van in the barn, 
+; weasel. And make sure it's facing out in case we need to make a speedy 
+; getaway."
+ dc.b waitforperiod,0,0,nullobject
+ dc.b go,0,13,nullobject ; park in barn
+ dc.b stand,0,nullobject,nullobject ; get out of van
+ dc.b go,0,24,nullobject ; go kitchen
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; triggered rt for when john q switches generator on
+; first, he is automatically "teleported" to side of house
+ even 
+johnqtriggered
+ dc.b waitforperson,0,user,nullobject ; wait for user to return from 
+; back of house
+ dc.w WRtMessage,rtmess+30 ; uttered a few obsceneties about the 
+; electricity board, and then went into the outhouse to start the 
+; backup generator. 
+; "Ruddy thing's knackered," he complained as he came back out, 
+; "It's only giving out sixty flamin' volts"
+ dc.b go,0,24,nullobject ; go back to kitchen
+ dc.b racetrackreturn,0,nullobject,nullobject ; return to normal racetrack
+;---
+; john q waits for the drugs, exchanges the money, gives a few orders, 
+; and then plays cards.
+ even 
+johnqrt
+;
+; john q begins his true racetrack when jude arrives (she goes to 
+; lounge to put logs on fire etc.), OR when player 
+; arrives. 
+; this gives the player the chance to see the beginning of john q's 
+; racetrack if he arrives before jude (about 20 moves). if the player 
+; arrives late (i.e. after jude), john q will have begun his racetrack 
+; anyway.
+;
+johnqrt0
+ dc.b conditional,0,user,nullobject ; is user here?
+ dc.w WRtGoto,johnqrt1-list5
+ dc.b conditional,0,jude,nullobject ; has jude arrived yet?
+ dc.w WRtGoto,johnqrt1-list5
+ dc.b waitforperiod,0,0,nullobject ; prevent endless loop
+ dc.w WRtGoto,johnqrt0-list5
+;
+; start of john q racetrack...
+johnqrt1
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WRtMessage,rtmess+35 ; John B and Weasel emptied the drugs onto 
+; the table for Severian and the Professor to inspect.
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WRtMessage,rtmess+36 ; "The usual amount?", asked Severian as 
+; he took some wads of money from his briefcase and handed them to 
+; John Q.
+; John Q counted the money and nodded confirmingly to Severian.
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+37 ; John Q split the money evenly 
+; between the rest of the drug importers and took a large cut for himself.
+; Severian crammed the drugs into his briefcase and then put it beneath 
+; his ^N chair.
+ dc.w WActorSingleMessage,rtmess+38 ; John Q nodded briefly to Weasel and 
+; said, "Well, I think this calls for a bit of entertainment. Don't 
+; you?". Weasel returned a devious smile and got up from his 
+; chair.
+; With some help from Jude, he held Sarah in a headlock and took 
+; back her share of the drugs money while she struggled, screaming.
+;
+; TRIGGER WEASEL'S RACETRACK HERE (MESSAGE 5039)
+ dc.w WRtMessage,rtmess+39 ; "So sorry to see you go, Sarah", said 
+; Weasel as he tossed her share of the money to John Q. "But not to 
+; worry, I'm going to put you somewhere nice and safe where the police 
+; won't find you..."
+ dc.b waitforperiod,0,0,nullobject
+;
+; TRIGGER JOHN B'S RACETRACK HERE (MESSAGE 5040)
+ dc.w WActorSingleMessage,rtmess+40 ; John Q sniggered as he heard Sarah 
+; being dragged through the hallway. "Okay, the cabaret's over," he said 
+; as he turned to address John B. "Now it's time for you to play 
+; night watchman"
+ dc.b waitforperiod,0,0,nullobject
+;
+; The remaining crooks are about to play cards, but first they wait for 
+; Jude (in the event that the player has arrived before her).
+waitforjude
+ dc.b conditional,0,jude,nullobject
+ dc.w WRtGoto,judeishere-list5 ; jude is here
+ dc.w WRtVaryMessage,rtmess+45 ; varied message to pass the time...
+; 1. John Q puffed a cigarette contentedly.
+; 2. Severian and the Professor talked between themselves about 
+; how they were going to distribute the drugs.
+; 3. Severian made a few rude comments to John Q about the amateur 
+; way his gang had operated.
+; 4. John Q apologised to Severian about the way things had almost 
+; gone wrong with the drugs operation. He swore that he would have 
+; everything under control next time.
+; 5. The Professor negotiated with John Q about the next drugs deal.
+;
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WRtGoto,waitforjude-list5
+judeishere
+ dc.b waitforperiod,0,0,nullobject ; allow time for jude's introduction
+ dc.w WActorSingleMessage,rtmess+50 ; John Q took a deck of playing cards 
+; out of his pocket and began shuffling them. "This should pass the 
+; time," he said with a cunning smile.
+ dc.b waitforperiod,0,0,nullobject
+;
+; John Q's main gambling loop.
+; Interaction is with Jude, Severian, and the Professor.
+; Weasel simply reads a newspaper in the Lounge, since he frequently has 
+; to leave the room to check on Sarah, which would make it very difficult 
+; for him to play.
+johnqgamblingloop
+ dc.w WRtMessage,rtmess+51 ; Jude cleared the table while John Q cut 
+; the deck of cards. "Are we all in?", he asked the crooks. Each of 
+; them returned a nod and John continued, "Good. We'll start with a 
+; fiver each, shall we?"
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtMessage,rtmess+52 ; Each of the crooks slapped a five pound 
+; note onto a pile in the centre of the table, while John Q dealt them 
+; each a hand of five.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtMessage,rtmess+53 ; Everyone studied their own hand thoughtfully, 
+; while passing around a bottle of whisky. 
+; "Can't keep a clear head drinking that stuff," said the Professor 
+; as he passed the whisky without swigging any. "You'll all see when I 
+; win the game"
+; John sniggered quietly to himself.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtMessage,rtmess+54 ; The game began to go around the table 
+; starting with Jude, who took a card from the face-down pile and 
+; got rid of a seven of hearts.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtMessage,rtmess+55 ; Severian exchanged a five of clubs 
+; for the seven of hearts on the face-up pile. "I'll raise you ten," he 
+; said, trying to hold back a grin.
+; "Suits me fine," said John, who began scratching the sleeve of 
+; his jacket suspiciously.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtMessage,rtmess+56 ; The professor slowly took a card from 
+; the face-down pile, passed it through his hand and then frowned 
+; convincingly as he placed it back on the face-up pile.
+; John Q rubbed his elbow slowly and then took a large swig of whisky 
+; before passing the bottle to Jude.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WActorSingleMessage,rtmess+57 ; John Q took a face-down card and 
+; "accidentally" dropped it behind his chair.
+; While he was picking it up, I caught a glimpse of him swapping it 
+; with another card from up his sleeve.
+;
+ dc.w WRtMessage,rtmess+58 ; "I'll raise you high to twenty five," 
+; said John Q confidently, while he discarded a three of clubs on 
+; the face-up pile.
+; Everyone matched his bid by each placing a ten pound note on the 
+; pile in the centre of the table.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtMessage,rtmess+59 ; Jude lit up a cigarette and puffed it 
+; nervously. She took the three of clubs from the pile and discarded 
+; an eight of hearts. Severian concealed a smile by taking a long 
+; swig of whisky.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtMessage,rtmess+60 ; Severian snapped up the eight of hearts 
+; from the face-up pile and exchanged it for a three of diamonds.
+; "I'll raise you another five," he said smugly, and everyone slapped 
+; a five pound note onto the table, making the total up to a hundred 
+; and twenty.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtMessage,rtmess+61 ; A bead of sweat ran down the Professors 
+; forehead as he tried his luck with another face-down card. He 
+; placed it among his hand and discarded an ace of hearts.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WActorSingleMessage,rtmess+62 ; John Q put on a forced frown as he 
+; took the ace of hearts from the pile in the centre, and then replaced 
+; it quietly with a nine of hearts. 
+;
+ dc.w WRtMessage,rtmess+63 ; "I might as well make things interesting", 
+; sighed John as he tossed another ten pound note onto the table. 
+; Severian and the Professor matched his bid, although reluctantly. But 
+; Jude just shook her head and made it clear that she was dropping 
+; out of the game. 
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtMessage,rtmess+64 ; Severian quickly snatched the nine of 
+; hearts from the face-up pile and tapped his foot proudly against 
+; the leg of his chair.
+; Without hesitation, he put a king of spades onto the pile.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtMessage,rtmess+65 ; The Professor smiled a little, as if 
+; his luck was changing. He took the king of spades from the table 
+; and swapped it with his eight of diamonds.
+; "It has it's advantages when you don't drink," he said to Severian. 
+; "We'll see about that," replied Severian. "Just one more time 'round 
+; and we'll see..."
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WActorSingleMessage,rtmess+66 ; John Q took another card from the 
+; face-down pile and slapped a jack of hearts onto the table. 
+; "I bet that's what you've been waiting for," he said to Severian, 
+; who was eying the card eagerly. "But," continued John, "I'm afraid 
+; there isn't going to be another turn for you".
+; He revealed his hand, which consisted of four aces and a king of 
+; diamonds...
+;
+ dc.w WRtMessage,rtmess+67 ; Somewhat distraught, Severian slapped his 
+; cards onto the table. A seven, eight, nine and ten of hearts was 
+; good, but it didn't quite beat John's four aces.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtMessage,rtmess+68 ; Both John Q and Severian turned to the 
+; Professor, who muttered a few obscenitites beneath his breath and 
+; then threw his cards impatiently on the table. An eight, ten and king 
+; of spades was the best he could do.
+; "Like you say," said John sarcastically, "It really does have it's 
+; advantages when you don't drink"
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WActorSingleMessage,rtmess+69 ; John Q collected his winnings 
+; from the table and proudly lit up a cigarette.
+; "Pity you don't handle your drugs operations quite as well as you 
+; play cards," said Severian with a grudge.
+;
+ dc.w WRtMessage,rtmess+70 ; "Shtop shquabbling, will you?", 
+; protested Jude, who was sat on her own, swigging large mouthfulls 
+; of whisky.
+; Severian folded his arms ignorantly and shook his head silently.
+ dc.b waitforperiod,0,0,nullobject
+;
+; Special addition to gambling racetrack, when severian thinks he 
+; sees me
+ dc.b conditional,0,user,nullobject ; is user here?
+ dc.w WRtGoto,seeuser1-list5 ; if so, then begin severian's warnings
+ dc.w WRtGoto,notseeuser-list5 ; otherwise, skip the routine
+seeuser1
+; WARNING 1
+ dc.w WRtMessage,rtmess+71 ; Severian cast his gaze ignorantly across 
+; the room, looking anywhere except at John and Jude.
+; Suddenly, his eyes stopped and seemed to fucus on me. "What the hell's 
+; that," he yelled.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.b conditional,0,user,nullobject ; is user still here?
+ dc.w WRtGoto,seeuser2-list5 ; if so, then proceed with 2nd warning
+ dc.w WRtGoto,notseeuser-list5 ; otherwise, skip the routine
+seeuser2
+; WARNING 2
+ dc.w WRtMessage,rtmess+72 ; Severian pointed towards me and the 
+; others began to look at me as well, although somewhat puzzled as 
+; to what they were meant to be looking at. Their combined stared 
+; began to make me feel very weak.
+ dc.b waitforperiod,0,0,nullobject
+;
+; PROCEED WITH WARNING 3 REGARDLESS OF WHETHER USER IS HERE OR NOT
+; Special code in SpecialRtMessage banished player if he is still 
+; here, OR triggers the gang to leave with plenty of time if user 
+; has paid heed to warning 2
+ dc.w WRtMessage,rtmess+73 ; All four of the crooks squinted towards 
+; me, as if they could almost see me, and I suddenly felt very 
+; drowsy.
+; I couldn't stand them all staring at me any longer, and I felt myself 
+; dissolving into the air and being drawn back to my exorcised grave.
+;
+; Within seconds I was banished to darkness, leaving the spirit 
+; world behind forever, and failing to clear the blemished reputation 
+; I had left behind...
+ dc.b waitforperiod,0,0,nullobject
+;
+; Resume standard racetrack...
+notseeuser
+ dc.w WRtVaryMessage,rtmess+45 ; use same varied message as in 
+; "waitforjude" above, since it may be a while until the player 
+; returns after Severian's warning
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WRtVaryMessage,rtmess+45 ; .ditto.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WActorSingleMessage,rtmess+74 ; John Q shuffled his deck of 
+; cards and announced, "Okay, how about another little game of 
+; cards, then?"
+; 
+ dc.w WRtgoto,johnqgamblingloop-list5
+;---
+; jude waits in hall for john b to arrive, then she goes into lounge 
+; for a while, before going to the kitchen to meet the rest of the 
+; gang (see comments at start of john q's racetrack)
+judert
+ dc.b waitforperson,0,johnb,nullobject
+ dc.b go,0,25,nullobject ; go lounge
+ dc.b waitforperiod,0,3,nullobject ; no messages for first 4 moves, 
+; since user cannot be in house yet
+ dc.w WActorSingleMessage,rtmess+80 ; piled some more logs onto the fire
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+81 ; poked the fire until it burned well
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+82 ; emptied some papers from her pockets 
+; and threw them onto the fire
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+83 ; went around the room tidying up 
+; the newspapers and a few letters
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+84 ; threw some ^N newspapers and 
+; ^N letters onto the fire
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+85 ; picked up the ^N telephone and dialed 
+; a number
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+86 ; talked to someone over the 
+; telephone, seemingly arringing for some money to be laundered
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+87 ; opened the cocktail ^N cabinet and 
+; took out a bottle of whisky. "this should see keep us 
+; occupied," she said to herself as she walked towards the door
+ dc.b go,0,24,nullobject ; go to kitchen
+ dc.w WRtMessage,rtmess+88 ; "I've brought something to help us through 
+; the night", said Jude as she put a bottle of whisky on the 
+; table, before sitting down with the rest of the crooks.
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; John B is sent to attic to keep lookout
+johnbtriggered
+ dc.w WRtMessage,rtmess+90 ; "I always get the crappy jobs around 
+; here", grumbled John B as he reluctantly got up out of his chair.
+ dc.b go,0,28,nullobject ; go attic
+ dc.b waitforperson,0,user,nullobject ; wait for user
+ dc.w WActorSingleMessage,rtmess+91 ; sat down on the bed next to the 
+; window and opened his flask of whisky. "Well, at least I won't be 
+; losing all my money to John Q when he plays poker", he sighed. 
+; "I can get sloshed in peace up here"
+ dc.b waitforperiod,0,0,nullobject
+;
+; Main loop for john b while calm
+johnblookout
+ dc.w WActorSingleMessage,rtmess+92 ; took his copy of "The Beano" out 
+; his pocket and began to read it. "Gosh!", he exclaimed, "Isn't Dennis 
+; being naughty this week"
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WActorSingleMessage,rtmess+93 ; began to pour whisky down his 
+; throat like there was no tomorrow. "Sheesh!", he wheezed as he took 
+; the flask from his mouth, "Fiery stuff, that"
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WActorSingleMessage,rtmess+94 ; flicked through his Beano 
+; with excitement, as if trying to find something. "Yeah!", he shouted, 
+; "The Bash Street kids! I wonder what teach' is going to get up to 
+; this week..."
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WActorSingleMessage,rtmess+95 ; missed his mouth with his flask 
+; and dribbled whisky down his chin and onto his comic. "Haw! Haw!", he 
+; guffawed, "It's gone all over Walter the softy"
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtMessage,rtmess+96 ; "Ho! Ho! This is fun", giggled 
+; John B as he rolled about on the bed, reading his Beano and swigging 
+; large mouthfuls of whisky. "Ha! Ha! Ha!", he laughed as he rolled 
+; off the end of the bed and fell onto the floor.
+ dc.b waitforperiod,0,1,nullobject
+;
+ dc.w WActorSingleMessage,rtmess+97 ; picked his soggy comic up and 
+; attempted wring the whisky back into his flask before climbing onto the 
+; bed again. Once he had got comfortable, he took another swig from his 
+; flask and dribbled a sort of alcoholic ink down his t-shirt.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WActorSingleMessage,rtmess+98 ; read the letters page of his Beano 
+; aloud, occasionally breaking into fits of helpless mirth, and sometimes 
+; bashing his fists vigorously against the ^N pillow.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WActorSingleMessage,rtmess+99 ; put his copy of the Beano back 
+; into his pocket. "Drat!", he grumbled, "I wish I had brought my 
+; Dandy along as well".
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WActorSingleMessage,rtmess+100 ; sat quietly, stroking his chin 
+; for a while, as if thinking of what to do next.
+; "I know!", he said finally, "I'll write a letter to my best pal"
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WActorSingleMessage,rtmess+101 ; took a ^N pen and a piece of 
+; ^N paper out of his pocket and began to write...
+; "Dear Dennis, I read your comic every week and I think you are 
+; really swell. Yours Menacingly, John B.
+; P.S. Publish this letter or I will blow your nuts off"
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtGoto,johnblookout-list5
+;---
+; Subroutines when John B is frightened by progressive distractions.
+; When each racetrack comes to an end, John calms down and resumes 
+; his normal "lookout" racetrack.
+;
+; NB: WRtMessage is used instead of WActorSingleMessage so that 
+; unwanted messages can be "disposed" of easily. See commented 
+; code in SpecialRtMessage just above .distract1.
+;
+johnbdistracted1
+ dc.w WRtMessage,rtmess+110 ; John scratched his head in 
+; frustration. "Dunno what it is about this place", he said, shaking 
+; his head. "but it sure gives me the willies"
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtMessage,rtmess+111 ; John B shone his ^N torch around the 
+; room, just to check that none of the other crooks were playing 
+; tricks on him.
+; "Come on, I can see you," he shouted, although he couldn't see 
+; anyone at all. "It's not funny, y'know"
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtMessage,rtmess+112 ; John B put his torch down and sat 
+; back on the bed, slightly more at ease.
+; "Must be the gang takin' the Mick," he said. "Well, they won't 
+; scare me easily"
+;
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+johnbdistracted2
+ dc.w WRtMessage,rtmess+120 ; John wriggled under the ^N covers 
+; of the bed until only his eyes were visible.
+; "This attic is haunted," he said in a muffled voice.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtMessage,rtmess+121 ; John B climbed hesitantly out of the 
+; bed and paced across the attic towards the ^N hatch. "No, I can't 
+; do that," he said as he got half way across the room. "If I tell the 
+; others they'll probably just laugh in my face".
+; He paced reluctantly back to the bed and sat down, shivering.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtMessage,rtmess+122 ; "It must be the scotch," decided John. 
+; "I've been drinking it ever since I came up here. No wonder I'm 
+; seeing things".
+; And with another swig of scotch from his flask, he calmed down.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+johnbdistracted3
+ dc.w WRtMessage,rtmess+130 ; John let out a frightened whine and 
+; dashed frantically towards the hatch.
+ dc.b go,0,24,nullobject		; go to kitchen
+;
+ dc.w WRtMessage,rtmess+131 ; John B stood quivering before the 
+; crooks. "Th-the at-tic!", he stammered, "It-it's haunted!"
+; One by one, the crooks burst out with laughter and John B held 
+; his head down in shame. "There's some garlic in the fridge, John", 
+; said Jude. "Maybe that will keep the vampires at bay..."
+; John turned around and walked quietly towards the door, amidst the 
+; everyone's laughter.
+ dc.b go,0,28,nullobject		; go back to attic
+;
+ dc.w WRtMessage,rtmess+132 ; John B sat on the bed again and began 
+; to calm down. "Not surprising they laughed at me," he sighed, 
+; "It does sound a bit daft. Huh! Haunted indeed!"
+;
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+johnbdistracted4
+ dc.w WRtMessage,rtmess+140 ; John shrieked and darted into the bed, 
+; pulling the covers up to his twitching eyes.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtMessage,rtmess+141 ; John lay trembling in the bed, cautiously 
+; edging back the covers with his quivering hands.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtMessage,rtmess+142 ; John climbed hesitantly out of the bed 
+; and wiped the sweat from his brow with the back of his hand. 
+; "Pull yourself together," he said to himself, "It's probably just the 
+; wind outside"
+; And with that self-reassurance, he lay back on the bed and calmed 
+; down again.
+;
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+johnbdistracted5
+ dc.w WRtMessage,rtmess+150 ; John squealed timidly and hid in a dark 
+; corner of the attic. "Go away!", he pleaded, "Go and haunt somebody 
+; else!"
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtMessage,rtmess+151 ; John shivered in terror as he sat 
+; crouched in a corner of the attic, his beady eyes scanning the 
+; room nervously.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.w WRtMessage,rtmess+152 ; Slowly, John got out from the corner 
+; of the attic and carefully made his way over to the bed, upon 
+; which he sat and began to calm down.
+; "It's just my imagination," he convinced himself. "Just my 
+; imagination..."
+;
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; If player manifests himself while John B is scared (executing 2nd or 
+; 3rd distraction racetrack) then he runs downstairs and convinces gang 
+; to leave.
+johnbscared
+ dc.b go,0,24,nullobject ; go kitchen
+ dc.w WRtMessage,rtmess+161 ; "I-I've s-seen someone!", shouted John B 
+; in the kitchen. "W-we've got to go before we get caught!"
+; "Are you going mad?", I heard the Professor say.
+; "Come on, Prof," said Severian, "Better safe than sorry. We'd better 
+; make a move"... (OMNI IN HOUSE)
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; Weasel takes Sarah to cellar and ties her up. then, between 
+; visits to check up on her, he sits in the lounge reading a 
+; newspaper and doing the crossword etc.
+; He cannot play cards with the rest of the gang simply because 
+; he must frequently leave the room to check on Sarah.
+weaseltriggered
+ dc.b go,0,21,nullobject ; go to cellar door
+ dc.w WRtMessage,rtmess+170 ; "This should be safe enough for you, 
+; Sarah," laughed Weasel as he waggled the bolt at the bottom of the 
+; door.
+; Sarah screamed and struggled to break free, but Weasel just tightened 
+; his grip around her neck.
+ dc.b open,0,cellardoor,nullobject ; open cellar door
+ dc.b go,0,23,nullobject ; go to back of cellar
+ dc.w WActorSingleMessage,rtmess+171 ; Held Sarah down on the chair 
+; while he tied and gagged her. "If someone 'phones, shall I tell 
+; them your rather tied up at the moment?", cackled Weasel.
+;
+; Weasel's main loop of reading newspaper etc., and occasionally 
+; checking on Sarah in the cellar...
+; (starts in cellar)
+weaselloop
+ dc.b go,0,21,nullobject ; go out of cellar
+ dc.w WRtMessage,rtmess+172 ; "Now for a quiet read," said Weasel as 
+; he reached down to bolt the door]
+ dc.b close,0,cellardoor,nullobject ; close cellar door
+ dc.b go,0,25,nullobject ; go to lounge
+;
+; Weasel relaxes in lounge in between checking on Sarah
+ dc.w WActorSingleMessage,rtmess+173 ; sat down on the sofa and took 
+; a rolled up newspaper from his pocket.
+ dc.b waitforperiod,0,1,nullobject
+;
+ dc.w WActorSingleMessage,rtmess+174 ; flicked through his newspaper 
+; leisurely and stopped when he reached the crossword.
+ dc.b waitforperiod,0,1,nullobject
+;
+ dc.w WActorSingleMessage,rtmess+175 ; nibbled the end of his ^N pen 
+; as he studied the crossword in his newspaper.
+ dc.b waitforperiod,0,1,nullobject
+;
+ dc.w WRtMessage,rtmess+176 ; "Hmm," pondered Weasel, looking at the 
+; crossword. "One across. Medicine or narcotic. Four letters. Hmmm,"
+ dc.b waitforperiod,0,2,nullobject
+;
+ dc.w WActorSingleMessage,rtmess+177 ; frowned at the crossword in 
+; his newspaper and decided to turn to the television page.
+ dc.b waitforperiod,0,1,nullobject
+;
+ dc.w WRtMessage,rtmess+178 ; "Blast!", grunted Weasel as he read the 
+; television page of his newspaper. "I've missed Neighbours"
+ dc.b waitforperiod,0,1,nullobject
+;
+checksarah
+ dc.w WActorSingleMessage,rtmess+179 ; rolled up his newspaper and 
+; put it back in his pocket. "I'd better check on our hostage," he 
+; sighed as he got up from the sofa.
+ dc.b waitforperiod,0,0,nullobject
+;
+ dc.b go,0,21,nullobject ; go to cellar door
+ dc.b open,0,cellardoor,nullobject ; open cellar door
+ dc.b go,0,23,nullobject ; go to back of cellar
+ dc.b conditional,0,sarah,nullobject
+ dc.w WRtGoto,sarahishere-list5
+;
+; Sarah has gone, and weasel shouts an alarm
+alarmsarahescaped
+ dc.w WRtMessage,rtmess+180 ; Weasel suddenly shouted an alarm from 
+; the cellar to warn the rest of the gang. "Sarah's escaped!", he yelled, 
+; "Somebody must have helped her"
+; "Let's hit the road!", I heard John Q call to the others, "All meet 
+; in the hallway"
+; (OMNI IN HOUSE)
+ dc.b racetrackreturn,0,nullobject,nullobject
+;
+sarahishere
+ dc.w WRtMessage,rtmess+181 ; "Just checking your still here," said 
+; Weasel to Sarah. "If you want anything to eat, just give me a shout", 
+; he sniggered. 
+; Sarah just made muffled swearing noises.
+ dc.w WRtGoto,weaselloop-list5
+;---
+; Weasel is knocked out by hammer.
+weaselunconcious
+ dc.w WRtMessage,rtmess+190 ; It hit Weasel smack on the 
+; back of the head, knocking him flat out on the floor.
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WActorSingleMessage,rtmess+191 ; slowly groaned as he lay there 
+; on the floor.
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+192 ; began to snore loudly.
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+193 ; began to twitch slightly as if he 
+; were about to wake up.
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+194 ; gradually began to come to. 
+; Looking rather dazed, he slowly sat up and then rubbed the back of his 
+; head before fully opening his eyes...
+ dc.w WRtGoto,alarmsarahescaped-list5
+;---
+; when weasel has been knocked out, sarah arrives
+saraharrives
+ dc.b waitforperiod,0,0,nullobject
+ dc.b go,0,22,nullobject
+ dc.w WRtMessage,rtmess+200 ; Jude saw Weasel lying on the floor 
+; and smiled in satisfaction.
+; "Greasy little shrimp", she laughed.
+ dc.b conditional,0,user,nullobject ; is user visible (manifested)?
+ dc.w WRtGoto,sarahret-list5
+ dc.w WRtMessage,rtmess+201 ; "Wonder where Alan's got to?", said Sarah.
+; "I can't see him anywhere..."
+sarahret
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; Racetracks used when gang are leaving...
+;---
+johnqleaving1
+ dc.b waitforperiod,0,0,nullobject
+ dc.b find,0,johnb,nullobject ; run to the aid of John B when gun fired
+ dc.w WRtMessage,rtmess+240 ; "What the hell happened!", demanded John Q 
+; as he shook John B out of his shocked state.%
+; "I-I just seen someone," gibbered John B, "But he just vanished when 
+; I shot him..."
+ dc.b waitforperiod,0,1,nullobject
+ dc.w WRtMessage,rtmess+241 ; "Whether you saw someone or not," said John 
+; Q, "I think we'd better make tracks..."
+ dc.b waitforperiod,0,1,nullobject
+;
+johnqleaving
+ dc.b go,0,20,nullobject ; go to hall to meet rest of gang
+ dc.w WRtMessage,rtmess+205 ; "Hurry up, Jude," called John Q. "I want 
+; us to check things in the cellar before we go"
+ dc.b waitforperson,0,jude,nullobject
+ dc.b go,0,22,nullobject ; go to front of cellar
+;
+; MESSAGE 5208 is intercepted in specialrtmess. If anyone is tied up, 
+; then John Q frees them and the message is altered.
+;
+ dc.w WRtMessage,rtmess+208 ; John Q searched around the cellar, just to
+; make sure there wasn't any evidence lying around.
+;
+ dc.b go,0,23,nullobject ; go to back of cellar
+ dc.w WRtMessage,rtmess+208 ; John Q searched around the cellar, just to
+; make sure there wasn't any evidence lying around.
+;
+; Hard coded alternatives to 5208...
+;
+; 5209 is: "We can't leave without our hostage, can we?", laughed 
+; John Q as he seized sarah.
+;
+; 5210 is: "Fool!", yelled John Q as he shook Weasel. "How did you 
+; mange to foul things up this time?"
+;
+ dc.b stand,prepin,van,nullobject ; go to van and get in
+ dc.w WRtMessage,rtmess+211 ; "Okay, let's hit the road", said John 
+; Q as he fumbled in his pocket for his ignition key.
+;
+; MESSAGE 5212 is intercepted to test whether John Q's key is bent.
+; If it is, then the crooks attempt to escape across the fields, and 
+; they are successful unless the police are close by. (All a message)
+;
+ dc.w WRtMessage,rtmess+212 ; John Q turned the ignition key and the 
+; engine roared into action.
+ dc.b go,0,12,nullobject ; go to track
+ dc.w WRtMessage,rtmess+214 ; The van sped off into the distance along
+; the track and soon disappeared from sight.
+;
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; severian gets drugs and then leaves
+severianleaving1
+ dc.b waitforperiod,0,0,nullobject
+ dc.b find,0,johnb,nullobject ; run to the aid of John B when gun fired
+ dc.b waitforperiod,0,3,nullobject
+severianleaving
+ dc.b conditional,0,briefcase,nullobject ; are drugs here?
+ dc.w WRtGoto,sevtakesbriefcase-list5 ; if so, then take them.
+ dc.b conditional,0,kitchentable,nullobject ; are we already in kitchen?
+ dc.w WRtGoto,sevcantfinddrugs-list5 ; if so, then sev can't find drugs.
+;
+; severian goes to kitchen to get drugs
+ dc.w WRtMessage,rtmess+220 ; "Better get the drugs from the kitchen," 
+; said Severian hastily
+ dc.b go,0,24,nullobject ; otherwise, go to kitchen
+ dc.b conditional,0,briefcase,nullobject ; are drugs here when he arrives?
+ dc.w WRtGoto,sevtakesbriefcase-list5 ; if so, then take them.
+;
+; severian can't find drugs
+sevcantfinddrugs
+ dc.w WRtMessage,rtmess+221 ; "Somebody's swiped my briefcase!", seethed 
+; Severian. "I knew I sould have chained it to my wrist!"
+ dc.w WRtGoto,sevgoestaxi-list5
+;
+; severian takes the briefcase
+sevtakesbriefcase
+ dc.w WRtMessage,rtmess+223 ; "Can't leave these behind," said 
+; Severian with a smile as he patted his briefcase.
+; replied the Professor
+;
+; severian goes to the van to wait for john q to arrive
+sevgoestaxi
+ dc.b stand,prepin,taxi,nullobject ; go to taxi and get in
+ dc.b waitforperiod,0,5,nullobject ; wait for van to move out
+ dc.b go,0,12,nullobject ; drive to track
+;
+; MESSAGE 5225 is intercepted in 'specialrtmessage'.
+; If player is in taxi, then fight with Severian and crash the taxi if 
+; tyres are deflated.
+;
+ dc.w WRtMessage,rtmess+225 ; The taxi roared along the track, splashing 
+; mud along the hedge as it disappeared into the distance.
+;
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; jude is forced to follow john q
+judeleaving
+ dc.b find,0,johnq,nullobject
+ dc.w WRtGoto,judeleaving-list5
+;---
+; John b goes to van, gets in and then waits for john Q
+johnbleaving1
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+242 ; stood trembling, clutching his 
+; smoking gun in his hand
+ dc.b waitforperiod,0,0,nullobject
+ dc.w WActorSingleMessage,rtmess+243 ; whined nervously through his 
+; chattering teeth
+ dc.b waitforperson,0,johnq,nullobject ; wait for john Q to arrive
+ dc.b waitforperiod,0,3,nullobject
+johnbleaving
+ dc.b stand,prepin,van,nullobject ; go to van and get in
+ dc.w WRtMessage,rtmess+230 ; "Blast!", cursed John B. "John Q's 
+; got the ignition key with him. What's keeping him?"
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; Weasel goes to van and gets in
+weaselleaving
+ dc.b waitforperiod,0,0,nullobject ; allow time to capture sarah if weasel 
+; has just woken up and sarah is there.
+ dc.b stand,prepin,van,nullobject ; go to van and get in
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+; professor goes to taxi and gets in
+professorleaving
+ dc.b stand,prepin,taxi,nullobject ; go to taxi and get in
+ dc.b racetrackreturn,0,nullobject,nullobject
+;---
+ even
+reversaltable
+; part of list5
+; gives reverse directions for directions
+ dc.b 0,4,6,7,1,8,2,3,5 ; compass directions
+ dc.b 10,9,12,11,13,14,15
+;-----------
+ even
+roompictures
+; part of list 5
+; gives pictures associated with various rooms.
+; the bytes are arranged in ROOM,PIC pairs rather than a table of 
+; pictures for each room. this is because some rooms begin from 
+; number 220, hence the table would be rather big.
+ dc.b 24,2 ; gang playing cards (kitchen)
+ dc.b 3,12 ; priest (my grave)
+ dc.b 4,13 ; churchyard (path)
+ dc.b 5,13 ; churchyard (path)
+ dc.b 6,13 ; churchyard (vault)
+ dc.b 7,13 ; churchyard (gate)
+ dc.b 11,20 ; farm (track)
+ dc.b 12,20 ; farm (track)
+ dc.b 13,21 ; van (barn)
+ dc.b 15,20 ; farm (side)
+ dc.b 16,20 ; farm (back)
+ dc.b 20,20 ; farm (hall)
+ dc.b 21,20 ; farm (steps)
+ dc.b 22,20 ; farm (cellar)
+ dc.b 23,20 ; farm (cellar)
+ dc.b 24,2 ; gang play cards (kitchen)
+ dc.b 25,20 ; farm (lounge)
+ dc.b 26,20 ; farm (stairs)
+ dc.b 27,20 ; farm (attic)
+ dc.b 28,20 ; farm (attic)
+ dc.b 50,20 ; farm (yard)
+ dc.b 0,0
+ even
+
+ENDTABLE
+;---------
+ END
+

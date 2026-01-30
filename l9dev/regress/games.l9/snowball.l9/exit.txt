@@ -1,0 +1,582 @@
+; SNOWBALL EXITS 25/8/84
+;
+; Web rooms (1-22)
+;
+; status nybble is:  #8 -> last in room
+;                    #4 -> door
+;                    #2 -> don't describe
+;                    #1 -> reversable
+; (i.e. LDIT, as in later games)
+;
+; odd directions are:
+;  9 = up
+; 10 = down
+; 11 = in
+; 12 = out
+;
+;Room number 1
+0001 1 160  ; .. to room 160
+0011 11 160 ; .. to room 160
+1001 4 4    ; .. to room 4
+;Room number 2
+1001 3 4
+;Room number 3
+1001 7 5
+;Room number 4
+0001 4 8
+1011 10 8
+;Room number 5
+1001 7 4
+;Room number 6
+0001 1 2
+0011 9 2
+1001 3 8
+;Room number 7
+0001 1 3
+1011 9 3
+;Room number 8
+0001 1 4
+1011 9 4
+;Room number 9
+0001 4 13
+1011 10 13
+;Room number 10
+0001 4 14
+1011 10 14
+;Room number 11
+0001 3 10
+0001 1 7
+0011 7 7
+1011 9 7
+;Room number 12
+0001 4 16
+1011 10 16
+;Room number 13
+0001 7 12
+0001 4 17
+1011 10 17
+;Room number 14
+1001 3 16
+;Room number 15
+0001 1 11
+1011 9 11
+;Room number 16
+0001 4 20
+1011 10 20
+;Room number 17
+0001 4 21
+1011 10 21
+;Room number 18
+0001 1 14
+1011 9 14
+;Room number 19
+1001 3 18
+;Room number 20
+1001 7 18
+;Room number 21
+0001 4 22
+1011 10 22
+;Room number 22
+0001 4 26
+1010 10 26
+;
+; Floating/falling in space
+;
+;Room number 23
+1010 15 24
+;Room number 24
+1010 15 25
+;Room number 25
+1010 15 32
+;
+; Snowfield below pylons
+;
+;Room number 26
+1000 9 38
+;Room number 27
+0000 9 38
+1001 11 161
+;Room number 28
+1000 9 38
+;Room number 29
+0000 9 38
+0001 1 156
+1011 11 156
+;Room number 30
+1001 9 38
+;Room number 31
+0000 9 38
+1001 11 39
+;Room number 32
+1000 9 38
+;Room number 33
+0000 9 38
+1101 11 36
+;
+; Snowfield by Hole/Infinite Snow
+;
+;Room number 34
+1010 10 255
+;Room number 35
+1010 15 34
+;
+; Snowfield "Rooms"
+;
+;Room number 36
+1010 1 33
+;Room number 37
+1111 1 46
+;Room number 38
+1001 9 37
+;Room number 39
+1001 10 40
+;Room number 40
+1001 10 45
+;Room number 41
+1001 2 42
+;Room number 42
+1001 5 44
+;Room number 43
+1001 8 41
+;Room number 44
+1001 6 43
+;Room number 45
+0001 1 42
+0001 3 44
+0001 4 43
+1001 7 41
+;
+; Shuttle car
+;
+;Room number 46
+1101 12 37
+;
+; Snowdozer
+;
+;Room number 47
+1011 12 28
+;Room number 48
+1001 9 47
+;
+; Landing craft (ghost of)
+;
+;Room number 49
+1110 12 36
+;Room number 50
+1001 12 49
+;
+; Top Level Freezer
+;
+;Room number 51
+0001 10 58
+1001 1 52
+;Room number 52
+0000 10 55
+1001 1 53
+;Room number 53
+1001 1 51
+;
+;Room number 54
+1001 3 55
+;Room number 55
+0100 4 63
+0110 11 63
+1001 3 56
+;Room number 56
+1001 3 57
+;Room number 57
+1001 3 58
+;Room number 58
+1001 3 59
+;Room number 59
+1001 3 54
+;
+; Elevator and Ropes
+;
+;Room number 60
+1100 9 51
+;Room number 61
+1001 9 60
+;Room number 62
+1001 9 61
+;Room number 63
+1011 9 62
+;Room number 64
+1011 9 63
+;Room number 65
+1001 9 64
+;
+; Corridor by Elevator/Revival room
+;
+;Room number 66
+0000 3 69
+0000 7 70
+0101 4 63
+1111 11 63
+;Room number 67
+1001 4 66
+;
+; Curving Corridor
+;
+;Room number 68
+1001 3 69
+;Room number 69
+1001 3 70
+;Room number 70
+1001 3 68
+;
+; Mortuaries
+;
+;Room number 71
+0101 1 70
+1111 12 70
+;Room number 72
+0101 4 69
+1111 12 69
+;Room number 73
+0001 1 71
+1001 9 73
+;Room number 74
+0001 4 72
+1001 9 74
+;
+; Freezer Control
+;
+;Room number 75
+0011 3 75
+0101 4 152
+1001 1 77
+;Room number 76
+0011 3 76
+0101 1 153
+1001 4 80
+;Room number 77
+0001 3 79
+0001 7 79
+1010 9 79
+;Room number 78
+0000 1 76
+0001 4 77
+1010 9 80
+;Room number 79
+0001 1 80
+0000 4 75
+1010 9 77
+;Room number 80
+0001 3 78
+0001 7 78
+1010 9 78
+;Room number 81
+1001 9 80
+;Room number 82
+1001 7 81
+;Room number 83
+0001 9 79
+0001 4 136
+1011 5 84
+;Room number 84
+0010 4 86
+1001 1 85
+;Room number 85
+0001 7 83
+1011 6 136
+;Room number 86
+1001 1 136
+;Room number 87
+1001 4 83
+;Room number 88
+1001 4 87
+;Room number 89
+0001 3 91
+1001 4 85
+;Room number 90
+1001 3 89
+;Room number 91
+0010 10 97
+1000 11 97
+;Room number 92
+1001 4 91
+;
+; Passage Near Stores
+;
+;Room number 93
+0000 9 77
+0011 11 162
+1001 12 162
+;Room number 94
+0011 3 178
+1001 7 93
+;Room number 95
+1111 15 95
+;Room number 96
+0001 1 97
+1001 3 162
+;Room number 97
+0001 1 98
+0001 3 163
+1011 10 163
+;Room number 98
+0001 1 99
+0001 3 164
+1011 10 164
+;Room number 99
+1001 3 165
+;Room number 100
+1001 9 78
+;Room number 101
+0101 9 100
+1001 10 167
+;
+; Beside Windows
+;
+;Room number 102
+1001 3 168
+;Room number 103
+1001 4 167
+;
+; Beside Ticket Machine
+;
+;Room number 104
+1001 1 172
+;Room number 105
+1001 7 171
+;
+; Unfurnished Accommodation
+;
+;Room number 106
+1001 1 107
+;Room number 107
+1001 10 108
+;Room number 108
+0111 10 109 ; down through combination door
+1101 11 109
+;Room number 109
+1001 10 149
+;Room number 110
+1001 9 149
+;Room number 111
+1111 15 111
+;Room number 112
+1101 9 155
+;Room number 113
+1001 9 112
+;
+; Jacob's Ladder
+;
+;Room number 114
+0011 1 115
+1001 9 115
+;Room number 115
+0011 1 116
+1001 9 116
+;Room number 116
+0011 1 117
+1001 9 117
+;Room number 117
+0011 1 118
+1001 9 118
+;Room number 118
+0001 1 120
+0001 3 122
+0001 4 121
+1001 7 119
+;Room number 119
+0011 4 121
+1001 5 121
+;Room number 120
+0001 9 123
+0011 7 119
+1001 6 119
+;Room number 121
+0011 3 122
+1001 2 122
+;Room number 122
+0011 1 120
+1001 8 120
+;Room number 123
+0011 4 124
+1001 9 124
+;Room number 124
+0011 3 125
+1001 9 125
+;Room number 125
+0011 1 126
+1001 9 126
+;Room number 126
+0111 7 127
+1101 11 127
+;Room number 127
+1001 7 128
+;Room number 128
+1001 7 130
+;Room number 129
+1001 4 130
+;Room number 130
+1001 4 131
+;Room number 131
+0111 7 151
+1101 11 151
+;Room number 132
+1111 11 255
+;
+; Engine Room (not part of the game):
+;
+;Room number 133
+1010 1 132
+;Room number 134
+1010 1 133
+;Room number 135
+1010 1 134
+;
+; Hologram Rooms
+;
+;Room number 136: Console
+1001 3 84
+;Room number 137: Crew Accommodation
+1001 1 149
+;Room number 138
+0011 12 137
+1001 1 137
+;Room number 139
+1001 8 149
+;Room number 140
+0011 12 139
+1001 8 139
+;Room number 141
+1001 7 149
+;Room number 142
+0011 12 141
+1001 7 141
+;Room number 143
+1001 4 149
+;Room number 144
+0011 12 143
+1001 4 143
+;Room number 145
+1101 6 149
+;Room number 146
+0011 12 149
+1001 5 149
+;Room number 147
+1001 3 149
+;Room number 148
+0011 12 147
+1001 3 147
+;Room number 149
+1001 9 109
+;Room number 150
+0011 9 142
+1011 12 142
+;Room number 151: Main control room
+1001 7 132
+;
+; Airlocks
+;
+;Room number 152
+0101 1 75
+1101 4 160
+;Room number 153
+0100 1 53
+1100 4 76
+;Room number 154
+1101 4 107
+;Room number 155
+1101 9 110
+;Room number 156
+1001 1 114
+;
+; Landing Craft
+;
+;Room number 157
+1001 12 36
+;Room number 158
+0011 1 157
+1011 12 157
+;
+; Airless "Passages"
+;
+;Room number 159
+1011 12 161
+;Room number 160
+0011 11 159
+1100 1 152
+;Room number 161
+1101 4 154
+;
+; Between crates in stores
+;
+;Room number 162
+;>>mike 21/10/86 - 0011 3 102
+1001 10 102
+;Room number 163
+0011 4 162
+1001 10 162
+;Room number 164
+1001 4 163
+;Room number 165
+0001 4 164
+1011 10 164
+;Room number 166
+1001 4 102
+;Room number 167
+1001 4 166
+;Room number 168
+1001 3 104
+;Room number 169
+0001 4 168
+1001 7 166
+;Room number 170
+0001 4 169
+1001 7 167
+;Room number 171
+0001 4 170
+1001 7 103
+;Room number 172
+0001 1 173
+1001 7 169
+;Room number 173
+0001 1 105
+1001 7 170
+;
+; Coffin
+;
+;Room number 174
+1000 12 73
+;
+; Autodoc
+;
+;Room number 175
+0011 4 81
+0011 12 81
+1011 9 81
+;
+; Coccoon
+;
+;Room number 176
+1101 11 132
+;
+; Bunk Bed
+;
+;Room number 177
+0011 4 89
+0001 9 89
+1011 10 89
+;
+; Padded Cell
+;
+;Room number 178
+0011 7 94
+0011 11 94
+1011 12 94
+;
+; At Console
+;
+;Room number 179
+0001 9 136
+1011 10 136
+;
+;End-of-table markers:
+0000 0 0
+;--------------------------------------------------------------
+;------------------------------------------------------------------
+

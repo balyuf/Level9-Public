@@ -1,0 +1,45 @@
+#!/bin/bash
+
+usage() {
+  echo "Usage: $0 [options] <name>"
+  echo
+  echo "Options:"
+  echo "--help: this usage message"
+  echo "--old: for strict binary compatibility with older games"
+  echo
+  exit 1
+}
+
+if ! type -P m68k-linux-gnu-as >/dev/null
+then
+  echo "Please install binutils-m68k-linux-gnu ..."
+  echo "On Ubuntu Linux: sudo apt install binutils-m68k-linux-gnu"
+  echo "On Rocky Linux:  sudo dnf install binutils-m68k-linux-gnu"
+  echo
+  usage
+fi
+
+old=""
+name=""
+while [[ $# -gt 0 ]]
+do
+  case $1 in
+    --help) usage ;;
+    --old) old=$1 ;;
+    --*) echo "Unrecognized option: $1"; usage ;;
+    *) name=$1 ;;
+  esac
+  shift
+done
+if [[ -z $name ]]; then usage; fi
+
+if [[ ! -f $name.bin ]]; then echo "The file $name.bin was not found."; exit 2; fi
+
+size=`stat -c "%s" $name.bin`
+if [[ -n $old ]]; then rel='\xff\xff'; end='\x00'; pbt='\x00'; else rel='\x00\x00'; end='\x00\x00\x00\x00'; pbt='\x90'; fi
+if ((size%2==1)); then pad=$pbt; ((size++)); else pad=''; fi
+s0=`printf '\\\\x%02X' $(((size>>24)&0xff))`
+s1=`printf '\\\\x%02X' $(((size>>16)&0xff))`
+s2=`printf '\\\\x%02X' $(((size>>8)&0xff))`
+s3=`printf '\\\\x%02X' $((size&0xff))`
+(LANG=C echo -ne "\x60\x1A$s0$s1$s2$s3\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00$rel"; cat $name.bin; echo -ne "$pad$end") > $name.prg

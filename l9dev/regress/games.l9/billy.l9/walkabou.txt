@@ -1,0 +1,1419 @@
+; WALKABOU.TXT
+;
+; Walkabout code for Billy The Kid
+;
+; Mike Austin July 1990
+;
+var
+ InfoAlready ; local variable to TalkToPerson
+
+const
+ TVDOpinionBillyOffset=1
+ TVDOpinionPatOffset=2
+ TVDAlignmentByte=5 ; <128 if good, >=128 if bad
+ TVDNameOffset=6 ; information type this person will ever know about.
+; Top bit set if they know about the current event of this type.
+ TVDInfoByte=7
+
+ begin
+
+; Check map square at dv2+dx2,dv3+dx3
+; V1=0 if square is vacant...
+;---
+.TownControls
+ gosub @sGetControls ; still scan escape whilst riding
+ if PlayerACB=0 then @TCRet ; riding into town?
+ if PleaseSTopPlayer>1 then @TCStop
+; look at kbd/joystick/mouse and return
+; dir as new movement direction in standard adventure format
+; and FireKey=0 if not pressed, 1 if pressed.
+; and FireKeyChange=1 if pressed/released this turn
+
+; and for directions, returns:
+;	x1
+;   x4       x2
+;       x3
+; Non-zero means trying to move in that direction
+; and x5=x offset (single pixel movement), signed
+;     x6=y offset (single pixel movement), signed
+;     x7=direction number in standard adventure format
+;          i.e.          1
+;                     8     2
+;                    7       3
+;                     6     4
+;                        5
+ UpKey=x1
+ RightKey=x2
+ DownKey=x3
+ LeftKey=x4
+ XSpeed=x5
+ YSpeed=x6
+ MenuNumber=0 ; in case not changed elsewhere
+ if x7=0 then TCNoChangeDir
+ if PlayerWalking=false then TCCD1
+ if x7=PlayerDirection then TCNoChangeDir
+.TCCD1
+ PlayerDirection=x7
+.TCSetUpPlayer
+ PlayerWalking=true
+ ObjectNumber=3400 ; walk in direction
+.TCSetUpPlayer2
+ add ObjectNumber,PlayerDirection ; walk in new direction
+ dx4=PlayerACB
+ RasterOffset=100 ; Billy
+ if PlayersName=Billy then TCSUP2
+ RasterOffset=200 ; Pat
+.TCSUP2
+ gosub @ChangePersonACBdx4
+ goto @ResetPlayerHeight
+
+.TCNoChangeDir
+ add TimeInRoom,c1
+; after a while in each room, check if anybody wants to
+; talk to the player...
+; (The time is set so as to JUST allow the player to
+; walk across the screen, provided they don't stop on
+; the way.)
+ if TimeInRoom<>70 then TCNotEncounters
+ gosub @WalkingSubPlotEncounters
+.TCNotEncounters
+
+
+
+
+; sub AccostCounter,c1
+; if AccostCounter>0 then TCNoAccost
+; PosRange=4000
+; NegRange=60000 ; -20
+; cursorx=PlayerX
+; cursory=PlayerY
+; gosub @HiresCDRange ; anyone in room?
+;; Returns result=true if found
+;; and x1=offset in HiresTable
+; if result=0 then TCNoAccost
+;
+;; an object - e.g. wanted poster?
+; if x1<1264 then TCAccost2 ; 79*16
+; if x1<1345 then TCNoAccost ; 84*16+1
+;
+;.TCAccost2
+;;;; add x1,PeopleVarData ; get offset in TVD
+; break ;*********
+; push x1 ;******
+; pop x1 ;*********
+; goto @TalkToPerson ; use 'current' menu
+;; gosub @GetGreetingMessage
+;; gosub @GetPersonalGreeting ; also sets ThisPersonVarData=x1
+;;
+;; gosub @TTPDisplayInstructions
+;; fire pressed.
+;; TextBoxDisplayed=0
+;
+;; MenuNumber=16 ; hello, talk, threaten, bribe menu.
+;; gosub @PrettyMenu
+;;;; if result=DoNothing then @TCStop ; 'do nothing' selected
+;; goto @TCStop ; after menu selection
+; goto @MeetDoMenu ; gosub, return
+
+.TCNoAccost
+ if PleaseStopPlayer<>false then @TCStop
+ if FireKey=0 then @TCNoStop
+; bring up menu
+
+; is player near to a person?
+ dx4=PlayerACB
+ gosub @ReadACBDX4
+ cursorx=PlayerX
+ cursory=PlayerZ ; y=z-h
+ sub cursory,dv4 ; PlayerH
+ gosub @HiresCD ; check HiresTable(0..SizeHiresTable)
+; for collision with thing at coordinates cursorx,cursory
+; Returns result=true if found
+; and x1=offset in HiresTable
+ if result=false then TCNotTalkPerson
+
+; an object - e.g. wanted poster?
+ if x1=1344 then TCTalk ; card table crew
+ if x1<1264 then TCTalk ; 79*16
+ if x1=1264 then @WantedPoster
+ if x1<1680 then TCNotTalkPerson ; 84*16+1 20 dec90 was 1345
+
+.TCTalk
+ push x1 ; x1 is person's offset in HiresTable()
+  WantCSTB=true ; set to true when want to do a COpyScreenToBuffer
+  gosub @DisplayEverything
+ pop x1
+ gosub @TalkToPerson ; x1 is person offset in HiresTable:16 times
+; person number
+ goto @BackToWalkabout ; TCStop ; after talk.
+
+.TCNotTalkPerson
+ x1=832 ; barman(52) times 16
+ if Location=160 then TCTalk ; talk to barman
+ MenuNumber=0 ; move on/leave town menu
+ m1=0
+ m2=0
+ gosub @PrettyMenu
+ if result=DoNothing then TCDoNothing ; 'do nothing' selected
+ goto @ReturnToMap
+
+
+.TCDoNothing
+; v1=0
+; v2=0
+; gosub @MCBuildRoom ; remove black box CSTB'd onto screen
+
+.TCStop
+ if PleaseStopPlayer=0 then TCStop2
+ sub PleaseStopPlayer,c1
+.TCStop2
+ x4=ACBLastHeightAdjust
+ add x4,PlayerACB
+ x3=ACBList(x4)
+ x4=ACBHOffset
+ add x4,PlayerACB
+ x1=64 ; default player height
+ add x1,x3 ; add on last terrain height we noted
+ if x4>ACBListSize then @StratBug ;*****
+ &ACBList(x4)=x1 ; reset player height the hard way!
+
+
+ PlayerWalking=false
+ gosub @ResetPlayerHeight
+ ObjectNumber=3410 ; stop in direction
+ add ObjectNumber,PlayerDirection ; walk in new direction
+ dx4=PlayerACB
+ goto @ChangePersonACBdx4 ; gosub, return
+
+.TCNoStop
+; going off walkable area in any direction?
+ gosub @CheckNewRoom
+.TCRet
+ return
+;---------
+.ChangePersonACBdx4
+ gosub @ChangeACBDX4
+ gosub @ReadACBDx4 ; get current coords
+ dx1=ACBCumulativeShift ; word - for Walkabout: keeps track
+; of how far we've shifted vertically - to allow the up/down
+; movement as we walk to be cancelled when change animation.
+ add dx1,dx4
+ &dx5=ACBList(dx1)
+ if dx1>ACBListSize then @StratBug ;*****
+ &ACBList(dx1)=c0
+ sub dv4,dx5 ; remove cumulative h shift from h coord
+ gosub @MoveACBdx4
+.SASTRet
+ return
+;-------
+.SpecialAniShiftTown
+; acb ACBheader is moving from dv2,dv3,dv4 by dx2,dx3,dx4 pixels
+ if PlayerACB=0 then SASTRet ; e.g. riding into town
+ if ACBHeader<>PlayerACB then @SASTNotPlayer
+ dx1=ACBCumulativeShift ; word - for Walkabout: keeps track
+; of how far we've shifted vertically - to allow the up/down
+; movement as we walk to be cancelled when change animation.
+ add dx1,ACBHeader
+ &dx5=ACBList(dx1)
+ add dx5,dx4
+ if dx1>ACBListSize then @StratBug ;*****
+ &ACBList(dx1)=dx5
+
+.SetUpPlayerCoords
+ if BuildingRoom=true then @SUPCRet
+ PlayerX=dv2
+ PlayerZ=dv3
+;; sub PlayerY,dv4 ; y=z-h
+
+ CursorX=dv2
+ CursorZ=dv3
+ gosub @CheckCollision
+ if ReturnCode=0 then @SUPCRet ; currently standing on a non-walkable square
+
+ CursorX=dv2
+ CursorZ=dv3
+ add CursorX,dx2
+ add CursorZ,dx3
+ push CursorX
+ push CursorZ
+  gosub @CheckCollision
+ pop CursorZ
+ pop CursorX 
+ if ReturnCode=0 then @SUPCBlock
+; walkable if non-zero
+; add CursorX,c8 ; reflects width of player
+; gosub @CheckCollision
+; if ReturnCode=0 then SUPCBlock
+ push dx4
+ dx4=ACBHeader
+ gosub @ResetPlayerHeight
+ pop dx4
+ return
+;-----
+.ResetPlayerHeight
+; player has ACB at dx4
+  gosub @AdjustPersonHeight
+  if result=false then SASTNoAdjustHeight ; height not available,
+; so leave it alone.
+;***! if PlayerWalking=false then RPH2
+  x4=ACBLastHeightAdjust
+  add x4,dx4
+  x3=ACBList(x4)
+  if x3=x1 then SASTNoAdjustHeight ; height adjust?
+.RPH2
+ if x4>ACBListSize then @StratBug ;*****
+  ACBList(x4)=x1
+  gosub @ReadACBdx4
+  dv4=x2 ; height for this bit of terrain
+  if dv4<200 then SASTAH2
+; negative - clearly silly
+  dv4=64 ; default height
+
+.SASTAH2
+  goto @MoveACBdx4 ; gosub, return
+
+.SASTNoAdjustHeight
+ return
+
+.SUPCRet
+ return
+
+.SUPCBlock
+; PleaseStopPlayer=true
+
+;; get collision, height stuff for CURRENT position, not
+;; where we were trying to move to. This is so ResetPlayerheight
+;; can find the correct terrain height
+; CursorX=dv2
+; CursorZ=dv3
+; gosub @CheckCollision
+
+ PleaseStopPlayer=2 ; freeze player for 2 frames, to give
+; system a change to realise we've stopped, and thus
+; reset the height
+
+
+ dx2=0
+ dx3=0
+ dx4=0
+ return
+;------
+.SASTNotPlayer
+ return
+;-----------
+.CheckNewRoom
+ x1=0 ; direction to go in
+ if PlayerX>32000 then CNRNotGoRight ; slightly off LHS
+ if PlayerX<300 then CNRNotGoRight ;until 5 jan 91, was 316
+ if PlayerDirection<2 then CNRNotGoRight
+ if PlayerDirection>4 then CNRNotGoRight
+; leave this room, going east
+ x1=3 ; new direction
+ x5=3 ; direction we'll enter new room in
+
+.CNRNotGoRight
+ if PlayerX>4 then CNRNotGoLeft
+ if playerDirection<6 then CNRNotGoLeft
+ x1=7 ; new direction
+ x5=7 ; direction we'll enter new room in.
+
+.CNRNotGoLeft
+ if PlayerZ<194 then CNRNotGoSouth ; y=130
+ if PlayerDirection<4 then CNRNotGoSouth
+ if PlayerDirection>6 then CNRNotGoSouth
+ x5=5 ; direction we'll enter new room in.
+ x1=5 ; new direction
+ if PlayerX<170 then CNRNotGoSouth
+ x1=4 ; SE: for door at RHS of screen
+
+.CNRNotGoSouth
+ if CurrentScreen>MaxOutside then @CNRNotGoNorth ; no north doors
+; from inside rooms (Because they have a bigger walkable area)
+ code -
+  x2=120 ; z limit for a few strange rooms
+  if CurrentScreen=431 then CNRFarBack ; news office, Santa Fe
+  if CurrentScreen<435 then CNRFB1 ; 435-438
+  if CurrentScreen<439 then CNRFarBack ; 
+.CNRFB1
+  if CurrentScreen<451 then CNRFB1a
+  if CurrentScreen<454 then CNRFarBack
+.CNRFB1a
+  if CurrentScreen<454 then CNRFB2 ; 
+  if CurrentScreen<458 then CNRFarBack ; 
+.CNRFB2
+;;  if CurrentScreen=472 then CNRFarBack ; Outside Roswell hotel
+  if CurrentScreen=473 then CNRFarBack ; 
+  if CurrentScreen=500 then CNRFarBack ;Lincoln City Saloon
+  if CurrentScreen=503 then CNRFarBack ;Lincoln Bank
+  if CurrentScreen=505 then CNRFarBack ; Lincoln City
+  if CurrentScreen<543 then CNRFB3 ; 
+  if CurrentScreen<545 then CNRFarBack ; 
+
+.CNRFB3
+  x2=138 ; z limit for 542 White Oaks
+  if CurrentScreen=542 then CNRFarBack
+  if CurrentScreen=472 then CNRFarBack ; Outside Roswell hotel
+  if CurrentScreen=430 then CNRFarBack ; Santa Fe first room
+  x2=150 ; z limit for outside Santa Fe Saloon
+  if CurrentScreen=433 then CNRFarBack
+  x2=144 ; z limit for most rooms
+
+
+
+.CNRFarBack
+ code +
+
+ if PlayerZ>x2 then CNRNotGoNorth
+ if PlayerDirection=8 then CNRNorth
+ if PlayerDirection>2 then CNRNotGoNorth
+.CNRNorth
+ x5=1 ; direction we'll enter new room in.
+ x1=1 ; new direction
+ x4=155 ; x limit for a few rooms where NE is near to centre
+ if CurrentScreen=453 then CNRFunnyNE
+ x4=100
+ if CurrentScreen=438 then CNRFunnyNE
+ x4=170 ; x limit for most rooms
+.CNRFunnyNE
+ if PlayerX<x4 then CNRNotGoNorth
+ x1=2 ; NE: for door at RHS of screen
+
+.CNRNotGoNorth
+ if x1=0 then @CNRDontWantLeave ; no direction set up, so not leaving just yet
+ x4=CurrentScreen
+ x2=TownRoomBase
+ sub x4,x2 ; get offset from lowest town number = "room" number
+; for purpose of calculating exit.
+.CNRCheck
+ code -
+;;  EXIT ROOM DIR STATUS DEST
+  EXIT x4 x1 x2 x3
+ code +
+; break ;*****
+; push x1 ;***
+; pop x1 ;*****
+ if x3=191 then @CNRNotNE ; can't go that way
+ if x3=190 then CNRClosed ; shop is closed
+ if x3<>0 then @CNRLeave
+; no exit defined - we got a problem!
+; our two "alternate" directions: NE and SE, map them
+; back onto N and S in case there was only one exit in that direction
+ if x1<>2 then CNRNotNE
+ x1=1
+ goto CNRCheck
+.CNRNotNE
+ if x1<>4 then CNRReallyClosed ; @CNRNoLeave
+ x1=5
+ goto CNRCheck
+
+.CNRReallyClosed
+.CNRClosed
+ if x3<>190 then @CNRNoLeave
+; shop is closed - print a message, put player back on the street
+ m1=874 ; get outa here!
+.BTWM1
+ gosub @DisplayInstructions
+ goto @BackToWalkabout
+ 
+.CNRLeave
+ NewScreen=TownRoomBase
+ add NewScreen,x3
+
+
+ v4=40 ; plain shop
+ if x3<12 then @PersonInShop
+ v4=1 ; bank teller
+ if x3<19 then @PersonInShop ; display bank picture
+ v4=40 ; plain shop
+ if x3<30 then @PersonInShop
+ if x3<60 then CNRNewWalkabout
+ v4=4 ; pretty store
+ if x3<66 then @PersonInShop ; display store picture
+ v4=40 ; plain shop
+ if x3<70 then @PersonInShop
+ if x3<80 then NotSheriffsOffice
+ if x3>85 then NotSheriffsOffice
+ v4=561 ; display Sheriff's office from Town Structures
+ if PlayersName=Pat then @PersonInShop ;SheriffsOffice ;******
+ m1=875 ; Billy decided not to go into Sheriffs Office
+ goto @BTWM1 ; print message, back to walkabout
+
+
+.NotSheriffsOffice
+.CNRNewWalkabout
+; enter new room in direction x5
+ PlayerDirection=x5
+ dx4=PlayerACB
+ gosub @ReadACBdx4
+ if PlayerDirection<>1 then PPNotN
+ add dv2,c32 ; TEMP for Santa Fe Saloon!!! ***************
+ dv3=PlayerInitialY ; z position
+ add dv3,dv4 ; z=y+h
+
+.PPNotN
+ if PlayerDirection<>3 then PPNotE
+ dv2=32 ; x position
+
+.PPNotE
+ if PlayerDirection<>5 then PPNotS
+ dv3=100 ; z position
+ add dv3,dv4 ; z=y+h
+
+.PPNotS
+ if PlayerDirection<>7 then PPNotW
+ dv2=280 ; x position
+
+.PPNotW
+ gosub @MoveACBDx4
+ gosub @SetUpPlayerCoords ; copy into PlayerX,Y vars in case
+; specialAniShift is not done before we next display a frame.
+
+ gosub @NewRoomSubplotEncounters
+
+.CNRDontWantLeave
+ return
+
+.CNRNoLeave
+; can't leave
+ gosub @TCStop
+ return
+;----------
+.PersonInShop
+; x3=room number of shop to briefly visit.
+; Don't actually change LOCATION, as we are going
+; straight back outside after we finish chatting.
+; re-entering this shop. See correction in CNRNewWalkabout.
+ PleaseStopPlayer=true ; stop player ASAP, to avoid walking into
+; shops or similar funnies.
+ if PlayerDirection=3 then DontTurn
+ if PlayerDirection=7 then DontTurn
+ PlayerDirection=5
+
+.DontTurn
+; gosub @MCCopyScreenToBuffer ; freeze the street scene,
+;; for when we overlay it.
+ if x3=6 then @NewsOffice
+ if x3>11 then PISNotNews
+ if x3>7 then @NewsOffice
+
+.PISNotNews
+ if v4=0 then NoLinkingBackdrop ; a linking picture?
+
+ push x3
+  if v4<>561 then PISPic1 ; display Sheriff's office from Town Structures
+   dv1=v4
+   gosub @BuildPicture ; 
+   goto PISPic2
+.PISPic1
+  gosub @DisplayLinkingPicture ; load linking structure file,
+
+.PISPic2
+; open sprites file, and build the picture we've asked for(v4).
+ pop x3
+ push CurrentRoom
+ MenuNumber=174 ; Sheriff menu
+ x1=0 ; no person in Sheriff's office
+ if x3<80 then PISNotSheriff
+ if x3>84 then PISNotSheriff
+ gosub @MaybeForceTalkToPerson ; use MenuNumber
+ goto PIS3
+
+
+.PISNotSheriff
+;Menu156 dc.w 1519-MM,MMenu+158 * the store was deserted...
+; MenuNumber=156 ; menu to allow us to get books.
+ gosub @WhoIsAtX3
+; gets x1 as person number * 16 for room x3.
+.PIS2
+ gosub @TalkToPerson
+.PIS3
+ gosub @MCPurgeAllCells ; purge cells from linking picture.
+
+; break ;*****
+; push PlayerX ;*****
+; pop PlayerX ;*******
+; x5=5 ; south
+; gosub @CNRNewWalkabout ; make player appear at a sensible
+; position in street, when we enter new room in direction x5
+ gosub @LimitPlayerCoords
+ PlayerDirection=5 ; going south againd
+ PlayerWalking=true
+ goto @BackToWalkabout
+;---------
+
+.NoLinkingBackdrop
+ push CurrentRoom
+  gosub @MCEmptyRoom
+  gosub @MCBuildRoom
+  gosub @InitACBs
+  gosub @DisplayEverything ; display black quickly
+ gosub @WhoIsAtX3
+ gosub @TalkToPerson
+ goto @BackToWalkabout
+;------------------
+code -
+.iBackToWalkabout
+ code +
+  gosub BackToWalkabout
+ code -
+ return 
+;-------
+code +
+.BackToWalkabout
+ if PlayingDuel<>0 then BTW1 ; about to fight duel (e.g.
+; lady being bothered by gunslinger -> duel, immediately after talking to her)
+ if Location>199 then @ReturnToMap ; at Fort Sumner
+; or somewhere, talking to person
+.BTW1
+ gosub @FreezeAndPutUpHourglass
+ PersonDisplayed=false
+; back to map, or out onto street again.
+ gosub @OpenTownStructures ; load town structure again, if needed.
+; v4=GameMap ; map
+ if CurrentScreen=GameMap then @ReturnToMap ; OverlayEntryPoint ; map
+ NewScreen=CurrentScreen
+ gosub @WaitFireRelease
+
+ PlayerWalking=true ; false ; start Billy stationary
+ gosub LimitPlayerCoords
+ PlayerDirection=5 ; turn round to face south
+ goto @BuildNewScreen
+;-----------
+.LimitPlayerCoords
+ code -
+ if PlayerX>9 then BTW2
+ PlayerX=10 ; limit X
+
+.BTW2
+ if PlayerX<310 then BTW3
+ PlayerX=308 ; limit x
+
+.BTW3
+ if PlayerZ>141 then BTW4 ; y=71 then BTW4
+ PlayerZ=165 ; limit y y=95
+
+.BTW4
+ If PlayerZ<189 then BTW5 ; y=125
+ PlayerZ=184 ; limit y ; y=120
+
+.BTW5
+ code +
+ return
+;--------------
+.MoveOffBlockedSquares
+ gosub LimitPlayerCoords
+ x2=4 ; x shift to try to get off
+ x3=4 ; z shift to try to get off
+
+.MOBS1
+ CursorX=PlayerX
+ CursorZ=PlayerZ ; y=z-h, so z=y+h
+; x1=64
+; add CursorZ,x1
+
+.MOBSLoop
+ push x2
+ push x3
+  gosub @GDpointOnMap
+  if ReturnCode<>0 then NotOffMap
+  returnCode=39721 ; off map
+  goto OffMap1
+
+.NotOffMap
+  gosub @CheckCollision
+
+.OffMap1
+ pop x3
+ pop x2
+; returnCode=0 if non-walkable
+ if ReturnCode=39721 then MOBSTryNewDir ; off map, so try new direction
+ if ReturnCode<>0 then MOBSGotIt
+; currently standing on a non-walkable square
+ add CursorX,x2
+ add CursorZ,x3
+ if CursorZ>184 then MOBSTryNewDir
+ if CursorX<315 then MOBSLoop
+
+.MOBSTryNewDir
+ if x2>200 then MOBSGiveUp ; can't find anywhere
+ x2=65532 ; -4: x shift
+ x3=65532 ; -4: z shift
+ goto @MOBS1 ; start from original position, search in new direction
+
+.MOBSGotIt
+; got position CursorX,Z which is unblocked
+ PlayerX=CursorX
+ PlayerZ=CursorZ ; y=z-h
+; x1=64 ; h
+; sub PlayerY,x1
+
+.MOBSGiveUp
+ return
+
+;------------------
+ code -
+.iTalkToPerson
+ code +
+ gosub TalkToPerson
+ code -
+ return
+ code +
+;------------
+.TalkToPerson
+; handle conversation with person x1/16.
+; Either return, to go back to walkabout, or
+; jump off somewhere depending on the result of
+; the conversation.
+ MenuNumber=0 ; don't force a menu (default)
+
+.MaybeForceTalkToPerson
+; MenuNumber=forced menu for person
+
+ PersonNumber=x1
+ asr PersonNumber
+ asr PersonNumber
+ asr PersonNumber
+ asr PersonNumber
+ add x1,PeopleVarData ; get offset in TVD
+ ThisPersonVarData=x1
+ InfoAlready=false ; haven't selected "talk" or "threaten" before
+
+ push x3 ; location we're visiting....
+  x4=PeoplePatMenuOffset
+;  if PlayersName=Pat then TTP1
+;  x4=PeopleBillyMenuoffset
+;.TTP1
+  if PersonNumber=0 then TTP1b ; no person displayed.
+  add x4,ThisPersonVarData
+  if MenuNumber<>0 then ForcedMenu
+  &MenuNumber=TownVarData(x4) ; get current menu number in subplot
+; for this person.
+.ForcedMenu
+  gosub @OpenIdentikitStructures
+
+.TTP1b
+  gosub @PutUpMenu
+  if PersonNumber=0 then TTP2 ; no person shown in identikit form
+  push x4
+    gosub @DisplayNewMenu ; display it to give an immediate response.
+ if MenuNumber=156 then TTP1c ; Menu156 is 'search for books' menu
+; in Lincoln City store
+    gosub @FullDisplayPerson ; display identikit picture.
+
+.TTP1c
+  pop x4
+.TTP2
+ pop x3
+
+; identikit text print raster set up in menu print code.
+ gosub @TTPSub
+ return
+;-------------
+
+.TTPSub
+; visiting location x3, talking to person PersonNumber
+; and x1=PersonNumber*16 and TownVarData(ThisPersonVarData)
+ gosub @SelectPrettyMenu ; like "PrettyMenu", but when already displayed
+ MenuNumber=24 ; excludes talk option - default menu to use from
+; now on in conversation, unless changed by e.g. offering a bribe
+ goto MeetDoMenuDisplayed ; MenuNumber=current menu
+
+.TTPMainMenu
+
+.MeetDoMenu
+ gosub @PrettyMenu
+
+.MeetDoMenuDisplayed
+ if result=50 then @ReturnToMap ; 'leave town'
+ gosub @GetCost
+ if x1<>0 then @SpendMoney
+
+
+; dc.w 450-MM,MDoIt+450-MM ; where are deputies?
+; dc.w 451-MM,MDoIt+451-MM ; hire deputy
+; dc.w 452-MM,MDoIt+452-MM ; fire deputy
+ if result=3946 then @WhereAreDeputies ; FF6A&0FFF => 0F6A
+ if result=3947 then @HireDeputy
+ if result=3948 then @FireDeputy
+
+ code -
+  x1=65506 ; -30
+  if result=LoseRepMessage then @iTTPAddX1ToReputation
+  if result=907 then @iTTPAddX1ToReputation
+  if result=910 then @iTTPAddX1ToReputation
+  if result=904 then @iTTPAddX1ToReputation
+  if result=901 then @iTTPAddX1ToReputation
+  if result=1023 then @iTTPAddX1ToReputation
+  if result=1032 then @iTTPAddX1ToReputation
+  if result=1053 then @iTTPAddX1ToReputation
+  if result=1062 then @iTTPAddX1ToReputation
+  if result=160 then @iTTPAddX1ToReputation
+  if result=1260 then @iTTPAddX1ToReputation
+  if result=1213 then @iTTPAddX1ToReputation
+  if result=1214 then @iTTPAddX1ToReputation
+  goto iTTPNoRep
+
+.iTTPAddX1ToReputation
+ gosub @iAddX1ToReputation
+
+.iTTPNoRep 
+ code +
+ if result=907 then @MDMRet ; lose reputation message
+ if result=59 then @TTPIntroduce ; 'hello'
+ if result=60 then @TTPTalk ; 'talk'
+ if result=61 then @TTPThreaten ; 'threaten'
+ if result=257 then @BankRobbery ; 'rob'
+ if result=304 then @WantDuelSoon ; "let's settle this outside"
+ if result=300 then @ToCardGame
+; x1=704 ; ThisPersonVarData
+; add x1,PeopleVarData ; get offset in TVD
+ x1=AshUpton
+ MenuNumber=156 ; store was mysteriously deserted
+ if result=912 then @NewMenuForPerson ;TVDx1 ;[1512:"the army are being cheated by the Murphy-Dolans on the meat
+ if result=917 then @NewMenuForPerson ;TVDx1 ;[1512:"the army are being cheated by the Murphy-Dolans on the meat
+ if result=1257 then @GangRecruited ; "ok, we'll do a robbery with you"
+ if result=1281 then @ToEscapeGame ; "It's Billy, get him boys!"
+
+;[602:go upstairs with the girl ($25) `]
+;[603:offer a bribe `]
+;[604:give $20 `]
+;; drinks on offer at bar...
+;[605:nothing `]
+;[606:red-eye ($1) `]
+;[607:beer ($1) `]
+ if result=1215 then @LoseGame ; Barney Mason has told Pat he's out.
+ if result=1064 then @WantDuelSoon ; Stop Brady
+ if result=1268 then @ToFinalDuel ; to final duel
+
+ if result=1052 then @ToRustlingGame ; steal cows
+
+ x1=4065 ; -30&0fff:  reputation
+ if result=1053 then @AddX1ToReputation ; spend counterfeit money normally
+ x1=1000 ; amount of gold
+ x2=200 ; increase in reputation
+ if result=1022 then @SpendMoney ; give money to widow woman
+
+ gosub @SetSubPlotFlags
+
+;[1537:Barney lead Pat at high speed to the head of a winding
+;valley, then left him to track the escapee on his own. ] ; yes to 1535
+ if result=937 then @ToTrackingGame
+
+ if result=3796 then @ToBrawlGame ; (300-600)&0fff
+ if result=3797 then @ToBrawlGame ; (301-600)&0fff
+ if result=57 then @ToBrawlGame ; 657-MM 'RAISE HELL' reply
+
+ m1=111 ;[111:the prospector ] ; followed by 115
+ m2=115 ;[115:came up and said "thanks pard, you've
+ if location=248 then @SubPlotShootout ; at prospector's place.
+
+ m1=110 ;[110:the homesteader ] ; followed by 115
+;done me a right big favour and I'll be sure to tell everyone about you". ] ;œœœ
+ if result=940 then @SubPlotShootout ; mexican peasant etc.
+;; [1540:"Hurry! We must fight them!" ] ; yes to 1500
+ if result=0 then MDMNotHomestead ; 'do nothing' or 'clear off'
+ if Location<231 then MDMNotHomestead
+ if Location<234 then @SubPlotShootout ; help homesteader
+
+.MDMNotHomestead
+ push Location
+  Location=225 ; ranch
+
+ if result<>970 then MDMNotTart
+; tart/lady being bothered by gunslinger in saloon
+ CurrentScreen=450 ; move player outside so duel happens immediately
+; MenuNumber=14 ; click on tart menu used from now on.
+; x1=PersonNumber
+; push result
+;  gosub @NewMenuForPerson ; gosub, return
+; pop result
+
+; kill her...
+ x1=63 ; lady
+ gosub @KillPersonX1
+
+.MDMNotTart
+  if result<970 then MDMNotDuel
+  if result<1000 then @WantDuelSoon
+
+.MDMNotDuel
+ m1=112 ;[112:Mrs McSween ] ; ; followed by 116
+ m2=116 ;[116:came up and said "thanks old friend. That's
+;stopped to the Murphy Dolans, at least for a while". ]
+ if result=1072 then @SubPlotShootout ; go to help McSween
+
+ m1=113 ; Laura Picket, same m2
+ if result=730 then @SubPlotShootout ; help Laura Picket
+ if result<940 then MDMNotShootout ; various subplots -> shootout
+ m1=0 ; no special result message
+ if result<970 then @SubPlotShootout
+
+.MDMNotShootout
+ pop Location
+; 970..999 are duel subplots.
+ if Location>200 then @ReturnToMap ; do nothing/clear off etc.
+; when e.g. visiting a ranch.
+.MDMRet
+ return
+;-------------
+.GangRecruited
+ PlayerGang=Location
+ x1=231 ; base for locations - 10 (first town)
+ sub PlayerGang,x1 ; PlayerGang has values 10..15
+ return
+;--------
+.FightDuel
+.WantDuelSoon
+; gosub @SetToClearOffMenu
+ EnemyName=255 ; Pat, Billy or $ff for other
+
+ PlayingDuel=true ; get duel next time we're outside
+ goto @BackToWalkabout
+; if CurrentScreen<MaxOutside then @BackToWalkabout ; build new screen
+;; so starts duel immediately if already outside.
+; return
+;-------
+.SetToClearOffMenu
+ MenuNumber=ClearOffMenu
+ x1=PersonNumber
+ goto @NewMenuForPerson ; gosub, return
+;-----------
+.GetCost
+; get cost in x1, increase in reputation x2
+; parameter: result is message number -MM (600)
+ code -
+  x1=15 ; bribe
+  x2=0 ; no increase in reputation
+  if result=255 then GetCost2
+  if result=3 then GetCost2 ; bribe
+  x1=5 ; cost of a round of drinks
+  x2=1 ; increase in reputation
+  if result=1 then GetCost2 ; round of drinks
+  if result=253 then GetCost2 ;[853:called for drinks on the house. That sure made him popular. ]
+  x2=0 ; no increase in reputation
+  x1=25 ; cost of going upstairs
+  if result=2 then GetCost2 ; [602:GO UPSTAIRS WITH THE GIRL ($25) `]
+  if result=254 then GetCost2 ; [854:went upstairs with the saloon girl... ]
+  x1=1
+  if result=6 then GetCost2 ; [606:red-eye ($1) `]
+  if result=7 then GetCost2 ; [607:beer ($1) `]
+
+  x1=1000
+  if result=1020 then GetCost2 ; widow woman donation: $1000
+
+; donations to charity/poor people...
+  x1=20
+  x2=5 ; increase in reputation
+  if result=4 then GetCost2 ; [604:GIVE $20 `]
+  if result=256 then GetCost2 ; [856:handed over some money. ]
+
+  x1=0 ; no cost
+  x2=0 ; no increase in reputation
+.GetCost2
+ code +
+ return
+
+;-------------
+.SpendMoney
+; spend money x1 with increase in reputation x2
+; as a result of menu entry RESULT (message=result+MM)
+ sub PlayerGold,x1 ; amount of money to spend
+ if PlayerGold<32000 then SpendMoney2
+ PlayerGold=0 ; don't allow an overdraft.
+
+.SpendMoney2
+ x1=x2
+ gosub @AddX1ToReputation ;  add PlayerReputation,x2
+
+ if result=255 then @TTPBribe ; 'bribe'
+
+ v4=16 ; Bordello scene
+ MenuNumber=142 ; Bordello menu
+ if result<>254 then SpendMoney3
+ gosub @CallLinkingOverlay ; 'went upstairs with the girl'
+ goto @BackToWalkabout
+
+.SpendMoney3
+ return
+;---------
+ code -
+.iAddX1ToReputation
+ code +
+  gosub AddX1ToReputation
+ code -
+ return
+ code +
+;-------
+.AddX1ToReputation
+ add PlayerReputation,x1
+ if x1<32000 then ATR2
+ PlayerReputation=0
+.ATR2
+ if x1<32000 then ATR3
+; reduced reputation, so make person dislike you
+ gosub @SetToClearOffMenu
+.ATR3
+ return
+;---------
+;-----------
+.TTPIntroduce
+; 'ello' to NPC: introduce player, maybe get some reaction.
+ x2=TownVarData(ThisPersonVarData) ; been introduced to Pat / Billy?
+ x3=1 ; Pat flag
+ if PlayersName=Pat then TTPI2
+ x3=2 ; Billy flag
+.TTPI2
+ or x2,x3
+ if ThisPersonVarData>TownVarDAtaSize then @StratBug ;*****
+ TownVarData(ThisPersonVarData)=x2 
+
+ x1=ThisPersonVarData
+ MenuNumber=36 ; hello again (after hello Billy intro - coded)
+ gosub @NewMenuForPersonTVDx1
+; next time Player talks to person x1, use menu MenuNumber
+
+ code -
+  gosub @iStartPrinting
+  message 915 ; I'm 
+  x2=10
+  add x2,PlayersName ; player's full name: e.g. Sheriff Pat Garrett
+  message x2 ; Billy The Kid
+  message 916 ; (other person's name is...)
+  x2=TVDNameOffset ; offset of NPC's name
+  add x2,ThisPersonVarData
+  x2=TownVarData(x2) ; get offset of NPC's name
+  x3=1100 ; base for NPC names
+  add x2,x3
+  message x2
+  message 917 ; ". etc.
+  gosub @iEndPrinting
+ code +
+ gosub @TTPDisplayInstructions2 ; using text on raster already
+ goto @TTPMainMenu
+
+.TTPMaybeInformation
+.TTPTalk
+; choose whether to give player information, false
+; information, or refuse to talk.
+ if InfoAlready=0 then TTPTalkInfo2
+ add InfoAlready,c1
+ m1=876 ; you deaf or something, boy?
+ if InfoAlready<3 then @TTPGotReply
+ m1=878 ; Can't stand gibbering all day
+ if InfoAlready=3 then @TTPGotReply
+ m1=877 ; I said "YOU DEAF OR SOMETHING"
+ goto @TTPGotReply
+
+.TTPTalkInfo2
+ m1=919 ; won't tell player, regardless of whether anything known.
+ gosub @GetOpinions ; doesn't corrupt ThisPersonVarData.
+ if result=true then TTPTalkInfo3
+ add InfoAlready,c1
+ goto @TTPGotReply
+
+.TTPTalkInfo3
+; likes player enough to tell them something, if known.
+ x2=TVDInfoByte ; offset of information to give byte
+ add x2,ThisPersonVarData
+ x2=TownVarData(x2)
+ m1=918 ; genuinely nothing known
+ if x2<128 then @TTPGotReply ; no information to give.
+ gosub @TTPScanInformation
+; information is at TownVarData(x4). Or if result=false,
+; no information on this topic is available
+ if result=false then TTPGotReply ; m1 set to not known message.
+ if x1<250 then TTPScan5
+; was hidden - make it appear on map etc.
+ if x4>TownVarDAtaSize then @StratBug ;*****
+ &TownVarData(x4)=c1 ; don't use UpdateVarData, cause this is private info
+.TTPScan5
+ gosub @PrintSPEntries
+ goto @TTPMainMenu
+
+.TTPGotReply
+; message m1 is the reply to the player's conversation:
+; drop's back to walkabout after printing this...
+ gosub @TTPDisplayInstructions
+ if InfoAlready>2 then @BackToWalkabout ; person is fed up with telling you
+ goto @TTPMainMenu
+
+;----------
+.TTPScanInformation
+; what information of type x2 is known?
+; Return: information is at TownVarData(x4). Or if result=false,
+; no information on this topic is available
+ x1=127 ; mask off top bit
+ and x1,x2
+
+; .w Offset of "Money Location" information. (type 0)
+; .w Offset of "Deputies Location" information. (type 1)
+; .w Offset of "Gang Location" information (type 2)
+; .w Offset of "Recent robbery" information (type 3)
+ code -
+  random x2
+ if x2>70 then TSI2
+; one third of the time you talk to a cooperative person, they'll
+; tell you where a gang is.
+ x1=2 ; type of information - force to be about gangs!!!
+.TSI2
+ if PlayersName<>Pat then TSINotPat
+ if x1<>1 then TSIPat2 ; don't tell Pat about number of deputies,
+; cause the information is often WRONG
+.TSIRecentRobbery
+ x1=3 ; recent robbery info
+
+.TSIPat2
+.TSINotPat
+ if PersonDisplayed<>0 then TSINotNewspaper
+ if x1=2 then TSIRecentRobbery ; don't publish gang locations!
+
+.TSINotNewspaper
+ code +
+
+
+ add x1,x1 ; get offset from SubPlot tables in TownVarData
+ x2=x1 ; save offset used
+ add x1,SubPlotsOffset
+ &x4=TownVarData(x1) ; x4 is now start of subplot data word pairs
+; that this NPC may have some knowledge about.
+; Scan the words for a non-zero location/event that is
+; not flagged as being hidden
+; if x2=SPMoneyOffset then TTPSThisTownOnly
+; if x2<>SPGangsOffset then @TTPScan2
+;.TTPSThisTownOnly
+;; only report something which is in current town
+; x1=Town
+; x2=SantaFe
+; sub x1,x2
+; add x1,x1 ; 8 words per entry, so times 8
+; add x1,x1
+; add x1,x1
+; add x1,x1
+; add x4,x1
+; &x1=TownVarData(x4)
+; if x1=254 then TTPTTO1 ; hidden, and cannot be told to player.
+; if x1>0 then TTPScan4
+;.TTPTTO1
+; m1=1900 ; sorry, nothing going on round here.
+; goto @TTPNoInfo ; end of table - know nothing
+;;------------
+.TTPScan2
+ &x1=TownVarData(x4) ; event?
+ if x1=254 then TTPScan3 ; hidden, and cannot be told to player.
+ if x1=65535 then @TTPNoInfo ; end of table - know nothing
+ if x1>0 then TTPScan4
+; 0 - nothing of interest.
+
+.TTPScan3
+ x1=16 ; 8 words per entry in SubPlots.
+ add x4,x1
+ goto TTPScan2
+
+.TTPScan4
+; information is at TownVarData(x4). Or if result=false,
+; no information on this topic is available
+ result=true ; information ok!
+ return
+
+.TTPNoInfo
+ result=false
+ return
+
+;-------
+.TTPDisplayInstructions2
+; using text already on raster
+ gosub @DisplayNewTextBox
+ goto TTPDI2
+
+.TTPDisplayInstructions
+ gosub @DisplayTextNoWait
+ goto TTPDI2 ; scan keys before displaying frame again
+
+.TTPDI1
+ gosub @DisplayEverything
+
+.TTPDI2
+ gosub @sGetControls
+ if FireKey=0 then TTPDI1
+ if FireKeyChange=0 then TTPDI1
+ return
+;----------
+.PrintSPEntries
+; information is at TownVarData(x4)
+ code -
+  gosub @iStartPrinting
+  message 906 ; er, Ok I'll help ya
+  message 960 ; header...
+ code +
+
+.AddSPEntries ; to a text box already started (but not displayed)
+ code -
+  x3=8 ; offset from TownVarData(x4) of current item to print.
+.PrintSPELoop
+  code +
+   push x3
+    gosub PrintSPEntry
+  if PersonDisplayed<>0 then PSL2
+  code -
+   message ForceCr ; in news office
+   message space
+   message cr
+  code +
+
+.PSL2
+   pop x3
+  code -
+  add x3,c2
+  if x3<16 then PrintSPELoop
+  if PersonDisplayed=0 then PrintSPE2 ; news office?
+  message 961 ; ". etc.
+.PrintSPE2
+  gosub @iEndPrinting
+ code +
+ gosub @TTPDI2 ; DisplayInstructions2 ; using text on raster already
+ return
+;------
+.PrintSPEntry
+; information is at TownVarData(x4)
+; x3 is offset from TownVarData(x4) of current item to print.
+ add x3,x4
+ &x1=TownVarData(x3)
+ if x1=0 then @PSEDontPrint
+ if x1>10 then PSENotPrintArgument
+; print TownVarData(x4+x1-2)
+ sub x1,c2
+ add x1,x4
+ &x1=TownVarData(x1)
+ code -
+  x2=1000 ; location /gang name.
+  IF X1<10 then PSPELimit
+  if x1<16 then PSPEOk1
+  if x1<41 then PSPELimit
+  if x1<48 then PSPEOk1
+.PSPELimit
+  x1=10 ; limit to within range.
+
+.PSPEOk1
+  add x1,x2
+  message x1
+ code +
+ return
+
+.PSENotPrintArgument
+ if x1<>65535 then PSENotPrintNumber
+; print the number at TownVarData(x4+x3+2).w
+ add x3,x4
+ add x3,c2
+ &x1=TownVarData(x3)
+ if x1<10 then PSENP2
+ x1=10 ; limit e.g. number of deputies
+
+.PSENP2
+ if x1>0 then PSENP3
+ x1=1 ; lower limit - e.g. minimum number of deputies is 1
+; (cause in lawful towns, a deputy challenges you, regardless
+; of whether there's actually one there )
+
+.PSENP3
+ code -
+  print x1
+ code +
+ return
+
+.PSENotPrintNumber
+ if PersonDisplayed<>false then PSENotNewspaper
+ if x1=962 then PSEDontPrint ; "I hear... "
+
+.PSENotNewspaper
+ code -
+  message x1
+ code +
+.PSEDontPrint
+ return
+
+;---------
+.TTPThreaten
+; decide whether this NPC is going to:
+;  + Give Information
+;  + Give False Information
+;  + Challenge player to a duel
+ x1=PersonNumber
+ MenuNumber=ClearOffMenu ; clear off buster
+ gosub @NewMenuForPerson
+
+ gosub @GetOpinionOfPlayer
+ if x3<20 then TTPT2
+ sub x3,c16 ; reduce opinion
+ v1=x2 ;  TownVarData(x2)=x3
+ v2=x3
+ gosub @UpdateVarDataByte
+
+
+
+
+.TTPT2
+ x2=TVDAlignmentByte ; offset of good guy / bad guy flag
+ add x2,ThisPersonVarData
+ x2=TownVarData(x2) ; good guy?
+ if x2<128 then @TTPTalk ; good guys don't fight.
+ x3=1
+ and x3,x2 ; cowardly?
+ if x3<>0 then @TTPTalk ; cowards don't fight.
+ m1=908 ; let's settle this outside...
+ gosub @DisplayInstructions ; @TTPDI2 ; DisplayInstructions
+ MenuNumber=22 ; accept/climb down/try to fight
+ gosub @PrettyMenu
+ if result=304 then @ThreatenFightDuel ; "We'll settle this outside"
+ m1=905 ; lilly livered etc.
+ if result=64 then @TTPGotReply ; back to walkabout
+; no other response should be possible - just exit
+ return
+
+.ThreatenFightDuel
+; kill person - because we're fighting a duel with them,
+; don't want to see them ever again.
+ v1=ThisPersonVarData
+ v2=TVDPeopleNameOffset
+ add v1,v2
+ v2=0 ; code for missing person
+ gosub @UpdateVarDataByte
+ goto @FightDuel
+
+;----------
+.TTPBribe
+ gosub @GetOpinionOfPlayer
+ if x3>230 then TTPB3
+ add x3,c16 ; add on some opinion, careful it doesn't wrap
+; TownVarData(x2)=x3
+ v1=x2
+ v2=x3
+ gosub @UpdateVarDataByte
+
+.TTPB3
+ MenuNumber=10 ; to standard menu, without bribe option
+ goto @TTPMaybeInformation ; maybe give some information now.
+;----------
+.GetOpinionOfPlayer
+; get x3=TownVarData(x2) as opinion of
+; npc TownVarData(ThisPersonVarData) of the player
+ x2=TVDOpinionBillyOffset
+ if PlayersName=Billy then TTPB2
+ x2=TVDOpinionPatOffset
+.TTPB2
+ add x2,ThisPersonVarData
+ x3=TownVarData(x2)
+ return
+;---------
+.GetOpinions
+; get x2 as opinion of Billy, x3 as opinion of Pat
+; for NPC with table at TownVarData(ThisPersonVarData)
+; and set result=true if likes player more than opponent
+ x2=TVDOpinionBillyOffset
+ add x2,ThisPersonVarData
+ x2=TownVarData(x2) ; opinion of Billy
+ x3=TVDOpinionPatOffset
+ add x3,ThisPersonVarData
+ x3=TownVarData(x3) ; opinion of Pat
+ result=false
+ if PlayersName=Pat then GOPat
+; Billy playing
+;; if x2>x3 then GOTrue
+ if x2>60 then GOTrue ;  return
+
+.GOPat
+ if x3>60 then GOTrue ;  if x2<x3 then GOTrue
+ return
+
+.GOTrue
+ result=true
+ return
+;---------
+.GetGreetingMessage
+; get, for NPC TownVarData(ThisPersonVarData),
+; the message to greet the player in M1
+ x2=TVDAlignmentByte
+ add x2,x1
+ x2=TownVarData(x2) ; get cowardly/greedy flag
+ x3=1 ; cowardly?
+ m1=920 ; cowardly greeting base
+ and x3,x2
+ if x3<>0 then GGMGot
+ x3=2 ; greedy?
+ m1=930 ; greedy greeting base
+ and x3,x2
+ if x3<>0 then GGMGot
+ m1=940 ; other person greeting base
+
+.GGMGot
+ push x1
+  gosub @GetVaryM1
+ pop x1
+ return
+;--------
+.GetPersonalGreeting
+; for person TownVarData(x1)
+; return m1=personal greeting, if we've already met them.
+; or leave m1 unchanged if we haven't met them.
+; Also return x2=0 if they are strangers.
+; person's data is at TownVarData(ThisPersonVarData)
+ x2=TownVarData(ThisPersonVarData) ; been introduced to Pat / Billy
+ x3=1 ; Pat flag
+ if PlayersName=Pat then GPG1
+ x3=2 ; Billy flag
+.GPG1
+ and x2,x3
+;; m1=953 ; hello stranger
+ if x2=0 then GPG3
+ m1=949 ; hello: 950/951 are messages for each player
+ add m1,PlayersName
+.GPG3
+ return
+;-------
+.GetVaryM1
+; get M1 as a choice of 10 messages, based on M1
+ code -
+  random x1
+ code +
+ x2=15
+ and x1,x2
+ if x1>9 then GetVaryM1
+ add m1,x1
+ return
+;---------
+.WhoIsAtX3
+; who is at room x3?
+; return x1 as the person number * 16
+ &x4=TownFixedData(0) ; offset in TownFixedData() of peopleData.
+ x2=0 ; number of person being examined
+.WIALoop
+ x1=TownFixedData(x4) ; room number
+ if x1<>x3 then WIA3
+; got a match - record it etc.
+ x1=x4
+ &x2=TownFixedData(0)
+ sub x1,x2 * take off start of this table.
+ add x1,x1 ; get number times 16 from number times 8.
+ x2=65520 ; $fff0 ; remove bottom 4 bits.
+ and x1,x2
+ return ; x1=person number times 16
+
+.WIA3
+ x1=8 ; 8 bytes per entry
+ add x4,x1
+ add x2,c1 ; number of person being examined
+ if x2<NumberOfPeople then @WIALoop
+ x1=0
+ return
+;---------
+.KillPersonX1
+ add x1,x1
+ add x1,x1
+ add x1,x1
+ add x1,x1
+ v1=PeopleVarData
+ add v1,x1
+ v2=TVDPeopleNameOffset
+ add v1,v2
+ v2=0 ; code for missing person
+ goto @UpdateVarDataByte
+;------------

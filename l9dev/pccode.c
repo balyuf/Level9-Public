@@ -1,0 +1,627 @@
+// Code generation section specific to particular processors
+//
+// 8086 version. N.W.Austin 18/7/88
+//
+// Copyright (C) 1988-1989 Level 9 Computing
+//
+// last change 18/7/88
+//
+// Linux adaptation in sync with:
+// 68000 Acode to 8086 cross-compiler 1.53
+// Copyright (C) 1989 Level 9 Computing
+// Mike Austin 14/11/89
+// Nick Austin 15/2/89
+// (complete source still missing)
+//
+
+#include "code.h"
+
+// gamedata segment (in 1.5) contains:
+//   0,1      PC for return to acode
+//   2,3      Acode INT segment
+//   4,5      Address of start of table 0
+//   6,7      Segment paragraph containing table 0
+//   8-35     Addresses of lists 1 thru 9
+//   36-141   Addresses of lists 10 thru 31
+//   142      RET instrction
+//   143      Not used
+//   144-2191 Vars and temp lists
+//   2192+    Gamedata (includes acode and permanent tables)
+
+//
+// data tables for ALL instructions
+// one word per byte which goes into code.
+// If the high byte of the word is zero, the low byte
+// is used immediately as code.
+// if the high byte is non-zero, it codes information as follows:
+// bit 15 set: use high byte of argument as byte of code
+// bit 14 set: substitute argument 1 for the current byte
+// bit 13 set: substitute argument 2 for the current byte
+// convention: arguments are given in the same order as in
+// the acode source.
+//
+
+uint8_t i8086DataShortGoto[] = {
+  // jmp short
+  1,
+  0x00, 0xEB,
+};
+
+uint8_t i8086DataLongGoto[] = {
+  // jmp near
+  1,
+  0x00, 0xE9,
+};
+
+uint8_t i8086DataShortGosub[] = {
+  // 8086 does not have short gosub
+  0,
+};
+
+uint8_t i8086DataLongGosub[] = {
+  // call near
+  1,
+  0x00, 0xE8,
+};
+
+uint8_t i8086DataReturn[] = {
+  // ret near
+  1,
+  0x00, 0xC3,
+};
+
+uint8_t i8086DataToAcode[] = {
+  // mov bx,offset label
+  // mov di,0
+  // jmp far cs:[di]
+  // label:
+  9, // length also used in 'MCToAcode'
+  0x00, 0xBB,
+  0x40, 0x00, 0xC0, 0x00, // D4.w
+  0x00, 0xBF,
+  0x00, 0x00,
+  0x00, 0x00,
+  0x00, 0x2E,
+  0x00, 0xFF,
+  0x00, 0x2D,
+};
+
+uint8_t i8086DataLetVC[] = { // i.e. Let V1=CCCC
+  // mov ds:V1,C1
+  6,
+  0x00, 0xC7,
+  0x00, 0x06,
+  0x40, 0x00, 0xC0, 0x00, // V1
+  0x20, 0x00, 0xA0, 0x00, // C1
+};
+
+uint8_t i8086DataLetVV[] = { // i.e. Let V1=V2
+  // mov ax,ds:[V2]
+  // mov ds:[V1],ax
+  6,
+  0x00, 0xA1,
+  0x20, 0x00, 0xA0, 0x00, // V2
+  0x00, 0xA3,
+  0x40, 0x00, 0xC0, 0x00, // V1
+};
+
+uint8_t i8086DataAddVV[] = { // i.e. ADD V1,V2: V1:=V1+V2
+  // mov ax,ds:V2
+  // add ds:V1,ax
+  7,
+  0x00, 0xA1,
+  0x20, 0x00, 0xA0, 0x00, // V2
+  0x00, 0x01,
+  0x00, 0x06,
+  0x40, 0x00, 0xC0, 0x00, // V1
+};
+
+uint8_t i8086DataSubVV[] = { // i.e. SUB V1,V2: V1:=V1-V2
+  // mov ax,ds:V2
+  // sub ds:V1,ax
+  7,
+  0x00, 0xA1,
+  0x20, 0x00, 0xa0, 0x00, // V2
+  0x00, 0x29,
+  0x00, 0x06,
+  0x40, 0x00, 0xC0, 0x00, // V1
+};
+
+uint8_t i8086DataIfNEVCShort[] = { // i.e. IF V<>C THEN label
+  // cmp ds:V,C
+  // jnz
+  7,
+  0x00, 0x81,
+  0x00, 0x3E,
+  0x40, 0x00, 0xC0, 0x00, // V1
+  0x20, 0x00, 0xA0, 0x00, // C1
+  0x00, 0x75,
+};
+
+uint8_t i8086DataIfNEVCLong[] = { // i.e. IF V<>C THEN @label
+  // cmp ds:V1,C1
+  // jz+3
+  // jmp
+  9, 
+  0x00, 0x81,
+  0x00, 0x3E,
+  0x40, 0x00, 0xC0, 0x00, // V1
+  0x20, 0x00, 0xA0, 0x00, // C1
+  0x00, 0x74,
+  0x00, 0x03,
+  0x00, 0xE9, // jmp
+};
+
+uint8_t i8086DataIfEQVCShort[] = { // i.e. IF V=C THEN label
+  // cmp ds:V1,C1
+  // jz
+  7,
+  0x00, 0x81,
+  0x00, 0x3E,
+  0x40, 0x00, 0xC0, 0x00, // V1
+  0x20, 0x00, 0xA0, 0x00, // C1
+  0x00, 0x74,
+};
+
+uint8_t i8086DataIfEQVCLong[] = { // i.e. IF V=C THEN @label
+  // cmp ds:V1,C1
+  // jnz+3
+  // jmp
+  9,
+  0x00, 0x81,
+  0x00, 0x3E,
+  0x40, 0x00, 0xC0, 0x00, // V1
+  0x20, 0x00, 0xA0, 0x00, // C1
+  0x00, 0x75,
+  0x00, 0x03,
+  0x00, 0xE9, // jmp
+};
+
+uint8_t i8086DataIfLTVCShort[] = { // i.e. IF V<C THEN label
+  // cmp ds:V1,C1
+  // jb                     // >NICK 23/11/88 // jl
+  7,
+  0x00, 0x81,
+  0x00, 0x3E,
+  0x40, 0x00, 0xC0, 0x00, // V1
+  0x20, 0x00, 0xA0, 0x00, // C1
+  0x00, 0x72,              // >NICK 23/11/88  0x00, 0x7C,
+};
+
+uint8_t i8086DataIfLTVCLong[] = { // i.e. IF V<C THEN @label
+  // cmp ds:V1,C1
+  // jae+3                         // >NICK 23/11/88 // jge+3
+  // jmp
+  9,
+  0x00, 0x81,
+  0x00, 0x3E,
+  0x40, 0x00, 0xC0, 0x00, // V1
+  0x20, 0x00, 0xA0, 0x00, // C1
+  0x00, 0x73,                     // >NICK 23/11/88  0x00, 0x7D,
+  0x00, 0x03,
+  0x00, 0xE9, // jmp
+};
+
+uint8_t i8086DataIfGTVCShort[] = { // i.e. IF V>C THEN label
+  // cmp ds:V1,C1
+  // ja                          // >NICK 23/11/88 // jg
+  7,
+  0x00, 0x81,
+  0x00, 0x3E,
+  0x40, 0x00, 0xC0, 0x00, // V1
+  0x20, 0x00, 0xA0, 0x00, // C1
+  0x00, 0x77,                   // >NICK 23/11/88  0x00, 0x7F,
+};
+
+uint8_t i8086DataIfGTVCLong[] = { // i.e. IF V>C THEN @label
+  // cmp ds:V1,C1
+  // jbe +3                     // >NICK 23/11/88 // jle +3
+  // jmp
+  9,
+  0x00, 0x81,
+  0x00, 0x3E,
+  0x40, 0x00, 0xC0, 0x00, // V1
+  0x20, 0x00, 0xA0, 0x00, // C1
+  0x00, 0x76,                  // >NICK 23/11/88  0x00, 0x7E,
+  0x00, 0x03,
+  0x00, 0xE9, // jmp
+};
+
+uint8_t i8086DataIfNEVVShort[] = { // i.e. IF V<>V1 THEN label
+  // mov ax,ds:V
+  // cmp ax,ds:V1
+  // jnz
+  8,
+  0x00, 0xA1,
+  0x40, 0x00, 0xC0, 0x00, // V
+  0x00, 0x3B,
+  0x00, 0x06,
+  0x20, 0x00, 0xA0, 0x00, // V1
+  0x00, 0x75,
+};
+
+uint8_t i8086DataIfNEVVLong[] = { // i.e. IF V<>V1 THEN @label
+  // mov ax,ds:V
+  // cmp ax,ds:V1
+  // jz +3
+  // jmp
+  10,
+  0x00, 0xA1,
+  0x40, 0x00, 0xC0, 0x00, // V
+  0x00, 0x3B,
+  0x00, 0x06,
+  0x20, 0x00, 0xA0, 0x00, // V1
+  0x00, 0x74,
+  0x00, 0x03,
+  0x00, 0xE9, // jmp
+};
+
+uint8_t i8086DataIfEQVVShort[] = { // i.e. IF V=V1 THEN label
+  // mov ax,ds:V
+  // cmp ax,ds:V1
+  // jz
+  8,
+  0x00, 0xA1,
+  0x40, 0x00, 0xC0, 0x00,
+  0x00, 0x3B,
+  0x00, 0x06,
+  0x20, 0x00, 0xA0, 0x00,
+  0x00, 0x74,
+};
+
+uint8_t i8086DataIfEQVVLong[] = { // i.e. IF V=V1 THEN @label
+  // mov ax,ds:V
+  // cmp ax,ds:V1
+  // jnz +3
+  // jmp
+  10,
+  0x00, 0xA1,
+  0x40, 0x00, 0xC0, 0x00, // V
+  0x00, 0x3B,
+  0x00, 0x06,
+  0x20, 0x00, 0xA0, 0x00, // V1
+  0x00, 0x75,
+  0x00, 0x03,
+  0x00, 0xE9, // jmp
+};
+
+uint8_t i8086DataIfLTVVShort[] = { // i.e. IF V<V1 THEN label
+  // mov ax,ds:V
+  // cmp ax,ds:V1
+  // jb                         // >NICK 23/11/88 // jl
+  8,
+  0x00, 0xA1,
+  0x40, 0x00, 0xC0, 0x00, // V
+  0x00, 0x3B,
+  0x00, 0x06,
+  0x20, 0x00, 0xA0, 0x00, // V1
+  0x00, 0x72,                 // >NICK 23/11/88  0x00, 0x7C,
+};
+
+uint8_t i8086DataIfLTVVLong[] = { // i.e. IF V<V1 THEN @label
+  // mov ax,ds:V
+  // cmp ax,ds:V1
+  // jae +3                      // >NICK 23/11/88 // jge +3
+  // jmp
+  10,
+  0x00, 0xA1,
+  0x40, 0x00, 0xC0, 0x00, // V
+  0x00, 0x3B,
+  0x00, 0x06,
+  0x20, 0x00, 0xA0, 0x00, // V1
+  0x00, 0x73,                   // >NICK 23/11/88  0x00, 0x7D,
+  0x00, 0x03,
+  0x00, 0xE9, // jmp
+};
+
+uint8_t i8086DataIfGTVVShort[] = { // i.e. IF V>V1 THEN label
+  // mov ax,ds:V
+  // cmp ax,ds:V1
+  // ja                       // >NICK 23/11/88 // jg
+  8,
+  0x00, 0xA1,
+  0x40, 0x00, 0xC0, 0x00, // V
+  0x00, 0x3B,
+  0x00, 0x06,
+  0x20, 0x00, 0xA0, 0x00, // V1
+  0x00, 0x77,                // >NICK 22/11/88  0x00, 0x7F,
+};
+
+uint8_t i8086DataIfGTVVLong[] = { // i.e. IF V>V1 THEN @label
+  // mov ax,ds:V
+  // cmp ax,ds:V1
+  // jbe +3                      // >NICK 23/11/88 // jle +3
+  // jmp
+  10,
+  0x00, 0xA1,
+  0x40, 0x00, 0xC0, 0x00, // V
+  0x00, 0x3B,
+  0x00, 0x06,
+  0x20, 0x00, 0xA0, 0x00, // V1
+  0x00, 0x76,                   // >NICK 23/11/88  0x00, 0x7E,
+  0x00, 0x03,
+  0x00, 0xE9, // jmp
+};
+
+uint8_t *i8086MCIfVVTable[8] = {
+  // first the short branch versions...
+  i8086DataIfEQVVShort,
+  i8086DataIfNEVVShort,
+  i8086DataIfLTVVShort,
+  i8086DataIfGTVVShort,
+
+  i8086DataIfEQVVLong,
+  i8086DataIfNEVVLong,
+  i8086DataIfLTVVLong,
+  i8086DataIfGTVVLong,
+};
+
+uint8_t *i8086MCIfVCTable[8] = {
+  i8086DataIfEQVCShort,
+  i8086DataIfNEVCShort,
+  i8086DataIfLTVCShort,
+  i8086DataIfGTVCShort,
+
+  i8086DataIfEQVCLong,
+  i8086DataIfNEVCLong,
+  i8086DataIfLTVCLong,
+  i8086DataIfGTVCLong,
+};
+
+uint8_t i8086DataAttVV[] = { // i.e. TableN(V1)=V2
+  // les di,ds:N
+  // add di,ds:V1
+  // mov al,ds:V2
+  // stosb
+  12,
+  0x00, 0xC4,
+  0x00, 0x3E,
+  0x40, 0x00, 0xC0, 0x00, // N
+  0x00, 0x03,
+  0x00, 0x3E,
+  0x20, 0x00, 0xA0, 0x00, // V1
+  0x00, 0xA0,
+  0x10, 0x00, 0x90, 0x00, // V2
+  0x00, 0xAA,
+};
+ 
+uint8_t i8086DataAttCV[] = { // i.e. TableN(C)=V
+  // les ds:N
+  // mov al,ds:V
+  // mov es:C[si],al
+  12,
+  0x00, 0xC4,
+  0x00, 0x36,
+  0x40, 0x00, 0xC0, 0x00, // N
+  0x00, 0xA0,
+  0x10, 0x00, 0x90, 0x00, // V
+  0x00, 0x26,
+  0x00, 0x88,
+  0x00, 0x84, // Short constant is available
+  0x20, 0x00, 0xA0, 0x00, // C
+};
+
+uint8_t i8086DataAftVV[] = { // i.e. V2=TableN(V1)
+  // les ds:N
+  // mov bx,ds:V1
+  // mov dl,es:[si+bx]
+  // mov ds:V2,dx // DH is always zero in m/c
+  15,
+  0x00, 0xC4,
+  0x00, 0x36,
+  0x20, 0x00, 0xA0, 0x00, // N
+  0x00, 0x8B,
+  0x00, 0x1E,
+  0x40, 0x00, 0xC0, 0x00, // V1
+  0x00, 0x26,
+  0x00, 0x8A,
+  0x00, 0x10,
+  0x00, 0x89,
+  0x00, 0x16,
+  0x10, 0x00, 0x90, 0x00, // V2
+};
+
+uint8_t i8086DataAftVC[] = { // i.e. V=TableN(C)
+  // les ds:N
+  // mov dl,es:C[si]
+  // mov ds:V,dx
+  13,
+  0x00, 0xC4,
+  0x00, 0x36,
+  0x20, 0x00, 0xA0, 0x00, // N
+  0x00, 0x26,
+  0x00, 0x8A, // Can be optimised for CC<256
+  0x00, 0x94,
+  0x10, 0x00, 0x90, 0x00, // C
+  0x00, 0x89,
+  0x00, 0x16,
+  0x40, 0x00, 0xC0, 0x00, // V
+};
+
+uint8_t i8086DataAttVV16[] = { // i.e. &TableN(V1)=V2
+  // les di,ds:N
+  // add di,ds:V1
+  // mov ax,ds:V2
+  // xchg ah,al
+  // stosw
+  14,
+  0x00, 0xC4,
+  0x00, 0x3E,
+  0x40, 0x00, 0xC0, 0x00, // N
+  0x00, 0x03,
+  0x00, 0x3E,
+  0x20, 0x00, 0xA0, 0x00, // V1
+  0x00, 0xA1,
+  0x10, 0x00, 0x90, 0x00, // V2
+  0x00, 0x86,
+  0x00, 0xE0,
+  0x00, 0xAB,
+};
+
+uint8_t i8086DataAttCV16[] = { // i.e. &TableN(C)=V
+  // les ds:N
+  // mov ax,ds:V
+  // xchg ah,al
+  // mov es:C[si],ax
+  14,
+  0x00, 0xC4,
+  0x00, 0x36,
+  0x40, 0x00, 0xC0, 0x00, // N
+  0x00, 0xA1,
+  0x10, 0x00, 0x90, 0x00, // V
+  0x00, 0x86,
+  0x00, 0xE0,
+  0x00, 0x26,
+  0x00, 0x89, // Optimise for CC<256
+  0x00, 0x84,
+  0x20, 0x00, 0xA0, 0x00, // C
+};
+
+uint8_t i8086DataAftVV16[] = { // i.e. &V2=TableN(V1)
+  // les si,ds:N
+  // add si,ds:V1
+  // lods es:[si]
+  // xchg ah,al
+  // mov ds:V2,ax
+  15,
+  0x00, 0xC4,
+  0x00, 0x36,
+  0x20, 0x00, 0xA0, 0x00, // N
+  0x00, 0x03,
+  0x00, 0x36,
+  0x40, 0x00, 0xC0, 0x00, // V1
+  0x00, 0x26,
+  0x00, 0xAD,
+  0x00, 0x86,
+  0x00, 0xE0,
+  0x00, 0xA3,
+  0x10, 0x00, 0x90, 0x00, // V2
+};
+
+uint8_t i8086DataAftVC16[] = { // i.e. &V=TableN(C)
+  // les si,ds:[n]
+  // mov ax,es:[si+C]
+  // xchg ah,al
+  // mov ds:V,ax
+  14,
+  0x00, 0xC4,
+  0x00, 0x36,
+  0x20, 0x00, 0xA0, 0x00, // N
+  0x00, 0x26,
+  0x00, 0x8B, // Optimise for CC<256
+  0x00, 0x84,
+  0x10, 0x00, 0x90, 0x00, // C
+  0x00, 0x86,
+  0x00, 0xE0,
+  0x00, 0xA3,
+  0x40, 0x00, 0xC0, 0x00,
+};
+
+uint8_t i8086DataBreakPt[] = {
+  1,
+  0x00, 0xCC,
+};
+
+uint8_t i8086DataPush[] = {
+  // mov ax,ds:V
+  // push ax
+  4,
+  0x00, 0xA1,
+  0x40, 0x00, 0xC0, 0x00, // V
+  0x00, 0x50,
+};
+
+uint8_t i8086DataPop[] = {
+  // pop ax
+  // mov ds:V,ax
+  4,
+  0x00, 0x58,
+  0x00, 0xA3,
+  0x40, 0x00, 0xC0, 0x00, // V
+};
+
+uint8_t i8086DataAndVV[] = {
+  // mov ax,ds:V2
+  // and ds:V1,ax
+  7,
+  0x00, 0xA1,
+  0x20, 0x00, 0xA0, 0x00, // V2
+  0x00, 0x21,
+  0x00, 0x06,
+  0x40, 0x00, 0xC0, 0x00, // V1
+};
+
+uint8_t i8086DataOrVV[] = {
+  // mov ax,ds:V2
+  // or ds:V1,ax
+  7,
+  0x00, 0xA1,
+  0x20, 0x00, 0xA0, 0x00, // V2
+  0x00, 0x09,
+  0x00, 0x06,
+  0x40, 0x00, 0xC0, 0x00, // V1
+};
+
+uint8_t i8086DataXorVV[] = {
+  // mov ax,ds:V2
+  // xor ds:V1,ax
+  7,
+  0x00, 0xA1,
+  0x20, 0x00, 0xA0, 0x00, // V2
+  0x00, 0x31,
+  0x00, 0x06,
+  0x40, 0x00, 0xC0, 0x00, // V1
+};
+
+uint8_t i8086DataASR[] = {
+  // sar ds:V1,1
+  4,
+  0x00, 0xD1,
+  0x00, 0x3E,
+  0x40, 0x00, 0xC0, 0x00, // V1
+};
+
+// i8086 code data table
+struct _datatable i8086DataTable = {
+  i8086DataShortGoto,
+  i8086DataLongGoto,
+  i8086DataShortGosub,
+  i8086DataLongGosub,
+  i8086DataReturn,
+  i8086DataToAcode,
+  i8086DataLetVC,
+  i8086DataLetVV,
+  i8086DataAddVV,
+  i8086DataSubVV,
+  i8086DataIfNEVCShort,
+  i8086DataIfNEVCLong,
+  i8086DataIfEQVCShort,
+  i8086DataIfEQVCLong,
+  i8086DataIfLTVCShort,
+  i8086DataIfLTVCLong,
+  i8086DataIfGTVCShort,
+  i8086DataIfGTVCLong,
+  i8086DataIfNEVVShort,
+  i8086DataIfNEVVLong,
+  i8086DataIfEQVVShort,
+  i8086DataIfEQVVLong,
+  i8086DataIfLTVVShort,
+  i8086DataIfLTVVLong,
+  i8086DataIfGTVVShort,
+  i8086DataIfGTVVLong,
+  i8086DataAttVV,
+  i8086DataAttCV,
+  i8086DataAftVV,
+  i8086DataAftVC,
+  i8086DataAttVV16,
+  i8086DataAttCV16,
+  i8086DataAftVV16,
+  i8086DataAftVC16,
+  i8086DataBreakPt,
+  i8086DataPush,
+  i8086DataPop,
+  i8086DataAndVV,
+  i8086DataOrVV,
+  i8086DataXorVV,
+  i8086DataASR,
+};

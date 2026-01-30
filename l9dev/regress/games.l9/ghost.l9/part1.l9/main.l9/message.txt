@@ -1,0 +1,2804 @@
+; Scapeghost part I text. 
+; Copyright (C) 1989 Level 9 Computing. 
+; 
+; ST version of MESSAGE.TXT: messages/keywords for the game. 
+; 
+; Messages are of the form: [ number : text ] ; comment 
+; They must be in numeric order, but gaps are allowed in the number 
+; sequence, of course. 
+; 
+; | (vertical bar) terminates the printable part of a message. It 
+;   is typed by shifting backslash (to the left of the keyboard). 
+; / forces the following character to be printed literally. 
+; % is carriage return. Note that carriage return is ignored if 
+;   the printing is already at the start of a line, to make coding 
+;   simpler. To force a real carriage return, print space first. 
+; ^ (shift 6) marks a word for recognition by the parser. It is 
+;   followed by a letter for word type: 
+;   Adjective; Comment; conJunction; Noun; Preposition; Verb. 
+; 
+; Capitalization is done automatically on output and you are 
+; recommended to use lower case for the first letter of messages 
+; as this improves compression and will make no difference on 
+; output, providing all punctuation is correct. 
+;
+; Please ensure that all long room descriptions and first-time 
+; messages are there. Comment blank msgs..  ;; [1375:] ; etc..
+; Please comment all long room descriptions, first-time messages, 
+; examine messages etc so we know what they refer to. eg: 
+; [1143:, in the Dunes. Etc..] ; back of Dunrollin. 
+; Exits must be clear from room descriptions or first-time msgs. 
+; 
+;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
+;>> NB: Grouped messages which lie in unusual areas (eg. 2500-2799) >> 
+;>> are marked with GROUP.                                           >> 
+;>>                                                                  >> 
+;>> For future games, SEARCH for "I " (case specific) "Scapeghost"   >> 
+;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
+; 
+; punctuation messages.. 
+[1: ] 
+[2::] 
+[3:, ] 
+[4:.] ; dot with no space 
+[5:%] 
+[6:and ] 
+[7:.%] 
+[8:?%] 
+[9:. ] 
+; 
+; positions etc.. 
+[10:exits led ] 
+[11:an exit led ] 
+[12: through a door] 
+[13: through an open door] 
+[14: and ] 
+[15:%a haunting breeze carried away the "What now" prompts. ] 
+[16:%> ] 
+[17:%What now? ] 
+[18:: ]; 
+[19:"] 
+; 
+; Messages for printing objects.. 
+[20:a ] 
+[21:the ] 
+[22:an ] 
+[23:some ] 
+[24:." ] ; dot quote 
+[25:% %] ; blank line 
+[26:worn] ; for 'couldn't have worn' 
+[27:taken] ; for 'couldn't have taken' 
+; 
+; exits directions, doubling as movement verbs.. 
+[51:^V north|^V n ^V northwards] 
+[52:^V northeast|^V ne] 
+[53:^V east|^V e ^V eastwards] 
+[54:^V south|^V s ^V southwards] 
+[55:^V southeast|^V se] 
+[56:^V southwest|^V sw] 
+[57:^V west|^V w ^V westwards] 
+[58:^V northwest|^V nw] 
+[59:^V upwards|^V u ^V up] 
+[60:^V downwards|^V d ^V down] 
+[61:^V inside|^V in ^V inwards ^V into ^V enter] 
+[62:^V outside|^V out ^V leave] 
+[63:^V cross|^V across ^V over] 
+[64:with the ^V climb|^V scramble ^V ascend ^V mount] 
+; is in 'you struggle with the climb and are in' 
+; 
+; Intransitive verbs.. 
+[70:^V i] 
+[71:^V again|^V a] 
+[72:^V look|^V l ^V display ^V redisplay ^V refresh] 
+[73:^V inventory|^V inv ^V list] 
+[74:^V quit ^V restart] 
+[75:^V restore ^V load] 
+[76:^V save] 
+[77:^V ramsave ^V ram] ; && 
+[78:^V ramload] ; && 
+[79:^V score ^V rating ^V status] 
+[80:^V verbose] 
+[81:^V brief] 
+[82:^V wait|^V wa ^V pause ^V z] 
+[83:^V ring|^V play ^V blow ^V toot ^V sound] 
+[84:^V on] 
+[85:^V off]
+[86:^V pictures ^V graphics] ; && 
+[87:^V words ^V text] ; && 
+[89:^V UNDO ^V OOPS] 
+[90:^V hit|^V attack ^V hit ^V break ^V kick ^V punch ^V smash
+^V kill ^V wake ^V rouse] ; == wake & rouse statue (Scapeghost.1) ==
+[92:^V searched|^V search ^V explore] 
+[93:^V dug|^V dig] 
+[94:^V sniffed|^V sniff ^V smell] 
+[95:^V knocked|^V knock] 
+[96:got|^V stood ^V stand ^V jump] ; output eg. "L got out", "L got in" etc. 
+;===== 
+; Scapeghost.1 kneel down (to calm dog) 
+[97:^V knelt|^V kneel ^V bend] ; [97:^V lay|^V lie] 
+;===== 
+[98:^V got|^V sat ^V sit] 
+[99:^V hid|^V hide] 
+[100:^V said|^V say ^V whisper ^V call ^V talk] 
+;; [101:^V teleported|^V teleport] 
+;; [102:^V getme] 
+[103:^V filled|^V fill]
+[104:^V ran|^V run ^V fly] 
+[105:^V made|^V make] 
+; 
+[107:hey, come on, ghosts don't ^V eat|^V bite ^V taste ^V nibble 
+^V lick] ;== Scapeghost ==
+[108:^V went|^V go ^V goto ^V find ^V walk ^V fly] 
+[109:stopped|^V stop ^V abort] 
+[110:I could have done with a ^V drink, but being a ghost didn't 
+have the stomach for it..] 
+; 
+[112:^V exits ^V exit] 
+; 
+; verbs for output.. 
+[130:^V had|^V have ] ; mainly for output 
+[131:^V had|^V has ] ; mainly for output 
+[132:^V was|^V am ] ; mainly for output 
+[133:^V were|^V are ] ; mainly for output 'you were' 
+[134:^V was|^V is ] ; mainly for output 'someone was' 
+[135:are] ; output only - present tense for 'tell me about' 
+[136:is] ; output only - present tense for 'tell me about' 
+;; 137 is 'GO IN' 
+;; 138 is 'GO OUT' 
+;; 139 is 'wait for person' 
+;; 140 is 'wait until time' 
+;; 141 is 'wait for (length of time)' 
+;; 142 is 'wait for single turn' 
+; 
+[143:^V fought|^V fight ^V kill]  ; >> Pete 13/9/89 
+[145:^V dodged|^V dodge] 
+; 
+; 146 and 147 have text for debugging output only - do not mark 
+[146:gdgo] ; 196 - gdgo 
+[147:gdrun] ; 197 - gdrun 
+;; [148:^V stuff] 
+; 
+; Transitive verbs.. 
+[150:^V examined|^V examine ^V read ^V x] 
+[151:^V cut|^V chop] 
+; 
+[154:^V got|^V get] 
+[155:^V took|^V take ^V carry ^V acquire ^V steal 
+^V pluck ^V catch ^V lift ^V hold ^V keep ^V grab] 
+[156:^V wore|^V wear] 
+[157:^V dropped|^V drop ^V discard] 
+[158:^V put|^V conceal] 
+[159:^V removed|^V remove ^V free ^V release] 
+[160:^V threw|^V throw ^V chuck ^V toss ^V hurl] 
+[161:^V gave|^V give ^V offer ^V show ^V offered ^V sell] 
+[162:^V asked|^V ask ^V question] 
+[163:^V followed|^V follow ^V chase] 
+[164:^V opened|^V open ^V unlock ^V pick] 
+; 
+[168:^V pushed|^V tug ^V push ^V launch ^V shove ^V rock ^V turn 
+^V rotate ^V paddle ^V press ^V select ^V depress ^V poke ^V prod 
+^V touch] 
+[169:^V fastened|^V fasten ^V tie ^V attach] 
+[170:^V unfastened|^V unfasten ^V untie] 
+[171:^V pulled|^V pull ^V yank] 
+;==== 
+; 
+; specials to Scapeghost.1 for writing "time" in gravel and erasing it 
+[172:^V wrote|^V write ^V etch ^V scribe ^V scribble ^V carve] 
+[173:^V erased|^V erase ^V rub ^V wipe ^V end] 
+; Scapeghost.1, pat dog etc. 
+[174:^V stroked|^V stroke ^V pat ^V calm] 
+;==== 
+; 
+[176:^V inserted|^V insert] 
+; 
+; 186, 187 and 189 have text for debugging only 
+[186:return object] ; 186 is 'return object to initial' (for npcs) 
+[189:gdfind] ; 239 is gdfind 
+[190:^V closed|^V close ^V shut] 
+; 
+[192:told] ; "tell" removed by Pete. 13/9/89
+[194:struggled] ; mainly for output 
+; 195 is 'steal all from' 
+[197:killed] ; output only 
+; 
+[210:reached] ; output only 
+[211:dragged] ; output only 
+[212:passed] ; output only 
+[213:flew] ; output only 
+[214:walked] ; output only 
+[215:caught] ; output only 
+[216:entered] ; output only, eg 'Fred entered from the east'. Do not mark 
+; 
+; Echo verbs (250-299) which just print the message containing them.. 
+[250:OK, if you say not|^V no] 
+[251:right, so be it|^V yes] 
+[252:well, that's one way to keep your spirits up!|^V leap ^V hop 
+^V skip ^V dance ^V celebrate] 
+[253:thunder rolled ominously|^V plugh ^V xyzzy ^V sesame 
+^V plover ^V humakaat ^V satarh ^V ollabin ^V obis] 
+; magic words for amusing response 
+;
+; **** PETE - Please, please, please, please, please, please, please, 
+; leave this in, if only for the 16 bit versions. ****
+[254:a message from ^N Graham ^N Jones:
+%"Hi to Mary, Simon B. and his unfeasably large ears (sorry about 
+that cruel remark, Simon), Rog & the rest of Hollywood Inc., 
+Punky, Joanne (my hair has started to fall out since you cut 
+it!), Steve & Sue, Mark & Donna, "Walter" Owen, Julian the 
+gigalo, Chaddy and his disciples, Simon W. (by the way Simes, you 
+still owe me 15 quid!), Clive & Stav, Steve E., Tony & Ali and 
+the rest of the congregation, Chris (haven't seen you in ages, 
+and I don't particularly want to), Steven F. (don't want to see 
+you either), Carol, Lou & Tony, Kerry and friends, the Jones 
+tribe, all the young dudes in Great Harwood and all at L9. 
+% %
+Also, a mixture kind regards and sarcastic remarks to all those 
+Guys in Burnley who I haven't seen for ages, Keith, Mick, Neil, 
+Mark, Pete. How's life treating you nowadays?"]
+; 
+[255:if you want to talk to someone, follow their name with what you 
+want to say to them. For example JOE, HELLO|^V hello ^V welcome ^V hi 
+^V greetings ^V day ^V afternoon] 
+[256:I heard nothing that I hadn't heard before|^V listen ^V hear] 
+[257:send the coupon to Level 9 for a ^V hint|^V help] 
+; 
+[263:why not|^V y ^V why] 
+; 
+[267:that sort of language is not very clever|^V sod 
+^V motherfucker ^V crap ^V nipples ^V bloody ^V frigging 
+^V wanker ^V turd ^V piss ^V shit ^V twat ^V cunt ^V bollocks 
+^V jesus ^V christ ^V god ^V devil ^V tits ^V asshole 
+^V arsehole ^V cretin ^V conservatives ^V spastic ^V coon 
+^V wog ^V fucking ^V fucker ^V bastard ^V bugger ^V damn 
+^V sex ^V hell ^V bonk ^V pratt ^V rape ^V shag ^V fuck] 
+; lower case swear words 
+; 
+[273:what? Off already? Try CONTROL C, but don't forget to save 
+your position first|^V goodbye ^V bye] ; && 
+[274:and I should think so too|^V sorry] 
+; 
+;; [277:] 
+; 
+[279:I found that closing my eyes made no difference|^V sleep] 
+[280:as a ghost, I could not cross flowing water|^N swim] 
+; 
+[283:hit] ; the object 'hit' target 
+; 
+[284:I ^V concentrated hard but found that my powers were too weak 
+to accomplish much at this stage|^V concentrate ^V meditate 
+^V recreate ^V reconstruct] ; ==
+; 
+[285:I wasn't thirsty|^V drink]
+;
+;>> TRANSITIVE ECHO VERBS FOLLOW...
+;
+[286:I thought about shaking it, but that would take too much 
+strength|^V shake] 
+; 
+[288:there was quite enough buried here already|^V bury] 
+; 
+[290:I tried to ^V polish it, but my hand went through|^V rub 
+^V clean] 
+[291:you ^V fill a container by, eg, "PUT THING IN CONTAINER"] 
+[292:please ^V empty a container by removing its contents in turn] 
+; 
+;; [294:I had nothing with which to ^V light anything. I was 
+;; a non-smoker, you see] ; == Removed for Scapeghost only ==
+[297:my lips passed straight through|^V kiss] 
+;
+; -------------------------------------------------------------- 
+; 
+; Objects (300+N).. 
+; 
+; NPCs (1 onwards) 
+; People 
+[301:^N I|^N player ^N me ^N Alan ^N Chance ^N myself] 
+[302:^N Joe ^N Danby] 
+[303:^N Bert ^N Willmot] 
+[304:^N Edna ^N Willmot] 
+[305:^N David ^N Ridge] 
+[306:^N Alex ^N Pym] 
+[307:^N Edith ^N Dean] 
+[308:^N Colonel ^N Rycroft] 
+[309:^N Violet ^N Conway] 
+[310:^N mourners|^N relatives ^N family] ; PL.SOME 
+[311:^N detective] ; HE 
+[312:the ^N cemetery ^N supervisor] 
+[313:the ^N workman] 
+[314:^N vandals|^N gang ^N hooligans ^N hoodlums ^N yobbos 
+^N yobs ^N thugs ^N programmers] 
+; 
+; Animals 
+[315:^N dog|^N mutt ^N hound] ; ITA 
+; 
+; ordinary objects (80 onwards) 
+; 
+; light objects in order... 
+[380:^N thistledown|^N thistle ^N down] 
+[381:^N petal] 
+[382:^N dry ^N leaf] 
+[383:^N matchbook] 
+[384:^N pebble|^N stone] 
+[385:^A white ^N card] 
+[386:^A yellow ^N card] 
+[387:^N fishbone|^N fish ^N bone] 
+[388:^N twig|^N stick ^N branch] 
+[389:^N watch|^N wristwatch] 
+[390:^N bell] 
+[391:^N gnomon] 
+; 
+; heavy objects... 
+[395:^N carrier ^N bag] 
+[396:^N newspaper|^N paper] 
+[397:^N copy of Time ^N magazine|^N time] ; careful about l/c. 
+; 
+[398:^N bottle] 
+[399:^N shovel|^N spade] 
+[400:^A new ^N wreath] 
+[401:^A green ^N wreath] 
+[402:^A faded ^N wreath] 
+; 
+; static objects (110 onwards) 
+[410:^N button] 
+[411:^N switch] 
+[412:^N lightbulb|^N light ^N bulb] 
+[413:^N lock|^N latch] 
+[414:^N barrel] 
+[415:^A short ^N lever] 
+[416:^A medium ^A sized ^N lever|^A middle] 
+[417:^A long ^N lever] 
+[418:^N rope ^N handle] 
+[419:^N gravel|^N pebbles ^N stones ^N chippings] 
+[420:^N vase|^N jug] 
+[421:^N dogwood ^N bush|^N bushes] 
+[422:^N heap of ^N branches|^N twigs ^N sticks ^N compost] 
+[423:^N mound of ^N earth|^N soil ^N dirt] 
+[424:^N vault] 
+[425:^N spotlight|^N light ^N bulb] 
+[426:^N thermometer] 
+[427:^N yew ^N tree] 
+[428:^N octagonal ^N seat] 
+[429:^N jumbled ^N stonework] 
+[430:^N carvings|^N etchings] 
+[431:^N plinth|^N stand] 
+[432:^N statue|^N Alex ^N Pym] 
+[433:^N sundial] 
+[434:^N broken ^N sundial] 
+[435:^N sarcophagus] 
+[436:^N urn|^N greek] 
+; "time" object which appears in gravel once written. this is used for 
+; erasing/examining purposes etc. since it allows "erase message". 
+; but since "write message" is unacceptable, the noun used for 
+; writing is 220 (message 520) 
+[437:^N message reading time|^N time] ; (doesn't work with quotes!) 
+[438:^N shed ^N door] ; shed door 
+[439:^N crumbling ^N abbey ^N wall|^N church] ; from thermometer 
+; 
+; vehicles (140 onwards) 
+[440:^N cart|^N electric ^N carriage ^N vehicle] 
+; 
+; invisible objects (150 onwards) 
+; 
+; headstones & graves are present in many locations... 
+[450:^N headstone|^N tombstone ^N gravestone] 
+[451:^N grave|^N mound] 
+; 
+[452:^N gate] 
+[453:^N main ^N entrance ^N gate] 
+[454:^N wooden ^N frame] 
+[455:^N burnt ^N church|^N abbey ^N wall] 
+[456:^N thermometer] ; from spotlight 
+[457:^N thermometer] ; from vault 
+; 
+[459:^N shed|^N cabin] 
+[460:^N footprints|^N footsteps] 
+[461:^N cenotaph|^N war ^N memorial ^N monument] 
+[462:^N marigolds|^N flowers ^N plants] 
+[463:^N copper ^N beech|^N tree] 
+[464:^N elder ^N bushes|^N bush] 
+[465:^N flowerbed|^N poppies ^N flowers ^N plants] 
+[466:^N crosses] 
+[467:^N carrier ^N bags|^N plastic] 
+[469:^N abbey ^N wall|^N church] ; from vault 
+[470:^N window] ; inside shed 
+[471:^N window] ; outside shed 
+[472:^N company|^N followers ^N friends ^N recruits ^N companions]
+; 
+; light sources that are present in many locations... 
+[475:^N light coming from the shed|^N lightbulb] 
+[476:^N spotlight|^N light] 
+[477:^N street ^N lights|^N lamps ^N posts ^N light] 
+[478:something in the ^N air] ; Violet can't see light, so she 
+; complains about "something in the air" 
+; 
+; Brief location objects (479+N). 
+; 
+; These are used for seeing from a distance and for input, eg for 
+; 'examine tower' and 'go castle'. (Note that 'go scenery' also works). 
+; They also provide a link between the grid of synthesised locations 
+; and the real, static locations used for rooms inside buildings etc. 
+; 
+[480:^N shed|^N cabin] 
+[481:^N path] 
+[482:^N toppled ^N sepulchre] 
+; 
+; "time" noun used only for "write time". DO NOT use any synonyms 
+; such as "word" or "message". these are catered for in noun 137 
+; (message 737) 
+[520:the word ^N time] ; (doesn't work with quotes!) 
+; 
+; CHEAT nouns...
+; STUFF..
+;; [530:^N Ingrid ^N Bottomlow] 
+; ...WITH...
+;; [531:^N turnips|^N semtex] 
+; 
+; Collective nouns... 
+[534:^N everything ^N all ^N every] 
+[535:^N ingredients] ; collective noun - was 'treasure' 
+;; [536:^N weapons] ; collective noun 
+[537:^N people|^N everyone ^N everybody] ; collective noun 
+;; [538:^N clothes|^N armour] 
+; 
+; -------------------------------------------------------------- 
+; 
+; Omni-present objects.. 
+[539:^N door] ; normal door, for the benefit of PRINTACTORACTION. It 
+; is apparently never described by PRINTOBJECT (so?). 
+[541:^N plants|^N weeds ^N flowers ^N daisy ^N bean ^N husk ^N grass 
+^N soil] 
+[542:^N be] 
+[543:^N room|^N ground ^N floor] ; used for output as well 
+[544:^N wall|^N walls] 
+[545:^N sky|^N sun ^N moon ^N air ^N stars] 
+; 
+; and finally, some miscellaneous nouns which are used miscellaneously. 
+[547:^N except ^N but] 
+[548:^N it|^N that ^N them ^N those ^N none ^N him ^N her] 
+[549:^N minute ^N minutes] 
+; 
+[551:^J then ^J next] 
+[552:^J therefore ^J so] 
+[553:^N I|^N you] ;you 
+; 
+; Pronouns... 
+[560:it] ; ita 
+[561:it] ; itan 
+[562:some] 
+[563:he] 
+[564:she] 
+[565:they] 
+[566:I] ; you ; "Scapeghost special" 
+[567:he] ; proper male 
+[568:she] ; proper female 
+; 
+[570:it] ; ita 
+[571:it] ; itan 
+[572:them] 
+[573:him] 
+[574:her] 
+[575:them] 
+[576:me] ; you ; "Scapeghost special" 
+[577:him] ; proper male 
+[578:her] ; proper female 
+; 
+; SEE ALSO 2430 - GRAHAM 
+; 
+; and some misc output messages 
+; plural endings, and other odd verb declension... 
+[579:~] ; print to avoid bug which can print a space after previous word 
+[580:s] 
+[581:es] 
+[582:is] ; used in examine 
+; 
+; Entry directions, in the form 'The animal enters from the 
+; outside'. (As opposed to 'The animal goes in' - the normal 
+; verb table.) Note that directions are reversed, so the offset 
+; into the table is the direction of the moving npc. 
+; 
+[585:from the south]      ; north  
+[586:from the southwest]  ; northeast  
+[587:from the west]       ; east   
+[588:from the north]      ; south  
+[589:from the northwest]  ; southeast  
+[590:from the northeast]  ; southwest   
+[591:from the east]       ; west  
+[592:from the southeast]  ; northwest  
+[593:from below]          ; above   
+[594:from above]          ; below  
+[595:from outside]        ; inside  
+[596:from inside]         ; outside   
+[597:from across the way] ; across  
+[598:by climbing]         ; climb  
+[599:with a jump]         ; jump 
+; 
+; -------------------------------------------------------------- 
+; 
+; Examine messages (600+N). NO full stops at end please. 
+; 
+; NPCs (1 onwards) 
+; People 
+[601:the same as I had always been, as far as I could tell] ; me 
+; 
+[602:the ghost of the landlord of one of the local pubs. He was 
+a good sort, always ready to help out|^N publican ^N landlord 
+^N bartender ^N ghostly ^N figure] ; Joe 
+; 
+[603:a thin, pale ghost] ; Bert 
+; 
+[604:the ghost of Bert's loving wife] ; Edna 
+; 
+[605:an impeccably dressed ghost, with an irritatingly smug 
+expression] ; David 
+; 
+[606:an elderly ghost who spent much of his time posing as a 
+statue. Some reckoned he was just bone idle|^N statue] ; Alex 
+; 
+[607:a sad, self-pitying spirit. She was of the quiet whimpering 
+variety, that by the end of a night's haunting is a lot more 
+wearing than those who shout and make a fuss] ; Edith 
+; 
+[608:the stubborn old ghost of a stubborn old soldier, who was 
+living in the past] ; Colonel 
+; 
+[609:the ghost of a frail old lady who had gone blind in the last 
+years before her death] ; Violet 
+; 
+[610:a solemn crowd, most of them fighting back tears or sobbing 
+openly into their handkerchiefs. But there were others in 
+police uniforms, whose stony expressions showed that their 
+attendance was just a matter of duty. 
+% %I looked at each, wondering who they were. My mind felt like 
+quicksand as I stared at all the unknown, familiar faces, trying 
+to get some response that would help me to remember. But if they 
+looked my way at all, they looked straight through me as if I 
+wasn't there|^N police ^N colleagues ^N policeman ^N policemen] ; mourners 
+; 
+[611:difficult to place at first, but then it clicked. He was 
+^N Severian, a new ^N recruit to the drugs squad. 
+% %The slight hint of a devious smile separated him from the rest 
+of the mourners. I gave him a long hard look, weighing up where 
+he stood, but he ignored me and smoked a ^N cigarette|^N crook 
+^N criminal ^N villain ^N policeman] ; crook 
+; 
+[612:a grey old man with a stern, lined face] ; supervisor 
+; 
+[613:a weather-beaten old cove, who squinted at the ground through 
+thick bottle-glass spectacles] ; workman 
+; 
+[614:staggering drunkenly through the cemetery, passing a bottle 
+of vodka between them] ; vandals 
+; 
+; Animals 
+[615:a flea-ridden ^N stray, with no home but the cemetery|^N throat 
+^N neck ^N mouth] ; dog 
+; 
+; ordinary objects (80 onwards) 
+; 
+; light objects in order... 
+[680:the merest wisp of ^N gossamer ^N threads, waiting to be carried 
+off by the next breeze] ; thistledown 
+; 
+[681:a last fragment of a dying flower, so pale and thin it was 
+almost translucent] ; petal 
+; 
+[682:a dry beech leaf of russet brown, the plaything of autumn 
+winds, now tossed aside and forgotten] ; leaf 
+; 
+[683:a cardboard flap, the inside nearly bare but for the torn 
+off ^N tabs. The cover advertised a car hire company in South 
+America|^N match ^N book ^N matchbox ^N matches] ; matchbook 
+; 
+[684:a small, well-rounded ^N flint, probably from one of the 
+gravel paths] ; pebble 
+; 
+[685:printed with, "For Alan Chance, a much loved man and 
+long-serving police officer, murdered in the line of duty. His 
+family and friends shall all miss him dearly"] ; white card 
+; 
+[686:imprinted in faded writing with, "In memory of Edna 
+Willmot. She died a widow, but now shares eternity with her 
+much loved husband"] ; yellow card 
+; 
+[687:a long curved bone, with jagged ends] ; fishbone 
+; 
+[688:a scrap of ^N wood and ^N bark] ; twig 
+; 
+[689:a slim model, with a flat plastic case and a thin strap] ; watch 
+; 
+[690:a small brass dome, with a ^N leather ^N thong for it to hang 
+in the twilight] ; bell 
+; 
+[691:the cast iron pointer which had broken off the sundial. Much 
+of the lacy ironwork that made up its body had rusted away, leaving 
+only the thin remnants of the arm] ; gnomon 
+; 
+; heavy objects... 
+[695:full of ^N biscuits] ; carrier bag 
+; 
+[696:the ^N Daily ^N Mail, dated the first of November 1989. 
+Presumably today. Something niggled at the back of my mind, and 
+I remembered that the gangsters had set up a meet for the second. 
+Tomorrow they would be collecting their hard drugs, turning them 
+into into hard cash and escaping. Which meant they would no longer 
+need a hostage. Sarah would die unless I could immobilise the 
+drugs hoard tonight]; newspaper 
+; 
+[697:a slug-chewed old copy, but the name was still 
+legible] ; time magazine 
+; 
+[698:half full of ^N vodka - a clean spirit with a heck of a kick, 
+just like I aimed to be|^N booze ^N alcohol] ; bottle 
+; 
+[699:a sturdy old ^N tool, the ^N blade shiny with wear and the 
+handle wrapped in soft string to give a better grip] ; shovel 
+; 
+[700:glistening with life and vitality] 
+; new wreath 
+; 
+[701:of ^N laurel and hardy evergreens, once crisp dark green and 
+now beginning to fade] ; Bert's wreath 
+; 
+[702:faded and tatty; its ^N flowers wilted and leaves shrivelled] 
+; faded wreath 
+; 
+; static objects (110 onwards) 
+[710:a ^A red ^A plastic ^N push-button] ; button 
+; 
+[711:an ^A old-fashioned ^N bakelite light switch] ; switch 
+; 
+[712:a 40 watt clear bulb, and far too bright for my ghostly gaze]
+; lightbulb in shed 
+; 
+[713:a galvanised iron lock for the shed door|^N levers] ; lock 
+; 
+[714:a small steel ^N cylinder, which had to be turned to unlock 
+the door. The three levers rested against it, preventing the 
+barrel from turning unless they all pushed simultaneously into 
+place. What I needed was the key to doing this] ; barrel 
+; 
+[715:part of the lock mechanism] ; short lever 
+; 
+[716:part of the lock mechanism] ; medium lever 
+; 
+[717:part of the lock mechanism] ; long lever 
+; 
+[718:a ^A thick ^N twist of ^N plaitted rope, fastened firmly 
+to the door] 
+; rope handle 
+; 
+[719:a ^A thick ^N layer of ^A loose ^N pebbles] ; gravel 
+; 
+[720:a ^A squat ^A glass ^N vessel, its ^N base green with ^N algae] ; vase 
+; 
+[721:about waist high; its thin red ^N branches bare of leaves] 
+; dog bush 
+; 
+[722:an untidy ^N heap of ^N prunings and wind-broken wood, left 
+to rot away] ; branches 
+; 
+[723:beside my grave] ; mound 
+; 
+[724:a hefty stone job; its ^N lid much too heavy for a ghost 
+to move. A flash of white caught my attention, so I peered 
+through a ^A small ^N crack under the ^N rim. A faint streak of 
+moonlight filtered through the crack to reveal a pile 
+of white plastic bags] 
+; vault 
+; 
+[725:a ^A high-powered ^N light to illuminate the repair fund 
+thermometer|^N bulb] 
+; spotlight 
+; 
+[726:a ^A large, ^A wooden ^N model that showed the progress of 
+the church repair fund. It looked like a severe case of 
+hypothermia. The thermometer was bolted to the crumbling 
+^N abbey ^N wall] 
+
+; thermometer 
+; 
+[727:a ^A dusty ^A old tree, its ^N branches splayed 
+with age] ; yew tree 
+; 
+[728:an ^A octagonal ^N rim, supported on short stone ^N pillars] ; seat 
+; 
+[729:, at first glance, a mass of ^A jumbled ^N stones. Looking closer, 
+I could see a ^N plinth and some carvings|^N stone] ; stonework 
+; 
+[730:^A weathered ^N engravings; a ^A fading ^N memorial to 
+whoever was buried here] ; carvings 
+; 
+[731:a ^A decorated ^A square ^N stone ^N base, that may once 
+have been topped by a cross] ; plinth 
+; 
+[732:a very lifelike figure, despite being cracked and blackened 
+with age. It was of a young man, possibly in a deep sleep since 
+his eyes were shut tightly] ; statue 
+; 
+[733:a ^A top-heavy ^A stone ^N ornament, with a ^A fluted ^N pillar 
+and a ^A round ^N top on which its ^N gnomon cast a ^A faint 
+^N shadow] ; sundial 
+; 
+[734:smashed into a ^A scatter of ^A jagged ^N  pieces] ; broken sundial 
+; 
+[735:a ^A marble ^N coffin, decorated like a ^A miniature 
+^N Greek ^N temple] 
+; sarcophagus 
+; 
+[736:a wobbly ^A Greek one] ; urn 
+; 
+[737:intended for me to erase, thus ending "time"] 
+; seen in gravel DO NOT CHANGE 
+; 
+[738:built of ^A thick ^N planks] ; shed door 
+; 
+[739:sagging above the ^N path. The ^N thermometer was clamped 
+to it with ^A rusting ^N bolts] ; wall near thermometer 
+; 
+; vehicles (140 onwards) 
+[740:a small ^A electric ^N buggy, like a ^A road-going ^N trolly 
+with a ^A bench ^N seat|^N pram] 
+; cart 
+; 
+; invisible objects (150 onwards) 
+[750:of ^A inscribed ^N marble, the words hidden by ^N moss] ; headstone. omni-present on grid 
+; 
+[751:marked in the usual way] ; grave. omni-present on grid 
+; 
+[752:an ^A old ^A iron ^N gate leading east to the car park] ; gate 
+; 
+[753:the entrance to the graveyard. I was certainly not going 
+to use it as an exit] ; main gate 
+; 
+[754:a ^A wooden ^N construction which supported the spotlight] ; frame 
+; 
+[755:the ^A blackened ^N shell of a burnt and ruined church. I 
+seemed to recall that we never did establish if it was arson or 
+an accident] ; church 
+; 
+[756:a "church repair fund" indicator, set against the ^N wall in 
+front of the spotlight] 
+; thermometer from spotlight 
+; 
+[757:a "church repair fund" indicator, bolted to the ^N wall beside
+the path] ; thermometer from vault 
+; 
+[759:where the workmen kept their tools and had their tea breaks] ; shed 
+; 
+[760:deeply trodden into the ^N gravel in front of the shed door] 
+; footprints 
+; 
+[761:a ^A granite ^N memorial from the first world war. Typically, 
+it named only those who died quickly; spurning the deeds and 
+sacrifices of the survivors] ; cenotaph 
+; 
+[762:a last flurry of ^A yellow ^N flowers among the ^A browning 
+^N heads of the dying Autumn]; marigolds 
+; 
+[763:a ^A big ^A old ^N copper ^N beech, its ^A broad ^N branches 
+reaching up to the heavens] ; beech tree 
+; 
+[764:a ^A coarse ^N growth of ^A thick-stemmed ^N elders] ; bushes 
+; 
+[765:still bearing their ^A cheerful ^A red ^N flowers] ; poppies 
+; 
+[766:a collection of ^A anonymous ^N markers] ; crosses 
+; 
+[767:from high street shops, apparently just another ^N pile 
+of ^N litter. But I could sense the ^N narcotics within, 
+wrapped against the damp in ^N layers of ^N plastic|^N pile 
+^N dope ^N hash ^N smack ^N cannabis ^N marijuana ^N speed 
+^N heroin ^N cocaine ^N LSD ^N acid ^N hashish ^N drugs] 
+; 
+[769:the south end of the ^A crumbling ^A abbey ^N wall. It teetered 
+dangerously above the vault] ; wall near vault 
+; 
+[770:thick with ^N dust and ^N cobwebs. A ^A small ^N hole had been 
+wiped clear, so that the workmen could keep watch for their boss 
+coming] ; window inside shed 
+; 
+[771:streaked with ^N grime, but solid and firmly shut] 
+; window outside shed 
+;
+[772:a motley host of other ghosts]
+; company
+; 
+; light sources that are present in many locations... 
+[775:the light in the shed] ; light from shed 
+; 
+[776:amazingly bright] ; light from spotlight 
+; 
+[777:a horrid yellow] ; street lights 
+; 
+[778:illuminated by the light] ; illuminated air 
+; 
+; Brief location objects (479+N). 
+; 
+; These are used for seeing from a distance and for input, eg for 
+; 'examine tower' and 'go castle'. (Note that 'go scenery' also works). 
+; They also provide a link between the grid of synthesised locations 
+; and the real, static locations used for rooms inside buildings etc. 
+; 
+[780:the workmen's tool shed] ; shed 
+[781:a well-worn path] ; path 
+[782:a large tomb that had collapsed under its own weight] ; sepulchre 
+; 
+; -------------------------------------------------------------- 
+; 
+; Short-Form room Descriptions (800+N). No full stops at end please. 
+; These are the brief mode descriptions; they are prefixed by 'you 
+; are' and, in verbose mode, messages 1100+N are appended. 
+; 
+; room 1 is used as exit modifier for synthesised rooms. 
+; rooms 2..20 are those with static connections; i.e. not on the 
+; synthesised grid. 
+; 
+; description order is: 
+; 'I was' '800++'   '1100++'  '.'  
+;          short     long 
+; 
+;Outdoors 
+; 
+[803:on a wide ^A gravel ^N path] 
+[804:on a ^A muddy ^N lawn] 
+[805:on a ^A gravel ^N path] 
+[806:at a ^N junction in the ^N path] 
+[807:beside a ^A rusty ^N gate] 
+[808:by the ^A main ^N gate] 
+[809:by the south ^N wall] 
+[810:on a ^N grassy ^N lawn] 
+[811:by ^N Edith ^N Dean's headstone] 
+; 
+;Indoors 
+; 
+[815:inside the ^N shed] 
+; 
+; "echo locations..." 
+; 
+;Indoors 
+; 
+[820:by the tall oak door of the burnt church. Though charred 
+by the fire, the door was still solid and was too thick for ghosts 
+to pass through. As there was nothing to do there, I turned and 
+drifted back to the path] ; burnt church 
+; 
+;Outdoors 
+; 
+[830:on a north-south path leading towards the car park. As I 
+floated away from my grave, I felt the cemetery pulling at me, 
+sapping my strength. Before long I had faded so much that I 
+couldn't go on. I turned, and as I returned my strength built 
+up once more] 
+; car park gate 
+; 
+[831:beginning to fade as I neared the boundary of the cemetery. 
+I could see the road ahead, but was too drained to move even 
+another inch towards it. What strength I had seemed to come from 
+the cemetery, and to leave me if I strayed too far from my grave. 
+I had to turn back] ; south road from main gate 
+; 
+[832:weakening rapidly as I got further from my grave. It soon 
+became obvious that I wouldn't have the strength to reach the 
+road ahead, and I turned back] ; south road from yew 
+; 
+[833:fading as I drew towards the limits of the cemetery. The 
+road was close ahead, but I hadn't the strength to carry on. 
+I turned and let myself be drawn back] ; south road from lawn 
+; 
+;Grid rooms 
+; 
+[840:by a ^A toppled ^N sepulchre] 
+[841:west of the ^N shed] 
+[842:at the ^N end of the ^N path] 
+[843:at a ^N corner in the ^N gravel ^N path] 
+[844:standing beside ^N my ^N own grave] 
+[845:by the headstone of Violet Conway] 
+[846:among an untidy group of ^A old ^N tombstones] 
+[847:in a ^N patch of ^A swishy ^N grass] 
+[848:in a ^A circular ^N clearing] 
+[849:by Joe Danby's grave] 
+[850:by a grave covered in ^N marigolds] 
+[851:by a ^A granite ^N cenotaph] 
+[852:by the tomb of David Ridge] 
+[853:beneath a ^A copper ^N beech] 
+[854:among the new graves] 
+[855:in a ^N patch of ^A elder ^N bushes] 
+[856:by Colonel Rycroft's tombstone] 
+[857:on a ^A neatly ^A mowed ^N lawn] 
+[858:by some ^A new graves] 
+[859:by the Willmot graves] 
+; 
+; -------------------------------------------------------------- 
+; 
+; Now verbose additions to brief location descriptions (1100+n). No 
+; full stops at end please. These are printed immediately after each 
+; short description (800+N), without any intervening punctuation. 
+; (You may start a message with either punctuation or just text.) 
+; 
+;Outdoors 
+; 
+[1103: leading south from the graves] ; my grave 
+; 
+; NB: SPOTLIGHT MAY BE ON OR OFF, SO NO DESCRIPTIONS OF LIGHT, PLEASE! 
+[1104: to the southeast of the graveyard. A ^A tall ^A wooden 
+^N frame supported a large spotlight] ; spotlight area 
+; 
+[1105: which ran east towards the graveyard and south towards the 
+main entrance to the cemetery. Just to the north were the ^N ruins 
+of an ^A old ^N church] ; outside church 
+; 
+[1106: where a ^A large ^A stone ^N vault stood, squat and 
+solid] ; beside vault 
+; 
+[1107: which was jammed open, its ^N hinges caked with ^N rust. A 
+^N path led east towards the cemetery car park] ; by car park gate 
+; 
+[1108: which led south out of the cemetery and away towards the town] 
+; main gate 
+; 
+[1109: of the cemetery. The path here was covered with the ^A fallen 
+^N leaves of nearby ^N trees] ; by yew 
+; 
+[1110: at the southeast ^N corner of the cemetery. There was nothing 
+but ^A long ^N grass between here and the south ^N wall] ; lawn 
+; 
+[1111: in a remote and ^A lonely ^N corner of the cemetery] ; Edith's grave 
+; 
+;Indoors 
+; 
+[1115: where the workmen kept their ^N tools] ; shed 
+; 
+;Grid rooms 
+; 
+[1140:, overgrown with ^N weeds and ^N grass] ; sepulchre 
+; 
+[1141: where a pile of twigs and branches lay rotting] 
+; pruned branches 
+; 
+[1142: outside an ^A old ^A weather-beaten ^N shed] ; end of path 
+; 
+[1143: which wound west to a ^N shed and south beside the church] 
+; corner of path
+; 
+;; [1144:] ; my grave 
+; 
+[1145:, beside the ^N hedge] ; Violet's grave 
+; 
+[1146:, leaning sleepily together. Others were cloaked with 
+^N moss and ^N lichens, and obscured behind a ^N veil of 
+^A uncut ^N grass] 
+; overgrown tombstones 
+; 
+[1147:, heavy with ^N dew] ; long grass 
+; 
+[1148: between the graves] ; sundial 
+; 
+[1149:. It was a ^A well-tended ^N spot, for this was a man who 
+had been loved by many in the village] ; Joe's grave 
+; 
+[1150:, their gold evoking the memory of summers past] ; marigolds 
+; 
+[1151:. A ^A small ^N flowerbed of poppies had been grown around 
+the ^N base of the monument as a mark of respect] ; cenotaph 
+; 
+[1152:, with its imposing headstone] ; David's grave 
+; 
+[1153:. Golden ^N leaves rustled gently in the breeze] ; beech tree 
+; 
+[1154:, a neatly aligned set of black and white headstones and 
+crosses] ; new graves 
+; 
+[1155: in the northwest corner of the cemetery] ; elder bushes 
+; 
+[1156:, in the ^N shadow of the ^N war ^N memorial to the 
+south] ; Colonel's grave 
+; 
+[1157: where a collection of ^A marble ^N crosses stood white and proud] 
+; lawn 
+; 
+[1158:, with ^A trim ^A low ^N walls of ^N stone enclosing 
+^A white ^A stone ^N chippings] ; new graves 
+; 
+[1159: where a tombstone bore a double inscription under the 
+word "reunited"] ; Willmot graves 
+; 
+; -------------------------------------------------------------- 
+; 
+; 1350+n are messages printed on first entering each room 
+; (VisitTable) 
+; 
+; Twilight (1350++) 
+; 
+[1353:] 
+; 
+[1354:it stood gaunt and tall in the gloom of the evening. ] 
+; spotlight area 
+; 
+[1355:the church was blackened by fire; its ancient stone 
+^N walls streaked with ^N soot and its ^N roof a ^N jumble of 
+^A cracked ^N slates. ] ; outside church 
+; 
+[1356:the abbey wall to the west bulged ominously towards 
+the vault, as if it might topple any minute. ] ; vault 
+; 
+[1357:the cortege that had brought me had gone now, leaving me 
+behind. They don't do return tickets for hearses. ] ; gate 
+; 
+[1358:the streets had been my patch, but I'd got a new beat 
+now. ] ; main gate 
+; 
+[1359:% %oddly enough, the leaves made no rustling sounds as I 
+walked over them. ] ; yew 
+; 
+[1360:"Reserved for future expansion" - wasn't that a message I 
+had come across on the station's computer system? And here as well.. ] 
+; lawn 
+; 
+[1361:this ^A tidy ^N place seemed scarcely touched by the passage 
+of time. ] ; Edith's grave 
+; 
+[1365:the floor was caked with ^N mud, and the ^N corners and 
+^N roof were draped with ^A old ^N cobwebs. ] ; inside shed 
+; 
+[1390:^A broken ^N stones glistened with the ^A evening 
+^N dew. ] ; sepulchre 
+; 
+[1391:a hedgehog snuffled its way over - or through - my feet. 
+"That makes a change", I thought, "being run over by a 
+hedgehog". ] ; branches 
+; 
+[1392:thick ^N clods of ^N earth clung to the ^N ledge beneath 
+the door, where people had scraped the worst off their boots 
+before entering. ] 
+; outside shed 
+; 
+[1393:I felt a strange pull towards the east. ] ; path 
+; 
+[1394:% %as the mourners prepared to file away, ignoring me, 
+I was still rooted to the spot. This was going to take a bit 
+of getting used to. ] ; my grave 
+; 
+[1395:the thin branches of the bush swayed slightly in the 
+breeze. ] ; Violet's grave 
+; 
+[1396:this ^A peaceful ^N part of the cemetery seemed so old that 
+even its ghosts had faded and only Nature remained. ] ; tombstones 
+; 
+[1397:the ^N webs of a thousand ^N spiders glistened like frost. ] 
+; long grass 
+; 
+[1398:the moon had risen, casting a ^A faint ^N shadow across the 
+top of the sundial. ] ; sundial area 
+; 
+[1399:the ^N inscription on the ^N stone read, "The great Landlord 
+has called 'Time' on our Joe". ] ; Joe's grave 
+; 
+[1400:the marigolds must have been beautiful in the Summer, 
+and even now there were still some in flower. ] ; marigolds 
+; 
+[1401:a broad swathe of trampled plants showed that not 
+everyone shared this respect. ] ; cenotaph 
+; 
+[1402:there lay someone who didn't want to be forgotten. ]
+; David's grave 
+; 
+[1403:% %The tree cast a ^A long ^N shadow across the ^N leaves 
+that carpeted the ground. ]
+; beech tree (statue) 
+; 
+[1404:they were all the same height, all the same width. Nice 
+and tidy, but soulless compared with the rambling variety of 
+the older memorials in the west part of the cemetery. ] ; new graves 
+; 
+[1405:a ^N flock of ^N starlings flew past, on their way to roost. ] 
+; elder bushes 
+; 
+[1406:it was a fitting resting place for an old soldier. ] 
+; Colonel's grave 
+; 
+[1407:a ^A low ^N mist hovered above the grass; a ^A rising 
+^N tide of grey threatening to drown the crosses. ] ; crosses 
+; 
+[1408:a ^A stray ^N cat fled as I approached. ] ; new graves 
+; 
+[1409:the tombstone reminded me that I intended to get "reunited" 
+with my killers, and it was about time that I got moving on that. ] 
+; Willmot graves 
+; 
+; Night Time (1410++) 
+; 
+[1413:% %in the dark of the night, the church wall seemed to 
+lean heavily in towards the path, its wide shadow broken only 
+by the dim patches of light that filtered through the ^N cracks 
+in the ^A stone. ] 
+; 
+[1414:the spotlight illuminated the "church repair fund" 
+^N thermometer to the west. ] ; spotlight area 
+; 
+[1415:the ^A shattered ^N roof ^N line stood out starkly against the 
+night sky. ] ; outside church 
+; 
+[1416:there was something menacing about the vault, as if it 
+were full of evil. I shook off the notion. What has a ghost to 
+be scared of? ] ; vault 
+; 
+[1417:it was still and deserted now - there was more going on 
+in the cemetery, for those that had eyes to see it. ] ; gate 
+; 
+[1418:^A distant ^A street ^N lamps cast a ^A pale ^A orange 
+^N glow on the ^A low ^N clouds overhead. ] ; main gate 
+; 
+[1419:a ^N bird rustled the branches as I passed. "Do birds 
+have ghostly nightmares?" I wondered idly. ] ; yew 
+; 
+[1420:the ^A heavy ^N dew dragged at my legs I floated 
+over the lawn. ] ; lawn 
+; 
+[1421:Edith seemed to be sniffling quietly. ] ; Edith's grave 
+; 
+[1425:a ^N mouse scurried across the floor, snatching up ^A biscuit 
+^N crumbs. ] ; inside shed 
+; 
+[1450:it must have been an impressive construction once, but 
+nothing stands forever. ] ; sepulchre 
+; 
+[1451:] ; branches 
+; 
+[1452:I knew that there must be things in that shed that 
+would help me, if only I could get to them. ] ; outside shed 
+; 
+;; [1453:] ; path 
+; 
+[1454:% %my eyes wandered absently and I found myself looking 
+to the north, where a neat row of new headstones stood. Looking 
+towards the west, I noticed that the gravestones there were 
+much older, worn and stained by time, some of them badly 
+broken. ] ; my grave 
+; 
+[1455:a ^A spider span a broad web between its ^N branches and the 
+neighbouring headstone. ] ; Violet's grave 
+; 
+;; [1456:] ; tombstones 
+; 
+[1457:the dew was painful to my feet and I thought wryly that I 
+should have died with my boots on - preferably wellies. ] ; long grass 
+; 
+;; [1458:] ; sundial area 
+; 
+[1459:% %on Sundays, there would always be a fresh wreath or 
+bunch of flowers on Joe's grave, and someone came regularly 
+to cut the grass around it. ] ; Joe's grave 
+; 
+[1460:] ; marigolds 
+; 
+[1461:there was a barking cough over in the distance and a 
+fox trotted into view, its tail startling white in the light of 
+the moon. It saw me and, hackles raised, loped swiftly away. ] 
+; cenotaph 
+; 
+[1462:there was something challenging about this grave. 
+Something which seemed to say, "Prove that you're worthy to be 
+here". ] ; David's grave 
+; 
+[1463:something moved within the stonework. ] 
+; beech tree (statue) 
+; 
+[1464:the neat rows stretched off into the distance. ] ; new graves 
+; 
+[1465:a ^N bat fluttered overhead, feasting off the ^N insects 
+drawn to the ^A overripe ^A elder ^N berries. ] ; elder bushes 
+; 
+[1466:the tall tombstone still stood stiffly to attention, 
+unbowed by the passing years. ] ; Colonel's grave 
+; 
+[1467:the ^A long ^N shadows of the crosses cast a ^N checkerboard 
+on the ^A trimmed ^N grass. ] ; crosses 
+; 
+[1468:] ; new graves 
+; 
+[1469:a ^N pair of ^N squirrels chattered and squabbled over an 
+^N acorn at the foot of the grave, before chasing one another west. ] 
+; Willmot graves 
+; 
+; -------------------------------------------------------------- 
+; 
+; Message pairs for use in describing containment positions 
+; also used for preposition table 
+; 
+; part printed before container 
+; 
+[1600:I could see]                 ; 0 - you can see
+[1601:^P on |^P onto]              ; 1 - on
+[1602:^P underneath|^P below ^P under] ; 2 - under  
+[1603:^P behind]                   ; 3 - behind  
+[1604:]                            ; 4 - carrying   
+[1605:]                            ; 5 - wearing  
+;; [1606:in|^P at]                 ; 6 - blocking the hole  
+[1607:^P in |^P into ^P inside]    ; 7 - in   
+;; [1608:hanging from]             ; 8 - hanging from
+;; [1609:growing from ]            ; 9 - growing from
+;; [1610:^P between]               ;10 - tied between is tied a rope
+;; [1611:]                         ;11 - the carter was pushing a cart
+;; [1612:lying on]                 ;12 - lying on
+;; [1613:sitting on]               ;13 - sitting on
+[1614:fastened to]                 ;14 - fastened to
+[1615:lodged in the throat of]     ;15 - lodged in throat (Scapeghost.1)
+; 
+[1616:^P with|^P using] 
+[1617:^P from]  
+;  
+; part printed between container and contained.  
+;   
+[1640:]                            ; 0 - I could see
+[1641:was]                         ; 1 - on  
+[1642:was]                         ; 2 - under   
+[1643:was]                         ; 3 - behind  
+[1644:was carrying]                ; 4 - carrying
+[1645:was wearing]                 ; 5 - wearing
+;; [1646:was blocked by]           ; 6 - is blocked by  
+[1647:was]                         ; 7 - in  
+;; [1648:was]                      ; 8 - hanging from
+;; [1649:was]                      ; 9 - growing from
+;; [1650:was tied]                 ;10 - tied between
+;; [1651:was driving]              ;11 - the carter was pushing a cart   
+;; [1652:]                         ;12 - lying on
+;; [1653:]                         ;13 - sitting on
+[1654:was]                         ;14 - fastened to   
+[1655:was]                         ;15 - lodged in throat (Scapeghost.1)
+;  
+; for plural contents...   
+[1670:]                            ; 0 - I could see
+[1671:were]                        ; 1 - on  
+[1672:were]                        ; 2 - under   
+[1673:were]                        ; 3 - behind  
+[1674:was carrying]                ; 4 - carrying
+[1675:was wearing]                 ; 5 - wearing
+;; [1676:was blocked by]           ; 6 - is blocked by  
+[1677:were]                        ; 7 - in  
+;; [1678:were]                     ; 8 - hanging from
+;; [1679:were]                     ; 9 - growing from
+;; [1680:was tied]                 ;10 - tied between
+;; [1681:was driving]              ;11 - the carter was pushing a cart   
+;; [1682:]                         ;12 - lying on
+;; [1683:]                         ;13 - sitting on
+[1684:were]                        ;14 - fastened to   
+[1685:were]                        ;15 - lodged in throat (Scapeghost.1)
+;  
+; (1700+N is part printed before 'you')
+;  
+; 1740+N is part printed between you and object(s)  
+[1740:]                            ; 0 - I could see
+[1741:was on]                      ; 1 - on   
+[1742:]                            ; 2 - under
+[1743:]                            ; 3 - behind
+[1744:owned]                       ; 4 - carried  
+[1745:was wearing]                 ; 5 - worn
+;; [1746:was riding]               ; 6 - riding
+[1747:was in]                      ; 7 - in
+;; [1748:were]                     ; 8 - hanging from
+;; [1749:were]                     ; 9 - growing from
+;; [1750:was tied]                 ;10 - tied between
+;; [1751:was driving]              ;11 - pushing  
+;; [1752:was lying on]             ;12 - lying on
+;; [1753:was sitting on]           ;13 - sitting on
+[1754:was fastened to]             ;14 - fastened to
+[1755:]                            ;15 - lodged in throat (Scapeghost.1)
+;   
+; for plural prepositions...  
+; 1770+N is part printed between you and object(s)  
+[1770:]                            ; 0 - I could see
+[1771:were on]                     ; 1 - on   
+[1772:]                            ; 2 - under
+[1773:]                            ; 3 - behind
+[1774:owned]                       ; 4 - carried
+[1775:were wearing]                ; 5 - worn
+;; [1776:were riding]              ; 6 - riding
+[1777:were in]                     ; 7 - in
+;; [1778:were]                     ; 8 - hanging from
+;; [1779:were]                     ; 9 - growing from
+;; [1780:was tied]                 ;10 - tied between
+;; [1781:was driving]              ;11 - the carter was pushing a cart   
+;; [1782:were lying on]            ;12 - lying on
+;; [1783:were sitting on]          ;13 - sitting on
+[1784:were fastened to]            ;14 - fastened to
+; 
+[1800:^P off] 
+[1801:^P up] 
+[1802:^P down] 
+[1803:^P to] 
+[1804:^P out] 
+[1805:^P from the ] ; used for npc motion 
+[1806:^P for] 
+[1807:^P until] 
+[1808:^P debug] 
+[1809:^P through] 
+[1810:^P about] 
+; 
+; Parser messages.. 
+[2000:you don't need to use "] 
+[2001:" to finish the game] 
+; 
+[2003:I don't understand the word "] 
+[2004:" when used like that] 
+; 
+[2006:I was ] 
+[2007:in a ] ; as in 'You are in an alder forest 
+[2008:in an ] 
+[2009:exits led in all directions] 
+; 
+; general error message when parsing has broken down. 
+[2010:I don't understand what you mean] 
+[2011:I couldn't see] 
+[2012:I didn't have] 
+[2013:I already had] 
+[2014:(Perhaps I'm having an off night, but I really haven't the 
+ghost of a notion as to what you are on about)]
+[2015:it's too far away] ; examine, take etc. scenery objects 
+[2016:I can't find a verb in that sentence] 
+[2017:it's not there] 
+[2018:there were too many nouns in that sentence] 
+[2019:I couldn't see that here] 
+[2020:I owned nothing at all. ] 
+[2021:it was dark. ] 
+[2022:I couldn't reach that from here]
+; 
+[2036:sorry, I don't fully understand that verb] 
+; ^ verb in keyword table but not in CALLVERB routine 
+[2037:there didn't seem to be anything suitable. ] 
+[2038:said "That was a rhetorical question"] 
+[2039:what a mouthful! ] 
+; 
+[2044:couldn't have ] ; as in 'I couldn't have knocked that' 
+; 
+[2046:that] 
+[2047:here] 
+[2048:I couldn't find ] 
+; 
+[2053:it's not clear to what ] 
+[2054: is referring] 
+; 
+; error messages for NPC's 
+[2060:are you talking to yourself again? ] 
+[2061:I couldn't talk to several people at once] 
+; 
+; Standard Adventure output messages 
+; 
+[2100:Welcome to "Scapeghost", copyright (C) 1989 from Level 9 
+Computing. Please enter the number of the part you want to play; 
+the start is part 1. 
+%1..November Graveyard 
+%2..Haunted House 
+%3..Poltergeist 
+%> ] ; && 
+[2101:Please enter 1 2 or 3.%] ; && 
+[2102:My head cleared, I looked around, and found myself 
+standing among a crowd of dark suits at a funeral. How had 
+I got there? What was going on? 
+
+% %The last thing I remembered was driving in the motor with 
+Sarah, on our way to meet with the drugs gang. Our long 
+patient months of undercover work were about to pay off. 
+But what had happened then? 
+
+% %I stared around at the others, as a 
+priest mouthed platitudes over a nearby grave, and wondered 
+who had copped it this time. Then I read the name on a nearby 
+wreath...% %] 
+; 
+; examining something greater than maxobject: (but not scenery) 
+; rare occurrence - mostly for omnipresent objects, numbers, spells 
+[2112:it looked exactly as I had expected. ] 
+; 
+[2114:I couldn't go that way] 
+; 
+[2115:through the door] 
+; 
+[2117:it's already open] 
+; 
+[2123:I couldn't put ] ; paired with 2124 
+[2124:there] 
+; 
+[2126:I would have to drop it first] 
+[2127:I would have to pick it up first] 
+[2128:%Did you know that you can go quickly to a far off place? Eg 
+"RUN TO VAULT" or "GOTO VIOLET"%] 
+; 
+; 2130 is used when player refers to scenery which is not nearby 
+[2130:I can't find a reference to "] 
+[2131:I was on it! ] 
+[2132:what? ] 
+[2133:where? ] 
+[2134:I was wearing ] 
+[2135:please try again, saying what with. ] 
+[2136:which one? ] 
+[2137:at what? ] 
+; 
+[2139:was full] 
+[2140:" here] 
+; 
+[2142:I couldn't wear ] 
+; 
+[2147:I was already wearing that] 
+[2148:I found that I didn't need to do that] 
+; 
+; Confirmation messages 
+; 
+[2152:worn] 
+[2153:OK] 
+; 
+[2155:time passed. ] 
+[2156:said] 
+; 
+[2158:I found that I would have to untie it first] 
+; 
+[2160:YES or NO please.%] 
+; 
+[2172:nobody wants it] 
+; 
+; Death, scoring, game control etc. 
+; 
+[2200:really restart? ] 
+[2202:really restore? ] 
+[2203:% %did I continue? ] 
+;;[2204:said, "Thank you"]  ; >> Pete 14/9/89 
+; 
+[2209:% %the adventure had come to an end. 
+%Please type RESTART, UNDO, RESTORE or RAM RESTORE: ] ; && 
+[2210:the room was badly damaged] ; attack/fireball room 
+[2211:the place was already smashed] 
+[2212:really! You're so destructive! ] 
+[2213:it looks as though the vandals have been at work here] 
+; 
+[2215:that's too long to wait] ; won't wait 
+[2216:try eg Wait for Joe, or Wait 5] 
+; 
+; Score messages.. 
+[2240:%I had scored ] 
+[2241:% %the adventure had come to an end.%] 
+[2242: out of 300 and was ] 
+[2243:-] ; minus sign 
+; 
+; Ratings 
+[2249:a faded vision] ; -ve score 
+[2250:a vain spirit] 
+[2251:an incompetent ghost] 
+[2252:a harmless apparition] 
+[2253:an ordinary ghost] 
+[2254:a competent spirit] 
+[2255:progressing in the spirit world] 
+[2256:a strong presence] 
+[2257:a powerful phantasm] 
+[2258:a vivid phantom] 
+[2259:a dominant supernatural force] 
+[2260:a poltergeist] ; Used in case of score overflow 
+; 
+[2300:UNDO and RAM SAVE//RESTORE don't work in this version. ] ; && 
+[2301:%please insert save disk and press a key. %] ; && disc 
+[2302:%please insert game disk. %] ; && 
+[2308:I couldn't go back further than this. ] ; && 
+[2309:(this version allows you to use RAM SAVE and RAM RESTORE to 
+save a position in memory, and UNDO to take back bad moves).%] ; && 
+[2310:I can't find that saved position in memory. Perhaps you've 
+restarted the game. ] ; && 
+; 
+[2311:% %I am about to start another part of the game. Do you 
+want to save my position first, just in case? ] ; && tape 
+[2312:that data was not saved from Scapeghost. ] 
+[2313:play the game tape to load part ] ; && tape 
+[2314:% %I am about to start another part of the game. Do you 
+want to go ahead? ] ; && tape 
+; 
+[2319:you've started in the middle of the game. Please 
+restore a position saved from this part. ] ; && tape 
+; 
+; misc jokey messages (slightly more complex than echo verbs).. 
+;;[2401:that would be a pretty silly thing to do] ; attack me  ; >> Pete 14/9/89 
+[2404:I could not smell anything] 
+[2405:I found nothing much to write about] 
+[2406:I didn't smell of anything, being a ghost] ; == altered for Scapeghost ==
+[2407:I said hello] 
+[2416:to be, or not to be, that is the question] 
+[2417:knocked with a firm fist] 
+; follow target is destroyed 
+[2420:I couldn't find what I was looking for] 
+; 
+; Additional pronouns used when actor is referring to himself. 
+; This prevents: 
+; EXAMINE Joe 
+; Joe was... <last word is now Joe> 
+; Joe, EXAMINE Joe 
+; Joe examined HE. 
+[2430:itself] ; ita 
+[2431:itself] ; itan 
+[2432:themselves] 
+[2433:himself] 
+[2434:herself] 
+[2435:themselves] 
+[2436:myself] ; <you> ; "Scapeghost special" 
+[2437:himself] ; proper male 
+[2438:herself] ; proper female 
+; 
+; used by vehicles 
+[2470:got out of the cart ] 
+[2471:drove the cart to the ] 
+[2472:drove the cart ] 
+; 
+; GROUP movement of animals 
+[2480:trotted] 
+[2481:ran] 
+[2482:darted] 
+[2483:wandered] 
+[2484:went] 
+; 
+; GROUP movement of people 
+[2490:walked] 
+[2491:trudged] 
+[2492:stomped] 
+[2493:wandered] 
+[2494:went] 
+; 
+; GROUP movement of ghosts 
+[2500:floated] 
+[2501:drifted] 
+[2502:hovered] 
+[2503:glided] 
+[2504:went] 
+; 
+; used for a group of 4 or more followers 
+[2509:the company arrived ] 
+; 
+; experience when picking up light objects 
+[2510:I felt slightly stronger] ; Joe says 2850 
+[2511:my strength seemed to be increasing] ; Joe says 2851 
+[2512:I felt a little more solid] 
+[2513:my control over material objects was improving] 
+[2514:I felt much stronger and confident] 
+[2515:my strength was improving all the time] 
+[2516:I began to feel a much more experienced ghost] 
+[2517:I suddenly became less transparent than before] 
+[2518:I congratulated myself with my power over heavier objects] 
+[2519:I felt very confident and much stronger than before] 
+[2520:I prided myself on my improved strength] 
+[2521:my strength had reached its peak for my first night as 
+a ghost] ; Joe says 2852 
+; 
+; handling of light and heavy objects 
+[2524:the dog, anxious to be helpful, picked it up again for me] 
+[2525:wasn't strong enough to carry that yet] 
+
+[2527:my hands became weak and I dropped ] ; presence of light AND humans 
+[2528:would never be strong enough to carry that] ; lift heavy object 
+[2529:I was now strong enough, and ] ; ...I took the <object> 
+; 
+; GROUP message for USER when humans are present 
+[2530:my strength seemed drained by the presence of ] 
+[2531:I began to fade when I saw ] 
+[2532:my powers seemed to drain while I was near ] 
+[2533:a sudden feeling of weakness was brought upon me by the 
+presence of ] 
+[2534:I sensed a feeling of distress when I was approached by ] 
+; 
+; shed light 
+[2550:the shed light went off. ] 
+[2551:the shed light came on. ] 
+[2552:% %the sudden shock of the light stabbed through me. I felt 
+myself fade and everything returned to darkness. I opened my eyes 
+and found myself back upon my own grave] ; also used by spotlight 
+[2554:the shed light was on] ; seen in lit areas 
+[2555:it was off] 
+[2556:it was on] ; added to examine message. Joe says 2858 
+; 
+; actor is startled by light and sent back to grave. this message 
+; is printed if player is by their grave when they arrive 
+[2558:slowly materialised before me and complained about the 
+sudden effects of bright light] 
+; 
+; spotlight 
+[2560:the spotlight went off. ] 
+[2561:the spotlight came on. ] 
+[2564:the spotlight illuminated the whole of the southern part 
+of the cemetery] 
+; special cases when spotlight seen going on & off from shed. 
+; spotlight is NOT mentioned here, since it is only visible in the 
+; locations which it illuminates. 
+[2565:the button clicked to its "off" position. Looking through the 
+shed window, I noticed that the southern part of the cemetery had 
+become much darker. ] 
+[2566:the button clicked to its "on" position. I looked through the shed 
+window and saw that the southern part of the cemetery was now brightly 
+lit. Luckily,the light had little effect on me from that distance. ] 
+[2567:more pressure seemed to be needed to push it 
+properly] ; Joe says 2859 
+; vandals joke about spotlight going off. 
+; this is printed regardless of the player being in same room 
+; as vandals or elsewhere. do not make any references to light 
+; here. 
+[2568:% %just then, I heard a young lout bellow, "Now even the bulb's 
+dead!" ] 
+; 
+; street lights 
+[2570:% %twilight gave way to darkness and the street lights came 
+on to the south of the cemetery. I felt myself begin to disperse 
+into the night air, and when I came to I was back beside my own grave. 
+% %A ghostly figure entered from the north and made its way towards 
+me...% %] 
+[2574:the street lights lit the road to the south of the cemetery] 
+; 
+; shed door 
+[2580:the door was too solid for any of the graveyard ghosts to 
+float through. I would have to work out how to open it] ; Joe says 2861  
+; go in 
+[2581:it was closed] 
+[2582:it was open] ; examine door 
+; 
+; GROUP message for USER when light is present 
+[2590:I felt uneasy about ] 
+[2591:I began to feel weak because of ] 
+[2592:my powers seemed to be absorbed by ] 
+[2593:I found that I couldn't stand being close to ] 
+[2594:a sudden feeling of distress was brought upon me by ] 
+; 
+; GROUP message for NPC when light is present 
+[2600:refused to do anything until somebody turned off ] 
+[2601:did nothing but complain bitterly about ] 
+[2602:didn't seem to be able to do anything, except point 
+weakly at ] 
+[2603:floated about helplessly, refusing to do anything because of ] 
+[2604:hovered aimlessly around, set on doing nothing until 
+somebody switched off ] 
+; 
+; examine lights when not present 
+[2610:there were no bright lights here. ] 
+; 
+; wrong wreath taken to Edna 
+[2619:% %"That nasty thing's not my wreath", said Edna, as she saw 
+the faded wreath. "Mine was all nice and fresh"] ; Joe says 2862 
+[2620:% %"That's not my wreath. It don't have my card on it", said 
+Edna, pointing at the new wreath] ; Joe says 2863 
+; 
+; new wreath taken to Edna with her card in it 
+[2621:% %"Ah, you've found Bert's wreath, though it seems that 
+someone has mixed up the cards and put mine on it", said Edna 
+in a satisfied tone.  
+%"Well, thank goodness that squabble's over with", said Bert 
+with a sigh. "Now we might get a bit of peace and quiet around 
+here"] ; Joe says 2864
+[2622:% %"Oh look", said Edna as she inspected the wreath. "Someone 
+else's card has been put in here as well. We can't have that, can we?" 
+%She plucked out the white card and threw it onto the ground] 
+; 
+; not specified which wreath/card/lever 
+[2623:please try again, this time saying which one] 
+; 
+; statue turns into Alex 
+[2630:slowly, it began to take the shape of a ghostly 
+figure] ; Joe says 2865 
+; 
+; push sundial 
+[2640:and it began to rock heavily] 
+[2641:and it teetered and keeled over. The heavy sundial 
+crashed down the steps, breaking into pieces as it fell to 
+the ground] ; Joe says 2866 
+; 
+; Edith's "end of time" pun 
+[2650:% %"At last! The end of time!", cried Edith. "My curse has 
+been lifted and I am free!" 
+%Beaming with joy, she got up from her grave and danced around 
+her headstone. 
+%"How can I thank you?", she asked] 
+; Erase time from gravel. Joe says 2867  
+[2651:% %Edith saw the gnomon and smiled with relief. "Oh, I'm so 
+happy!", she announced. "I'm free from my curse now that you've 
+brought about the end of time..."] ; Joe says 2868 
+[2652:there seemed to be something in the bushes] ; Joe says 2869 
+[2653:I found a magazine] ; Joe says 2870 
+[2654:Edith snatched the magazine and said, "Of course! This will 
+free me from my curse!" 
+%She held it in the air and set fire to it. "I never thought I'd 
+see the end of time", she mused as the magazine burned 
+away] ; Joe says 2871
+[2655:it fell to the bottom and then smashed to pieces] 
+[2656:%Edith sighed with relief. "Wonderful!", she began, "that's the 
+end of time. I'm a free spirit at last!" 
+%She stretched her arms out and danced happily around her grave. 
+She smiled gratefully at me and said, "What ever can I do to 
+repay you?"]  ; Joe says 2872
+; 
+; pushing urn to impress David 
+[2660:said, "Do it yourself if you want to show how good you are"] 
+[2661:I wasn't strong enough to rock the urn] ; Joe says 2873
+[2662:I pushed the urn and it rocked slightly. 
+% %"Hmm, not bad for a beginner", began David, who was obviously 
+impressed, though trying not to show it. "I might consider helping 
+you now", he added] ; Joe says 2874 
+; 
+; unlock shed door 
+[2667:pushed the short lever briefly into place so that it wasn't 
+obstructing the barrel] 
+[2668:pushed the medium sized lever briefly into position] 
+[2669:pushed the long lever briefly into place] 
+[2670:found that the barrel wouldn't turn. Maybe it had something 
+to do with the levers] 
+[2671:turned the barrel and unlocked the door] ; Joe says 2875
+[2672:wasn't strong enough to pull the rope] 
+[2673: but nothing, since the door was already wide open] ; Joe says 2877
+[2674: but the shed door seemed to be locked]  ; Joe says 2878
+[2675:, the shed door swung open and the dog darted inside. It 
+soon reappeared with the workman's lunch box, clinking with 
+bottles and bulging with biscuits. It struggled out of the 
+cemetery to eat its reward]  ; Joe says 2879 
+[2676:turned the barrel, but the lock was jammed open]  ; Joe says 2880
+[2677:% %I suddenly felt very uneasy watching the dog leave the 
+cemetery. It was as if something had been left undone] 
+[2678:. A small bell jingled inside the shed] ; used before 2673,4,5 
+[2679:a bell rang inside the shed. ] ; used on its own 
+; 
+; successively calming dog by stroking it etc. 
+[2680:the dog wagged its tail a little, but still seemed to be 
+frightened of me] 
+[2681:the dog lost some of its fears and sniffed me nervously] 
+[2682:the dog must have realised that I wasn't going to hurt it, 
+and it became quite friendly]  ; Joe says 2881
+; 
+; trying to remove fishbone before dog is fully calmed 
+[2690:the dog snarled at me, with its fur bristling] 
+[2691:the dog backed away, growling. Not surprisingly, it seemed to be 
+afraid of ghosts] 
+[2692:the dog darted out of the way, as if confused] ; Joe says 2882
+; 
+; remove fishbone from dog 
+[2700:% %The dog yelped in panic and ran away from me, its tail 
+tucked between its legs] ; Joe says 2883
+[2701:reached through the dog's throat] 
+; 
+; vandals scared by switching shed light OR spotlight ON. 
+; this is printed regardless of the player being in same room 
+; as vandals or elsewhere. do not make any references to light 
+; here. 
+[2710:% %suddenly, I heard a young vandal shout, "Quick! Somebody's 
+in the shed!" 
+%Then another replied, "Come on, let's leg it over this wall!" 
+% %Soon after, I heard footsteps running alongside the burnt church 
+and the sound of them scrambling jumping over the wall. "Stone me!", 
+yelled one of them, "I nearly knocked the wall over". 
+%"Be quiet!", bellowed another at the top of his voice. 
+% %Soon, their footsteps faded into the distance as they ran from 
+the cemetery. ] 
+; 
+; solve "Violet puzzle" 
+[2720:"Oh, what a clever idea, young man", said Violet with a little
+smile. "I can hear the bell nicely when the wind blows". 
+% %She got up from her grave and walked steadily towards me, "Now 
+I can get about the place without becoming lost", she said with 
+delight, "How ever can I thank you?"] 
+; can't remove bell from bush 
+[2721:said, "I wouldn't dream of doing a thing like that. Why, 
+Violet would never find her way back if I were to remove the bell"] 
+[2722:the bell jingled clearly as the bush quivered in the breeze] 
+; 
+; endgame thermometer puzzle 
+[2730:% %"it's beyond me why they bother collecting money", 
+commented Joe whilst pointing at the thermometer. "This place 
+is past repair; the first storm of winter will have the 
+whole wall down. Look at those cracks deep in the stone"] 
+; 
+; increasing tempest for each of the 9 ghosts 
+[2740:a light breeze seemed to blow against the thermometer] 
+[2741:the thermometer groaned quietly in the breeze] 
+[2742:I could feel a strong breeze blowing against the thermometer] 
+[2743:the breeze turned to a wind and spread itself over the wall] 
+[2744:dust and loose chippings blew into the air along the wall] 
+[2745:the thermometer leaned heavily and the wall began to crumble] 
+[2746:a strong gale blew the wall until it leaned heavily] 
+[2747:the increasing blast set the wall a-quiver, almost bringing 
+it to collapse] 
+[2748:% %finally, the wall could resist the wind's torment no longer, 
+and it began to topple over. Like a tidal wave crashing along a 
+shore, the collapse spread further and further south along the 
+course of the wall, until at last the southernmost section smashed 
+heavily onto the vault. 
+% %We all cheered as the vault was buried beneath an avalanche 
+of rubble, trapping the drugs hoard within it. Now the gangsters 
+would be delayed for a day or two, until enough of the debris 
+was cleared for them to be able to sneak back and recover their 
+loot. It would give me time to track down their hideout, and 
+perhaps tomorrow I would be be strong enough in spirit to leave 
+the churchyard and do it. 
+% %I could do nothing more today, for the night was now coming to 
+an end, and it was time for us ghosts to make our way back to our 
+graves] 
+; 
+; late additions 
+[2750:Bert blocked my hand] 
+[2760:rang the bell]
+[2761:%"Oooh, that's nice!", cried Violet, "I can hear that a 
+treat! But I'm sure you've got better things to do than stand 
+by my grave, ringing the bell all night so I can find my way back"]
+[2762:it rocked a little, but then settled back to its state of rest. 
+Maybe it wasn't ready to wake up yet]
+[2763:% %
+Gradually, the sun began to rise above the hills towards the 
+east, casting long drawn-out shadows across the cemetery. And 
+with the distant crow of a cockerel I realised that morning had 
+arrived, bringing with it an end to my existence as a ghost.
+% %I knew that the crooks would collect their drugs and escape 
+today, so there was no chance to bring them to justice and clear 
+my name. I sadly faded away with a feeling of incompleteness..] 
+; 
+; "Pet" messages... (table driven) 
+; some remarks made by PET on various occurrences... 
+; 
+[2850:smiled and said, "Well done, mate. Keep at it and 
+you'll be on your way to lifting bigger things. Perhaps 
+even pushing up some daisies"] 
+; After 2510 (I took something light) 
+; 
+[2851:patted me through the back and said, "That's the spirit! 
+It won't be long before you can lift something 
+worthwhile"] ; After 2511 (I took something heavier)
+; 
+[2852:grinned, "I guess you're one spirit that's not weak"] 
+; After 2521 (my strength had peaked) 
+; 
+;; [2854:urged me to drop whatever I was already carrying] 
+;; After 2526 (which seems to be missing) 
+; 
+[2858:added, "And I wish it was off"] ; After 2556 (light was on) 
+; 
+[2859:tried to slink out of the door] ; After 2567 (button stiff)
+; 
+[2861:said, "Unless you've a built-in spirit duplicator, you're 
+going to need some help"] 
+; After 2580 (shed door closed)
+; 
+[2862:muttered to me, "Fussy old crow, isn't she?!"] 
+; After 2619 (Edna rejected old wreath) 
+; 
+[2863:said, "I wonder where her card is?"] 
+; After 2620 (Edna rejected new wreath) 
+; 
+[2864:sniggered and muttered, "Hah! Some chance of that, 
+Bert"] ; After 2621 (Edna accepted wreath and Bert moaned)
+; 
+[2865:grinned. "A familiar spirit, I see. Hello again, Alex"] 
+; After 2630 (Alex awoke) 
+; 
+[2866:tutted and sighed, "You're worse than the vandals around 
+here"] ; After 2641 (sundial broke)
+; 
+[2867:clutched his stomach and groaned at the pun] 
+; After 2650 ('Time' has been erased from the gravel) 
+; 
+[2868:said, "Is that corny, or what?"] 
+; After 2651 (gnomon brought to illustrate end of time)
+; 
+[2869:said, "Ooh, what's that in there?"] 
+; After 2652 (I saw something in the bushes) 
+; 
+[2870:shook his head. "Flamin' litter louts! They leave their stuff 
+lyin' around all over", he sighed] ; After 2653 (I found magazine) 
+; 
+[2871:laughed. "Edith will have forgotten all about breaking the 
+curse by tomorrow, but at least she's in high spirits tonight"] 
+; After 2654 (fate of magazine means 'End of Time') 
+; 
+[2872:groaned at the pun. Passing footsteps on the road outside 
+broke into a panic-stricken run] 
+; After 2656 (wrist watch smashed to mean 'End of Time') 
+; 
+[2873:said, "Try building up your strength by lifting light 
+objects"] ; After 2661 (I wasn't strong enough to rock the urn) 
+; 
+[2874:grinned and said in a whisper, "Well done, lad. You kicked 
+that Greek style bucket good and proper"] 
+; After 2662 (I rocked urn and recruited David) 
+; 
+[2875:rubbed his hands, saying, "Only you would have been good 
+enough to unlock the door and let us in"] 
+; After 2671 (I unlocked the door)
+; 
+[2877:tapped his head and laughed] ; After 2673 (unlocked open door)
+; 
+[2878:said, "A really powerful ghost could just walk through this 
+door, you know. But you will just have to tackle the lock"] 
+; After 2674 (door turned out to be locked) 
+; 
+[2879:laughed, "Sly little mutt!"] 
+; After 2675 (dog escaped with biscuits) 
+; 
+[2880:said, "I'd leave it unlocked to confuse the workmen next morning"] 
+; After 2676 (failed to lock shed door)
+; 
+[2881:said, "Well, well. We've made a new friend"] 
+; After 2682 (dog become tame) 
+; 
+[2882:knelt by sinking slightly into the ground and said, "Nice 
+doggy. We're not going to hurt you". The dog backed away further] 
+; After 2690 (dog backed away) 
+; 
+[2883:said, "Don't worry, it'll come back"] 
+; After 2700 (I removed fishbone and dog jumped back) 
+; 
+; messages when people refuse an order. 2900+n 
+; Use ACTORM1Dot 
+; 
+[2902:said, "Just wait a while, I'll help you after we've finished 
+our ghost walk"] ; Joe 
+[2903:seemed too busy guarding his wreath from Edna] ; Bert 
+[2904:said, "You won't get any help from me unless you can get me 
+my wreath back"] ; Edna 
+[2905:sneered and said, "Why should I help a puny ghost like you?"] 
+; David 
+;; [2906:] ; Alex 
+[2907:wept softly and said, "I'd like to help you, but I'm cursed 
+to remain here until the end of time"] ; Edith 
+[2908:dismissed my request and said, "Sorry. Duty calls. Got to 
+stand guard against those young hooligans"] ; Colonel 
+[2909:said, "I'd love to help, but I fear that I may get lost if I 
+stray from my grave"] ; Violet 
+[2910:ignored me as if I wasn't there] ; mourners 
+[2911:looked straight through me] ; crook 
+[2912:walked straight through me] ; supervisor 
+[2913:stopped and listened, but had clearly not heard what I said] ; workman 
+[2914:paid no attention to me and carried on telling filthy jokes] 
+; vandals 
+[2915:didn't seem to hear my request] ; dog 
+; 
+; don't be silly GROUP... 
+[3100:don't be silly] 
+[3101:well, that's new] 
+[3102:sorry, no can do] 
+[3103:that's a funny thing to want to do] 
+[3104:that's a bit daft isn't it] 
+; 
+;;; nice try GROUP...  ; >> Pete 14/9/89 
+;;[3110:nice try, that's the spirit]  ; >> Pete 14/9/89 
+;;[3111:a good bash at the solution. Shame it doesn't work]  ; >> Pete 14/9/89 
+;;[3112:not a ghost of a chance, chum]  ; >> Pete 14/9/89 
+;;[3113:good idea, but it didn't work]  ; >> Pete 14/9/89 
+;;[3114:a good try, but it doesn't work]  ; >> Pete 14/9/89 
+; 
+; just scenery GROUP... 
+[3120:you might as well leave it alone] 
+[3121:I suggest that you forget about it] 
+[3122:that's not important to the game] 
+[3123:forget it. It's only scenery] 
+[3124:pay it no heed] 
+; 
+; missing object... 
+[3130:now what was the object of that? Try again] 
+[3131:sorry, I couldn't find an object in that] 
+[3132:please be more specific] 
+[3133:there was no object in that command] 
+[3134:do it to what? You didn't say] 
+; 
+; Nothing happened GROUP... 
+[3140:nothing happened] 
+[3141:that didn't seem to work] 
+[3142:there was no effect on anything] 
+[3143:that was remarkably useless] 
+[3144:that did nothing at all, I'm afraid] 
+; 
+; the following are printed after the object name.. 
+; 
+[3150:wouldn't move] ; try to move static object GROUP 
+[3151:didn't budge] 
+[3152:refused to be moved] 
+[3153:seemed fixed in place] 
+[3154:was unmoved] 
+; 
+[3160:don't bother, it would do nothing] ; don't bother GROUP 
+[3161:that would be a waste of time] 
+[3162:I found that I couldn't] 
+[3163:that will get you nowhere] 
+[3164:don't expect any results from that] 
+; 
+; GROUP messages for hello responses 
+[3170:gave a friendly nod] 
+[3171:grinned warmly] 
+[3172:returned my greeting with a smile] 
+[3173:greeted me with a suspicious smile] 
+[3174:nodded slightly] 
+; 
+; GROUP messages for npc's being unable to carry out an order 
+[3180:seemed puzzled] 
+[3181:shook a puzzled head] 
+[3182:looked distinctly confused] 
+[3183:didn't seem to understand what was wanted] 
+[3184:looked at me with a blank expression] 
+; 
+; GROUP messages for npc's being unable to carry out an order 
+[3190:had had problems with ] 
+[3191:looked troubled about ] 
+[3192:mentioned trouble with ] 
+[3193:obviously hadn't understood about ] 
+[3194:had been mystified about ] 
+; 
+; now, npc accepts an order GROUP 
+[3230:nodded in acknowledgement] 
+[3231:nodded slowly] 
+[3232:nodded obediently] 
+[3233:agreed] 
+[3234:nodded enthusiastically] 
+; 
+; now response to questions when not obedient GROUP... 
+[3250:refused to answer that] 
+[3251:remained silent as the grave] 
+[3252:pretended to ignore the question] 
+[3253:refused to give any help whatsoever] 
+[3254:looked back stubbornly] 
+; 
+; response to requests to give anything(s) to anyone GROUP 
+[3270:refused to part with anything] 
+[3271:refused to give it away] 
+[3272:didn't want to give anything away] 
+[3273:clutched it tightly] 
+[3274:stared back in silent refusal] 
+; 
+; npc wants to obey orders just given, but can't understand GROUP 
+[3290:looked puzzled] 
+[3291:did not understand] 
+[3292:shrugged in non-comprehension] 
+[3293:made a questioning noise] 
+[3294:didn't seem to understand] 
+; 
+; Goldsinging GROUPS... 
+; 
+; NB: Goldsinging is now used less frequently, since racetrack 
+; messages are now used more extensively. 
+; 
+; Joe, Edith, Violet 
+[3300:hummed quietly] 
+[3301:stared blankly into the night] 
+[3302:gazed up at the starry sky] 
+[3303:watched me curiously] 
+[3304:smiled pleasantly] 
+; 
+; Bert, Edna 
+[3310:muttered rebelliously] 
+[3311:moaned loudly and annoyingly] 
+[3312:stared pointedly into the distance] 
+[3313:gave me a grumpy look] 
+[3314:tried to enlist my help in their squabble] 
+; 
+; David 
+[3320:laughed pretentiously] 
+[3321:stood pompously with his hands on his hips] 
+[3322:sniggered at me quietly] 
+[3323:looked down his nose at me] 
+[3324:looked at me, shaking his head] 
+; 
+; Alex 
+[3330:yawned loudly] 
+[3331:shut his eyes for a moment] 
+[3332:stretched his arms tiredly] 
+[3333:gazed at me blankly] 
+[3334:made snoring noises] 
+; 
+; Colonel 
+[3340:muttered about the youth of today] 
+[3341:complained about the state of the cemetery] 
+[3342:saluted me smartly] 
+[3343:frowned distastefully] 
+[3344:nodded thoughtfully] 
+; 
+; mourners 
+[3350:talked quietly amongst themselves] 
+[3351:stood, looking at the cemetery] 
+[3352:murmured to each other] 
+[3353:shook their heads and frowned sorrowfully] 
+[3354:nodded to each other solemnly] 
+; 
+; crook 
+[3360:grinned deviously] 
+[3361:smiled broadly] 
+[3362:stroked his chin thoughtfully] 
+[3363:sniggered quietly to himself] 
+[3364:clasped his hands together and grinned] 
+; 
+; supervisor, workman 
+[3370:yawned tiredly] 
+[3371:coughed noisily] 
+[3372:scratched his head thoughtfully] 
+[3373:blew his nose into a handkerchief] 
+[3374:rubbed his tired eyes] 
+; 
+; vandals 
+[3380:joked noisily] 
+[3381:sang a filthy song at the tops of their voices] 
+[3382:staggered around drunkenly] 
+[3383:passed a bottle of vodka between them] 
+[3384:laughed loudly at some crude joke] 
+; 
+; dog 
+[3390:wagged its tail timidly] 
+[3391:sniffed the ground inquisitively] 
+[3392:cocked its head to one side] 
+[3393:yapped noisily] 
+[3394:sniffed me nervously] 
+; 
+; again used following a command referring to scenery 
+[3530:the previous command was unrepeatable] 
+[3531:you can't do that again] 
+[3532:it wouldn't help to try that again] 
+[3533:that was a once-only command] 
+[3534:oh, not again] 
+; 
+[3560:not around] ; printed by follow code 
+; npc stack overflow 
+[3600:a ghost moaned about a stack overflow. ] 
+[3605:sorry, I can't find the way from here] 
+[3614:only a whisper came out] 
+; 
+; 'npc, rude' word for talking people 
+[3620:laughed] 
+[3621:paid me no heed] 
+[3622:had not heard] 
+[3623:took no notice] 
+[3624:ignored me] 
+; 
+; 'npc, help' for talking people 
+[3640:needed specific orders] 
+[3641:waited for instructions] 
+[3642:looked me up and down] 
+[3643:asked, "Why?"] 
+[3644:did not know what to do] 
+; 
+; 'npc, echo verb' for talking people 
+[3660:raised an eyebrow] 
+[3661:gave a spirited response] 
+[3662:looked offended] 
+[3663:laughed, "Oh! You are a hoot"] 
+[3664:looked askance at me] 
+; 
+;========= 
+; 
+; Garbage words.. 
+[4000:^N the ^N this ^N these ^N that ^N some ^N and ^N also 
+^N before ^N wade ^N jog ^N plod ^N rush ^N dash ^N march ^N amble 
+^N good ^N of ^N there] 
+[4001:^N therefore ^N am ^N your ^N try ^N carefully ^N slowly 
+^N warily ^N quickly ^N rapidly ^N following ^N around] 
+[4002:^N please ^N road ^N Mister ^N Mr ^N Mrs ^N Miss] 
+; 
+;; Book protection code... 
+;; 
+;; [4200:%a skeletal figure stopped me by waving a copy 
+;; of a colourful book. ] 
+;; [4201:page ] 
+;; [4202:, line ] 
+;; [4203:, word ] 
+;; [4204:?"%] 
+;; [4205:the skeleton grinned nastily and I knew I was wrong. ] 
+;; [4206:the skeleton vanished in a cascade of bones. ] 
+;; [4207:it wanted to know the word at ] 
+;; [4208:wrong again! The skeleton beckoned me forwards and everything 
+;; went black... ] 
+;; 
+;; ADD PROTECTION WORDS HERE, BUT DO NOT MARK NUMBERS (digits) eg 20 
+;; [4301:^C even ^C maintain] ; 18,9,8 
+; 
+; Racetrack Messages... 
+; Mostly, these start with actors name. The one's starting with 
+; a carriage return (i.e. "%") are used for other peoples reactions 
+; to the actors Rt. Varied messages are marked with GROUP 
+; 
+; --- mourners leave the grave at start of game --- 
+; 
+[5000:prepared to leave the grave; the police among them talking 
+quietly. 
+%"I'm glad that's over with", muttered one of the policemen, 
+"I hate this part of the job. Especially going to funerals for 
+stupid bastards who get themselves killed and their partner captured". 
+%"Too right", agreed another. "And it it's only because Mr Severian 
+stumbled upon them dumping Alan's body that the crooks needed a 
+hostage. Otherwise the girl would be dead"] 
+; 
+[5002:continued walking along the path. 
+%"Chance has blown the whole operation", continued the first policeman. 
+"And now the gang's lit out with Sarah as hostage"] 
+; 
+[5003:walked alongside the crumbling wall of the burnt church, 
+with the police still talking about me as if I wasn't there at all] 
+; 
+[5004:walked quietly past the vault. One of them patted it 
+casually and cracked an old joke about vampires] 
+; 
+[5005:stood looking at the burnt church. "The wall on the east 
+side looks dodgy", commented one of them. "I don't know why they 
+bother to collect money. It's way beyond repair"] 
+; 
+[5006:made their way slowly out of the main gate. 
+%"Right then, tea time for me", said one policeman as he left, 
+shaking off the gloom of the churchyard and slapping his belly. 
+"Anyone else for a pie and a pint?"] 
+; 
+; --- detective wanders around cemetery before leaving --- 
+; 
+[5010:waited until the rest of the mourners had gone] 
+; 
+[5011:paused to light a cigarette, then tossed an empty matchbook aside] 
+; 
+[5014:strolled casually along the path, kicking up the gravel. 
+%"Well, that's one nosey snoop taken care of", he chuckled. It 
+wasn't a nice sound. "And none of those other dozey cops have 
+even looked twice in my direction. Fools! The lot of them". 
+% %"No wonder he's not looking sorry", I thought to myself. 
+"He's one of the crooks - probably set me up. And nobody 
+suspects because I'm dead and a convenient scapegoat"] 
+; 
+[5015:walked past the vault, running his hand along its edge. 
+"Who'd think of looking in here?", he laughed to himself. 
+% %"For what?" I murmured to myself, but even before I had 
+finished the words I knew. This was where the gang had stashed 
+their drugs. If only I had some way to foil their plans..] 
+; 
+[5016:strolled away into the twilight mists] 
+; 
+; --- workman fills in grave --- 
+; 
+[5020:stretched his back and sighed, "Ah, well. Back to work. 
+What a bleedin' job; diggin' holes, watchin' holes and fillin' 
+holes again] 
+; 
+[5021:read the headstone and laughed, "I reckon this was the 
+miserable bleeder that arrested me for being drunk. Well, I'm 
+safe now. I don't reckon I'll be seeing him again"] 
+; 
+[5022:pushed his shovel into the mound of earth and began to fill 
+the grave] 
+; 
+[5023:suddenly leapt back, staring at me. I had a sudden queezy 
+feeling and felt myself fade away under his gaze. 
+%A minute passed; then the workman shook his head. "No, it wasn't 
+him. It's just be the whisky", he muttered. Then picked up the 
+shovel from where he had dropped it and continued to fill my grave. 
+As he turned away, I began to firm up again] 
+; 
+[5024:stood up and rubbed his back. "Tirin' work, is this", he sighed 
+and rested on his shovel for a few minutes] 
+; 
+[5025:finished shovelling the earth into the grave and then patted 
+it flat with the back of the blade] 
+; 
+; --- supervisor starts racetrack at car park gate --- 
+; 
+[5030:muttered to himself, "Company vehicle, they said. There 
+I was expecting a Sierra, and what do I get? A bleedin' battery 
+operated pram"] 
+; 
+[5034:dismounted briefly to collect some litter. 
+%He twisted around with a start and I began to fade away in his 
+gaze. "Funny, I could 'ave sworn someone was watching me", he muttered. 
+%He looked away and I slowly began to recover my ghostly shape] 
+; 
+[5035:saw the faded wreath and said, "Phew! I could smell this thing 
+rotting as I came through the gates. It'll have to go on the heap"] 
+; 
+[5036:tapped his fingers on the steering wheel of the cart and 
+said, "Where the heck is that dozey four-eyed digger?"] 
+; 
+[5037:saw the workman and said, "You took your time! Did you see 
+a ghost, or fall into the grave or something?" 
+% %"I wish you'd fall into a grave", muttered the workman, "I'd 
+fill it in before you could climb back out again"] 
+; 
+[5038:rubbed his frost-bitten hands together. "Well, that's another 
+day over with", he said to the workman] 
+; 
+[5039:% %The workman propped his tools up in a corner. "I'll 
+say one thing for this lark", he joked for the hundredth time, 
+"the customers never complain"] 
+; 
+[5040:clasped his hands together and announced, "I could murder 
+a pint of best." 
+% %"I'm with you there", replied the workman, "Let's make it the 
+Pig and Whistle tonight"] 
+; 
+[5041:drove off through the car park and headed for the pub] 
+; 
+; --- Joe introduces player to the cemetery --- 
+; 
+[5050:% %The figure greeted me with a warm smile and introduced himself. 
+"I'm Joe Danby, that used to run the Pig and Whistle", he said. "Turned 
+my toes up nearly five years ago, I did, and couldn't return to haunt 
+my pub because they don't serve spirits. I've got to know this place 
+quite well in that time". 
+% %Joe spread his arm in a wide arc, prompting me to take a look at 
+the cemetery. "Come on", he added, "follow me and I'll show you around 
+the place and introduce you to some of my kindred spirits"] 
+; 
+[5051:gave me a broad grin and announced, "Here's my grave. Right 
+next to yours. I can see us being good neighbours". 
+% %I returned a smile and admired the well-mown grass. "It gets cut 
+every Sunday, through the Summer", he explained. "I had some good 
+friends"] 
+; 
+[5052:beckoned me to come closer. "These are the Willmot graves", 
+he said in a low whisper. "And if you thought the dead rest in peace, 
+you should listen to this couple"] 
+; 
+[5053:% %"What was that, Mr Danby?", shouted Bert. 
+%"Oh", replied Joe. "I was just telling the new fellow what a 
+lovely couple you and Edna make". He grinned to me, "I think it's 
+time to pass on"] 
+; 
+[5054:whispered, "Always has to prove something, does our David. 
+He may have gone to meet his maker, like, but still he claims to 
+be a self-made man"] 
+; 
+[5055:greeted David with a tight smile. "Still practising with 
+your psychic powers, I see", he said, as David lifted up a 
+moth and spun it high into the air] 
+; 
+[5056:continued with his guided tour. "And this is Colonel Rycroft's 
+grave", he said. "An extinct ex-soldier is the Colonel. Bit stiff. 
+Served his country well in the old days, but he's rather stuck in his 
+ways. Can't stand the young louts we sometimes get here of a night"] 
+; 
+[5057:% %"Evening, Joe", barked the Colonel. "I see you've brought 
+along the new chap". 
+% %He held out his hand, but it went straight through me when I 
+tried to shake it. The Colonel laughed and said, "Not too solid 
+yet, eh? You'll have firmed up some before the night is out"] 
+; 
+[5058:said, "Violet Conway's our oldest resident. Cracked as well 
+as croaked. She went blind in life and now won't leave her grave in 
+case she can't find her way back. It's nonsense of course; we 
+ghosts don't need eyes to see"] 
+; 
+[5059:% %"I'm certainly all ears", replied Violet. "And you must 
+be Alan, the new arrival". She gave me a warm, friendly smile] 
+; 
+[5060:%"You must forgive me if I don't follow you", she continued, 
+"but if I wandered too far from my grave, I might never find my way 
+back again"] 
+; 
+[5061:sighed and said, "And by no means least, this is the last 
+resting place of Edith Dean"] 
+; 
+[5062:lowered his voice. "If 'resting' is the word. Edith used to 
+be a real hypochondriac; scared to death of catching germs off 
+things; the rumour is that she OD'd on carrots. So nowadays she 
+reckons she's cursed or something"] 
+; 
+[5063:concluded his guided tour, saying, "Well, that's most of 
+your new neighbours introduced. I hope you haven't been bored 
+to death". 
+% %He laughed warmly and I had to smile. "I guess that's more 
+of your graveyard humour", I replied. Joe laughed again and 
+continued, "I can see we're going to get along all right. Do you 
+mind If I walk with you? We don't want you getting lost on your 
+first night, do we?"] 
+; 
+; --- Bert intro, then protect wreath from Edna --- 
+; 
+[5070:% %Edna tried to snatch Bert's wreath but he wouldn't let go 
+of it. They glared at one another in silence] 
+; 
+[5071:stood guarding his wreath, while Edna paced around him, trying to 
+it. "Let me have my wreath back", she insisted. 
+% %"It's mine!", he replied, "And you're not having it"] 
+; 
+[5072:clutched tightly at his wreath, guarding it from Edna. 
+Sometimes, he would stop and suck his teeth, which made Edna even 
+angrier. I wondered why they bothered. There must be better 
+things to do with your death] 
+; 
+[5073:said to Edna, "This wreath is mine! Yours was all faded. 
+I bet it's on the compost heap". 
+% %"Don't talk such drivel", snapped Edna, "Now, give me that 
+wreath back". 
+% %"Shan't!", sulked Bert] 
+; 
+[5074:% %Edna jabbed Bert with a sharp elbow, but he still managed 
+to keep a tight hold on his wreath] 
+; 
+[5075:% %Edna sat on the headstone and folded her arms in a huff. 
+"If you don't give my wreath back", she nagged at Bert, "I won't 
+speak to you until the end of eternity". 
+% %"Suits me fine", muttered Bert as he sat down on the grave, 
+facing away from his wife] 
+; 
+; --- Bert's racetrack after edna is given the wreath --- 
+; 
+[5078:said, "Do you want any help, Alan? It's getting boring hanging 
+about here all night] 
+; 
+; GROUP message for Bert taking stick from edna 
+; keep these fairly short, since they are often repeated 
+[5080:put his fingers in his ears so that he didn't have to listen 
+to Edna's nagging] 
+[5081:cringed while Edna went on about his "filthy habits"] 
+[5082:yelled at Edna, "Oh, shut up, woman! You nagged me into an 
+early grave. Now let me have some peace in it"] 
+[5083:put up with Edna's nagging for as long as he could, then 
+snapped and started mimicking and mouthing at her] 
+[5084:paid no attention to Edna's nagging, and just looked in 
+the opposite direction] 
+; 
+; --- Edna's racetrack after she is given the wreath --- 
+; 
+; GROUP message for Edna nagging Bert 
+; keep these fairly short, since they are often repeated 
+[5090:complained that Bert never listened to her and never did 
+a thing she said and that her mother had warned her against 
+marrying him in the first place] 
+[5091:nagged on at Bert, while he pretended 
+not to hear] 
+[5092:droned on and on about the awful lousy weather they'd been 
+having and how it was all Bert's fault] 
+[5093:wittered on about the state Bert had let their headstone 
+get into] 
+[5094:found Bert wasn't paying attention and became noisily silent] 
+; 
+; --- Alex is woken up --- 
+; 
+; GROUP for statue turning into Alex. these follow message 2630 
+[5100:I watched as the figure stood up, yawned, and then brushed a few 
+pigeon droppings off its arms. 
+% %"Greetings, my friend", it announced in an elderly voice. "I am 
+Alex Pym. Pleased to meet you"] 
+[5101:the grey figure stretched its arms in the air and yawned 
+loudly. 
+% %"What's all the to-do about?", complained the figure, "and 
+I was having such a nice dream". He paused to brush himself 
+down then said, "Well, now that you've woken me, I may as well 
+make myself useful. Pym's the name, by the way. Alex Pym"] 
+[5102:I watched as the figure got up and rubbed its eyes. 
+% %"Oh, excuse me", he said sleepily, "I must have nodded off. 
+I'm Alex Pym. Is there anything I can do for you?"] 
+[5103:I watched attentively as the pale figure stretched and made 
+its way towards me, yawning. 
+% %"What a strange dream I was having", it said in a fragile voice, 
+"Something about nine overthrowing the church. Blowed if I can 
+make head nor tail of it". 
+%The figure shook the dust from its arms and said, "How do you 
+do. My name's Alex Pym, if you don't already know. Pleasure to 
+meet you"] 
+[5104:the figure stood up and peered around, with a puzzled frown. 
+"I must have fallen asleep", it concluded, scratching its head of 
+ruffled grey hair. 
+% %"Well, thank you for waking me", continued the figure. "Goodness 
+knows how long I would have slept if it weren't for you. By the 
+way, my name's Alex Pym. You look a little troubled. Can I help 
+at all?"] 
+; 
+[5110:yawned widely] 
+; 
+[5111:muttered something about nine overthrowing the church. 
+It sounded like gibberish to me at the time] 
+; 
+[5112:nodded off and then woke with a start, mumbling about men 
+in white coats] 
+; 
+[5113:said, "I was always statuesque. Nobody really appreciated my 
+handsome features while I was alive, but they all look now"] 
+; 
+[5114:posed and said, "I think I should have gone in for modelling 
+rather than becoming an accountant"] 
+; 
+[5115:yawned loudly and said, "I feel ever so tired. I think I'll 
+go and take a little nap"] 
+; 
+[5120:struck a pose and slowly changed back into a statue] 
+; 
+; --- Edith believes she is cursed to stay here until the end of time --- 
+; 
+[5130:moaned sorrowfully, "Cursed, I am. Cursed to remain beside 
+my grave until the end of time. What kind of an afterlife is 
+this, I ask you?"] ; followed by 5131 if Joe there 
+; 
+[5131:% %Joe spoke quietly into my ear, "Aye up, she's off 
+again! Complained all her life and now this nonsense". 
+%He raised his voice. "She's no more cursed than I am; just 
+likes silly games"] 
+; 
+[5132:wept on her grave. "Have you any idea how lonely it is, 
+stuck in this corner until the end of time?"] 
+; 
+[5133:complained bitterly, "I had to wait to be buried during 
+the strikes of the Winter of Discontent, but this is worse. 
+Nobody comes to visit me here"] ; followed by 5134 if Joe there 
+; 
+[5134:% %"Pull yourself together, Edith", said Joe, "I'm sure 
+that we can free you from your curse again". 
+% %Joe turned to me and winked, "There must be some way of 
+demonstrating the end of time. Can you think of anything?"] 
+; 
+[5135:continued her moaning. "It's no use", she wailed, 
+"Nobody will help me. I'll just have to stay here until the 
+end of time". 
+% %She sat down by her grave and sobbed theatrically] 
+; 
+; --- Edith's obedient racetrack --- 
+; 
+[5140:smiled delightfully and said, "I think I'll take a nice 
+walk around the cemetery, now that I'm free of my curse"] 
+; 
+[5141:skipped gracefully around the sepulchre. "It feels so good 
+to be free again", she simpered, "I feel so full of, er, life!"] 
+; followed by 5142 if Joe there 
+; 
+[5142:% %"Nice to see spirits go free", mused Joe as he watched 
+Edith dancing around, "though I didn't used to think that when I 
+ran the Pig and Whistle"] 
+; 
+[5143:% %Edith gossiped with Violet, and told her how good she felt now 
+that the curse had been lifted] 
+; 
+[5144:% %Edith was deep in conversation with Violet. "It was 
+young Alan who helped me", she said gratefully]
+; 
+[5145:talked to the Colonel about the "good old days"] 
+; 
+[5146:walked among the new graves. "I don't think much of their 
+headstones", she commented, "They're all so much the same"] 
+; 
+[5147:continued, "they knew how to mark a grave properly in 
+the old days. Look at my lovely headstone", she 
+waved a hand towards her own grave and smiled proudly] 
+; 
+[5148:sat down on the steps and looked around the cemetery. 
+"My, my", she sighed, "This place has changed since the 
+curse fell on me"] 
+; 
+[5149:looked at new graves around close by. "If I remember 
+rightly", she began, "all this used to be lawn. I suppose a 
+lot of people have passed on since then". 
+%I wasn't listening, but nodded anyway] 
+; 
+[5150:wandered around the tombstones, humming softly to herself. 
+"It feels so good to be free", she said to me, "There must be 
+something I can do to help you in return." ] 
+; 
+; --- David Ridge "arrogant" racetrack --- 
+; 
+[5160:smirked arrogantly. "So you're the new one. Weedy little chap, 
+aren't you? I bet you don't even know how to move objects yet"] 
+; 
+[5161:showed off by levitating a mouse and letting it drop 
+to the ground] ; followed by 5131 if Joe there 
+; 
+[5162:% %Joe frowned at David's display and said to me, "Go on, 
+Alan, show him what you can do. Maybe he'll help you if you can 
+impress him"] 
+; 
+[5163:waved his hands about and worked up a strong breeze which 
+blew fallen leaves into my face. He stood back and laughed 
+pretentiously] 
+; 
+[5164:looked down his nose at me. "I bet you wish you had my powers", 
+he boasted, leaning pompously against his sarcophagus] 
+; 
+[5165:spread his hands and said, "Well, it's your turn to show me 
+what you can do. I might even help you if I'm impressed"] 
+; 
+; --- David Ridge "obedient" racetrack --- 
+; 
+[5168:said, "I'm busy practicing my powers, but I might help you 
+if you ask nicely"] 
+; 
+; GROUP message for David showing off etc. 
+[5170:conjuring up a breeze] 
+[5171:posed majestically and began flexing his physic muscles] 
+[5172:levitated a few feet above the ground and looked down at me] 
+[5173:laughed condescendingly and said, "You'll never be as good 
+a ghost as I am"] 
+[5174:folded his arms] 
+; 
+; --- additional David Ridge stuff --- 
+; 
+[5175:swirled a whirlwind of dust around me]  
+;  
+[5176:concentrated his powers on me and I helplessly floated 
+a few feet above the ground] 
+; 
+[5177:held his hand out and prompted me to shake it. But as soon as I 
+touched him, I was thrown back as if I'd had an electric shock. 
+"You really are pathetic, aren't you?", he sneered] 
+; 
+[5178:picked a fir cone off the ground and threw it into the air, 
+where it exploded into a shimmering cascade of stars. "Now that's 
+what I call impressive", sighed David, preening himself] 
+; 
+[5179:used his powers to plague me with moths] 
+; 
+; --- Colonel follows vandals --- 
+; 
+[5180:frowned at a distant noise. "Do you hear that?", he barked 
+in a stage-whisper, "Those young scoundrels are at it again. I'd 
+best be off to keep an eye on things"] 
+; 
+; --- Colonel "obedient" racetrack --- 
+; 
+[5185:greeted me with a salute and said, "Good show, old chap. 
+That light soon scared those blighters away"] 
+; 
+[5186:said, "Let me know if you need me for anything. I'll be 
+about the place in case any more of those young ne'er-do-wells 
+show their faces"] 
+; 
+[5187:peered behind a headstone. "Hmmph, no vandals hiding in here", 
+he concluded, "Now, where else they could be"] 
+; 
+[5188:% %David nodded towards the Colonel, then cast his eyes 
+upwards. "Silly old fool", he muttered] 
+; 
+[5189:rummaged through a pile of leaves to see if any vandals 
+were hiding there] ; followed by 5190 if Joe there 
+; 
+[5190:% %Joe watched the Colonel and smiled at me. "You don't 
+have to be mad to live here", he said, "but it helps pass the time]
+; 
+[5191:poked a stick vigorously into the branches, to flush out 
+any hooligans that might be hiding in there] 
+; followed by 5192 if Joe there 
+; 
+[5192:% %Joe shook his head ruefully at the Colonel's antics. 
+"He was just about as bad when he was alive", he mused] 
+; 
+[5193:squinted behind a sarcophagus, looking for vandals] 
+; 
+[5194:% %Edith gave the Colonel a peculiar look. "And people 
+used to say that I was touched", she commented] 
+; 
+[5195:complained about the state of today's youth. "I wish that I 
+could have brought my shotgun to the afterlife with me", he 
+grumbled, "I'd pepper their backsides for them!"] 
+; 
+; --- vandals loiter around, drinking and joking etc. --- 
+; 
+[5200:sat around the cenotaph, sharing a bottle of vodka and telling 
+jokes. One of them climbed up the stonework and then began to act like 
+a monkey. 
+% %He grew suddenly serious and stared down to where I stood. I 
+found myself fading away beneath his gaze. He blinked drunkenly 
+and went back to his cavorting] 
+; 
+[5201:% %"Look at those young louts!", said the Colonel in disgust, 
+"I knew many a good man who gave his live for this country and this 
+is the thanks they get from today's youth"] 
+; 
+[5202:sat on the sepulchre and started smoking. One began to choke 
+over his fag, and his friend laughed, "Oi you! Give over coffin!"] 
+; 
+[5203:% %David was angered by the vandals, and he began to rock the 
+urn to scare them away] 
+; 
+[5204:stomped through the leaves, swigging their vodka. One climbed 
+up the tree and shouted, "Hey! The view's dead good from up here!" 
+%"Yeh", agreed his mate, "I always wanted a tomb with a view."
+%"Aww", groaned a third, "Where do you keep digging them up." 
+%"Look!", cried the first one, "A ghost!". He stared hard at me and 
+I began to fade, until I became totally invisible. 
+%"'Ere, how much have you had?", sneered his friend. "I can't see no
+ghosts". 
+%They both looked away and I slowly began to recover] 
+; 
+[5205:% %the Colonel fumed with anger and concentrated on making 
+himself visible to scare the vandals away. He managed a full 
+apparition, but could only hold it for a few seconds and the 
+vandals were too drunk to notice] 
+; 
+[5206:stubbed their cigarettes out on Violet's grave and relieved 
+themselves on the bushes] 
+; 
+[5207:% %Violet began to shiver in the presence of the vandals. 
+"Oh, I do wish they'd go away", she quavered. "Young tearaways 
+like that scare me to death"] 
+; 
+[5208:kicked the tombstones, knocking some clean over. One of 
+the louts brought out a spray can and signed several of the stones] 
+; 
+[5209:% %the Colonel scrubbed the tombstones furiously with his 
+hand, trying to remove the paint, but it was a waste of time. 
+"We should have a night watchman in this cemetery", he seethed] 
+; 
+; --- dog before fishbone removed --- 
+; 
+[5210:seemed to notice me and began to shiver a little. It opened its 
+mouth to bark, but only managed a dry choking noise] 
+; 
+[5211:ran in circles, choking harshly] ; followed by 5212 if Joe there 
+; 
+[5212:% %"Come here, doggy", said Joe in a soft voice. But the 
+dog just growled] 
+; 
+[5213:coughed hoarsely, trying to clear its throat] 
+; 
+[5214:chewed some grass, then pawed its mouth in frustration] 
+; 
+[5215:opened its mouth wide and made dry gagging noises] 
+; 
+[5216:wandered around with its tail between its legs, looking sorry 
+for itself] 
+; 
+[5217:sat down outside shed door, coughing hoarsely] 
+; 
+[5218:rubbed its neck in the gravel as if trying to dislodge 
+something in its throat] ; followed by 5219 if Joe there 
+; 
+[5219:% %"If I'm not mistaken", said Joe, looking thoughtfully at 
+the dog, "it's got something stuck in its throat"] 
+; 
+; --- dog "friendly" racetrack --- 
+; 
+; GROUP message for dog being friendly 
+[5220:greeted me with a wag of its tail] 
+[5221:panted in excitement] 
+[5222:sniffed my leg curiously and made a puzzled noise] 
+[5223:shook itself noisily and gave a happy yap] 
+[5224:sat down on the floor and wagged its tail happily] 
+; 
+; --- Violet Conway is afraid to leave her grave, since she is blind --- 
+; 
+[5230:leaned against her headstone, sorrowfully. "Oh, I wish I'd 
+been healthier before my death", she sighed, "It's terrible having 
+to spend my afterlife without eyes"] 
+; followed by 5231 if Joe there 
+; 
+[5231:% %"But Violet, you know that you can see perfectly well. And 
+anyway, surely you could find your way by sound", suggested Joe] ; Joe 
+; 
+[5232:said thoughtfully, "I suppose my hearing could get me about 
+a bit, but I'm so afraid that I might not find my way back to my 
+grave before dawn". 
+%"I could do with something noisy beside it so that I don't get 
+lost", she added] ; followed by 5233 if Joe there 
+; 
+[5233:% %"I wish we could help you, Violet" said Joe, "If only we had 
+some kind of siren or something"] 
+; 
+[5234:said, "That bush beside my grave makes some noise in the 
+breeze, but it's so quiet that I can't hear it from a few yards away"] 
+; 
+[5235:pleaded, "Oh, I wish you could help me. It would be so 
+nice to wander through the cemetery by myself rather than having 
+to stay here all night"] 
+; 
+; --- Violet "obedient" racetrack --- 
+; 
+[5240:listened attentively to the sound of the bell ringing. 
+"That's so reassuring", she said, "I feel safe enough to wander 
+though the cemetery by myself, at last"] 
+; 
+[5241:drifted happily through the marigolds. "What pretty 
+flowers", she murmured. "This is a rare treat"] 
+; followed by 5242 if Joe there 
+; 
+[5242:% %Joe picked one of the flowers and gave it to Violet. "How 
+delightful", she smiled, "I do love marigolds"] 
+; 
+[5243:talked for a while with the Colonel, telling him how nice it was 
+to be able to get around by herself] 
+; 
+[5244:floated through the fallen leaves, listening to them rustling in 
+the breeze. "Oh, how I love Autumn", she sighed] 
+; followed by 5245 if Joe there 
+; 
+[5245:% %"You'll not have been to my grave yet", said Joe to 
+Violet. "It's one of the new ones over there". He took her hand 
+and pointed it towards his grave. "Why not have a walk over", 
+he suggested to her] 
+; 
+[5246:ran her fingers slowly over Joe's headstone, reading the 
+inscription] 
+; 
+[5247:finished reading Joe's headstone and said, "How sweet. You 
+must have had many friends before your death, Joe"] 
+; 
+[5248:thanked me for my help, saying, "This bell really works. It 
+was no trouble finding my way back here"] 
+; 
+[5249:ran her fingers slowly over the inscription on the cenotaph, 
+gradually forming each word with her lips] 
+; followed by 5250 if Joe there 
+; 
+[5250:% %Joe helped Violet by placing her hand carefully on each word 
+of the inscription. 
+%"Everyone's being so kind to me tonight", said Violet, "It's been much 
+nicer than staying by my grave all the time"] 
+; 
+; ================================= END ============================== 

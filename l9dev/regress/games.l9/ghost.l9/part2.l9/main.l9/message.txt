@@ -1,0 +1,2254 @@
+; Scapeghost part II text. 
+; Copyright (C) 1989 Level 9 Computing. 
+; 
+; ST version of MESSAGE.TXT: messages/keywords for the game. 
+; 
+; Messages are of the form: [ number : text ] ; comment 
+; They must be in numeric order, but gaps are allowed in the number 
+; sequence, of course. 
+; 
+; | (vertical bar) terminates the printable part of a message. It 
+;   is typed by shifting backslash (to the left of the keyboard). 
+; / forces the following character to be printed literally. 
+; % is carriage return. Note that carriage return is ignored if 
+;   the printing is already at the start of a line, to make coding 
+;   simpler. To force a real carriage return, print space first. 
+; ^ (shift 6) marks a word for recognition by the parser. It is 
+;   followed by a letter for word type: 
+;   Adjective; Comment; conJunction; Noun; Preposition; Verb. 
+; 
+; Capitalization is done automatically on output and you are 
+; recommended to use lower case for the first letter of messages 
+; as this improves compression and will make no difference on 
+; output, providing all punctuation is correct. 
+; 
+; Please ensure that all long room descriptions and first-time 
+; messages are there. Comment blank msgs..  ;; [1375:] ; etc.. 
+; Please comment all long room descriptions, first-time messages, 
+; examine messages etc so we know what they refer to. e.g: 
+; [1115:, which was very greasy] ; in the kitchen. 
+; Exits must be clear from room descriptions or first-time msgs. 
+
+;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+;>> NB: Grouped messages which lie in unusual areas (e.g. 2500-2799) >> 
+;>> are marked with GROUP.                                           >> 
+;>>                                                                  >> 
+;>> For future games, SEARCH for "I " (case specific) "Scapeghost"   >> 
+;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
+; 
+; punctuation messages.. 
+[1: ] 
+[2::] 
+[3:, ] 
+[4:.] ; dot with no space 
+[5:%] 
+[6:and ] 
+[7:.%] 
+[8:?%] 
+[9:. ] 
+; 
+; positions etc.. 
+[10:exits led ] 
+[11:an exit led ] 
+[12: through a door] 
+[13: through an open door] 
+[14: and ] 
+;; [15:] 
+[16:%> ] 
+[17:%What now? ] 
+[18:: ]; 
+[19:"] 
+; 
+; Messages for printing objects.. 
+[20:a ] 
+[21:the ] 
+[22:an ] 
+[23:some ] 
+[24:." ] ; dot quote 
+[25:% %] ; blank line 
+[26:worn] ; for 'couldn't have worn' 
+[27:taken] ; for 'couldn't have taken' 
+; 
+; exits directions, doubling as movement verbs.. 
+[51:^V north|^V n ^V northwards] 
+[52:^V northeast|^V ne] 
+[53:^V east|^V e ^V eastwards] 
+[54:^V south|^V s ^V southwards] 
+[55:^V southeast|^V se] 
+[56:^V southwest|^V sw] 
+[57:^V west|^V w ^V westwards] 
+[58:^V northwest|^V nw] 
+[59:^V upwards|^V u ^V up] 
+[60:^V downwards|^V d ^V down] 
+[61:^V inside|^V in ^V inwards ^V into ^V enter] 
+[62:^V outside|^V out ^V leave] 
+[63:^V cross|^V across ^V over] 
+[64:with the ^V climb|^V scramble ^V ascend ^V mount] 
+; is in 'you struggle with the climb and are in' 
+; 
+; Intransitive verbs.. 
+[70:^V i] 
+[71:^V again|^V a] 
+[72:^V look|^V l ^V display ^V redisplay ^V refresh] 
+[73:^V inventory|^V inv ^V possessions ^V possess ^V list] 
+[74:^V quit ^V RESTART] 
+[75:^V RESTORE ^V LOAD] 
+[76:^V save] ; 
+[77:^V RAMSAVE ^V RAM] ; && 
+[78:^V ramload] ; && 
+[79:^V score ^V status] 
+[80:^V verbose] 
+[81:^V brief] 
+[82:^V wait|^V wa ^V pause ^V z] 
+[83:^V ring|^V play ^V blow ^V sound] 
+[84:^V on] 
+[85:^V off] ; >> 
+[86:^V pictures ^V graphics] ; && 
+[87:^V words ^V text] ; && 
+; 
+[89:^V UNDO ^V OOPS] 
+[90:^V hit|^V attack ^V hit ^V break ^V kick ^V punch 
+^V smash ^V kill] 
+; 
+[92:^V searched|^V search ^V explore] 
+[93:^V dug|^V dig] 
+[94:^V sniffed|^V sniff ^V smell] 
+[95:^V knocked|^V knock] 
+[96:got|^V stood ^V stand ^V jump] ; output e.g. "L got out", "L got in" etc. 
+[97:^V lay|^V lie] 
+[98:^V got|^V sat ^V sit] 
+[99:^V hid|^V hide] 
+[100:^V said|^V say ^V whisper ^V call ^V talk] 
+;; [101:^V teleported|^V teleport] 
+;; [102:^V getme] 
+[103:^V filled|^V fill]
+[104:^V ran|^V run ^V fly] 
+[105:^V made|^V make] 
+; 
+[107:I couldn't ^V eat anything, being a ghost|^V bite ^V taste 
+^V nibble ^V lick] ;== Scapeghost ==
+[108:^V went|^V go ^V goto ^V find ^V walk ^V fly] 
+[109:stopped|^V stop ^V abort] 
+[110:I fancied a ^V drink, but didn't really have the stomach 
+for it..] 
+; 
+[112:^V exits ^V exit] 
+;===== 
+; special to Scapeghost.2 
+[113:^V concentrated|^V concentrate ^V meditate ^V recreate 
+^V reconstruct ^V summon ^V concentrating] ; latter ones used for e.g. STOP CONCENTRATING 
+[114:^V dialed|^V dial] ; used for broken telephone 
+;===== 
+; 
+; verbs for output.. 
+[130:^V had|^V have ] ; mainly for output 
+[131:^V had|^V has ] ; mainly for output 
+[132:^V was|^V am ] ; mainly for output 
+[133:^V were|^V are ] ; mainly for output 'you were' 
+[134:^V was|^V is ] ; mainly for output 'someone was' 
+[135:are] ; output only - present tense for 'tell me about' 
+[136:is] ; output only - present tense for 'tell me about' 
+;; 137 is 'GO IN' 
+;; 138 is 'GO OUT' 
+;; 139 is 'wait for person' 
+;; 140 is 'wait until time' 
+;; 141 is 'wait for (length of time)' 
+;; 142 is 'wait for single turn' 
+;; [143:^V fought|^V fight ^V kill]  ; >> Pete 13/9/89 
+[145:^V dodged|^V dodge] 
+; 
+; 146 and 147 have text for debugging output only - do not mark 
+[146:gdgo] ; 196 - gdgo 
+[147:gdrun] ; 197 - gdrun 
+;; [148:^V stuff] 
+; 
+; Transitive verbs.. 
+[150:^V examined|^V examine ^V read ^V x] 
+[151:^V cut|^V chop] 
+[152:^V woke|^V wake ^V rouse] 
+; 
+[154:^V got|^V get] 
+[155:^V took|^V take ^V carry ^V acquire ^V steal ^V picked ^V pick 
+^V pluck ^V catch ^V lift ^V hold ^V keep ^V grab] 
+[156:^V wore|^V wear] 
+[157:^V dropped|^V drop ^V discard] 
+[158:^V put|^V conceal 
+^V wrap ^V cover] ; ===== Scapeghost.2 cover bulb in foil ===== 
+[159:^V removed|^V remove ^V free ^V release] 
+[160:^V threw|^V throw ^V chuck ^V toss ^V hurl] 
+[161:^V gave|^V give ^V offer ^V show ^V offered ^V sell] 
+[162:^V asked|^V ask ^V question] 
+[163:^V followed|^V follow ^V chase] 
+[164:^V opened|^V open ^V unlock] 
+; 
+[168:^V pushed|^V tug ^V push ^V shove ^V rock ^V press 
+^V select ^V depress ^V poke ^V prod ^V pour ^V spill 
+^V touch ^V reach] ;===== Scapeghost.2 Reach through chimney/wall ===== 
+[169:^V fastened|^V fasten ^V tie ^V attach] 
+[170:^V unfastened|^V unfasten ^V untie] ; == Scapeghost.2 additions == 
+[171:^V pulled|^V pull ^V yank] 
+[172:^V froze|^V freeze ^V cool] ;===== Scapeghost.2 Freeze Water ===== 
+[173:^V ignited|^V light ^V spark ^V charge ^V heat] 
+; == Scapeghost.2 == 
+; 
+[176:^V inserted|^V insert] 
+; 
+; 186, 187 and 189 have text for debugging only 
+[186:return object] ; 186 is 'return object to initial' (for npcs) 
+[189:gdfind] ; 239 is gdfind 
+; 
+[190:^V closed|^V close ^V shut] 
+; 
+[192:told] ; "tell" removed by Pete. 13/9/89 
+; 
+[194:struggled] ; mainly for output 
+; 195 is 'steal all from' 
+; 
+[197:killed] ; output only 
+; 
+[210:reached] ; output only 
+[211:dragged] ; output only 
+[212:passed] ; output only 
+[213:flew] ; output only 
+[214:walked] ; output only 
+[215:caught] ; output only 
+[216:entered] ; output only, e.g 'Fred entered from the east'. Do not mark 
+; 
+; Echo verbs (250-299) which just print the message containing them.. 
+[250:OK, if you say not|^V no] 
+[251:right, so be it|^V yes] 
+[252:well, that's one way to keep the spirits up|^V leap ^V hop 
+^V skip ^V dance ^V celebrate] 
+[253:I found myself unable to say that word|^V plugh ^V xyzzy 
+^V sesame ^V plover ^V humakaat ^V satarh ^V ollabin ^V obis] 
+; magic words for amusing response 
+; 
+[255:if you want to talk to someone, follow their name with what 
+you want to say to them. For example JOE, HELLO|^V hello 
+^V welcome ^V hi ^V greetings ^V goodnight ^V afternoon] 
+[256:I heard nothing that I hadn't heard before|^V 
+listen ^V hear] 
+[257:send the coupon to Level 9 for a ^V hint|^V help] 
+; 
+[263:why not|^V y ^V why] 
+; 
+[267:calm down! Cursing's not going to solve anything|^V sod 
+^V motherfucker ^V crap ^V nipples ^V bloody ^V frigging 
+^V wanker ^V turd ^V piss ^V shit ^V twat ^V cunt ^V bollocks 
+^V jesus ^V christ ^V god ^V devil ^V tits ^V asshole 
+^V arsehole ^V cretin ^V conservatives ^V spastic ^V coon 
+^V wog ^V fucking ^V fucker ^V bastard ^V bugger ^V damn 
+^V sex ^V hell ^V bonk ^V pratt ^V rape ^V shag ^V fuck] 
+; lower case swear words 
+; 
+[273:what? Off already? Try CONTROL C, but don't forget to save 
+your position first|^V goodbye ^V bye] 
+[274:you're forgiven|^V sorry] 
+; 
+;; [277:] 
+; 
+[279:ghosts only ^V sleep but once, and then it's permanent] 
+[280:being a ghost, I couldn't ^V swim any more] 
+; 
+[283:hit] ; the object 'hit' target 
+; 
+[285:ghosts don't ^V drink]
+[286:that would achieve nothing|^V shake] 
+; 
+[288:do me a favour and don't mention that word|^V bury] 
+; 
+[290:I polished it until it gleamed|^V rub ^V clean ^V polish] 
+[291:you ^V fill a container by, e.g, "PUT THING IN CONTAINER"] 
+[292:please ^V empty a container by removing its contents in turn] 
+; 
+;; [294:I had nothing with which to ^V light anything. I was 
+;; a non-smoker, you see] ; == Removed for Scapeghost only ==
+; 
+[297:my lips would only pass straight through|^V kiss] 
+; 
+; -------------------------------------------------------------- 
+; 
+; Objects (300+N).. 
+; 
+; NPCs (1 onwards) 
+; People 
+[301:^N I|^N player ^N me ^N Alan ^N Chance] 
+[302:^N Joe ^N Danby|^N publican ^N landlord ^N bartender 
+^N ghostly ^N figure] 
+[303:^N Luke's ^N ghost|^N Luke ^N drug ^N dealer ^N crook 
+^N criminal ^N villain] 
+[304:^N firemen] 
+; 
+; ordinary objects (80 onwards) 
+; 
+; light objects in order... 
+[380:^A plastic ^N card|^N ID] 
+[381:^N piece of ^N paper|^N unburnt ^N charred] 
+[382:^N map] 
+[383:^N bookmark|^N envelope ^N postmark] 
+[384:^N briefcase|^N case ^N tag ^N label] 
+[385:^A clear ^N bulb|^N light ^N lightbulb] 
+[386:^A pearl ^N bulb|^N light ^N lightbulb] 
+[387:^N foil|^A aluminum ^A aluminum ^N tin ^N tinfoil] 
+[388:^N plug|^N extension ^N lead] 
+[389:^N socket|^N extension ^N lead] 
+; 
+; heavy objects... 
+[395:^N directory] 
+[396:^N dead ^N body|^N corpse ^N Luke ^N Lukes ^N Luke's] 
+; 
+[399:^N grandfather ^N clock] 
+[400:^N panel] 
+[401:^N panel] 
+[402:^N ice|^N ditch ^N water ^N ditchwater] 
+[403:^N branch|^N stick ^N twig] 
+[404:^N running ^N water|^N ditch ^N ditchwater] 
+[405:^N bottle of ^N whisky|^N booze] 
+[406:^N telephone|^N phone ^N receiver ^N handset] 
+; 
+; static objects (110 onwards) 
+[410:^N lid] 
+[411:^N water ^N tank] 
+[412:^N chimney ^N piece|^N breast] 
+[413:^N fireplace|^N fire] 
+[414:^A bricked-up ^N door|^N bricked ^N up ^N wall] 
+[415:^N ivy|^N wall] 
+[416:^N curtains] 
+[417:^N dispenser] 
+[418:^N mirror] 
+[419:^N alcove] 
+[420:^N lampholder] ; PETE: changed from SOCKET to LAMPHOLDER to 
+[421:^N lampholder] ; avoid confusion with extension SOCKET (this saves 
+; quite a chunk of code) 
+[422:^N large ^N switch] 
+[423:^N small ^N switch] 
+[424:^N fluorescent ^N tube|^N light] 
+[425:^N puddle of whisky|^N pool] 
+[426:^N broken ^N glass|^N bottle] 
+[427:^N ditch]
+; 
+; invisible objects (150 onwards) 
+; 
+[450:^N cloud of ^N whisky ^N vapour|^N fumes] 
+; 
+; headstones & graves are present in graveyard locations... 
+[451:^N headstone|^N head ^N stone ^N tombstone ^N gravestone] 
+[452:^N grave|^N mound] 
+; 
+; present in the three village green locations 
+[453:^N grass|^A village ^N green] 
+; 
+; present in the three garden locations 
+[454:^N garden|^N grass ^N plants ^N flowers ^N soil ^N weeds] 
+; 
+[455:^N pendulum] 
+[456:^A winding ^N track|^N gravel] 
+; 
+; omni present from in front and inside the house 
+[457:^N house|^N hideout ^N haunted] 
+; 
+[458:^N cobwebs] ; attic 
+[459:^N herbs] 
+; 
+; present in the three village green locations 
+[460:^N road] 
+; 
+[461:^N fire|^N flames ^N blaze ^N smoke] 
+; 
+; light sources that are present in many locations... 
+[475:^N light coming from the ^N headlights|^A passing ^N cars] 
+[476:^N hall ^N light] 
+[477:^N kitchen ^N light] 
+[478:^N landing ^N light] 
+; 
+; Brief location objects (479+N). 
+; 
+; These are used for seeing from a distance and for input, e.g for 
+; 'examine tower' and 'go castle'. (Note that 'go scenery' also works). 
+; They also provide a link between the grid of synthesized locations 
+; and the real, static locations used for rooms inside buildings etc. 
+; 
+[480:^N path] 
+; 
+; Cheat mode nouns 
+; 
+;; [530:^N Ingrid ^N Bottomlow] 
+;; [531:^N turnips] 
+; 
+; Collective nouns... 
+[534:^N everything ^N all ^N every] 
+[535:^N ingredients] ; collective noun - was 'treasure' 
+;; [536:^N weapons] ; collective noun 
+[537:^N people|^N everyone ^N everybody] ; collective noun 
+;; [538:^N clothes|^N armour] 
+; 
+; -------------------------------------------------------------- 
+; 
+; Omni-present objects.. 
+[539:^N door] ; normal door, for the benefit of PRINTACTORACTION. It 
+; is apparently never described by PRINTOBJECT (so?). 
+; 
+;===== 
+[540:^N hand|^N arm ^N fingers ^N wrist] ; push hand through object 
+;===== 
+; 
+[541:^N plants|^N weeds ^N flowers ^N daisy ^N bean ^N husk ^N grass 
+^N soil] 
+[542:^N be] 
+[543:^N room|^N ground ^N floor] ; used for output as well 
+[544:^N wall|^N walls] 
+[545:^N sky|^N sun ^N moon ^N air ^N stars] 
+; 
+; and finally, some miscellaneous nouns which are used miscellaneously. 
+[547:^N except ^N but] 
+[548:^N it|^N that ^N them ^N those ^N none ^N him ^N her] 
+[549:^N minute ^N minutes] 
+; 
+[551:^J then ^J next] 
+[552:^J therefore ^J so] 
+[553:^N I|^N you] ;you 
+; 
+; Pronouns... 
+[560:it] ; ita 
+[561:it] ; itan 
+[562:some] 
+[563:he] 
+[564:she] 
+[565:they] 
+[566:I] ; you ; "Scapeghost special" 
+[567:he] ; proper male 
+[568:she] ; proper female 
+; 
+[570:it] ; ita 
+[571:it] ; itan 
+[572:them] 
+[573:him] 
+[574:her] 
+[575:them] 
+[576:me] ; you ; "Scapeghost special" 
+[577:him] ; proper male 
+[578:her] ; proper female 
+; 
+; SEE ALSO 2430 - GRAHAM 
+; 
+; and some misc output messages 
+; plural endings, and other odd verb declension... 
+[579:~] ; print to avoid bug which can print a space after previous word 
+[580:s] 
+[581:es] 
+[582:is] ; used in examine 
+; 
+; Entry directions, in the form 'The animal enters from the 
+; outside'. (As opposed to 'The animal goes in' - the normal 
+; verb table.) Note that directions are reversed, so the offset 
+; into the table is the direction of the moving npc. 
+; 
+[585:from the south]      ; north  
+[586:from the southwest]  ; northeast  
+[587:from the west]       ; east   
+[588:from the north]      ; south  
+[589:from the northwest]  ; southeast  
+[590:from the northeast]  ; southwest   
+[591:from the east]       ; west  
+[592:from the southeast]  ; northwest  
+[593:from below]          ; above   
+[594:from above]          ; below  
+[595:from outside]        ; inside  
+[596:from inside]         ; outside   
+[597:from across the way] ; across  
+[598:by climbing]         ; climb  
+[599:with a jump]         ; jump  
+;  
+; -------------------------------------------------------------- 
+; 
+; Examine messages (600+N). NO full stops at end please. 
+; 
+; NPCs (1 onwards) 
+; People 
+[601:the ghost of Alan Chance, late of the CID. Robbed of my 
+life and good name, I was determined to clear myself so that 
+my spirit could rest in peace] 
+; Me 
+; 
+[602:the ghost of a local publican. The Pig and Whistle had 
+been a cheerful place when he had owned it. Fortunately, he 
+had brought his good cheer with him into the afterlife] ; Joe Danby 
+; 
+[603:the ghost of a criminal that I had killed. His eyes 
+glowed with a maniacal desire for revenge]; Luke's ghost 
+; 
+[604:an efficient, well-drilled team, totally intent on their 
+work of dousing the flames] 
+; Firemen in kitchen 
+; 
+; ordinary objects (80 onwards) 
+; 
+; light objects in order... 
+[680:my ^A police ^A identity card, which I'd buried just before 
+my death. It would be useful evidence in linking this place with 
+the drugs gang, if I could get it to the police] 
+; My ID card 
+; 
+[681:only burnt around the edges, and I could read what was on 
+it without any difficulty. From the ^N names and ^N numbers it 
+appeared that the gang had been keeping track of their gambling 
+debts to each other - they'd probably been playing on credit 
+against their expected haul from the drugs deal. All the gang were 
+there, in first name at least.
+% %Reading closer, I noticed that one of the two Johns on the list 
+was identified by the letter Q, presumably the initial of an  
+unusual surname. This evidence would help narrow down the police 
+search]; Paper 
+; 
+[682:a ^A crumpled ^N scrap which, when opened, 
+revealed a ^A hand-drawn ^N map. I realised that it showed 
+the gang's new hideout; presumably this was the isolated 
+farmhouse shown just outside an unnamed village] ; Map 
+; 
+[683:actually an ^A old ^N envelope. Although the address had been 
+obscured by a large black imprint reading, "BE PROPERLY ADDRESSED 
+- PLEASE USE THE POSTCODE", I could make out the postmark quite 
+easily. The envelope had been sent from a local village, possibly 
+the location of the gang's new hideout] 
+; Envelope 
+; 
+[684:a ^A Pierre ^A Cardigan ^N case. It was securely locked, 
+but felt empty so there was probably no point in opening it. 
+% %Attached to the handle was a label which revealed the 
+town where it was bought, possibly near the new hideout] 
+; Briefcase 
+; 
+[685:a clear 100 ^A watt ^N lightbulb with a ^A threaded 
+^N base]; clear bulb 
+; 
+[686:a 60 ^A watt ^A pearl ^A push-fit ^N lightbulb, of the 
+^N mushroom type] 
+; pearl bulb 
+; 
+[687:a ^A small ^N piece of ^A kitchen ^N foil that might be 
+used for baking a potato]; foil 
+; 
+[688:a ^A mains ^N plug on the end of a ^A long ^A extension 
+^N lead. There was a socket on the other end of the lead] 
+; plug 
+; 
+[689:a ^A mains ^N socket on the end of a ^A long ^A extension 
+^N lead. A plug was attached to the other end of the lead] 
+; socket 
+; 
+; heavy objects... 
+[695:just of the local area. It was the latest edition and only 
+three years out-of-date] 
+; directory 
+; 
+[696:a ^N corpse. I recognised the fatal wound caused when Luke 
+attacked me and his gun went off. Obviously the gang had hidden 
+his body to buy time]; Luke's body 
+; 
+[699:an ^A antique ^N grandfather ^N clock with a ^A solid 
+^A oak ^N case. It had been loving kept and highly polished at 
+one time, but its rich patina was now obscured by a ^N layer of 
+^A grimy ^N dust] 
+; clock 
+; 
+[700:a ^A hinged ^A wooden ^N cover over the ^A workings of the 
+clock. It was closed] 
+; closed panel 
+; 
+[701:open, revealing the ^A clock's ^A heavy ^A brass ^N pendulum] 
+; open panel 
+; 
+[702:cold and mud-stained. Frozen ^N strands of ^A yellowing ^N weeds 
+stuck out from the surface] 
+; ice in ditch 
+; 
+[703:a ^A large and ^A irregular ^N twig, still bearing a ^A few 
+^A tired ^N leaves] 
+; branch 
+; 
+[704:cold, dirty and wet. Even in mortal form I would have 
+kept clear of there. Now, I felt a strange revulsion as 
+I contemplated the moving liquid] 
+; water in ditch 
+; 
+[705:an unstoppered bottle of ^N Jack ^N Daniels. I could actually 
+see the ^N alcohol ^N fumes as they evaporated slowly through the 
+bottleneck. I was looking for proof that night, but not 70 
+proof fire-water] 
+; whisky 
+; 
+[706:an ^A old ^A black ^N model, covered in a ^A thick ^N layer 
+of ^N dust and ^A torn ^N cobwebs. Looking closer, I could see 
+my ^A smudged ^N fingerprints on the ^N handset] 
+; telephone 
+; 
+; static objects (110 onwards) 
+[710:a ^A thick ^A asbestos ^N sheet. One of its ^N corners had 
+broken off, leaving a ^N gap] 
+; water tank lid 
+; 
+[711:the ^A old ^A lead-soldered ^N tank that had once supplied 
+cold water to the house. It was a big one - about six foot long 
+I guessed] 
+; water tank 
+; 
+[712:a ^A solid ^N buttress than ran upwards from the ^N fireplace 
+to the ^N ceiling. Presumably there was a ^N chimney ^N shaft inside] 
+; chimney piece 
+; 
+[713:empty, except for a few ^N ashes that lay in the 
+^A iron ^N grate] 
+; do not mark anything in here as ^N paper 
+; fireplace 
+; 
+[714:a ^A disused ^N entrance that had been bricked up. I could feel 
+a ^N draught from outside, through the ^N cracks in the ^N plaster] 
+; bricked-up door 
+; 
+[715:a ^A thick ^N growth of ^A dark ^A green ^N leaves that 
+smothered the ^N wall of the house. ^N Clusters of ^A black 
+^N berries mottled the surface] 
+; ivy 
+; 
+[716:thinned with age, and tacky with smoke from years 
+of cooking] ; curtains 
+; 
+[717:fastened to the kitchen wall. 
+Looking at the ^N serrated ^N metal ^N blade along the 
+front edge, I remembered that I never did quite get the 
+hang of using dispensers while I was alive. I always ended 
+up with a torn triangle of aluminum that was never big 
+enough to do the job] 
+; foil dispenser 
+; 
+[718:screwed loosely to the wall. Although it was quite 
+clean, there was no sign of my reflection in the glass. I 
+spent some time looking for it - even the hint of an outline 
+would have been reassuring - but to no avail. All I could see 
+was the reflected room and the ^A faint ^N impression of a 
+^A rectangular ^N shape] ; mirror 
+; 
+[719:a ^A secret ^N hiding ^N place, where ^A several ^N bricks 
+had been removed from the wall behind the ^N mirror] 
+; alcove 
+; 
+[720:a ^A screw-in ^N lampholder set into an ^A ornamental ^N plastic 
+^N candelabra above the ^N doorway|^N lamp ^N holder] 
+; socket in hall 
+; 
+[721:a ^A push-in ^N lampholder, dangling low from the ceiling. It 
+hung naked at the end of a ^A dusty ^A two-ply ^N wire|^N lamp ^N holder] 
+; socket in kitchen 
+; 
+[722:a ^A large, ^A old-fashioned ^A brown ^N lump, controlling 
+both the ^A hall ^N light and the ^A fluorescent ^N tube on the 
+landing above] 
+; switch in hall 
+; 
+[723:smeared with ^N something ^N brown and ^N soft; hopefully 
+^A aging ^N ketchup] 
+; switch in kitchen 
+; 
+[724:a ^A circular ^A glass ^N hoop set in the ceiling above the 
+landing] 
+; fluorescent tube on landing 
+; 
+[725:very slowly oozing towards a ^N crack in the floor nearby. I 
+wondered whether the spirit would reach this ^N crevice and seep 
+away, or would it evaporate first?] 
+; puddle of whisky 
+; 
+[726:a ^N scatter of ^A broken ^A shards, glistening with ^N whisky] 
+; broken glass 
+;
+[727:a ^A stagnant and ^A slowly-trickling ^N stream]
+; ditch
+; 
+; invisible objects (150 onwards) 
+; 
+[750:a ^A volatile ^N cloud of ^A high-proof ^N spirits, so 
+thick I could almost feel it] 
+; whisky vapour 
+; 
+; headstones & graves are present in graveyard locations... 
+[751:standing proud or leaning forlornly, as time and vandals 
+had allowed, in the moonlit churchyard] 
+; headstones 
+; 
+[752:^A low ^N mounds, slowly subsiding with the passage of the years] 
+; graves 
+; 
+; present in the three village green locations 
+[753:the ^A well ^A tended ^N grass of the ^N village ^N green, 
+now cloaked in the mists of an Autumn night] 
+; grass 
+; 
+; present in the three garden locations 
+[754:the ^A unkempt ^A garden of the hideout. There was only one sort 
+of grass those boys were interested in, and it didn't grow here] 
+; 
+[755:a ^A long ^A brass ^N rod with a ^A heavy ^N cylinder at the 
+end. Pity there weren't any cogs numbered 1 to 9, I thought] 
+; pendulum in grandfather clock 
+; 
+[756:a ^A narrow ^N footpath that meandered up from the cemetery to 
+the old house] 
+; track 
+; 
+[757:a ^A grey ^N shell, rising out of a silent sea of mist that 
+washed slowly upwards from the sodden village green] 
+; house from garden AND inside it 
+; 
+[758:dustily festooning the rafters and hanging low into the room. 
+A ragged passageway had been ripped through them from the hatch to 
+the water tank] 
+; cobwebs in attic 
+; 
+; objects sources that are present in many locations... 
+[759:^N parsley, ^N sage, ^N rosemary and ^N thyme] ; herb garden 
+; 
+; present in the three village green locations... 
+[760:a narrow, winding road, little changed since the days 
+when carts clattered through on their way to market. Except that 
+nowadays people drove along it at Motorway speeds] 
+; 
+[761:a ^A fiery ^N cloud of ^A blazing ^A whisky ^N fumes] 
+; burning vapour 
+; 
+; light sources that are present in many locations... 
+[775:the bright light of ^A car ^N headlights] 
+[776:the brightness of the hall light] 
+[777:the light coming from the kitchen light] 
+[778:the clear glow from the fluorescent tube on the landing] 
+; 
+; Brief location objects (479+N). 
+; 
+; These are used for seeing from a distance and for input, e.g for 
+; 'examine tower' and 'go castle'. (Note that 'go scenery' also works). 
+; They also provide a link between the grid of synthesized locations 
+; and the real, static locations used for rooms inside buildings etc. 
+; 
+[780:a ^N track leading out of the ^N cemetery] 
+; path 
+; 
+; -------------------------------------------------------------- 
+; 
+; Short-Form room Descriptions (800+N). No full stops at end please. 
+; These are the brief mode descriptions; they are prefixed by 'you 
+; are' and, in verbose mode, messages 1100+N are appended. 
+; 
+; room 1 is used as exit modifier for synthesized rooms. 
+; rooms 2..20 are those with static connections; i.e. not on the 
+; synthesized grid. 
+; 
+; description order is: 
+; 'I was' '800++'   '1100++'  '.'  
+;          short     long 
+; 
+; Outdoors 
+; 
+[803:standing beside my own grave] 
+[804:by Joe Danby's ^N grave] 
+[805:among the ^A new ^N graves] 
+[806:by the ^N Willmot ^N Graves|^N Bert ^N Edna] 
+[807:on a ^A winding ^N track] 
+[808:on the south part of the ^N village ^N green] 
+[809:in the ^N middle of the ^N village ^N green] 
+[810:on the north ^N green|^N village] 
+[811:in the ^A front ^N garden] 
+[812:in the ^N herb ^N garden] 
+[813:on a ^A thick ^A grassy ^N lawn] 
+; 
+; Indoors 
+; 
+[814:in the ^N hall|^N hallway ^N house] 
+[815:in the ^N kitchen] 
+[816:in the ^N breakfast ^N room|^N dining] 
+[817:in the ^N lounge] 
+[818:on the ^N landing|^N stairs] 
+[819:in the ^N bathroom] 
+[820:in the ^N attic|^N loft] 
+; 
+; "echo locations..." 
+; 
+; Indoors 
+; 
+[825:in a dank corridor lined with a few wooden doors. None 
+of them were locked and I opened each in turn, only to find 
+empty bedrooms behind them all. I could see nothing here 
+that I could use as evidence, so I floated back to the landing] 
+; 
+; Outdoors 
+; 
+[830:in the overgrown part of the cemetery, now littered with 
+debris. I decided to return from whence I came] 
+; 
+[831:standing beside the remains of the copper beech, which 
+lay splintered on the muddy earth around me. "Another broken 
+copper", I thought, "I know how it feels". And I turned and 
+drifted back eastwards] 
+; 
+[832:standing beside the broken sundial which cast a jagged 
+shadow onto the debris to the north. A bright light shone from 
+the shed window to the south of the cemetery, forcing me to 
+return east into the shadows] 
+; 
+[833:on the ^A partly-cleared ^N rubble left by the collapse 
+of the ^N church ^N tower yesterday. A ^A mixed group of 
+^N sightseers and ^N workmen strolled around the ^N stones, 
+discussing the sudden storm that had caused the damage, and 
+occasionally stopping to listen in case anyone was trapped. 
+% %The ruins were lit from a portable generator, and the 
+bright light weakened me, so that I found myself drifting 
+back to my own grave] 
+; 
+; Grid rooms 
+; 
+[840:on a ^N path] 
+; 
+; -------------------------------------------------------------- 
+; 
+; Now verbose additions to brief location descriptions (1100+n). No 
+; full stops at end please. These are printed immediately after each 
+; short description (800+N), without any intervening punctuation. 
+; (You may start a message with either punctuation or just text.) 
+; 
+[1103:. Through the darkness, I could make out Joe Danby's 
+grave to the north, and to the west I saw the ^N ruins of 
+the ^N church ^N tower] 
+; standing beside my own grave 
+; 
+[1104:. It was strewn with ^A splintered ^N lengths of ^N wood, 
+^A rusting ^N bolts and ^A angle ^N irons, cast here when the 
+^A spotlit ^N tower collapsed] 
+; Joe Danby's grave 
+; 
+[1105:. A ^A small ^N path, its ^A overgrown ^N surface almost 
+indistinguishable from the surrounding land, lead east 
+through a ^N gap in the ^N wall] 
+; among the new graves 
+; 
+[1106: in the northeast ^N corner of the ^N cemetery] 
+; Willmot Graves 
+; 
+[1107: leading north from the ^A cemetery towards the old village. 
+% %^A Dank ^N clouds of ^N mist hovered low over the green to the 
+north, lit occasionally by ^A long ^A sweeping ^A beams from the 
+headlights of passing cars]; on a winding track 
+; 
+[1108:. The ^N grass was wet beneath my feet, sodden with 
+yesternight's rain] 
+; on the south part of the village green 
+; 
+[1109:. The area around me had been churned into a sea of 
+^N mud and deeply marked by ^A studded ^N footprints. Just 
+beyond, the ^A centre ^N line of the ^N football ^N pitch 
+reappeared on a ^A small ^N patch of ^A clear ^N grass|^N goalposts] 
+; in the middle of the village green 
+; 
+[1110:] ; on the north green 
+; 
+[1111: which must once have been well tended but was now 
+overrun with ^N weeds and long grass] 
+; in the front garden  
+; 
+[1112:, ruined by long neglect - its plants all strangled by 
+dead nettles] 
+; in the herb garden 
+; 
+[1113:. A tangled growth of ivy covered the ^A cracking ^N wall 
+of the ^N house before me, reaching high to tug at the ^N gutters 
+and pry beneath the ^A roof ^N tiles] 
+; on a thick grassy lawn 
+; 
+; Indoors 
+; 
+[1114: which was cold and bare and unwelcoming] 
+; in the hall 
+; 
+[1115:. ^A Curling ^N flakes of ^A old ^N paint and 
+^A dusty ^N chunks of ^A crumbling ^N plaster had collected 
+around the ^N skirting ^N boards, leaving the ^A yellowing 
+^N walls mottled and peeling like dead skin] 
+; in the kitchen 
+; 
+[1116: to the north of the kitchen. The ^A bare ^A wooden 
+floor was littered with the ^A drying ^N remains of ^A hasty 
+^N meals] 
+; in the breakfast room 
+; 
+[1117:. ^A Dark-stained ^N bookcases covered one wall, but 
+carried nothing but ^N dust and the ^A pale ^N stains from 
+careless cups. Apart from that, the place was bare of 
+furniture] 
+; in the lounge 
+; 
+[1118:, overlooking a ^A narrow ^N staircase. A door lead 
+into the bathroom, and a ^A small ^N hatch above led into 
+the attic] 
+; on the landing 
+; 
+[1119:] ; in the bathroom 
+; 
+[1120:. ^A Dusty ^N cobwebs dangled down and passed through me] 
+; in the attic 
+; 
+; Grid rooms 
+; 
+[1140: which twisted into the foggy distance to the north] 
+; on a path 
+; 
+; -------------------------------------------------------------- 
+; 
+; 1350+n are messages printed on first entering each room 
+; (VisitTable) 
+; 
+[1353:% %the earth around my grave was slushy and wet after 
+yesterday's storm. Fallen leaves lay soaking in the murky 
+puddles nearby, and uprooted plants littered the ground. ] 
+; standing beside my own grave 
+; 
+[1354:% %I had little doubt that Joe's old friends would be busy 
+this weekend, tidying up his resting place. ] 
+; Joe Danby's grave 
+; 
+[1355:% %the path seemed to turn beyond the wall and head north. 
+The village green lay there, and beyond it the chimneys of an 
+old house stood out against the skyline. It looked strangely 
+familiar. ] 
+; among the new graves 
+; 
+[1356:% %there were no signs of the ^N Willmots tonight. I 
+didn't think it likely that they had decided to have a 
+quiet lie-in together. More probably, they had been 
+quarrelling again and were now both sulking. ] ; Willmot Graves 
+; 
+[1357:%no one much lived hereabouts nowadays. Most of the old 
+houses had long since been abandoned, as people moved down to 
+the burgeoning town to the south. ] 
+; on a winding track 
+; 
+[1358:] ; on the south part of the village green 
+; 
+[1359:] ; in the middle of the village green 
+; 
+[1360:% %as the mist thinned out, I could clearly see an 
+old house at the end of a tangled garden to the north. No 
+lamps were lit there, no smoke drifted from its chimneys 
+and no sounds escaped its dark walls. Yet there was a 
+strong sense that it was occupied, and I felt uneasy. ] 
+; on the north green 
+; 
+; Note for \Pete & Mac: The first time messages for rooms which are 
+; associated with VISIONS are only printed if the player is NOT 
+; concentrating, since they become very confusing otherwise. 
+; This concerns message numbers 1361 to 1370 - Graham 
+; 
+[1361:I realised with shock that I had been here before. Though 
+this place was now deserted, it had been the gang's old hideout. 
+% %As I approached the house, I seemed to see the images of 
+many figures, spinning in a frenzy, blurring into darkening mist. ] 
+; in the front garden 
+; 
+[1362:I recoiled involuntarily from the sound of the ^N ripples. ] 
+; in the herb garden 
+; 
+[1363:%an ^N owl came upon me in a white rush, sweeping down 
+through me, talons outstretched, to pluck a cowering ^A field 
+^N mouse from the ^N lawn behind me. I heard a thin small cry 
+of pain before the sound was overwhelmed by the urgent beat of 
+powerful wings. And the silence that followed was even deeper 
+than it had been before. ] 
+; on a thick grassy lawn 
+; 
+; Indoors 
+; 
+[1364:% %a ^A distressing ^N presence hit me as I entered the 
+hall; a sudden sense of past violence. And there was a painful 
+familiarity to it, as if that violence had concerned me. ] 
+; in the hall 
+; 
+[1365:a ^A lone ^N cockroach scuttled off as I entered and 
+disappeared through a ^N hole in the ^A cracked ^N lino. ] 
+; in the kitchen 
+; 
+[1366:] ; in the breakfast room 
+; 
+[1367:the room's sparseness was offset by a ^A fine ^A old 
+^N fireplace with a ^A carved ^N mantle and ^A tiled ^N surround. 
+I wondered idly how long it would be before some enterprising 
+cowboy ripped it out to sell in London. ] 
+; in the lounge 
+; 
+[1368:% %^A ghostly ^N footsteps trod clumsily behind me, as if two 
+figures were carrying something heavy up the stairs. But this was 
+only another echo of the past. ] 
+; on the landing 
+; 
+;; [1369:] ; in the bathroom 
+; 
+[1370:% %the still air seemed to shimmer. ] 
+; in the attic 
+; 
+; Grid rooms 
+; 
+[1390:% %^A twin ^N beams of light briefly pierced the ^N gloom 
+far to the north. ] 
+; on a path 
+; 
+; -------------------------------------------------------------- 
+; 
+; Message pairs for use in describing containment positions 
+; also used for preposition table 
+; 
+; part printed before container 
+; 
+[1600:I could see]                     ; 0 - I could see
+[1601:^P on |^P onto]                  ; 1 - on
+[1602:^P underneath|^P below ^P under] ; 2 - under  
+[1603:^P behind]                       ; 3 - behind  
+[1604:]                                ; 4 - carrying   
+[1605:]                                ; 5 - wearing  
+[1606:^P at]                           ; 6 - (throw at mirror) ==Scapeghost==
+[1607:^P in |^P into ^P inside]        ; 7 - in   
+;; [1608:hanging from]                 ; 8 - hanging from
+;; [1609:growing from ]                ; 9 - growing from
+;; [1610:^P between]                   ;10 - tied between is tied a rope
+;; [1611:]                             ;11 - the carter was pushing a cart
+;; [1612:lying on]                     ;12 - lying on
+;; [1613:sitting on]                   ;13 - sitting on
+[1614:frozen to]                       ;14 - (fastened to) ==Scapeghost== 
+[1616:^P with|^P using] 
+[1617:^P from]  
+
+; part printed between container and contained.  
+;   
+[1640:]                                ; 0 - I could see
+[1641:was]                             ; 1 - on  
+[1642:was]                             ; 2 - under   
+[1643:was]                             ; 3 - behind  
+[1644:was carrying]                    ; 4 - carrying
+[1645:was wearing]                     ; 5 - wearing
+;; [1646:was blocked by]               ; 6 - is blocked by  
+[1647:was]                             ; 7 - in  
+;; [1648:was]                          ; 8 - hanging from
+;; [1649:was]                          ; 9 - growing from
+;; [1650:was tied]                     ;10 - tied between
+;; [1651:was driving]                  ;11 - the carter was pushing a cart   
+;; [1652:]                             ;12 - lying on
+;; [1653:]                             ;13 - sitting on
+[1654:was]                             ;14 - (fastened to) ==Scapeghost== 
+; 
+; for plural contents...   
+[1670:]                                ; 0 - I could see 
+[1671:were]                            ; 1 - on  
+[1672:were]                            ; 2 - under   
+[1673:were]                            ; 3 - behind  
+[1674:was carrying]                    ; 4 - carrying
+[1675:was wearing]                     ; 5 - wearing
+;; [1676:was blocked by]               ; 6 - is blocked by  
+[1677:were]                            ; 7 - in  
+;; [1678:were]                         ; 8 - hanging from
+;; [1679:were]                         ; 9 - growing from
+;; [1680:was tied]                     ;10 - tied between
+;; [1681:was driving]                  ;11 - the carter was pushing a cart   
+;; [1682:]                             ;12 - lying on
+;; [1683:]                             ;13 - sitting on
+[1684:was]                             ;14 - (fastened to) ==Scapeghost== 
+; 
+; (1700+N is part printed before 'you')
+;  
+; 1740+N is part printed between you and object(s)  
+[1740:]                                ; 0 - I could see
+[1741:was on]                          ; 1 - on   
+[1742:]                                ; 2 - under
+[1743:]                                ; 3 - behind
+[1744:owned]                           ; 4 - carried  
+[1745:was wearing]                     ; 5 - worn
+;; [1746:was riding]                   ; 6 - riding
+[1747:was in]                          ; 7 - in
+;; [1748:]                             ; 8 - hanging from
+;; [1749:]                             ; 9 - growing from
+;; [1750:]                             ;10 - tied between is tied a rope
+;; [1751:]                             ;11 - the carter was pushing a cart
+;; [1751:was driving]                  ;11 - pushing  
+;; [1752:was lying on]                 ;12 - lying on
+;; [1753:was sitting on]               ;13 - sitting on
+[1754:was frozen to]                   ;14 - (fastened to) ==Scapeghost== 
+;   	
+; for plural prepositions...  
+; 1770+N is part printed between you and object(s)  
+[1770:]                                ; 0 - I could see
+[1771:were on]                         ; 1 - on   
+[1772:]                                ; 2 - under
+[1773:]                                ; 3 - behind
+[1774:owned]                           ; 4 - carried
+[1775:were wearing]                    ; 5 - worn
+;; [1776:were riding]                  ; 6 - riding
+[1777:were in]                         ; 7 - in
+;; [1778:]                             ; 8 - hanging from
+;; [1779:]                             ; 9 - growing from
+;; [1780:]                             ;10 - tied between is tied a rope
+;; [1611:]                             ;11 - the carter was pushing a cart
+;; [1782:were lying on]                ;12 - lying on
+;; [1783:were sitting on]              ;13 - sitting on
+[1784:was frozen to]                   ;14 - (fastened to) ==Scapeghost== 
+; 
+[1800:^P off] 
+[1801:^P up] 
+[1802:^P down] 
+[1803:^P to] 
+[1804:^P out] 
+[1805:^P from the ] ; used for npc motion 
+[1806:^P for] 
+[1807:^P until] 
+[1808:^P debug] 
+[1809:^P through] 
+[1810:^P about] 
+; 
+; Parser messages.. 
+[2000:you don't need to use "] 
+[2001:" to finish the game] 
+; 
+[2003:I don't understand the word "] 
+[2004:" when used like that] 
+; 
+[2006:I was ] 
+[2007:in a ] ; as in 'You are in an alder forest 
+[2008:in an ] 
+[2009:exits led in all directions] 
+; 
+; general error message when parsing has broken down. 
+[2010:I don't understand what you mean] 
+[2011:I couldn't see] 
+[2012:I didn't have] 
+[2013:I already had] 
+[2014:(Perhaps I'm having a bad night, but I really haven't 
+the ghost of a notion as to what you are on about)]
+[2015:it's too far away] ; examine, take etc. scenery objects 
+[2016:I can't find a verb in that sentence] 
+[2017:it's not there] 
+[2018:there were too many nouns in that sentence] 
+[2019:I couldn't see that here] 
+[2020:I owned nothing at all. ] 
+[2021:it was dark. ] 
+[2022:I couldn't reach that from here] ; PLEASE LEAVE IN (although there 
+; are no "out of reach" restrictions, it is used as an error message 
+; when trying to access anything inside the tank when the lid is on)
+; 
+[2036:sorry, I don't fully understand that verb] 
+; ^ verb in keyword table but not in CALLVERB routine 
+[2037:there didn't seem to be anything suitable. ] 
+[2038:said "That was a rhetorical question"] 
+[2039:what a mouthful! ] 
+; 
+[2044:couldn't have ] ; as in 'I couldn't have hit that' 
+; 
+[2046:that] 
+[2047:here] 
+[2048:I couldn't find ] 
+; 
+[2053:it's not clear to what ] 
+[2054: is referring] 
+; 
+; error messages for NPC's 
+[2060:are you talking to yourself again? ] 
+[2061:I couldn't talk to several people at once] 
+; 
+; Standard Adventure output messages 
+; 
+[2100:I woke once again beside my own grave. Darkness had fallen 
+on my second night as a ghost and my powers had grown. I smiled 
+as I remembered how my deeds of yesternight had delayed the 
+gangsters, buying time tonight to locate their new hideout. 
+Now, with my heightened senses, I could detect an old house 
+north of the cemetery...] 
+; 
+; examining something greater than maxobject: (but not scenery) 
+; rare occurrence - mostly for omnipresent objects, numbers, spells 
+[2112:it looked exactly as I had expected. ] 
+; 
+[2114:I couldn't go that way] 
+[2115:through the door] 
+; 
+[2117:it's already open] 
+; 
+[2123:I couldn't put ] ; paired with 2124 
+[2124:there] 
+; 
+[2126:I would have to drop it first] 
+[2127:I would have to pick it up first] 
+[2128:%did you know that you can go quickly to a far off place? E.g 
+"RUN TO HALL" or "GOTO JOE". %] 
+; 
+; 2130 is used when player refers to scenery which is not nearby 
+[2130:I can't find a reference to "] 
+[2131:I was on it! ] 
+[2132:what? ] 
+[2133:where? ] 
+[2134:I was wearing ] 
+[2135:please try again, saying what with. ] 
+[2136:which one? ] 
+[2137:at what? ] 
+; 
+[2139:was full] 
+[2140:" here] 
+; 
+[2142:I couldn't wear ] 
+; 
+[2147:I was already wearing that] 
+[2148:I found that I didn't need to do that] 
+; 
+; Confirmation messages 
+; 
+[2152:worn] 
+[2153:OK] 
+; 
+[2155:time passed. ] 
+[2156:said] 
+; 
+[2158:I found that I would have to untie it first] 
+; 
+[2160:YES or NO please.%] 
+; 
+[2172:nobody wants it] 
+; 
+; Death, scoring, game control etc. 
+; 
+[2200:really restart? ] 
+[2202:really restore? ] 
+[2203:% %did I continue? ] 
+;;[2204:said, "Thank you"]  ; >> Pete 14/9/89 
+; 
+[2209:% %the adventure had come to an end. 
+%Please type RESTART, UNDO, RESTORE or RAM RESTORE: ] ; && 
+[2210:the room was badly damaged] ; attack/fireball room 
+[2211:the place was already smashed] 
+[2212:really! You're so destructive! ] 
+[2213:it looks as though the vandals have been at work here] 
+; 
+[2215:that's too long to wait] ; won't wait 
+[2216:you can wait for someone (e.g. WAIT FOR JOE), 
+for a certain length of time (e.g. WAIT FOR 25 MINUTES)] 
+; 
+; Score messages.. 
+[2240:%I had scored ] 
+[2241:% %the adventure had come to an end.%] 
+[2242: out of 600 and was ] 
+[2243:-] ; minus sign 
+; 
+; Ratings 
+[2249:a faded vision] ; -ve score 
+[2250:a vain spirit] 
+[2251:an incompetent ghost] 
+[2252:a harmless apparition] 
+[2253:an ordinary ghost] 
+[2254:a competent spirit] 
+[2255:progressing in the spirit world] 
+[2256:a strong presence] 
+[2257:a powerful phantasm] 
+[2258:a vivid phantom] 
+[2259:a dominant supernatural force] 
+[2260:a poltergeist] ; Used for score overflow 
+; 
+[2300:UNDO and RAM SAVE//RESTORE don't work in this version. ] ; && 
+[2301:%please insert save disk and press a key. %] ; && 
+[2302:%please insert game disk. %] ; && 
+; 
+[2308:I couldn't go back further than this. ] ; && 
+[2309:%(This version allows you to use RAM SAVE and RAM RESTORE to 
+save a position in memory, and UNDO to take back bad moves).%] ; && 
+[2310:I can't find that saved position in memory. Perhaps you've 
+restarted the game, since it was saved. ] ; && 
+; 
+[2311:% %I am about to start another part of the game. Do you 
+want to save my position first, just in case? ] ; && tape 
+[2312:that data was not saved from Scapeghost. ] 
+[2313:play the game tape to load part ] ; && tape 
+[2314:% %I am about to start another part of the game. Do you 
+want to go ahead? ] ; && tape 
+; 
+; 
+; misc jokey messages (slightly more complex than echo verbs).. 
+;;[2401:that would be a pretty stupid thing to do] ; attack me ; >> Pete 14/9/89 
+[2404:I could smell nothing] 
+[2405:I found nothing much of interest] 
+[2406:I didn't smell of anything, being a ghost] ; == altered for ghost ==
+[2407:I said hello] 
+[2416:to be, or not to be, that is the question] 
+[2417:knocked with a hollow sound] 
+; follow target is destroyed 
+[2420:I couldn't seem to find what I was looking for] 
+; 
+; Additional pronouns used when actor is referring to himself. 
+; This prevents: 
+; EXAMINE JOE 
+; Joe was... <last word is now joe> 
+; JOE, EXAMINE JOE 
+; Joe examined HE. 
+[2430:itself] ; ita 
+[2431:itself] ; itan 
+[2432:themselves] 
+[2433:himself] 
+[2434:herself] 
+[2435:themselves] 
+[2436:myself] ; <you> ; "Scapeghost special" 
+[2437:himself] ; proper male 
+[2438:herself] ; proper female 
+; 
+; used by vehicles 
+[2470:got out of the cart ] 
+[2471:drove the cart to the ] 
+[2472:drove the cart ] 
+; 
+; movement of animals GROUP 
+;; [2480:trotted] 
+;; [2481:ran] 
+;; [2482:darted] 
+;; [2483:wandered] 
+;; [2484:went] 
+; 
+; movement of people GROUP 
+[2490:walked] 
+[2491:trudged] 
+[2492:stomped] 
+[2493:wandered] 
+[2494:went] 
+; 
+; movement of ghosts GROUP 
+[2500:floated] 
+[2501:drifted] 
+[2502:hovered] 
+[2503:glided] 
+[2504:went] 
+; 
+; passing cars alongside village green (racetrack, not group). 
+[2510:% %the sound of an approaching car drifted across the village 
+green. ] ; followed by 2851 
+[2511:% %I could see in the misty distance, the pale headlights of an 
+car, coming down the road that ran beside the village green. ] 
+; followed by 2852
+[2512:% %as the approaching car turned on the winding road by 
+the green, suddenly, its headlights swung my way and caught 
+me dead centre in their brightness. ] 
+[2513:% %the dim red tail lights of a passing car faded away 
+into the distance. ] ; followed by 2853
+;; [2514:] ; interval between cars 
+; 
+; player loses concentration for various reasons 
+[2520:% %the disturbing presence of the many other ghosts in 
+the cemetery made it impossible for me to concentrate properly] 
+; followed by 2854
+[2521:% %for all I tried, I could pick up no sensation of 
+anything important having happened in this place. As I was 
+tiring and getting nowhere, I stopped concentrating] 
+[2522:% %I seemed to lose my concentration] 
+; 
+; ghost tries to lift a heavy object 
+[2528:would never be strong enough to carry such a dead weight] 
+; 
+; GROUP message when objects in vision are examined 
+[2530:I couldn't see more detail in the vision] 
+[2531:the vision was blurry, and I couldn't make out any more] 
+[2532:it was difficult to make things out in the vision] 
+[2533:I couldn't see the vision very clearly] 
+[2534:the vision was too blurred for me to see any more detail] 
+; 
+; Reach through ordinary walls. >> Pete 17/7/89 
+; 
+[2535:stuck a hand through the wall and waggled it about on the 
+other side, but found nothing of interest this time] 
+;
+; Chimney puzzle (operated by the player OR Joe, hence the 
+; messages are in pairs depending on whether the player is in 
+; the lounge or outside) 
+; 
+; Put hand through bricked up door 
+[2540:put a hand through the bricked up door, waved it about outside, 
+then withdrew it again] ; followed by 2855
+[2541:a ghostly hand emerged from behind the ivy, waved briefly and 
+disappeared again. This gave me a fix on the room, so that I knew 
+the position of the chimney within the wall] 
+; 
+; Put hand through ivy when location of chimney is known 
+[2542:put a hand through the wall behind the chimney and dislodged 
+the piece of paper from its resting place inside] 
+[2543:I saw a piece of paper flutter down from the chimney and 
+out into the fireplace] 
+; 
+; Put hand through ivy when location of chimney is unknown TO PLAYER 
+; (even though it may be known to Joe), OR when paper has already 
+; been dislodged 
+[2544:put a hand through the wall and waved it about before 
+pulling it back out again. I thought that I was probably reaching 
+into the lounge, but could not tell exactly where] ; followed by 2856
+[2545:a ghostly hand appeared through the bricked up door, then 
+disappeared again] 
+; 
+; Put hand through chimney before paper is dislodged 
+[2546:put a hand through the chimney piece and brushed against a 
+piece of unburnt paper. Annoyingly, the paper was just too far 
+out of reach to be dislodged, for the chimney was a big old one 
+that protruded a long way into the room] ; followed by 2857
+; 
+; Put hand through chimney after paper is dislodged 
+[2547:put a hand through the chimney piece and felt nothing 
+but soot and cobwebs] 
+; 
+; user puts hand through tank 
+[2548:my hand went a short way into the tank, far enough to 
+tell that there was water in it, but not far enough to be 
+tell if there was anything in the water. If I wanted a proper 
+look around, I would have to get inside the tank] ; followed by 2858
+; 
+; put hand through lid (followed by 2548 if actor is user, or by 2550 
+; if actor is not user) 
+[2549:pushed a hand against the lid and found it went straight 
+through it] 
+; 
+; npc puts hand through tank 
+[2550:reached a hand a short way into the side of the tank and 
+felt the water in it. "Yuk! It's nasty cold wet stuff. I 
+wouldn't fancy a bath in there", he said with a wry grin] 
+; 
+; User is startled by sudden shock of bright light 
+[2552:% %the sudden shock of the light hit me like a physical 
+blow. I felt myself begin to fade and everything returned to 
+darkness. When I next opened my eyes I found myself ] ; +room desc 
+; also used by spotlight 
+; actor is startled by light and sent back to grave. this message 
+; is printed if user is by their grave when they arrive 
+[2558:slowly materialised before me and complained groggily about 
+the effects of sudden bright lights] 
+; 
+; find identity card 
+[2560:found a small plastic card] 
+; dig in wrong place 
+[2561:reached half-heartedly into the ground, but managed to 
+find nothing] 
+; 
+; map puzzle 
+[2565:it was out of reach and the flowing water formed an 
+impassable barrier for a ghost] ; followed by 2860
+[2566:the map fluttered and fell back, clinging fast to the 
+branch] ; followed by 2860
+; 
+; Both user and Luke are startled 
+[2570:% %an echoing, ear-rending scream pierced the air] 
+; 
+; Luke is startled 
+[2571:% %Luke's ghost screamed painfully as the sudden shock of 
+the landing light cast him into limbo for the rest of the night] 
+; followed by 2861
+; 
+; Luke attacks npc and banished him from this night 
+[2580:screamed horribly as a murderous ghost appeared through 
+the wall and assailed him in a deadly fury. He barely managed 
+to break away from the attack and fled from the house, never 
+to return for the remainder of the night] 
+; 
+; Luke attacks user, but Joe has already been banished 
+[2581:suddenly I was attacked! 
+
+% %the ghost of Luke, the criminal who I had slain earlier, 
+threw himself upon me with overwhelming violence. Without 
+Joe there to help me, I felt myself fade to nothingness. I had 
+failed in my task] 
+; 
+; Luke attacks user, but Joe comes to the rescue 
+[2582:without warning, a terrible ghost threw himself upon me 
+with a staggering violence. It was Luke, the criminal I had 
+accidentally killed, and he was literally tearing me apart. 
+I felt myself fading rapidly, and I would soon have been 
+banished from the house if Joe hadn't arrived in the nick of 
+time to drag me free. 
+% %He pulled me free of my terrible assailant and dragged me down 
+the stairs and into the hall. "That was a fight worse than death", 
+gasped Joe, as I slowly began to recover..] 
+; 
+; GROUP message for USER when light is present 
+[2590:I felt uneasy about ] 
+[2591:I began to feel weak because of ] 
+[2592:my powers seemed to be absorbed by ] 
+[2593:I found that I couldn't stand being close to ] 
+[2594:a sudden feeling of distress was brought upon me by ] 
+; 
+; GROUP message for NPC when light is present 
+[2600:only complained about ] 
+[2601:wanted me to turn off ] 
+[2602:cringed weakly away from ] 
+[2603:turned away from ] 
+[2604:moaned about ] 
+; 
+; examine lights when not present 
+[2610:there were no bright lights here. ] 
+; not specified which lightbulb 
+[2623:please try again, this time saying which one] 
+; 
+; miscellaneous messages concerning lights in the house 
+[2630:the hall light was on] 
+[2631:the landing light was on] 
+[2632:the kitchen light was on] ; printed after room descriptions 
+; 
+[2640:it was switched off] 
+[2641:it was switched on] ; on examining switches 
+; 
+[2660:the hall light went off] 
+[2661:the hall light came on] 
+[2662:the landing light went off] 
+[2663:the landing light came on] 
+[2664:the kitchen light went off] 
+[2665:the kitchen light came on] ; on switching lights on and off 
+; 
+[2672:couldn't find the strength to push the stiff switch because 
+of ] ; can't push switch in hall while landing light is on 
+[2673:smashed to smithereens] ; on dropping a light bulb 
+[2674:the bulb was the wrong type and couldn't be fitted in that 
+sort of lampholder] ; can't swap bulbs 
+[2675:there was a loud crack as the main fuse in the house was 
+blown] ; Main fuse is blown. Followed by 2863 
+; 
+; removing bookmark from directory 
+[2680:a little more force seemed to be needed] 
+; Pull. Followed by 2864
+[2682:the telephone had been crudely ripped from the wall and 
+hurled to the ground. A frayed wire hung limply from the back, 
+its torn end brushing against the floor, and I knew that this 
+was one object that would never work again] ; dial etc. 
+; 
+; dead body in tank 
+[2690:I eased myself into the tank and then realised to my 
+horror that I was not alone there. Swaying eerily in the 
+discoloured water was the dead body of Luke, the crook I had 
+shot in the struggle before my death. 
+% %Startled by the gruesome sight, I scrambled to get out of 
+the tank, pushing aside the lid in my panic] ; followed by 2866
+[2691:went inside the tank and then suddenly scrambled back out 
+again, knocking the lid over in his rush to escape. He trembled 
+violently and his face had turned a translucent white. 
+%"Inside the tank", he stammered, "a dead body"..] 
+; 
+; extension lead 
+[2693:was fastened to something heavy, and ] 
+[2694:left ] 
+[2695:was dragged along the floor] 
+; 
+; clock is used to tow the body onto the landing 
+[2700:the clock was closed] 
+; Put object in clock when panel closed. Followed by 2867
+[2710:the clock had already been pushed over] ; clock pushed in hall 
+[2711:the clock toppled over and slid heavily down the stairs to the 
+hall] ; Push clock. Followed by 2868
+[2712:remained on the landing] 
+; Lead falls out of open clock. Followed by 2869
+[2713:was dragged along behind it] ; lead or body is dragged 
+; 
+; mirror puzzle 
+[2720:put a hand through the mirror and noticed that there was a 
+spacious gap behind it] ; followed by 2870
+[2721:didn't have any hard objects to hit the mirror with] 
+[2722:hit the mirror and smashed it to pieces, revealing a secret 
+alcove. Someone had stashed a briefcase in there] 
+[2723:hit the mirror and they both smashed to pieces. As the 
+shattered glass fell from its frame, it revealed a secret alcove 
+containing a briefcase] ; hit mirror with lightbulb 
+; 
+; starting a fire in the kitchen 
+[2730:pushed over the bottle, which smashed open on the floor. 
+The whisky spread in a widening pool and began to evaporate. 
+It wasn't long before the room was filled with its strong vapour] 
+; followed by 2872
+[2731:% %the air was thick with the sharp tang of whisky fumes] 
+; 
+[2735:it was on fire] ; examine burning vapour 
+[2736:they were burning fiercely] ; examine burning curtains 
+[2737:blew the curtains and the flames crept higher] ; already burning 
+[2738:blew the curtains. They flapped out into the room and fell 
+back again, settling back into their old creases] 
+; Blow curtains when no fire. Followed by 2876 
+[2739:blew the curtains into the flames where the crisp fabric 
+instantly caught fire] ; followed by 2877
+; 
+; progressive burning of curtains summons the fire brigade 
+; (these messages are in reverse order and are seen in all house locations) 
+[2740:the firemen finished putting out the blaze. They made a brief 
+search of the house to check that nobody was there and that all 
+was safe, then departed. ] 
+[2741:the house was filled with dense acrid smoke and the roar 
+of flames. Then the wailing sound of an approaching siren came 
+through above the noise of the fire. There was a screech of 
+brakes and a rush of heavy footsteps as a fire engine pulled up 
+outside and a group of firemen ran up to the house. They smashed 
+their way in through the front door and dashed into the kitchen, 
+shouting orders to the others outside. ] 
+[2742:thick smoke began to fill the house. ] ; followed by 2878
+; 
+; firemen have arrived. proceed with endgame depending on whether 
+; the body or any evidence have been left in the hall 
+; (these messages are bolted onto message 2741, and are seen in all 
+; house locations) 
+[2750:"Hey! There's a body in here", shouted one of the firemen from 
+the hall as he came across Luke's corpse. A few moments later, 
+another fireman came in with a stretcher. They loaded the body 
+with swift efficiency and carried it out of the house. ] 
+; Body here, but no evidence. Followed by 2879 
+; 
+[2751:"Someone radio for the police!", shouted a fireman in the hall. 
+"There's a dead man here and he wasn't killed by the fire. Don't 
+touch anything". ] ; followed by 2881
+; body and evidence here 
+; 
+[2752:"Who put all this junk in here?", shouted one of the 
+firemen from the hall as he kicked to one side all the evidence 
+I had collected so carefully. "If somebody's going to have a 
+fire, then you think they'd have the decency to tidy up first!". ] 
+; no body, but evidence is here. Followed by 2880 
+; 
+; win message is bolted onto message 2751 when all evidence is here 
+[2753:I was sure that Luke's body would stir the police into 
+action, and that when they looked at the evidence I had collected, 
+they would have sufficient clues to locate the drugs gang. I had 
+done my job. ] 
+; 
+; Joe's messages when evidence is discovered 
+[2760:"Aha!", exclaimed Joe, "Some evidence! Let's see what 
+else there is to find, before you summon the police"] 
+[2761:"More evidence", said Joe, "But I reckon that we'll have 
+to find even more if we're to find where the drugs gang might 
+have gone. And then we'll have to work out how to summon the 
+police"] 
+[2762:"You're doing well", enthused Joe]
+[2763:"It seems to me", began Joe, "that we've almost found enough 
+evidence to locate where the drugs gang are hiding. When we've 
+finished, I hope you can work out how to give it all to the police"] 
+[2764:"Well", said Joe contentedly, "I think we've collected enough 
+evidence for the police to locate the gang. Now we'd better try and 
+find some way to get it to them"] 
+; 
+; Joe gives a hint to concentrate outside the house 
+[2770:% %Joe looked around. "If I'm right", he said thoughtfully, 
+"a tragic event has left its mark on this place. Some people can 
+call up the past in visions; I get hints but no more. Perhaps you 
+could concentrate and summon the past a shade better than I can. As 
+like as not, it concerned you"] 
+; 
+; Joe doesn't want to start a fire (this also prevents endgame being 
+; executed if user is away from house) 
+[2771:said, "Don't do that! It'll set the whole house ablaze!"] 
+; 
+; late additions... 
+[2772:I found that I was now capable of passing through some solid 
+objects! With some difficulty, ] 
+[2773:try dropping it] 
+[2774:didn't have the strength to climb the stairs while the landing 
+light was on] 
+[2775:on it was a heavy lid with a small gap in one corner] 
+[2776:looking through it, I could see a vague shape in the water, but 
+I would have to get inside the tank if I wanted to see what it was] 
+[2777:couldn't reach the body from outside the tank] 
+[2778:the whisky wouldn't burn properly while it was in the bottle] 
+[2779:I would need a flame to light the curtains] 
+[2780:the vapour was already burning] 
+; 
+; progressive burning of vapour, in reverse order 
+[2785:the fire flickered and died, though the pool of whisky on 
+the floor continued to evaporate in the warmed air. ] 
+[2786:the fire began to die away as the vapour burned itself out. ] 
+[2787:the flames began to subside slowly. ] 
+[2788:the fumes burned steadily in a dancing sea of flame. ] 
+[2789:long tongues of flames roared up from the vapour and licked 
+angrily at the ceiling, leaving brown scorches on the old white 
+paint. ] 
+[2790:the whisky vapour flashed into a flickering blue-white fire. ] 
+; 
+; "Pet" messages... (table driven) 
+; some remarks made by the PET on various occurrences... 
+; 
+[2851:Joe urged me on, anxious to be clear of the open space. ] 
+; After 2510 (sound of car approaches) 
+; 
+[2852:Joe said, "Let's get walking. I don't want to get caught 
+by those headlights". ] 
+; After 2511 (car approaches in distance) 
+; 
+[2853:%Joe said, "The green looks safe enough to cross now. 
+I think we should pass over". ] 
+; 
+[2854:. Joe was sympathetic, "There are just too many ghosts 
+around here. It muddies the astral record. Now, if you were to 
+concentrate at the scene of a juicy murder"..] 
+; After 2520 (lose concentration in cemetery)
+; 
+[2855:. %Joe laughed, "I bet that hand looks right funny, 
+sticking out into the garden"] 
+; After 2540 (I put hand through closed door) 
+; 
+[2856:. %Joe scratched his head. "I wonder if there's any way that 
+I could help you know exactly where to reach through this here 
+wall?", he wondered aloud] 
+; After 2544 (in garden, put hand through wall) 
+; 
+[2857:. %Joe said, "Why don't we try reaching from another side?"] 
+; After 2546 (touched paper within chimney) 
+; 
+[2858:. %Joe said, "I wonder if there's anything inside?"] 
+; After 2548 (I couldn't reach contents of tank) 
+; 
+[2860:. %Joe said, "Brrr! I'm glad that spirits don't freeze. 
+It's a cold night tonight"] 
+; After 2565/2655 (can't get map from across water) 
+; 
+[2861:. %Joe smacked his hands together. "You got that spirit's 
+measure", he said with grim pleasure. "That unholy ghost won't 
+be back in a hurry"] 
+; After 2571 (light banishes Luke's ghost) 
+; 
+[2863:. %Joe smiled and said, "That's better. I couldn't stand 
+those blasted lights"] 
+; After 2675 (main fuse blown) 
+; 
+[2864:. %Joe said, "It will take more than one ghost to do that"] 
+; After 2680 (couldn't pull bookmark hard enough) 
+; 
+[2866:. %Joe looked at me and said, "What happened? You look like 
+you've seen a ghost"] 
+; After 2690 (I climbed into tank, saw body and leapt out)
+; 
+[2867:. %Joe grinned and said, "It might help if you opened 
+it first"] 
+; 
+[2868:. %"Timber!" shouted Joe, enjoying his night's work] 
+; After 2711 (clock pushed down stairs)
+; 
+[2869:. %"Oh dear", said Joe, shaking his head. "Maybe 
+you should have closed the clock first"] 
+; After 2712 (lead fell from clock and remained on landing) 
+; 
+[2870:. %Joe looked closely at the mirror. "I wonder what 
+that shadow is", he mused] 
+; After 2720 (felt gap behind mirror) 
+; 
+[2872:. %"Hey!", Joe, "What a terrible waste"] 
+; After 2730 (whisky spilled and evaporated) 
+; 
+[2873:%Joe wiped his brow. ] 
+; 
+[2874:%Joe backed away from the flames. ] 
+; 
+[2875:%"Are you trying to set this place on fire?", asked Joe. ] 
+; 
+[2876:. %"Oh, very nice", commented Joe] 
+; After 2738 (I blew and the curtains flapped) 
+; 
+[2877:. %Joe gaped at me, "I see you are determined to experience 
+death warmed up"] 
+; After 2739 (I set the curtains alight) 
+; 
+[2878:%"You'll have the fire brigade around", tutted Joe. ] 
+; After 2742 (smoke filled the house) 
+; 
+[2879:%"It's a pity you didn't leave some evidence for them to 
+collect", sighed Joe. ] ; After 2750 (firemen found and took body) 
+; 
+[2880:%Joe cursed with disappointment, "They didn't take any 
+notice of our evidence. We should have put something there, 
+next to it, to catch their attention". ] 
+; After 2752 (firemen ignored the evidence) 
+; 
+[2881:% %"I doubt that it will be much use to the police", added 
+Joe. "There wasn't quite enough evidence there to convict the gang 
+of anything". ] ; After 2751 (firemen summoned police) 
+; 
+; messages when people refuse an order. 2900+n 
+; Use ACTORM1Dot 
+; 
+;; [2902:] 
+; Joe is obedient 
+[2903:was roused to sudden anger by my request] 
+; Luke's ghost 
+[2911:looked straight through me] 
+; firemen 
+; 
+; comments made by people when they encounter player for the first time 
+; 3000+ 
+; 
+; don't be silly GROUP... 
+[3100:don't be silly] 
+[3101:well, that's new] 
+[3102:sorry, no can do] 
+[3103:that's a funny thing to want to do] 
+[3104:daft, I call it] 
+; 
+; nice try GROUP... 
+;;[3110:nice try, my ghostly friend]  ; >> Pete 14/9/89 
+;;[3111:a good bash at the answer. Shame it doesn't work]  ; >> Pete 14/9/89 
+;;[3112:not a ghost of a chance, chum]  ; >> Pete 14/9/89 
+;;[3113:good idea, but it didn't work]  ; >> Pete 14/9/89 
+;;[3114:a good try, but it doesn't work]  ; >> Pete 14/9/89 
+; 
+; just scenery GROUP... 
+[3120:you might as well leave it alone] 
+[3121:I suggest that you forget about it] 
+[3122:that's not important to the game] 
+[3123:forget it. It's only scenery] 
+[3124:pay it no heed] 
+; 
+; missing object... 
+[3130:now what was the object of that? Try again] 
+[3131:sorry, I couldn't find an object in that] 
+[3132:please be more specific] 
+[3133:there was no object in that command] 
+[3134:do it to what? You didn't say] 
+; 
+; Nothing happened GROUP... 
+[3140:nothing happened] 
+[3141:that didn't seem to work] 
+[3142:there was no effect on anything] 
+[3143:that was remarkably useless] 
+[3144:that did nothing at all, I'm afraid] 
+; 
+; the following are printed after the object name.. 
+; 
+[3150:wouldn't move] ; try to move static object GROUP 
+[3151:didn't budge] 
+[3152:refused to be moved] 
+[3153:seemed fixed in place] 
+[3154:was unmoved] 
+; 
+[3160:don't bother, it would do nothing] ; don't bother GROUP 
+[3161:that would be a waste of time] 
+[3162:that would be pointless] 
+[3163:that will get you nowhere] 
+[3164:don't expect any results from that] 
+; 
+; GROUP messages for hello responses 
+[3170:said, "Hello"] 
+[3171:said, "Greetings"] 
+[3172:smiled and nodded] 
+[3173:smiled back] 
+[3174:nodded politely] 
+; 
+; GROUP messages for npc's being unable to carry out an order 
+[3180:seemed puzzled] 
+[3181:shook a puzzled head] 
+[3182:looked distinctly confused] 
+[3183:didn't seem to understand what was wanted] 
+[3184:looked at me with a blank expression] 
+; 
+; GROUP messages for npc's being unable to carry out an order 
+[3190:had had problems with ] 
+[3191:looked troubled about ] 
+[3192:mentioned trouble with ] 
+[3193:obviously hadn't understood about ] 
+[3194:had been mystified about ] 
+; 
+; now, npc accepts an order GROUP 
+[3230:nodded in acknowledgement] 
+[3231:nodded slowly] 
+[3232:nodded obediently] 
+[3233:agreed] 
+[3234:nodded enthusiastically] 
+; 
+; now response to questions when not obedient GROUP... 
+[3250:refused to answer that] 
+[3251:remained silent as the grave] 
+[3252:pretended to ignore the question] 
+[3253:refused to give any help whatsoever] 
+[3254:looked back stubbornly] 
+; 
+; response to requests to give anything(s) to anyone GROUP 
+[3270:refused to part with anything] 
+[3271:refused to give it away] 
+[3272:didn't want to give anything away] 
+[3273:clutched it tightly] 
+[3274:stared back in silent refusal] 
+; 
+; npc wants to obey orders just given, but can't understand GROUP 
+[3290:looked puzzled] 
+[3291:did not understand] 
+[3292:shrugged in non-comprehension] 
+[3293:made a questioning noise] 
+[3294:didn't seem to understand] 
+; 
+; Goldsinging... 
+; 
+; NB: Goldsinging is now used less frequently, since racetrack 
+; messages are now used more extensively. 
+; 
+; Joe 
+[3300:made a quiet murmuring sound] 
+[3301:stared blankly at me] 
+[3302:gazed around as if preoccupied] 
+[3303:watched me curiously] 
+[3304:smiled pleasantly] 
+; 
+; Luke's ghost 
+[3310:laughed evilly] 
+[3311:stood waiting with his hands on his hips, staring a silent 
+challenge] 
+[3312:sneered at me, confident in his strength and violence] 
+[3313:peered at me with dark hooded eyes] 
+[3314:looked at me, shaking his head] 
+; 
+; firemen 
+[3320:sprayed water over the fire] 
+[3321:aimed a hose at the fire] 
+[3322:were busy controlling the fire] 
+[3323:began to put out the flames] 
+[3324:fought the flames bravely] 
+; 
+; again used following a command referring to scenery 
+[3530:the previous command was unrepeatable] 
+[3531:you can't do that again] 
+[3532:it wouldn't help to try that again] 
+[3533:that was a once-only command] 
+[3534:oh, not again] 
+; 
+[3560:not around] ; printed by follow code 
+; npc stack overflow 
+[3600:the wind moaned about a stack overflow. ] 
+[3605:sorry, I will have to find my own way from here] 
+[3614:I yelled, but no sound emerged. ] 
+; 
+; 'npc, rude' word for talking people 
+[3620:laughed] 
+[3621:paid me no heed] 
+[3622:had not heard] 
+[3623:took no notice] 
+[3624:ignored me] 
+; 
+; 'npc, help' for talking people 
+[3640:needed specific orders] 
+[3641:waited for instructions] 
+[3642:looked me up and down] 
+[3643:asked, "Why?"] 
+[3644:did not know what to do] 
+; 
+; 'npc, echo verb' for talking people 
+[3660:raised an eyebrow] 
+[3661:gave a spirited response] 
+[3662:looked offended] 
+[3663:laughed, "Oh! You are a hoot"] 
+[3664:looked askance at me] 
+; 
+;========= 
+; 
+; Garbage words.. 
+[4000:^N the ^N this ^N these ^N that ^N some ^N and ^N also 
+^N before ^N wade ^N jog ^N plod ^N rush ^N dash ^N march ^N amble 
+^N good ^N of ^N there] 
+[4001:^N therefore ^N am ^N my ^N your ^N try ^N carefully ^N slowly 
+^N warily ^N quickly ^N rapidly ^N following ^N around] 
+[4002:^N please] 
+[4003:^N road ^N Mister ^N Mr ^N Mrs ^N Miss ^N past] 
+; 
+;; Book protection code... 
+;; 
+;; [4200:%a pale apparition appeared and waved a copy of a greying 
+;; book. ] 
+;; [4201:page ] 
+;; [4202:, line ] 
+;; [4203:, word ] 
+;; [4204:?"%] 
+;; [4205:the apparition hissed nastily and I knew that I was wrong. ] 
+;; [4206:the apparition vanished in a cloud of black smoke. ] 
+;; [4207:He wanted to know the word at ] 
+;; [4208:Wrong again! The apparition grinned horribly and everything 
+;; went black... ] 
+;; 
+;; ADD PROTECTION WORDS HERE, BUT DO NOT MARK NUMBERS (digits) e.g. 20 
+;; [4301:^C even ^C maintain] ; 18,9,8 
+;; [4400:^C the] ; 13,2,7 
+; 
+; Astral images... 
+; A list of ten messages for each of the ten rooms inside and outside 
+; the house. Each room tells a story from its own point of view, such 
+; that the story is continued if the player moves to a different room. 
+; The timing of these messages is VERY critical. 
+; 
+; Front garden 
+; 
+[5000:concentrating hard, I managed to summon up a vision of past 
+events. The door before me creaked open and I watched myself 
+leaving the house as I had done a few hours before my death. I 
+seemed to be carrying something small in my hand as I headed
+west towards the herb garden|^N vision ^N image ^N visions ^N images] 
+; 
+[5001:I watched the vision of myself kneeling down in the herb 
+garden to the west, as if I were planting a seed - though I hardly 
+think that I'd suddenly taken up gardening for a hobby! Whatever 
+it was, I pushed the earth back over it. Then my shimmering figure 
+turned and went back into the house] 
+; 
+[5002:I concentrated on summoning back the vision, but it now seemed 
+to be stronger inside the house] 
+; 
+[5003:time passed in the vision] ; general null vision message
+; 
+[5004:as I concentrated, a shiver ran down my spine; a whispering 
+echo of some past violence] 
+; 
+[5007:a ^N wisp of shimmering ^N smoke drifted from the ^N chimney 
+and tumbled lazily down onto the roof of the house] 
+; 
+[5009:my vision returned, showing the ^N drugs ^N gang leaving 
+the house, carrying my unconscious body. 
+% %The vision finally came to an end and the images faded into 
+the night] 
+; 
+; Herb garden 
+; 
+[5010:I began meditating, and saw a vision of myself approaching from 
+the garden to the east] 
+; 
+[5011:I watched the vision and saw myself burying my ^N identity 
+^N card in the garden amongst the herbs. Then, the vision cleared 
+as my figure returned inside the house again|^N ID] 
+; 
+[5014:although there was nothing to see in my vision, I felt a 
+strong sense of fear and pain, as if some violence was about to 
+overwhelm me] 
+; 
+[5017:^N smoke whisped shimmeringly out of the ^N chimney at the 
+top of the house] 
+; 
+[5019:my vision returned with the drugs gang leaving the house, 
+carrying my unconscious body through the front garden. 
+% %The vision finally came to an end and the images faded into 
+the night] 
+; 
+; Lawn 
+; 
+[5020:I concentrated, and in a vision saw myself leaving the 
+house and walking through the front garden towards the straggly 
+growth of herbs] 
+; 
+[5021:at first, the vision showed me busy doing something over 
+at the herb garden - though it was too far away for me to see 
+what had gone on. As I watched, my figure crossed back again, 
+through the front garden and into the house] 
+; 
+[5024:I began to feel distressed, as if something violent had happened 
+here in the past, though nothing showed in my vision] 
+; 
+[5027:a thin trail of ^N smoke snaked shimmeringly up from the 
+^N chimney at the apex of the roof] 
+; 
+[5029:my vision returned and I saw the drugs gang slipping 
+from the house, carrying an unconscious figure - me - through 
+the front garden. 
+% %The vision faded away into the mists of time and the night] 
+; 
+; Hall 
+; 
+[5030:I summoned up a vision of myself pressed close to the 
+kitchen door, listening to the crooks beyond it. I had stood 
+there a short while, then slipped silently from the house 
+through the front door. As my figure left from my vision, 
+ghostly laughter echoed from the kitchen] 
+; 
+[5031:in the vision, I heard soft patter of cards and coarse 
+voices raised in a mixture of glee and anger as the crooks 
+gambled in the kitchen, then I watched myself enter the house 
+from outside, heading again to the kitchen door] 
+; 
+[5032:watching the vision, I saw myself at first listening at 
+the kitchen door, then walking over to the telephone. I focussed 
+my mind on the phone and realised that I had phoned the police] 
+; 
+[5033:my vision reached a new intensity and showed me talking 
+over the telephone to my colleagues on the force. But before I 
+could give my location, the kitchen door blasted open and a 
+villain entered the hall, pointing a gun at me. He snatched 
+the handset from me, listened long enough to confirm who I 
+had been talking to and slammed the phone down.
+% %"What have you told them, spy?", he yelled, waving the gun] 
+; 
+[5034:I watched the vision of myself struggling with the armed 
+crook, a fight that ended with the sharp crack of a gunshot and 
+my assailant falling to the floor and twitching into stillness. 
+%I felt a sudden sharp pang of distress, as if something evil 
+had entered the spirit world] 
+; 
+[5035:I visualised the other ^N crooks running into the hall 
+and surrounding me. I saw that ^N Sarah, my ^N partner, was 
+among them, pointing a revolver at me. If she had been feeling 
+any concern for me, she was hiding it well, but there would 
+have been little she could have done against those odds. They 
+stood for a moment weighing up the situation, then two 
+criminals picked up the one I had just killed, and dragged 
+him up the stairs towards the landing] 
+; 
+[5036:I was reluctant to continue and the vision faded, until 
+I snapped myself back to attention and concentrated once more. 
+The picture firmed to show one of the crooks hitting me over 
+the head with a gun butt and me slumping to the floor. Then 
+he stood guard while the rest of the them spread out in 
+all directions through the house, destroying evidence before 
+they left. Soon after, one of them returned from the kitchen 
+with his pockets stuffed with paper] 
+; 
+[5037:in my vision a crook stood guard over me, in case I came 
+back to my senses. Another, his pockets stuffed with paper, 
+walked through the hall and into the lounge] 
+; 
+[5038:I visualised the rest of the crooks returning to the hall, 
+their ^N pockets filled with their ^N belongings and anything 
+that might be used as ^N evidence against them] 
+; 
+[5039:my vision began to fade as the crooks picked my body up and 
+carried it outside through the front door. 
+% %There was then only the empty hall and the lingering sense of 
+malice, and the vision faded to an end] 
+; 
+; Kitchen 
+; 
+[5040:I summoned up an image of the crooks sat around a ^N table, 
+deep into an ill-tempered game of ^N poker|^N cards] 
+; 
+[5041:I watched as the vision showed my ^N partner, ^N Sarah, 
+sitting at the end of the table keeping the gambling scores on 
+a piece of ^N paper. The crooks were slapping ^N ten ^N pound 
+^N notes and ^N IOU's onto a pile in the middle of the 
+table. One of them - John? - whispered to his neighbour. I 
+caught the last few words "..if he's a spy like Severian 
+says"|^N cash ^N money ^N tenners] 
+; 
+[5042:I visualised Sarah talking to the crooks. "The sucker's 
+had time to take the bait", she sniggered. I shivered as one of 
+the crooks headed towards the hall with a gun, primed and 
+ready for me. I realised what was really going on, but couldn't 
+take it all in. Had Sarah become one of them? Or was this part of 
+some deeper game she was playing, knowing my cover was blown but 
+determined to see the job through to the end?] 
+; 
+[5043:in the vision, I saw the crooks go on with their game of 
+poker, confident that their mate could take care of the trouble. 
+"Don't waste him yet, Luke", shouted one of them towards the 
+hall door. "I've got a nice surprise in store for him later",
+he sniggered|^N Luke] 
+; 
+[5044:suddenly, the vision became strong and clear as a gunshot 
+blasted from out of the hallway. The crooks leapt up with a 
+start, knocking the table over and scattering money across the 
+^N floor. They rushed into the hall, some of them snatching guns 
+from their belts as they ran] 
+; 
+[5046:the images of two crooks dashed into the kitchen. One of them 
+went north into the breakfast room and the other one began to clear 
+the kitchen. He collected all the money from the floor and stuffed 
+the remaining scraps of paper into his pockets before returning to 
+the hall] 
+; 
+[5047:the vision showed one of the crooks return from the breakfast 
+room and start to check over the kitchen] 
+; 
+[5048:in the vision, a crook finished his inspection of the kitchen and 
+made his exit to the hall] 
+; 
+[5049:the images faded as the vision came to an end] 
+; 
+; 
+; Breakfast room 
+; 
+[5050:the vision here was empty, except for the sound of the crooks 
+gambling in the kitchen to the south] 
+; 
+[5054:I reeled as if under the sudden impact of a sharp blow, an 
+echo of past violence somewhere close at hand] 
+; 
+[5056:a crook entered my vision from the kitchen and began to pick 
+up a few belongings from around the ^N breakfast ^N table] 
+; 
+[5057:the image showed the crook finish collecting his belongings 
+before returning to the kitchen] 
+; 
+[5059:the vision slowly faded away and came to an end] 
+; 
+; 
+; Lounge 
+; 
+[5064:a blinding flash from the hallway left me shaken for a few seconds] 
+; 
+[5067:the image of one of the crooks entered the room. He knelt 
+down in front of the fire and began to empty some scraps of paper 
+from his pockets] 
+; 
+[5068:I watched the vision as it showed a crook piling up scraps 
+of paper and setting fire to them with a match, before going back 
+into the hall. 
+%I watched the scraps of paper burning and saw that one of them, 
+only slightly charred, was slowly carried up into the chimney with 
+the smoke] 
+; 
+[5069:the images faded as the flames died away in the fireplace] 
+; 
+; 
+; Landing 
+; 
+[5074:I imagined a deafening crack from the hallway, followed 
+by gun smoke that clouded my vision] 
+; 
+[5075:the vision ran on, showing two ^N burly ^N villains hauling 
+a ^N dead body up the ^N staircase towards me] 
+; 
+[5076:I watched the vision as it showed the two hefty crooks lifting 
+a bloody corpse up into the attic] 
+; 
+[5077:the vision continued. In it I saw the two villains clamber 
+down from the attic and brush their hands on their trousers. 
+"I won't be drinking any more water in this house", laughed one 
+of them coarsely] 
+; 
+[5078:the vision showed the two crooks walking back down the 
+landing and into the hall to rejoin the rest of the gang] 
+; 
+[5079:looking down into the hallway, I watched the vision as it 
+showed the crooks carrying my body outside into the night. 
+% %Then, after the front door was closed, the images faded] 
+; 
+; 
+; Bathroom 
+; 
+[5084:I suddenly felt uneasy, as if something violent had just 
+happened] 
+; 
+[5085:the vision indicated that there was a strong presence 
+on the landing to the south] 
+; 
+[5089:the images faded into the air and my concentration was lost] 
+; 
+; 
+; Attic 
+; 
+[5094:I felt a sudden shock, but it came from the past and from 
+a distant place and I couldn't make out the cause] 
+; 
+[5096:at last the vision began to reveal some life. Light 
+came into the attic, closely followed by two hefty crooks 
+struggling to haul a dead weight up with them. They let it 
+fall on the rafters as they took a breather, and I saw that 
+they had brought the dead body of another member of the gang. 
+It was the one they had called Luke] 
+; 
+[5097:the vision showed the two crooks slide the lid off the 
+water tank and dump the dead body unceremoniously inside it. 
+They pushed the lid back over the tank and climbed back down 
+to the landing] 
+; 
+[5099:the images cleared and I realised that the vision had come to 
+an end] 
+; 
+; --- Joe greets player before following --- 
+; 
+[5100:greeted me with a warm smile. "Good evening", he began, "I 
+trust you slept well. You're looking fit, all things considered. 
+It seems that you temporary ghosts soon get stronger than us 
+residents, so I expect you'll find you've got new powers this 
+night. Could be that you're now able to heat and cool things. 
+You might even be able to reach through solid objects - I've seen 
+that done in the past. How about a wander outside the cemetery. 
+Perhaps we'll find those crooks you were telling me about last 
+night? You lead the way and I'll just follow on"] 
+; 
+; ============================== END ============================ 
